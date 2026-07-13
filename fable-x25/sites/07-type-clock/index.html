@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MERIDIEM — the time, composed</title>
+<meta name="description" content="A living typographic clock. The current time, written out in words, re-composes itself every minute — its layout, scale and palette drawn from the hour itself.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="MERIDIEM — the time, composed">
+<meta property="og:description" content="A living typographic clock. The current time, written out in words, re-composes itself every minute — its layout, scale and palette drawn from the hour itself.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/07-type-clock/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/07-type-clock/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MERIDIEM — the time, composed">
+<meta name="twitter:description" content="A living typographic clock. The current time, written out in words, re-composes itself every minute — its layout, scale and palette drawn from the hour itself.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/07-type-clock/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%95%B0%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f2ea; --ink:#1c1a16; --accent:#8a6f3c; --faint:rgba(28,26,22,.14); --soft:rgba(28,26,22,.55);
+    --u: clamp(46px, 11.2vw, 164px);
+    --ease-out: cubic-bezier(.19,1,.22,1);
+    --ease-inout: cubic-bezier(.65,0,.35,1);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Cormorant Garamond", Georgia, serif;
+    transition: background 1.2s linear, color 1.2s linear;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:var(--bg); }
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:var(--faint); border-radius:5px; border:2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--soft); }
+  a{ color:inherit; text-decoration:none; }
+  button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+  :focus-visible{ outline:1px solid var(--accent); outline-offset:4px; border-radius:2px; }
+
+  .caps{
+    font-family:"Archivo", system-ui, sans-serif;
+    font-weight:500; text-transform:uppercase;
+    letter-spacing:.22em; font-size:10px; line-height:1.7;
+  }
+
+  /* ---------- back link ---------- */
+  .backlink{
+    position:fixed; top:0; left:0; z-index:50;
+    padding:22px 26px; display:inline-block;
+    opacity:.75; transition:opacity .4s var(--ease-out), letter-spacing .4s var(--ease-out);
+  }
+  .backlink:hover{ opacity:1; letter-spacing:.3em; }
+
+  /* ---------- clock stage ---------- */
+  .clock{
+    position:relative; height:100svh; min-height:560px;
+    overflow:hidden;
+  }
+  .frame{
+    position:absolute; inset:16px; pointer-events:none;
+    border:1px solid var(--faint);
+    transition:border-color 1.2s linear;
+  }
+  @media (max-width:640px){ .frame{ inset:10px; } }
+
+  .clock-head{
+    position:absolute; top:0; right:0; z-index:5;
+    padding:22px 30px; text-align:right;
+  }
+  .clock-head .word{ letter-spacing:.44em; font-size:11px; font-weight:600; }
+  .clock-head .sub{ margin-top:4px; opacity:.5; letter-spacing:.28em; font-size:9px; }
+
+  .stage-wrap{ position:absolute; inset:0; }
+  .stage{ position:absolute; inset:0; }
+  .stage .line{
+    position:absolute; white-space:nowrap;
+    line-height:.92; letter-spacing:-.01em;
+  }
+  .stage .line.role-big{ font-weight:300; font-style:italic; }
+  .stage .line.role-mid{ font-weight:400; font-style:normal; letter-spacing:.02em; opacity:.88; }
+  .stage .line.role-small{
+    font-family:"Archivo",system-ui,sans-serif; font-weight:500;
+    text-transform:uppercase; letter-spacing:.34em; opacity:.62;
+    font-style:normal;
+  }
+  .stage .ch{
+    display:inline-block; will-change:transform,opacity;
+    transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+  }
+  .stage.enter-prep .ch{ opacity:0; transform:translateY(.5em); }
+  .stage.out .ch{ opacity:0; transform:translateY(-.35em); }
+  .stage .diag{
+    position:absolute; left:50%; top:50%; width:120%; height:1px;
+    background:var(--faint); transform:translate(-50%,-50%) rotate(-24deg);
+    transition:opacity .8s var(--ease-out), background 1.2s linear; opacity:0;
+  }
+  .stage.tpl-diag .diag{ opacity:1; }
+
+  /* ---------- seconds ---------- */
+  .seconds{
+    position:absolute; right:34px; top:50%; transform:translateY(-50%);
+    z-index:5; display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .seconds svg{ display:block; }
+  .seconds .ring-bg{ stroke:var(--faint); }
+  .seconds .ring-fg{ stroke:var(--accent); transition:stroke 1.2s linear; }
+  .sec-count{
+    position:relative; height:14px; width:30px; overflow:hidden; text-align:center;
+  }
+  .sec-count span{
+    position:absolute; inset:0; font-family:"Archivo",sans-serif; font-size:10px;
+    font-weight:500; letter-spacing:.18em; opacity:.65;
+    transition: transform .38s var(--ease-out), opacity .38s var(--ease-out);
+  }
+  .sec-count span.up{ transform:translateY(-110%); opacity:0; }
+  .sec-count span.down{ transform:translateY(110%); opacity:0; }
+  .sec-label{ opacity:.4; font-size:8px; letter-spacing:.3em; }
+
+  /* ---------- meta: date, glyph, elsewhere ---------- */
+  .meta-left{
+    position:absolute; left:34px; bottom:78px; z-index:5; max-width:44%;
+  }
+  .meta-left .date-words{
+    font-style:italic; font-weight:300; font-size:clamp(15px,1.45vw,21px);
+    line-height:1.35; opacity:.85;
+  }
+  .meta-left .rule{ width:56px; height:1px; background:var(--faint); margin:14px 0; transition:background 1.2s linear; }
+  .skyline{ display:flex; align-items:center; gap:12px; }
+  .skyline svg{ display:block; overflow:visible; }
+  .skyline .arcpath{ stroke:var(--faint); transition:stroke 1.2s linear; }
+  .skyline .orb{ fill:var(--accent); transition:fill 1.2s linear; }
+  .skyline .orb-hollow{ fill:var(--bg); transition:fill 1.2s linear; }
+  .sky-label{ opacity:.5; }
+
+  .elsewhere{
+    position:absolute; right:34px; bottom:78px; z-index:5; text-align:right;
+  }
+  .elsewhere .ttl{ opacity:.45; margin-bottom:10px; }
+  .elsewhere .city{ display:flex; gap:18px; justify-content:flex-end; align-items:baseline; margin-top:6px; }
+  .elsewhere .city .name{ font-size:10px; letter-spacing:.26em; opacity:.7; }
+  .elsewhere .city .tm{
+    font-family:"Archivo",sans-serif; font-size:11px; font-weight:400;
+    letter-spacing:.14em; font-variant-numeric:tabular-nums; opacity:.9;
+  }
+
+  /* ---------- controls ---------- */
+  .controls{
+    position:absolute; left:0; right:0; bottom:0; z-index:6;
+    display:flex; align-items:center; gap:18px;
+    padding:0 34px; height:56px;
+    border-top:1px solid var(--faint);
+    background:color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    transition:border-color 1.2s linear;
+  }
+  .btn-play{
+    width:30px; height:30px; display:grid; place-items:center;
+    border:1px solid var(--faint); border-radius:50%;
+    transition:border-color .35s var(--ease-out), transform .35s var(--ease-out), background .35s;
+    flex:none;
+  }
+  .btn-play:hover{ border-color:var(--accent); transform:scale(1.08); }
+  .btn-play svg{ display:block; }
+  .btn-play .icon{ fill:var(--ink); transition:fill .3s; }
+  .scrub{
+    -webkit-appearance:none; appearance:none; flex:1; height:22px;
+    background:transparent; cursor:pointer;
+  }
+  .scrub::-webkit-slider-runnable-track{ height:1px; background:var(--faint); }
+  .scrub::-webkit-slider-thumb{
+    -webkit-appearance:none; width:11px; height:11px; border-radius:50%;
+    background:var(--accent); margin-top:-5px;
+    transition:transform .3s var(--ease-out), box-shadow .3s var(--ease-out);
+  }
+  .scrub:hover::-webkit-slider-thumb{ transform:scale(1.5); }
+  .scrub::-moz-range-track{ height:1px; background:var(--faint); }
+  .scrub::-moz-range-thumb{
+    width:11px; height:11px; border-radius:50%; border:none; background:var(--accent);
+    transition:transform .3s var(--ease-out);
+  }
+  .scrub:hover::-moz-range-thumb{ transform:scale(1.5); }
+  .readout{
+    font-family:"Archivo",sans-serif; font-size:11px; font-weight:500;
+    letter-spacing:.2em; font-variant-numeric:tabular-nums; opacity:.8; flex:none; min-width:52px; text-align:center;
+  }
+  .btn-live{
+    font-family:"Archivo",sans-serif; font-size:9px; font-weight:600;
+    letter-spacing:.28em; text-transform:uppercase; flex:none;
+    padding:6px 12px; border:1px solid var(--faint); border-radius:20px;
+    opacity:.55; transition:opacity .3s, border-color .3s, color .3s;
+  }
+  .btn-live:hover{ opacity:1; border-color:var(--accent); }
+  .btn-live.active{ opacity:1; color:var(--accent); border-color:var(--accent); }
+
+  /* ---------- sections below ---------- */
+  section{ position:relative; padding:clamp(90px,14vh,160px) clamp(24px,7vw,110px); }
+  section .kicker{ color:var(--accent); margin-bottom:26px; transition:color 1.2s linear; }
+  .manifesto h2{
+    font-weight:300; font-style:italic;
+    font-size:clamp(38px,5.6vw,84px); line-height:1.02; letter-spacing:-.01em;
+    max-width:14em;
+  }
+  .manifesto .cols{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:44px; margin-top:56px; max-width:1060px;
+  }
+  .manifesto p{ font-size:clamp(17px,1.35vw,20px); line-height:1.65; font-weight:400; opacity:.86; }
+  .manifesto p em{ font-style:italic; }
+
+  .templates{ border-top:1px solid var(--faint); transition:border-color 1.2s linear; }
+  .templates h2, .palette h2{
+    font-weight:300; font-style:italic; font-size:clamp(30px,3.6vw,54px); line-height:1.05;
+  }
+  .tpl-grid{
+    margin-top:54px; display:grid;
+    grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--faint); border:1px solid var(--faint);
+    transition:background 1.2s linear, border-color 1.2s linear;
+  }
+  @media (max-width:1000px){ .tpl-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:640px){ .tpl-grid{ grid-template-columns:1fr; } }
+  .tpl-card{
+    background:var(--bg); padding:34px 30px 40px;
+    transition:background 1.2s linear;
+    position:relative; overflow:hidden;
+  }
+  .tpl-card .no{
+    font-style:italic; font-weight:300; font-size:44px; line-height:1;
+    color:var(--accent); transition:color 1.2s linear;
+  }
+  .tpl-card .nm{ margin:16px 0 10px; font-size:11px; letter-spacing:.3em; font-weight:600; }
+  .tpl-card p{ font-size:16px; line-height:1.55; opacity:.75; }
+  .tpl-card .mini{ position:absolute; top:30px; right:26px; opacity:.5; }
+  .tpl-card .mini rect{ fill:var(--ink); transition:fill 1.2s linear; }
+
+  .palette{ border-top:1px solid var(--faint); transition:border-color 1.2s linear; }
+  .band-wrap{ margin-top:54px; }
+  .band{
+    height:110px; border:1px solid var(--faint); cursor:pointer;
+    transition:border-color 1.2s linear;
+  }
+  .band-hours{
+    display:flex; justify-content:space-between; margin-top:10px;
+    font-family:"Archivo",sans-serif; font-size:9px; letter-spacing:.14em; opacity:.5;
+    font-variant-numeric:tabular-nums;
+  }
+  .band-names{ display:flex; margin-top:22px; }
+  .band-names div{ text-align:center; }
+  .band-names .nm{ font-size:10px; letter-spacing:.3em; font-weight:600; }
+  .band-names .rg{ margin-top:6px; font-size:9px; letter-spacing:.14em; opacity:.5; font-family:"Archivo",sans-serif; }
+  .palette .hint{ margin-top:30px; font-style:italic; font-size:17px; opacity:.6; }
+
+  footer{
+    border-top:1px solid var(--faint); transition:border-color 1.2s linear;
+    padding:70px clamp(24px,7vw,110px) 60px;
+    display:flex; flex-wrap:wrap; gap:40px; justify-content:space-between; align-items:flex-end;
+  }
+  footer .mark{ font-style:italic; font-weight:300; font-size:38px; line-height:1; }
+  footer .cols{ display:flex; gap:70px; flex-wrap:wrap; }
+  footer .col .h{ opacity:.45; margin-bottom:10px; }
+  footer .col .v{ font-size:15px; line-height:1.6; opacity:.85; }
+  footer a:hover{ color:var(--accent); }
+
+  /* reveal */
+  .rv{ opacity:0; transform:translateY(34px); transition:opacity 1s var(--ease-out), transform 1s var(--ease-out); }
+  .rv.on{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    .rv{ opacity:1; transform:none; transition:none; }
+    .stage .ch{ transition:opacity .3s linear; }
+  }
+
+  /* grain */
+  .grain{
+    position:fixed; inset:-100px; z-index:40; pointer-events:none; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (max-width:640px){
+    :root{ --u: clamp(42px, 16vw, 80px); }
+    .backlink{ padding:16px 18px; }
+    .clock-head{ padding:16px 20px; }
+    .seconds{ right:18px; top:auto; bottom:150px; transform:none; }
+    .meta-left{ left:20px; bottom:126px; max-width:60%; }
+    .meta-left .date-words{ font-size:14px; }
+    .elsewhere{ display:none; }
+    .controls{ padding:0 18px; gap:12px; height:52px; }
+    footer .cols{ gap:36px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="backlink caps" href="/" aria-label="Back to the XAVIER FABLE ×30 gallery">Xavier Fable ×30</a>
+
+<!-- ================= CLOCK ================= -->
+<div class="clock" id="clock">
+  <div class="frame"></div>
+
+  <header class="clock-head caps">
+    <div class="word">Meridiem</div>
+    <div class="sub">The time, composed</div>
+  </header>
+
+  <div class="stage-wrap" id="stageWrap" aria-live="polite"></div>
+
+  <div class="seconds" aria-hidden="true">
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+      <circle class="ring-bg" cx="28" cy="28" r="24" stroke-width="1"/>
+      <circle class="ring-fg" id="secRing" cx="28" cy="28" r="24" stroke-width="1.5"
+        stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8"
+        transform="rotate(-90 28 28)"/>
+    </svg>
+    <div class="sec-count" id="secCount"><span>00</span></div>
+    <div class="sec-label caps">sec</div>
+  </div>
+
+  <div class="meta-left">
+    <div class="date-words" id="dateWords"></div>
+    <div class="rule"></div>
+    <div class="skyline">
+      <svg width="92" height="34" viewBox="0 0 92 34">
+        <path class="arcpath" d="M4 32 A 42 42 0 0 1 88 32" fill="none" stroke-width="1"/>
+        <g id="orbG"></g>
+      </svg>
+      <span class="sky-label caps" id="skyLabel"></span>
+    </div>
+  </div>
+
+  <div class="elsewhere">
+    <div class="ttl caps">Elsewhere</div>
+    <div class="city"><span class="name caps">Tokyo</span><span class="tm" id="tz0">—</span></div>
+    <div class="city"><span class="name caps">London</span><span class="tm" id="tz1">—</span></div>
+    <div class="city"><span class="name caps">New York</span><span class="tm" id="tz2">—</span></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-play" id="btnPlay" aria-label="Pause the clock">
+      <svg width="10" height="10" viewBox="0 0 10 10"><g class="icon" id="playIcon"><rect x="1.5" y="0" width="2.4" height="10"/><rect x="6.1" y="0" width="2.4" height="10"/></g></svg>
+    </button>
+    <span class="readout" id="readout">00:00</span>
+    <input class="scrub" id="scrub" type="range" min="0" max="1439" step="1" value="0" aria-label="Scrub through the day">
+    <button class="btn-live" id="btnLive">Live</button>
+  </div>
+</div>
+
+<!-- ================= MANIFESTO ================= -->
+<section class="manifesto">
+  <div class="kicker caps rv">I — A clock that writes</div>
+  <h2 class="rv">Numbers tell you the time. Words let you hear it.</h2>
+  <div class="cols">
+    <p class="rv">Meridiem abolishes the dial. Every sixty seconds it takes the present moment — <em>twenty-three minutes past four in the afternoon</em> — and sets it in type across the whole of your screen, the way a compositor once set a headline: by hand, by eye, by feel.</p>
+    <p class="rv">Nothing here is arbitrary. The digits of the hour choose the composition — flush left, staircase, a scattered grid. The minute decides the scale of each word. The true position of the sun decides the ink and the paper. The clock is the designer; we only taught it manners.</p>
+    <p class="rv">And because a minute is a long time when you are watching one, the seconds keep quiet company at the edge — a hairline arc, filling and emptying, like breath. Stay until the minute turns. The letters leave the way they came: one by one, politely.</p>
+  </div>
+</section>
+
+<!-- ================= TEMPLATES ================= -->
+<section class="templates">
+  <div class="kicker caps rv">II — The six compositions</div>
+  <h2 class="rv">Each minute selects one of six ways to stand on the page.</h2>
+  <div class="tpl-grid rv" id="tplGrid"></div>
+</section>
+
+<!-- ================= PALETTE ================= -->
+<section class="palette">
+  <div class="kicker caps rv">III — The hours, in colour</div>
+  <h2 class="rv">One day, one continuous curve of ink and light.</h2>
+  <div class="band-wrap rv">
+    <div class="band" id="band" role="slider" aria-label="Preview a time of day" tabindex="0" aria-valuemin="0" aria-valuemax="1439" aria-valuenow="0"></div>
+    <div class="band-hours"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div>
+    <div class="band-names">
+      <div style="width:20.8%"><div class="nm caps">Night</div><div class="rg">00 — 05</div></div>
+      <div style="width:12.5%"><div class="nm caps">Dawn</div><div class="rg">05 — 08</div></div>
+      <div style="width:37.5%"><div class="nm caps">Day</div><div class="rg">08 — 17</div></div>
+      <div style="width:12.5%"><div class="nm caps">Dusk</div><div class="rg">17 — 20</div></div>
+      <div style="width:16.7%"><div class="nm caps">Evening</div><div class="rg">20 — 24</div></div>
+    </div>
+    <p class="hint">Touch the band anywhere to set the clock to that hour — or drag the slider beneath the composition.</p>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div>
+    <div class="mark">Meridiem</div>
+    <div class="caps" style="opacity:.45; margin-top:12px;">A typographic clock · MMXXVI</div>
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="h caps">Set in</div>
+      <div class="v">Cormorant Garamond, light italic<br>Archivo, for the small print</div>
+    </div>
+    <div class="col">
+      <div class="h caps">Mechanism</div>
+      <div class="v">No dials. No hands.<br>Only language, on the minute.</div>
+    </div>
+    <div class="col">
+      <div class="h caps">Exhibition</div>
+      <div class="v"><a href="/">XAVIER FABLE ×30 — the gallery</a><br>Piece 07 of 30</div>
+    </div>
+  </div>
+</footer>
+
+<div class="grain" aria-hidden="true"></div>
+
+<script>
+(() => {
+'use strict';
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+
+/* ============ number → words ============ */
+const ONES = ['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+  'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const TENS = ['','', 'twenty','thirty','forty','fifty'];
+function numWord(n){
+  if(n < 20) return ONES[n];
+  const t = TENS[Math.floor(n/10)], o = n % 10;
+  return o ? t + '-' + ONES[o] : t;
+}
+const ORD_SPECIAL = {1:'first',2:'second',3:'third',5:'fifth',8:'eighth',9:'ninth',12:'twelfth'};
+function ordWord(n){
+  if(ORD_SPECIAL[n]) return ORD_SPECIAL[n];
+  if(n < 20) return ONES[n] + 'th';
+  const t = Math.floor(n/10), o = n % 10;
+  if(o === 0) return TENS[t].replace(/y$/,'ieth');
+  return TENS[t] + '-' + ordWord(o);
+}
+
+/* hour name (12h), where the reference hour may roll into noon / midnight */
+function hourName(h24){
+  const h = ((h24 % 24) + 24) % 24;
+  if(h === 0)  return 'midnight';
+  if(h === 12) return 'noon';
+  return numWord(h % 12);
+}
+function periodOf(h24){
+  const h = ((h24 % 24) + 24) % 24;
+  if(h === 0 || h === 12) return null;
+  if(h < 12) return 'in the morning';
+  if(h < 18) return 'in the afternoon';
+  return 'in the evening';
+}
+
+/* ============ time → composed lines ============ */
+/* returns [{text, role}]  role: big | mid | small */
+function timeToLines(h, m){
+  const L = [];
+  const push = (text, role) => L.push({text, role});
+  if(m === 0){
+    const name = hourName(h);
+    if(name === 'midnight' || name === 'noon'){
+      push(name, 'big'); push('precisely', 'mid');
+    } else {
+      push(name, 'big'); push("o'clock", 'mid');
+      const p = periodOf(h); if(p) push(p, 'small');
+    }
+    return L;
+  }
+  let refH = h, connective, headWord = null, headRole = 'big';
+  if(m === 15){ headWord = 'quarter'; connective = 'past'; }
+  else if(m === 30){ headWord = 'half'; connective = 'past'; }
+  else if(m === 45){ headWord = 'quarter'; connective = 'to'; refH = h + 1; }
+  else if(m < 30){ headWord = numWord(m); connective = m === 1 ? 'minute past' : 'minutes past'; }
+  else { headWord = numWord(60 - m); connective = (60 - m) === 1 ? 'minute to' : 'minutes to'; refH = h + 1; }
+  push(headWord, headRole);
+  push(connective, 'mid');
+  push(hourName(refH), 'big');
+  const hn = hourName(refH);
+  if(hn !== 'midnight' && hn !== 'noon'){
+    const p = periodOf(refH); if(p) push(p, 'small');
+  }
+  return L;
+}
+function timeToPhrase(h, m){
+  return timeToLines(h, m).map(l => l.text).join(' ');
+}
+
+/* ============ date → words ============ */
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function yearWords(y){
+  const hi = Math.floor(y / 100), lo = y % 100;
+  const loW = lo === 0 ? 'hundred' : (lo < 10 ? 'oh-' + numWord(lo) : numWord(lo));
+  return numWord(hi) + ' ' + loW;
+}
+function dateToWords(d){
+  return DAYS[d.getDay()] + ', the ' + ordWord(d.getDate()) + ' of ' + MONTHS[d.getMonth()] + ', ' + yearWords(d.getFullYear());
+}
+
+/* ============ palette curve ============ */
+function hex(c){ return [parseInt(c.slice(1,3),16), parseInt(c.slice(3,5),16), parseInt(c.slice(5,7),16)]; }
+/* keyframes across 24h: [hour, bg, ink, accent] */
+const PAL_KEYS = [
+  [ 0.0, '#0b0e16', '#ccd3df', '#8fa0bd'],   /* night — deep ink / moon-silver */
+  [ 4.6, '#10121c', '#ced4df', '#93a2be'],
+  [ 5.4, '#1c1622', '#dcc8c2', '#cd8668'],   /* first violet-rose */
+  [ 6.0, '#45252a', '#f2cfc0', '#e59a6b'],   /* deep rose, ink still light */
+  [ 6.3, '#7c4038', '#f7dcc8', '#f0b489'],
+  [ 6.55,'#e6c2ab', '#58241b', '#b05a24'],   /* the flip — brief, like real twilight */
+  [ 6.9, '#f2dcca', '#552a1e', '#bd6428'],   /* full dawn — rose / amber */
+  [ 8.6, '#f5f2ea', '#1c1a16', '#8a6f3c'],   /* day — paper / ink */
+  [16.8, '#f3ecdd', '#241f18', '#96702c'],
+  [17.6, '#eBBF8e', '#48200f', '#8e3d12'],   /* late amber, ink still dark */
+  [18.05,'#6e3530', '#f5cba0', '#f0a45e'],   /* dusk flip */
+  [18.5, '#38203a', '#f0d4b4', '#e07a38'],   /* dusk — plum / burnt orange */
+  [20.6, '#131c30', '#ede4cf', '#cfa863'],   /* evening — navy / cream */
+  [23.2, '#111a2c', '#e9e0cc', '#c5a061'],
+  [24.0, '#0b0e16', '#ccd3df', '#8fa0bd'],   /* wrap to night */
+];
+function lerp(a,b,t){ return a + (b-a)*t; }
+function smooth(t){ return t*t*(3-2*t); }
+function mixRGB(a,b,t){ return [0,1,2].map(i => Math.round(lerp(a[i],b[i],t))); }
+function rgbStr(c){ return `rgb(${c[0]},${c[1]},${c[2]})`; }
+function paletteAt(hourFloat){
+  const h = ((hourFloat % 24) + 24) % 24;
+  let i = 0;
+  while(i < PAL_KEYS.length - 2 && h >= PAL_KEYS[i+1][0]) i++;
+  const A = PAL_KEYS[i], B = PAL_KEYS[i+1];
+  const t = smooth(Math.min(1, Math.max(0, (h - A[0]) / (B[0] - A[0]))));
+  const bg = mixRGB(hex(A[1]), hex(B[1]), t);
+  const ink = mixRGB(hex(A[2]), hex(B[2]), t);
+  const accent = mixRGB(hex(A[3]), hex(B[3]), t);
+  return { bg, ink, accent };
+}
+function applyPalette(hourFloat){
+  const p = paletteAt(hourFloat);
+  const rs = document.documentElement.style;
+  rs.setProperty('--bg', rgbStr(p.bg));
+  rs.setProperty('--ink', rgbStr(p.ink));
+  rs.setProperty('--accent', rgbStr(p.accent));
+  rs.setProperty('--faint', `rgba(${p.ink[0]},${p.ink[1]},${p.ink[2]},.16)`);
+  rs.setProperty('--soft', `rgba(${p.ink[0]},${p.ink[1]},${p.ink[2]},.55)`);
+}
+
+/* ============ deterministic rng from time ============ */
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ============ layout templates ============ */
+const ROLE_SCALE = { big: 1, mid: .30, small: .148 };
+function bands(weights, y0, y1){
+  const tot = weights.reduce((a,b)=>a+b,0);
+  let acc = y0; const out = [];
+  for(const w of weights){
+    const h = (y1 - y0) * w / tot;
+    out.push(acc + h/2); acc += h;
+  }
+  return out;
+}
+/* each template: (lines, rng) -> [{x, y, align, scale}] ; align: left|right|center */
+const TEMPLATES = [
+  { name:'Stacked left',
+    desc:'Every word flush to the left margin, sized by the digits, a column of speech.',
+    fn(lines, rng){
+      const scales = lines.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .86 + rng()*.34 : 1));
+      const ys = bands(scales.map(s=>s+.16), 14, 76);
+      return lines.map((l,i)=>({ x: 7 + rng()*2.5, y: ys[i], align:'left', scale:scales[i] }));
+    }},
+  { name:'Staircase',
+    desc:'Each line steps further in than the last — the minute descending its own stairs.',
+    fn(lines, rng){
+      const scales = lines.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .8 + rng()*.3 : 1));
+      const ys = bands(scales.map(s=>s+.14), 12, 78);
+      const step = 9 + rng()*7;
+      return lines.map((l,i)=>({ x: 6 + i*step, y: ys[i], align:'left', scale:scales[i] }));
+    }},
+  { name:'Centered mass',
+    desc:'The whole phrase gathered at the heart of the page, tight as a struck bell.',
+    fn(lines, rng){
+      const scales = lines.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .9 + rng()*.3 : 1));
+      const ys = bands(scales.map(s=>s+.1), 22, 72);
+      return lines.map((l,i)=>({ x: 50, y: ys[i], align:'center', scale:scales[i] }));
+    }},
+  { name:'Right rag',
+    desc:'Set hard against the right edge, reading into the wind, ragged to the west.',
+    fn(lines, rng){
+      const scales = lines.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .86 + rng()*.32 : 1));
+      const ys = bands(scales.map(s=>s+.16), 14, 76);
+      return lines.map((l,i)=>({ x: 93 - rng()*2.5, y: ys[i], align:'right', scale:scales[i] }));
+    }},
+  { name:'Split diagonal',
+    desc:'Half the phrase high in the north-west, half low in the south-east; a hairline joins them.',
+    diag:true,
+    fn(lines, rng){
+      const k = Math.ceil(lines.length/2);
+      const top = lines.slice(0,k), bot = lines.slice(k);
+      const st = top.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .8 + rng()*.26 : 1));
+      const sb = bot.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .8 + rng()*.26 : 1));
+      const yt = bands(st.map(s=>s+.14), 12, 44);
+      const yb = bands(sb.map(s=>s+.14), 54, 78);
+      return [
+        ...top.map((l,i)=>({ x: 7, y: yt[i], align:'left', scale:st[i] })),
+        ...bot.map((l,i)=>({ x: 93, y: yb[i], align:'right', scale:sb[i] })),
+      ];
+    }},
+  { name:'Scattered grid',
+    desc:'Words thrown to separate corners of an invisible grid, yet still reading in order.',
+    fn(lines, rng){
+      const cols = [{x:8,a:'left'},{x:50,a:'center'},{x:92,a:'right'}];
+      const scales = lines.map(l => ROLE_SCALE[l.role] * (l.role==='big' ? .78 + rng()*.3 : 1));
+      const ys = bands(scales.map(s=>s+.2), 12, 78);
+      let prev = -1;
+      const bigUsed = new Set();
+      return lines.map((l,i)=>{
+        let c = Math.floor(rng()*3);
+        if(c === prev) c = (c + 1 + Math.floor(rng()*2)) % 3;
+        /* big words must never share a column — keeps the scatter genuinely scattered */
+        if(l.role === 'big'){
+          let guard = 0;
+          while(bigUsed.has(c) && guard++ < 4) c = (c + 1) % 3;
+          bigUsed.add(c);
+        }
+        prev = c;
+        return { x: cols[c].x, y: ys[i] + (rng()-.5)*3, align: cols[c].a, scale: scales[i] };
+      });
+    }},
+];
+
+/* ============ stage rendering ============ */
+const stageWrap = $('stageWrap');
+let currentStage = null;
+
+function buildStage(h, m){
+  const lines = timeToLines(h, m);
+  const seed = h * 60 + m;
+  const tplIdx = m % 6;
+  const tpl = TEMPLATES[tplIdx];
+  const rng = mulberry32(seed * 2654435761);
+  const placed = tpl.fn(lines, rng);
+
+  const stage = document.createElement('div');
+  stage.className = 'stage' + (tpl.diag ? ' tpl-diag' : '');
+  stage.setAttribute('role','text');
+  stage.setAttribute('aria-label', timeToPhrase(h, m));
+
+  if(tpl.diag){
+    const d = document.createElement('div');
+    d.className = 'diag'; stage.appendChild(d);
+  }
+
+  let chTotal = 0;
+  lines.forEach((line, i) => {
+    const el = document.createElement('div');
+    el.className = 'line role-' + line.role;
+    const p = placed[i];
+    el.style.top = p.y + '%';
+    el.style.fontSize = `calc(var(--u) * ${p.scale.toFixed(3)})`;
+    if(p.align === 'left'){ el.style.left = p.x + '%'; el.style.transform = 'translateY(-50%)'; }
+    else if(p.align === 'right'){ el.style.right = (100 - p.x) + '%'; el.style.transform = 'translateY(-50%)'; }
+    else { el.style.left = '50%'; el.style.transform = 'translate(-50%,-50%)'; }
+    /* letters */
+    for(const ch of line.text){
+      if(ch === ' '){ el.appendChild(document.createTextNode(' ')); continue; }
+      const s = document.createElement('span');
+      s.className = 'ch'; s.textContent = ch;
+      s.dataset.i = chTotal++;
+      el.appendChild(s);
+    }
+    el.dataset.lineIdx = i;
+    stage.appendChild(el);
+  });
+  return stage;
+}
+
+function fitLines(stage){
+  const W = stageWrap.clientWidth;
+  stage.querySelectorAll('.line').forEach(el => {
+    let avail;
+    if(el.style.left && el.style.left !== '50%') avail = W * (0.96 - parseFloat(el.style.left)/100);
+    else if(el.style.right) avail = W * (0.96 - parseFloat(el.style.right)/100);
+    else avail = W * 0.9;
+    const w = el.scrollWidth;
+    if(w > avail){
+      const fs = parseFloat(getComputedStyle(el).fontSize);
+      el.style.fontSize = (fs * avail / w).toFixed(1) + 'px';
+    }
+  });
+}
+
+/* nudge lines out of the furniture: date/skyline, elsewhere, seconds ring,
+   controls bar (push up) and the masthead / back-link (push down). */
+function avoidFurniture(stage){
+  const obs = [];
+  document.querySelectorAll('#clock .meta-left, #clock .elsewhere, #clock .seconds, #clock .controls, #clock .clock-head, .backlink').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if(r.width > 0 && r.height > 0 && getComputedStyle(el).display !== 'none') obs.push(r);
+  });
+  const mid = innerHeight / 2;
+  stage.querySelectorAll('.line').forEach(el => {
+    const r = el.getBoundingClientRect();
+    let up = 0, down = 0;
+    for(const o of obs){
+      const overlapX = r.right > o.left + 4 && r.left < o.right - 4;
+      const overlapY = r.bottom > o.top + 2 && r.top < o.bottom - 2;
+      if(!overlapX || !overlapY) continue;
+      if((o.top + o.bottom) / 2 > mid) up = Math.max(up, r.bottom - o.top + 16);
+      else down = Math.max(down, o.bottom - r.top + 16);
+    }
+    const dy = down - up;
+    if(dy !== 0){
+      const top = parseFloat(getComputedStyle(el).top);
+      el.style.top = (top + dy).toFixed(1) + 'px';
+    }
+  });
+}
+
+function setStage(h, m, animate){
+  const fresh = buildStage(h, m);
+  const old = currentStage;
+  currentStage = fresh;
+
+  if(animate && !REDUCED){
+    fresh.classList.add('enter-prep');
+    stageWrap.appendChild(fresh);
+    fitLines(fresh);
+    avoidFurniture(fresh);
+    /* stagger delays */
+    fresh.querySelectorAll('.line').forEach(line => {
+      const li = +line.dataset.lineIdx;
+      line.querySelectorAll('.ch').forEach((ch, ci) => {
+        ch.style.transitionDelay = Math.min(280 + li*110 + ci*16, 1100) + 'ms';
+      });
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fresh.classList.remove('enter-prep');
+    }));
+    if(old){
+      old.querySelectorAll('.ch').forEach((ch, ci) => {
+        ch.style.transitionDelay = (ci * 6) + 'ms';
+      });
+      old.classList.add('out');
+      setTimeout(() => old.remove(), 1200);
+    }
+    setTimeout(() => {
+      fresh.querySelectorAll('.ch').forEach(ch => ch.style.transitionDelay = '');
+    }, 1600);
+  } else {
+    stageWrap.appendChild(fresh);
+    fitLines(fresh);
+    avoidFurniture(fresh);
+    if(old) old.remove();
+  }
+}
+
+/* ============ sun / moon glyph ============ */
+const orbG = $('orbG'), skyLabel = $('skyLabel');
+function drawSky(hourFloat){
+  const h = ((hourFloat % 24) + 24) % 24;
+  const isSun = h >= 6 && h < 18;
+  const t = isSun ? (h - 6) / 12 : (((h - 18) + 24) % 24) / 12;
+  /* arc from (4,32) to (88,32), radius 42 */
+  const ang = Math.PI * (1 - t);
+  const cx = 46 + 42 * Math.cos(ang);
+  const cy = 32 - 42 * Math.sin(ang) * 0.62; /* squash to fit viewBox */
+  let svg;
+  if(isSun){
+    svg = `<circle class="orb" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.2"/>`;
+  } else {
+    svg = `<circle class="orb" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.2"/>
+           <circle class="orb-hollow" cx="${(cx+2.6).toFixed(1)}" cy="${(cy-1.4).toFixed(1)}" r="3.6"/>`;
+  }
+  orbG.innerHTML = svg;
+  skyLabel.textContent = isSun ? 'sun' : 'moon';
+}
+
+/* ============ elsewhere ============ */
+const CITIES = [
+  ['tz0','Asia/Tokyo'], ['tz1','Europe/London'], ['tz2','America/New_York'],
+];
+const tzFmts = CITIES.map(([,tz]) => new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12:false }));
+function drawElsewhere(date){
+  CITIES.forEach(([id], i) => { $(id).textContent = tzFmts[i].format(date); });
+}
+
+/* ============ clock engine ============ */
+const secRing = $('secRing'), secCount = $('secCount');
+const readout = $('readout'), scrub = $('scrub');
+const btnPlay = $('btnPlay'), playIcon = $('playIcon'), btnLive = $('btnLive');
+const CIRC = 150.8;
+
+let mode = 'live';            /* live | scrub */
+let paused = false;
+let scrubMin = 0;             /* minutes of day when scrubbed */
+let pauseAnchor = null;       /* Date frozen while paused */
+let lastMinuteKey = null;
+let lastSec = -1;
+let rafId = null;
+
+function effectiveDate(){
+  if(paused && pauseAnchor) return pauseAnchor;
+  const now = new Date();
+  if(mode === 'scrub'){
+    const d = new Date(now);
+    d.setHours(Math.floor(scrubMin/60), scrubMin % 60, now.getSeconds(), now.getMilliseconds());
+    return d;
+  }
+  return now;
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function renderMinute(d, animate){
+  const h = d.getHours(), m = d.getMinutes();
+  const key = h + ':' + m;
+  if(key === lastMinuteKey) return;
+  lastMinuteKey = key;
+  setStage(h, m, animate);
+  readout.textContent = pad(h) + ':' + pad(m);
+  if(mode === 'live') scrub.value = h * 60 + m;
+  $('dateWords').textContent = dateToWords(d);
+  drawElsewhere(d);
+  document.title = timeToPhrase(h, m).replace(/^./, c => c.toUpperCase()) + ' — MERIDIEM';
+}
+function renderContinuous(d){
+  const h = d.getHours() + d.getMinutes()/60 + d.getSeconds()/3600;
+  applyPalette(h);
+  drawSky(h);
+  const sProg = (d.getSeconds() * 1000 + d.getMilliseconds()) / 60000;
+  secRing.style.strokeDashoffset = (CIRC * (1 - sProg)).toFixed(2);
+  const s = d.getSeconds();
+  if(s !== lastSec){
+    lastSec = s;
+    flipSecond(pad(s));
+  }
+}
+function flipSecond(txt){
+  const old = secCount.querySelector('span:not(.up):not(.down)');
+  if(old && old.textContent === txt) return;
+  const nw = document.createElement('span');
+  nw.textContent = txt;
+  if(REDUCED){ secCount.innerHTML=''; secCount.appendChild(nw); return; }
+  nw.className = 'down';
+  secCount.appendChild(nw);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if(old) old.classList.add('up');
+    nw.classList.remove('down');
+  }));
+  setTimeout(() => { if(old) old.remove(); }, 460);
+}
+
+function loop(){
+  if(document.hidden){ rafId = null; return; }
+  const d = effectiveDate();
+  renderMinute(d, true);
+  renderContinuous(d);
+  rafId = requestAnimationFrame(loop);
+}
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden && rafId === null) rafId = requestAnimationFrame(loop);
+});
+
+/* ============ controls ============ */
+function setPaused(p){
+  paused = p;
+  if(p) pauseAnchor = effectiveDate();
+  else pauseAnchor = null;
+  btnPlay.setAttribute('aria-label', p ? 'Resume the clock' : 'Pause the clock');
+  playIcon.innerHTML = p
+    ? '<path d="M1.5 0 L9.5 5 L1.5 10 Z"/>'
+    : '<rect x="1.5" y="0" width="2.4" height="10"/><rect x="6.1" y="0" width="2.4" height="10"/>';
+}
+btnPlay.addEventListener('click', () => setPaused(!paused));
+
+let scrubRaf = null;
+scrub.addEventListener('input', () => {
+  mode = 'scrub';
+  paused = false; pauseAnchor = null;
+  setPaused(false);
+  scrubMin = +scrub.value;
+  btnLive.classList.remove('active');
+  btnLive.textContent = 'Go live';
+  if(scrubRaf) return;
+  scrubRaf = requestAnimationFrame(() => {
+    scrubRaf = null;
+    const d = effectiveDate();
+    /* while dragging: recompose instantly, no letter cascade */
+    const h = d.getHours(), m = d.getMinutes();
+    const key = h + ':' + m;
+    if(key !== lastMinuteKey){
+      lastMinuteKey = key;
+      setStage(h, m, false);
+      readout.textContent = pad(h) + ':' + pad(m);
+      $('dateWords').textContent = dateToWords(d);
+      drawElsewhere(d);
+    }
+    renderContinuous(d);
+  });
+});
+function goLive(){
+  mode = 'live';
+  setPaused(false);
+  btnLive.classList.add('active');
+  btnLive.textContent = 'Live';
+  lastMinuteKey = null;
+  const d = new Date();
+  renderMinute(d, true);
+}
+btnLive.addEventListener('click', goLive);
+
+/* palette band scrubbing */
+const band = $('band');
+function paintBand(){
+  const stops = [];
+  for(let i = 0; i <= 48; i++){
+    const p = paletteAt(i / 2);
+    stops.push(`${rgbStr(p.bg)} ${(i/48*100).toFixed(1)}%`);
+  }
+  band.style.background = `linear-gradient(90deg, ${stops.join(',')})`;
+}
+paintBand();
+function bandScrub(clientX){
+  const r = band.getBoundingClientRect();
+  const t = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+  scrub.value = Math.round(t * 1439);
+  scrub.dispatchEvent(new Event('input'));
+  band.setAttribute('aria-valuenow', scrub.value);
+  $('clock').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' });
+}
+band.addEventListener('click', e => bandScrub(e.clientX));
+band.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+    e.preventDefault();
+    scrub.value = +scrub.value + (e.key === 'ArrowRight' ? 30 : -30);
+    scrub.dispatchEvent(new Event('input'));
+  }
+});
+
+/* ============ reveal on scroll ============ */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add('on'); io.unobserve(en.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.rv').forEach((el, i) => {
+  el.style.transitionDelay = (i % 4) * 90 + 'ms';
+  io.observe(el);
+});
+
+/* ============ template cards ============ */
+const MINIS = [
+  [[6,8,60,7],[6,22,34,5],[6,33,50,7],[6,47,24,4]],
+  [[4,8,44,7],[16,22,34,5],[28,33,40,7],[40,47,22,4]],
+  [[20,8,40,7],[28,22,24,5],[16,33,48,7],[30,47,20,4]],
+  [[26,8,54,7],[46,22,34,5],[30,33,50,7],[56,47,24,4]],
+  [[4,6,44,7],[4,18,26,5],[42,38,42,7],[60,50,24,4]],
+  [[4,6,34,7],[46,18,30,5],[24,32,36,7],[58,47,22,4]],
+];
+$('tplGrid').innerHTML = TEMPLATES.map((t, i) => `
+  <div class="tpl-card">
+    <svg class="mini" width="86" height="58" viewBox="0 0 86 58" aria-hidden="true">
+      ${MINIS[i].map(r => `<rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" rx="1.5"/>`).join('')}
+    </svg>
+    <div class="no">0${i+1}</div>
+    <div class="nm caps">${t.name}</div>
+    <p>${t.desc}</p>
+  </div>`).join('');
+
+/* ============ boot ============ */
+const params = new URLSearchParams(location.search);
+const tParam = params.get('t');
+if(tParam && /^\d{1,2}:\d{2}$/.test(tParam)){
+  const [th, tm] = tParam.split(':').map(Number);
+  if(th < 24 && tm < 60){
+    mode = 'scrub';
+    scrubMin = th * 60 + tm;
+    scrub.value = scrubMin;
+    btnLive.classList.remove('active');
+    btnLive.textContent = 'Go live';
+  }
+} else {
+  btnLive.classList.add('active');
+}
+const boot = effectiveDate();
+renderMinute(boot, false);
+renderContinuous(boot);
+/* entrance cascade on first paint */
+if(!REDUCED && currentStage){
+  const st = currentStage;
+  st.classList.add('enter-prep');
+  st.querySelectorAll('.line').forEach(line => {
+    const li = +line.dataset.lineIdx;
+    line.querySelectorAll('.ch').forEach((ch, ci) => {
+      ch.style.transitionDelay = Math.min(300 + li*130 + ci*18, 1300) + 'ms';
+    });
+  });
+  requestAnimationFrame(() => requestAnimationFrame(() => st.classList.remove('enter-prep')));
+  setTimeout(() => st.querySelectorAll('.ch').forEach(ch => ch.style.transitionDelay = ''), 1800);
+}
+rafId = requestAnimationFrame(loop);
+addEventListener('resize', () => { if(currentStage){ fitLines(currentStage); avoidFurniture(currentStage); } });
+
+/* ?scroll= support for screenshots */
+const sc = params.get('scroll');
+if(sc) setTimeout(() => {
+  const el = document.querySelector(sc);
+  if(el) el.scrollIntoView({behavior:'auto'});
+  else window.scrollTo(0, parseInt(sc, 10) || 0);
+}, 300);
+})();
+</script>
+</body>
+</html>

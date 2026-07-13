@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="green">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FABLE-DOS v5.0 — A Playable Terminal</title>
+<meta name="description" content="FABLE-DOS v5.0 — a fully playable retro terminal operating system. Boot it, explore the filesystem, read the poems, play snake, follow the white rabbit.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="FABLE-DOS v5.0 — A Playable Terminal">
+<meta property="og:description" content="FABLE-DOS v5.0 — a fully playable retro terminal operating system. Boot it, explore the filesystem, read the poems, play snake, follow the white rabbit.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/09-terminal/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/09-terminal/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FABLE-DOS v5.0 — A Playable Terminal">
+<meta name="twitter:description" content="FABLE-DOS v5.0 — a fully playable retro terminal operating system. Boot it, explore the filesystem, read the poems, play snake, follow the white rabbit.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/09-terminal/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23061106'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='58' font-family='monospace' fill='%2335ff6a'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+  /* ============ THEMES ============ */
+  :root{
+    --room1:#0b0b0d; --room2:#000;
+    --bezel1:#26262b; --bezel2:#121215; --bezel3:#3a3a41;
+    --etch:#6d6d78;
+  }
+  [data-theme="green"]{
+    --ink:#3dff77; --ink-dim:#1f9e4c; --ink-faint:#12602e;
+    --scr1:#08260f; --scr2:#020b04;
+    --glow:rgba(61,255,119,.45); --glow-soft:rgba(61,255,119,.09);
+    --led:#4dff86; --err:#7dffab;
+    --scanline:rgba(0,0,0,.28); --sel-bg:#3dff77; --sel-ink:#02160a;
+    --chip-bg:rgba(61,255,119,.07); --chip-bd:rgba(61,255,119,.35);
+  }
+  [data-theme="amber"]{
+    --ink:#ffb32b; --ink-dim:#a8721a; --ink-faint:#5e400f;
+    --scr1:#241503; --scr2:#0c0602;
+    --glow:rgba(255,179,43,.42); --glow-soft:rgba(255,179,43,.08);
+    --led:#ffb32b; --err:#ffd07a;
+    --scanline:rgba(0,0,0,.30); --sel-bg:#ffb32b; --sel-ink:#1c1002;
+    --chip-bg:rgba(255,179,43,.07); --chip-bd:rgba(255,179,43,.35);
+  }
+  [data-theme="paper"]{
+    --ink:#33301f; --ink-dim:#6f6a52; --ink-faint:#a8a288;
+    --scr1:#efe9d3; --scr2:#d8d1b6;
+    --glow:rgba(0,0,0,0); --glow-soft:rgba(0,0,0,0);
+    --led:#c9a53f; --err:#5a3d17;
+    --scanline:rgba(90,80,50,.10); --sel-bg:#33301f; --sel-ink:#efe9d3;
+    --chip-bg:rgba(51,48,31,.06); --chip-bd:rgba(51,48,31,.35);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"VT323",ui-monospace,monospace;
+    font-variant-ligatures:none;
+    background:
+      radial-gradient(120% 90% at 50% 30%, var(--room1) 0%, var(--room2) 78%);
+    color:var(--ink);
+    overflow:hidden;
+    display:flex; flex-direction:column; align-items:center;
+    padding:clamp(8px,2.2vh,26px) clamp(8px,2.5vw,34px);
+    padding-top:max(clamp(8px,2.2vh,26px), env(safe-area-inset-top));
+    padding-bottom:max(clamp(8px,2.2vh,26px), env(safe-area-inset-bottom));
+  }
+  ::selection{background:var(--sel-bg);color:var(--sel-ink)}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+  /* ============ BACK LINK ============ */
+  .backlink{
+    position:fixed; top:10px; left:14px; z-index:60;
+    font-size:15px; letter-spacing:.24em; text-decoration:none;
+    color:var(--etch); opacity:.85; transition:color .25s ease, opacity .25s ease;
+  }
+  .backlink:hover{color:var(--ink); opacity:1; text-shadow:0 0 8px var(--glow)}
+
+  /* ============ MONITOR ============ */
+  .monitor{
+    flex:1; width:min(1240px,100%); min-height:0;
+    display:flex; flex-direction:column;
+    background:linear-gradient(160deg,var(--bezel3) 0%,var(--bezel1) 22%,var(--bezel2) 100%);
+    border-radius:26px;
+    padding:clamp(10px,1.8vw,26px);
+    padding-bottom:0;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,.75),
+      0 2px 0 rgba(255,255,255,.05) inset,
+      0 -14px 30px rgba(0,0,0,.5) inset;
+    position:relative;
+  }
+  /* plastic grain on the bezel */
+  .monitor::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    opacity:.14; mix-blend-mode:overlay;
+  }
+  .screen-wrap{flex:1; min-height:0; position:relative;
+    border-radius:18px;
+    padding:6px;
+    background:linear-gradient(180deg,#000 0%,#0a0a0a 100%);
+    box-shadow:0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06);
+  }
+  .screen{
+    position:absolute; inset:6px;
+    border-radius:16px / 20px;
+    background:radial-gradient(115% 100% at 50% 42%, var(--scr1) 0%, var(--scr2) 82%);
+    overflow:hidden;
+    box-shadow:
+      inset 0 0 90px rgba(0,0,0,.62),
+      inset 0 0 8px rgba(0,0,0,.85),
+      0 0 34px var(--glow-soft);
+    transition:background .4s ease;
+  }
+  /* scanlines */
+  .screen::before{
+    content:""; position:absolute; inset:0; z-index:30; pointer-events:none;
+    background:repeating-linear-gradient(to bottom, transparent 0 2px, var(--scanline) 2px 3px);
+    mix-blend-mode:multiply;
+  }
+  /* glass reflection + vignette */
+  .screen::after{
+    content:""; position:absolute; inset:0; z-index:31; pointer-events:none;
+    border-radius:inherit;
+    background:
+      linear-gradient(112deg, rgba(255,255,255,.085) 0%, rgba(255,255,255,.028) 22%, transparent 40%),
+      radial-gradient(130% 120% at 50% 50%, transparent 58%, rgba(0,0,0,.42) 100%);
+  }
+  .flicker{position:absolute; inset:0; z-index:29; pointer-events:none;
+    background:var(--glow-soft); opacity:.35; mix-blend-mode:screen;}
+  @keyframes flick{0%,100%{opacity:.30}46%{opacity:.38}52%{opacity:.26}60%{opacity:.36}}
+  @media (prefers-reduced-motion: no-preference){ .flicker{animation:flick 3.7s steps(12) infinite} }
+
+  /* CRT power-off */
+  @keyframes crtOff{
+    0%{transform:scale(1,1); filter:brightness(1)}
+    58%{transform:scale(1,.006); filter:brightness(2.4)}
+    82%{transform:scale(.3,.004); filter:brightness(3)}
+    100%{transform:scale(0,.002); filter:brightness(0)}
+  }
+  @keyframes crtOn{
+    0%{transform:scale(0,.002); filter:brightness(3)}
+    45%{transform:scale(1,.008); filter:brightness(2.2)}
+    100%{transform:scale(1,1); filter:brightness(1)}
+  }
+  .screen-inner{position:absolute; inset:0; z-index:10; display:flex; flex-direction:column}
+  .powering-off .screen-inner{animation:crtOff .5s cubic-bezier(.55,0,.68,.19) forwards}
+  .powering-on  .screen-inner{animation:crtOn .55s cubic-bezier(.16,.84,.44,1) forwards}
+  .powering-off .screen{background:#000}
+
+  /* ============ TERMINAL TEXT ============ */
+  .term{
+    flex:1; min-height:0; overflow-y:auto; overflow-x:hidden;
+    padding:clamp(12px,2.2vw,30px) clamp(14px,2.6vw,36px) 8px;
+    font-size:clamp(15px,1.55vw,21px);
+    line-height:1.32;
+    color:var(--ink);
+    text-shadow:0 0 6px var(--glow), 0 0 1px var(--glow);
+    scrollbar-width:thin; scrollbar-color:var(--ink-faint) transparent;
+    overscroll-behavior:contain;
+  }
+  .term::-webkit-scrollbar{width:8px}
+  .term::-webkit-scrollbar-thumb{background:var(--ink-faint);border-radius:4px}
+  .term::-webkit-scrollbar-track{background:transparent}
+  .term .row{white-space:pre-wrap; word-break:break-word; min-height:1.32em}
+  .term pre{font-family:inherit; white-space:pre; overflow-x:auto; scrollbar-width:none}
+  .term pre::-webkit-scrollbar{display:none}
+  /* VT323 lacks box-drawing/block glyphs (fallback width mismatch breaks grids):
+     anything grid-shaped renders in one consistent fallback mono family. */
+  .term pre.grid, .term pre.ascii-logo{
+    font-family:"Menlo","Cascadia Mono","Consolas","DejaVu Sans Mono",ui-monospace,monospace;
+  }
+  .grid{font-size:clamp(12px,1.35vw,19px); line-height:1.16; letter-spacing:0}
+  .dim{color:var(--ink-dim); text-shadow:0 0 4px var(--glow-soft)}
+  .faint{color:var(--ink-faint); text-shadow:none}
+  .bright{filter:brightness(1.18)}
+  .err{color:var(--err)}
+  .ascii-logo{font-size:clamp(10px,1.3vw,18px); line-height:1.05; margin:.4em 0}
+
+  .prompt-line{display:none}
+  .prompt-line.on{display:block}
+  .cursor{
+    display:inline-block; width:.55em; height:1.05em;
+    background:var(--ink); vertical-align:-0.12em;
+    box-shadow:0 0 8px var(--glow);
+  }
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  .cursor{animation:blink 1.06s steps(1) infinite}
+
+  /* ============ STATUS BAR ============ */
+  .statusbar{
+    flex:none; display:flex; justify-content:space-between; gap:12px;
+    padding:5px clamp(14px,2.6vw,36px) 9px;
+    font-size:clamp(12px,1.1vw,15px);
+    letter-spacing:.06em;
+    color:var(--ink-faint);
+    text-shadow:none; white-space:nowrap; overflow:hidden;
+  }
+  .statusbar b{font-weight:400; color:var(--ink-dim)}
+
+  /* ============ MATRIX CANVAS ============ */
+  #fx{position:absolute; inset:0; z-index:20; display:none; width:100%; height:100%}
+  .screen.fx-on #fx{display:block}
+
+  /* ============ BEZEL BOTTOM BAR ============ */
+  .bezel-bar{
+    flex:none; height:clamp(34px,4.6vh,46px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 8px;
+  }
+  .brand{font-size:clamp(12px,1.05vw,15px); letter-spacing:.34em; color:var(--etch); user-select:none}
+  .brand small{letter-spacing:.18em; opacity:.55; font-size:.82em; margin-left:.9em}
+  .led-group{
+    display:flex; align-items:center; gap:9px; font-size:11px; letter-spacing:.22em;
+    color:#4c4c55; user-select:none;
+    font-family:inherit; background:none; border:0; padding:4px 6px; cursor:pointer;
+    border-radius:6px; transition:color .25s ease;
+  }
+  .led-group:hover{color:#8a8a96}
+  .led{width:8px; height:8px; border-radius:50%; background:var(--led);
+    box-shadow:0 0 8px var(--led), 0 0 2px #fff inset; transition:all .3s ease}
+  .led.off{background:#2a2a2e; box-shadow:0 1px 1px rgba(0,0,0,.6) inset}
+
+  /* ============ MOBILE COMMAND PALETTE ============ */
+  .palette{
+    display:none; flex:none; width:min(1240px,100%);
+    margin-top:10px; gap:6px;
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+    padding:2px 2px 6px; scrollbar-width:none;
+  }
+  .palette::-webkit-scrollbar{display:none}
+  .palette-rows{display:flex; flex-direction:column; gap:6px; min-width:max-content}
+  .prow{display:flex; gap:6px}
+  .chip{
+    font-family:inherit; font-size:16px; line-height:1;
+    color:var(--ink); background:var(--chip-bg);
+    border:1px solid var(--chip-bd); border-radius:999px;
+    padding:9px 14px 10px; white-space:nowrap;
+    text-shadow:0 0 5px var(--glow); cursor:pointer;
+    transition:background .18s ease, transform .12s ease;
+    touch-action:manipulation;
+  }
+  .chip:active{transform:scale(.94); background:var(--chip-bd)}
+  @media (hover:hover){ .chip:hover{background:var(--chip-bd)} }
+
+  /* ============ SNAKE D-PAD (touch) ============ */
+  .dpad{
+    position:absolute; right:14px; bottom:14px; z-index:40;
+    display:none; grid-template-columns:repeat(3,52px); grid-template-rows:repeat(2,52px);
+    gap:6px; opacity:.92;
+  }
+  .screen.snake-touch .dpad{display:grid}
+  .dpad button{
+    font-family:inherit; font-size:22px; color:var(--ink);
+    background:rgba(0,0,0,.45); border:1px solid var(--chip-bd); border-radius:10px;
+    text-shadow:0 0 6px var(--glow); cursor:pointer; touch-action:manipulation;
+  }
+  .dpad button:active{background:var(--chip-bd)}
+  .dpad .up{grid-column:2;grid-row:1}
+  .dpad .left{grid-column:1;grid-row:2}
+  .dpad .down{grid-column:2;grid-row:2}
+  .dpad .right{grid-column:3;grid-row:2}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:700px), (pointer:coarse) and (max-width:1024px){
+    .palette{display:flex}
+  }
+  @media (max-width:700px){
+    body{padding:8px; padding-top:max(8px, env(safe-area-inset-top)); padding-bottom:max(30px, calc(22px + env(safe-area-inset-bottom)))}
+    .monitor{border-radius:18px; padding:8px; padding-bottom:0}
+    .screen-wrap{border-radius:12px; padding:4px}
+    .screen{inset:4px; border-radius:10px/13px}
+    .term{font-size:15px; padding:12px 12px 6px}
+    .statusbar{padding:4px 12px 7px; font-size:11px}
+    .statusbar .sb-right{display:none}
+    .bezel-bar{height:32px; padding:0 6px}
+    .brand{letter-spacing:.22em}
+    .brand small{display:none}
+    .backlink{top:auto; bottom:calc(6px + env(safe-area-inset-bottom)); left:12px; font-size:12px; z-index:70}
+    .ascii-logo{font-size:9px}
+    .grid{font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/" aria-label="Back to XAVIER FABLE ×30 gallery">XAVIER FABLE ×30</a>
+
+<div class="monitor" role="application" aria-label="FABLE-DOS terminal">
+  <div class="screen-wrap">
+    <div class="screen" id="screen">
+      <div class="flicker"></div>
+      <div class="screen-inner">
+        <div class="term" id="term" aria-live="polite">
+          <div id="out"></div>
+          <div class="prompt-line" id="promptLine"><span id="ps1"></span><span id="typed"></span><span class="cursor" id="cursor"></span></div>
+        </div>
+        <div class="statusbar">
+          <span class="sb-left" id="hint">TRY: <b>snake</b> · <b>matrix</b> · <b>cat poems/dawn.txt</b> · <b>theme amber</b></span>
+          <span class="sb-right">FABLE-DOS 5.0 · 640K OK</span>
+        </div>
+      </div>
+      <canvas id="fx" aria-hidden="true"></canvas>
+      <div class="dpad" aria-label="snake controls">
+        <button class="up" data-dir="up" aria-label="up">▲</button>
+        <button class="left" data-dir="left" aria-label="left">◀</button>
+        <button class="down" data-dir="down" aria-label="down">▼</button>
+        <button class="right" data-dir="right" aria-label="right">▶</button>
+      </div>
+    </div>
+  </div>
+  <div class="bezel-bar">
+    <span class="brand">FABLE SYSTEMS<small>TRM-80 COLOUR PHOSPHOR</small></span>
+    <button class="led-group" id="pwr" type="button" title="power" aria-label="Power off">PWR <span class="led" id="led"></span></button>
+  </div>
+</div>
+
+<div class="palette" id="palette" aria-label="command palette">
+  <div class="palette-rows">
+    <div class="prow" id="prow1"></div>
+    <div class="prow" id="prow2"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================================================================
+   FABLE-DOS v5.0 — one file, no frameworks, all phosphor.
+================================================================ */
+var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var out = document.getElementById("out");
+var term = document.getElementById("term");
+var ps1El = document.getElementById("ps1");
+var typedEl = document.getElementById("typed");
+var promptLine = document.getElementById("promptLine");
+var screenEl = document.getElementById("screen");
+var led = document.getElementById("led");
+var fx = document.getElementById("fx");
+
+var mode = "boot";          // boot | shell | snake | snakeover | matrix | off
+var buf = "";
+var hist = [], histIdx = -1, histStash = "";
+var cwd = ["home","guest"];
+var firstBoot = true;
+
+/* ---------------- filesystem ---------------- */
+function F(s){ return {t:"f", c:s}; }
+function D(ch){ return {t:"d", c:ch}; }
+
+var FS = D({
+  "bin": D({
+    "help":F(""), "ls":F(""), "cat":F(""), "cd":F(""), "clear":F(""),
+    "date":F(""), "whoami":F(""), "matrix":F(""), "snake":F(""),
+    "theme":F(""), "about":F(""), "exit":F("")
+  }),
+  "etc": D({
+    "motd": F("Welcome to FABLE-DOS. Be kind to the machine.\nIt remembers everything and forgives all of it.")
+  }),
+  "home": D({
+    "guest": D({
+      "readme.txt": F(
+"WELCOME, GUEST.\n\nYou are inside FABLE-DOS v5.0 — a machine that\ntechnically does not exist. Everything here is\nmade of text, and text is made of light.\n\nWorth your time:\n  poems/          three short transmissions\n  secrets/        you didn't hear it from me\n  manifesto.txt   why this machine was built\n  todo.txt        system maintenance notes\n\nThe system will not judge how long you stay.\nThe system has nowhere else to be."),
+      "manifesto.txt": F(
+"THE x30 MANIFESTO\n-----------------\nThis terminal is site 09 of 30 — an experiment in\nbuilding thirty small worlds, each committed\ncompletely to one idea.\n\nWe hold these truths:\n\n 1. A website can be a place, not a page.\n 2. Constraint is a renewable resource. This whole\n    operating system is a single HTML file.\n 3. Delight is load-bearing. Remove it and the\n    architecture collapses.\n 4. The demo IS the product. If you smiled when\n    the boot sequence found 640K OK, it worked.\n 5. Green text on a black screen has never once\n    gone out of style. Not once. We checked.\n\nFABLE SYSTEMS — est. the moment you loaded this page."),
+      "todo.txt": F(
+"TODO — priority order\n[x] boot\n[x] blink the cursor at 530ms, like the old machines\n[x] make the phosphor hum (silently)\n[ ] clean dust from inside the CRT (unreachable; ship anyway)\n[ ] answer the modem. it has been ringing since 1987\n[ ] delete secrets/            <- DO NOT DO THIS"),
+      "poems": D({
+        "dawn.txt": F(
+"DAWN.TXT\n\n   the night shift ends\n   when the cursor stops blinking —\n   it never stops blinking.\n\n   somewhere a modem sings its one song\n   to a house that is asleep,\n   and the screen holds its green breath\n   all the way to morning."),
+        "static.txt": F(
+"STATIC.TXT\n\n   between channel 3 and channel 4\n   lives everything we never broadcast:\n\n   weather for cities that don't exist,\n   the scores of unplayed games,\n   your name, pronounced correctly,\n   once, at 3 a.m., in snow."),
+        "phosphor.txt": F(
+"PHOSPHOR.TXT\n\n   every letter you have ever typed\n   is still glowing somewhere,\n   decaying at its own pace —\n\n   P31 forgets in a millisecond.\n   you are taking considerably longer.")
+      }),
+      "secrets": D({
+        "README.SEC": F(
+"THIS DIRECTORY IS EMPTY.\n\nThere is certainly no hidden file in here.\nNothing whispers. Move along.\n\n(hidden files start with a dot. ls has flags.)"),
+        ".whisper": F(
+"you found it.\n\nWOPR asked: SHALL WE PLAY A GAME?\nthis machine asks nothing. it just leaves\nthe door unlocked and the porch light on.\n\nkonami honor code: you may tell exactly\none (1) person about this file.\n\n                              — the mgmt")
+      })
+    })
+  })
+});
+
+function nodeAt(pathArr){
+  var n = FS;
+  for (var i=0;i<pathArr.length;i++){
+    if (n.t!=="d" || !(pathArr[i] in n.c)) return null;
+    n = n.c[pathArr[i]];
+  }
+  return n;
+}
+function resolvePath(str){
+  var parts, base;
+  str = (str||"").trim();
+  if (str==="" || str==="~") { return {path:["home","guest"], node:nodeAt(["home","guest"])}; }
+  if (str[0]==="/"){ base = []; }
+  else if (str.slice(0,2)==="~/"){ base = ["home","guest"]; str = str.slice(2); }
+  else { base = cwd.slice(); }
+  parts = str.split("/");
+  for (var i=0;i<parts.length;i++){
+    var p = parts[i];
+    if (p==="" || p===".") continue;
+    if (p===".."){ base.pop(); continue; }
+    base.push(p);
+  }
+  return {path:base, node:nodeAt(base)};
+}
+function pathDisplay(){
+  var s = "/"+cwd.join("/");
+  if (s==="/home/guest") return "~";
+  if (s.indexOf("/home/guest/")===0) return "~"+s.slice(11);
+  return s;
+}
+
+/* ---------------- output helpers ---------------- */
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function scrollBottom(){ term.scrollTop = term.scrollHeight; }
+function line(html, cls){
+  var d = document.createElement("div");
+  d.className = "row"+(cls?" "+cls:"");
+  d.innerHTML = html || " ";
+  out.appendChild(d); trim(); scrollBottom();
+  return d;
+}
+function text(s, cls){ return line(esc(s), cls); }
+function block(s, cls){
+  var p = document.createElement("pre");
+  if (cls) p.className = cls;
+  p.textContent = s;
+  out.appendChild(p); trim(); scrollBottom();
+  return p;
+}
+function blank(){ return line("&nbsp;"); }
+function trim(){
+  while (out.childNodes.length > 400) out.removeChild(out.firstChild);
+}
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, REDUCED?0:ms); }); }
+
+function ps1(){ return "guest@fable-dos:"+pathDisplay()+"$ "; }
+function showPrompt(){
+  ps1El.textContent = ps1();
+  typedEl.textContent = buf;
+  promptLine.classList.add("on");
+  scrollBottom();
+}
+function hidePrompt(){ promptLine.classList.remove("on"); }
+function renderTyped(){ typedEl.textContent = buf; scrollBottom(); }
+
+/* ---------------- boot sequence ---------------- */
+var LOGO =
+" █▀▀ ▄▀█ █▄▄ █   █▀▀      █▀▄ █▀█ █▀▀\n"+
+" █▀  █▀█ █▄█ █▄▄ ██▄  ▀▀  █▄▀ █▄█ ▄██";
+
+async function boot(){
+  mode = "boot"; hidePrompt(); out.innerHTML = ""; buf = "";
+  led.classList.remove("off");
+
+  text("FABLE SYSTEMS PhoenixROM BIOS v5.00", "bright");
+  text("(c) 1985-2026 Fable Systems Ltd. All phosphor reserved.", "dim");
+  blank();
+
+  // memory count
+  var mem = text("Memory Test :    0K", "");
+  if (!REDUCED){
+    for (var k=64;k<=640;k+=64){
+      mem.textContent = "Memory Test :  "+k+"K";
+      await sleep(72);
+    }
+  }
+  mem.textContent = "Memory Test :  640K OK";
+  await sleep(140);
+
+  var drivers = [
+    ["Detecting CRT phosphor .............", "P31 GREEN"],
+    ["Keyboard controller ................", "OK"],
+    ["Floppy drive A: ....................", "EMPTY (as always)"],
+    ["Hard disk C: FABLE-20MB ............", "OK"],
+    ["Initialising cursor blink ..........", "530ms"],
+    ["Loading HIMEM.SYS ..................", "OK"],
+    ["Loading POETRY.SYS .................", "OK"],
+    ["Loading SNAKE.DRV ..................", "OK"],
+    ["Calibrating scanlines ..............", "60Hz"],
+    ["Checking for the year 2000 .........", "STILL FINE"]
+  ];
+  for (var i=0;i<drivers.length;i++){
+    line(esc(drivers[i][0])+' <span class="bright">'+esc(drivers[i][1])+"</span>", "dim");
+    await sleep(105);
+  }
+  await sleep(160);
+  blank();
+  block(LOGO, "ascii-logo bright");
+  text("FABLE-DOS v5.0 — sixty-four kilobytes of good intentions", "dim");
+  blank();
+  await sleep(320);
+
+  // login
+  var lg = line("login: ");
+  var name = "guest";
+  for (var c=0;c<name.length;c++){
+    lg.textContent = "login: "+name.slice(0,c+1);
+    await sleep(95);
+  }
+  await sleep(160);
+  var pw = line("password: ");
+  for (var c2=0;c2<6;c2++){
+    pw.textContent = "password: "+"•".repeat(c2+1);
+    await sleep(55);
+  }
+  await sleep(200);
+  blank();
+  text("Welcome to FABLE-DOS v5.0 — 38911 PHOSPHOR BYTES FREE", "bright");
+  text("Last login: never. There's a first time for everything.", "dim");
+  blank();
+
+  mode = "shell";
+  showPrompt();
+
+  if (firstBoot){
+    firstBoot = false;
+    await sleep(420);
+    await autoType("help");
+    run(buf);
+  }
+}
+
+async function autoType(cmd){
+  for (var i=0;i<cmd.length;i++){
+    buf += cmd[i]; renderTyped();
+    await sleep(62);
+  }
+  await sleep(160);
+}
+
+/* ---------------- commands ---------------- */
+var COMMANDS = ["help","ls","dir","cat","cd","pwd","clear","date","whoami","theme","matrix","snake","about","exit","echo","history"];
+
+var UNKNOWN = [
+  'Bad command or file name: "%s"',
+  '"%s" is not recognized. This machine predates your expectations.',
+  'SYNTAX ERROR in "%s". (It is not you. It is 1985.)',
+  'No such command: "%s". Try HELP — it was written for this exact moment.',
+  '"%s"? The manual makes no mention of this. The manual is 900 pages.'
+];
+var unknownIdx = 0;
+
+function cmdHelp(){
+  block(
+"FABLE-DOS SHELL — COMMANDS\n"+
+"  help            this screen\n"+
+"  ls, dir [-a]    list directory contents\n"+
+"  cd <dir>        change directory\n"+
+"  cat <file>      print a file\n"+
+"  pwd             where am i\n"+
+"  clear           wipe the phosphor\n"+
+"  date            current system time\n"+
+"  whoami          an existential query\n"+
+"  theme <name>    green | amber | paper\n"+
+"  matrix          follow the white rabbit\n"+
+"  snake           arrows steer · Q quits\n"+
+"  about           about this machine\n"+
+"  exit            power down");
+  text("start with: cat readme.txt · then wander", "dim");
+  if (isTouch()) text("no keyboard? tap the chips below the monitor.", "faint");
+  else text("TAB completes · UP-arrow recalls history · some files hide", "faint");
+}
+
+function cmdLs(args){
+  var all = false, target = "";
+  args.forEach(function(a){ if (a==="-a"||a==="-la"||a==="-al") all = true; else target = a; });
+  var r = resolvePath(target||".");
+  if (!r.node){ text("ls: cannot access '"+target+"': No such file or directory", "err"); return; }
+  if (r.node.t==="f"){ text(target, ""); return; }
+  var names = Object.keys(r.node.c).sort(function(a,b){
+    var da = r.node.c[a].t==="d", db = r.node.c[b].t==="d";
+    if (da!==db) return da?-1:1;
+    return a<b?-1:1;
+  });
+  var shown = 0;
+  var html = "";
+  names.forEach(function(n){
+    if (n[0]==="." && !all) return;
+    shown++;
+    if (r.node.c[n].t==="d") html += '<span class="bright">'+esc(n)+"/</span>   ";
+    else html += esc(n)+"   ";
+  });
+  if (!shown){ text("(empty — or is it? try ls -a)", "faint"); return; }
+  line(html.trim());
+}
+
+function cmdCat(args){
+  if (!args.length){ text("cat: what file? (try: cat readme.txt)", "err"); return; }
+  var r = resolvePath(args[0]);
+  if (!r.node){ text('cat: "'+args[0]+'": No such file. The drive spins regardless.', "err"); return; }
+  if (r.node.t==="d"){ text("cat: "+args[0]+" is a directory (try: ls "+args[0]+")", "err"); return; }
+  if (r.path[0]==="bin"){ text("cat: "+args[0]+": binary file. It looks like snow and regret.", "err"); return; }
+  block(r.node.c);
+}
+
+function cmdCd(args){
+  var r = resolvePath(args[0]||"~");
+  if (!r.node){ text("cd: no such directory: "+args[0], "err"); return; }
+  if (r.node.t!=="d"){ text("cd: not a directory: "+args[0], "err"); return; }
+  cwd = r.path;
+}
+
+function cmdDate(){
+  var d = new Date();
+  var days = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+  function p(n){ return (n<10?"0":"")+n; }
+  text("Current date is "+days[d.getDay()]+" "+p(d.getMonth()+1)+"-"+p(d.getDate())+"-"+d.getFullYear());
+  text("Current time is "+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds())+"."+Math.floor(d.getMilliseconds()/10));
+  text("(the machine has been waiting for this exact moment)", "faint");
+}
+
+function cmdWhoami(){
+  text("guest");
+  text("(a courtesy title. the machine knows exactly who you are", "faint");
+  text(" and finds you delightful.)", "faint");
+}
+
+function cmdTheme(args){
+  var t = (args[0]||"").toLowerCase();
+  if (t!=="green" && t!=="amber" && t!=="paper"){
+    text("usage: theme <green|amber|paper>", "err");
+    return;
+  }
+  document.documentElement.setAttribute("data-theme", t);
+  var lines = {
+    green:"phosphor: P31 green. the classic. welcome home.",
+    amber:"phosphor: P3 amber. easier on the eyes, harder on the soul.",
+    paper:"mode: hardcopy. imagine the sound of a daisywheel."
+  };
+  text(lines[t], "dim");
+}
+
+function cmdAbout(){
+  block(
+"FABLE-DOS v5.0  (build 1985, re-issued 2026)\n"+
+"--------------------------------------------\n"+
+"CPU      1 x imagination @ 4.77 MHz\n"+
+"DISPLAY  P31 phosphor, 60 Hz, hand-polished\n"+
+"MEMORY   640K (ought to be enough for anybody)\n"+
+"UPTIME   since you arrived\n"+
+"PURPOSE  site 09 / 30 of FABLE x30 — a showcase\n"+
+"         of small, obsessive worlds.\n\n"+
+"This entire operating system is one HTML file.\n"+
+"No frameworks were harmed. cat manifesto.txt for more.");
+}
+
+function cmdHistory(){
+  if (!hist.length){ text("history: nothing yet. make some.", "faint"); return; }
+  hist.forEach(function(h,i){ text("  "+(i+1)+"  "+h, "dim"); });
+}
+
+async function cmdExit(){
+  mode = "off"; hidePrompt();
+  text("Flushing phosphor buffers ............ OK", "dim"); await sleep(180);
+  text("Parking drive heads .................. OK", "dim"); await sleep(180);
+  text("Saying goodbye to the cursor ......... done", "dim"); await sleep(260);
+  blank();
+  text("It is now safe to turn off your computer.", "bright"); await sleep(700);
+  screenEl.classList.add("powering-off");
+  led.classList.add("off");
+  await sleep(REDUCED?300:900);
+  out.innerHTML = "";
+  await sleep(REDUCED?200:900);
+  screenEl.classList.remove("powering-off");
+  screenEl.classList.add("powering-on");
+  setTimeout(function(){ screenEl.classList.remove("powering-on"); }, 600);
+  boot();
+}
+
+function run(raw){
+  // echo the command
+  line('<span class="dim">'+esc(ps1())+"</span>"+esc(raw));
+  buf = ""; renderTyped();
+  var input = raw.trim();
+  if (input){
+    if (hist[hist.length-1] !== input) hist.push(input);
+    if (hist.length>100) hist.shift();
+  }
+  histIdx = -1; histStash = "";
+  if (!input){ showPrompt(); return; }
+
+  var parts = input.split(/\s+/);
+  var cmd = parts[0].toLowerCase();
+  var args = parts.slice(1);
+
+  switch(cmd){
+    case "help": case "?": cmdHelp(); break;
+    case "ls": case "dir": cmdLs(args); break;
+    case "cat": case "type": cmdCat(args); break;
+    case "cd": cmdCd(args); break;
+    case "pwd": text("/"+cwd.join("/")); break;
+    case "clear": case "cls": out.innerHTML = ""; break;
+    case "date": case "time": cmdDate(); break;
+    case "whoami": cmdWhoami(); break;
+    case "theme": cmdTheme(args); break;
+    case "about": cmdAbout(); break;
+    case "history": cmdHistory(); break;
+    case "echo": text(args.join(" ") || ""); break;
+    case "matrix": startMatrix(); return;
+    case "snake": startSnake(); return;
+    case "exit": case "shutdown": case "halt": cmdExit(); return;
+    case "sudo":
+      text("guest is not in the sudoers file.", "err");
+      text("This incident will be reported to no one, because it is 1985.", "faint");
+      break;
+    case "hello": case "hi":
+      text("HELLO, GUEST. SHALL WE PLAY A GAME? (try: snake)"); break;
+    case "rm":
+      text("rm: permission denied. this museum does not deaccession.", "err"); break;
+    case "vi": case "vim": case "emacs":
+      text(cmd+": editor wars are not supported on this hardware.", "err"); break;
+    default:
+      var msg = UNKNOWN[unknownIdx++ % UNKNOWN.length].replace("%s", cmd);
+      text(msg, "err");
+  }
+  showPrompt();
+}
+
+/* ---------------- tab completion ---------------- */
+function complete(){
+  var upToCursor = buf;
+  var m = upToCursor.match(/(\S*)$/);
+  var frag = m ? m[1] : "";
+  var isFirst = upToCursor.trim().indexOf(" ") === -1 && !/\s$/.test(upToCursor.slice(0, upToCursor.length - frag.length)) && upToCursor.trim() === frag;
+  var cands = [];
+  if (isFirst){
+    COMMANDS.forEach(function(c){ if (c.indexOf(frag)===0) cands.push(c); });
+  } else {
+    // path completion
+    var slash = frag.lastIndexOf("/");
+    var dirPart = slash>=0 ? frag.slice(0,slash+1) : "";
+    var namePart = slash>=0 ? frag.slice(slash+1) : frag;
+    var r = resolvePath(dirPart || ".");
+    if (r.node && r.node.t==="d"){
+      Object.keys(r.node.c).forEach(function(n){
+        if (n.indexOf(namePart)===0 && (namePart[0]==="." || n[0]!==".")){
+          cands.push(dirPart + n + (r.node.c[n].t==="d"?"/":""));
+        }
+      });
+    }
+  }
+  if (!cands.length) return;
+  if (cands.length===1){
+    buf = buf.slice(0, buf.length - frag.length) + cands[0] + (isFirst?" ":"");
+    renderTyped();
+  } else {
+    line(cands.map(esc).join("   "), "dim");
+    // extend to common prefix
+    var pre = cands[0];
+    cands.forEach(function(c){ while (c.indexOf(pre)!==0) pre = pre.slice(0,-1); });
+    if (pre.length > frag.length){ buf = buf.slice(0, buf.length - frag.length) + pre; renderTyped(); }
+    showPrompt();
+  }
+}
+
+/* ---------------- snake ---------------- */
+var snakeState = null;
+function startSnake(){
+  mode = "snake";
+  hidePrompt();
+  var W = 32, H = 16;
+  if (window.innerWidth < 480){ W = 21; H = 13; }
+  else if (window.innerWidth >= 1200){ W = 40; H = 19; }
+  var pre = block("", "grid bright");
+  snakeState = {
+    W:W, H:H, pre:pre,
+    body:[[Math.floor(W/2)-1, Math.floor(H/2)],[Math.floor(W/2)-2, Math.floor(H/2)]],
+    dir:[1,0], nextDir:[1,0], food:null, score:0, timer:null, speed:150
+  };
+  placeFood();
+  text("SNAKE.DRV — arrows / WASD steer · Q quits", "faint");
+  if (isTouch()) screenEl.classList.add("snake-touch");
+  drawSnake();
+  snakeState.timer = setInterval(stepSnake, snakeState.speed);
+}
+function isTouch(){ return window.matchMedia("(pointer:coarse)").matches; }
+function placeFood(){
+  var s = snakeState;
+  while (true){
+    var f = [1+Math.floor(Math.random()*(s.W-2)), 1+Math.floor(Math.random()*(s.H-2))];
+    var hit = s.body.some(function(b){ return b[0]===f[0]&&b[1]===f[1]; });
+    if (!hit){ s.food = f; return; }
+  }
+}
+function drawSnake(over){
+  var s = snakeState; if (!s) return;
+  var grid = [];
+  for (var y=0;y<s.H;y++){ grid.push(new Array(s.W).fill(" ")); }
+  grid[s.food[1]][s.food[0]] = "¤";
+  s.body.forEach(function(b,i){ grid[b[1]][b[0]] = i===0 ? "█" : "▓"; });
+  var top = "╔" + "═".repeat(s.W) + "╗";
+  var bot = "╚" + "═".repeat(s.W) + "╝";
+  var rows = grid.map(function(r){ return "║"+r.join("")+"║"; });
+  var head = " SCORE: "+String(s.score).padStart(4,"0") + (over ? "   ** GAME OVER — any key returns ** " : "");
+  s.pre.textContent = head + "\n" + top + "\n" + rows.join("\n") + "\n" + bot;
+  scrollBottom();
+}
+function stepSnake(){
+  var s = snakeState; if (!s) return;
+  s.dir = s.nextDir;
+  var h = [s.body[0][0]+s.dir[0], s.body[0][1]+s.dir[1]];
+  var hitWall = h[0]<0 || h[0]>=s.W || h[1]<0 || h[1]>=s.H;
+  var hitSelf = s.body.some(function(b){ return b[0]===h[0]&&b[1]===h[1]; });
+  if (hitWall || hitSelf){ endSnake(); return; }
+  s.body.unshift(h);
+  if (h[0]===s.food[0] && h[1]===s.food[1]){
+    s.score += 10;
+    placeFood();
+    if (s.speed > 70){ s.speed -= 4; clearInterval(s.timer); s.timer = setInterval(stepSnake, s.speed); }
+  } else {
+    s.body.pop();
+  }
+  drawSnake();
+}
+function snakeDir(name){
+  var s = snakeState; if (!s) return;
+  var map = {up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+  var d = map[name];
+  if (d[0]===-s.dir[0] && d[1]===-s.dir[1]) return; // no 180
+  s.nextDir = d;
+}
+function endSnake(quiet){
+  var s = snakeState; if (!s) return;
+  clearInterval(s.timer);
+  screenEl.classList.remove("snake-touch");
+  if (quiet){
+    snakeState = null;
+    text("snake: interrupted. the snake understands.", "faint");
+    mode = "shell"; showPrompt(); return;
+  }
+  drawSnake(true);
+  mode = "snakeover";
+}
+function closeSnakeOver(){
+  var s = snakeState;
+  text("final score: "+s.score+(s.score>=100?" — the machine is impressed.":" — the snake forgives you."), "dim");
+  snakeState = null;
+  mode = "shell"; showPrompt();
+}
+
+/* ---------------- matrix ---------------- */
+var mtx = {raf:null, ctx:null, drops:null, lastT:0, fontSize:16, cols:0};
+var GLYPHS = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ0123456789ABCDEFZ$#*+=-";
+function sizeMatrix(){
+  var dpr = Math.min(window.devicePixelRatio||1, 2);
+  fx.width = Math.floor(screenEl.clientWidth*dpr);
+  fx.height = Math.floor(screenEl.clientHeight*dpr);
+  mtx.ctx = fx.getContext("2d");
+  mtx.ctx.setTransform(dpr,0,0,dpr,0,0);
+  mtx.fontSize = window.innerWidth<480 ? 13 : 17;
+  mtx.cols = Math.ceil(screenEl.clientWidth/mtx.fontSize);
+  mtx.drops = [];
+  var rows = Math.ceil(screenEl.clientHeight/mtx.fontSize);
+  // seed every column across the full height (slight above-screen lead) so
+  // the rain fills top-to-bottom the instant it starts — no empty dead zone
+  for (var i=0;i<mtx.cols;i++) mtx.drops.push(Math.random()*rows*1.15 - rows*0.15);
+}
+function matrixInk(){
+  var t = document.documentElement.getAttribute("data-theme");
+  return t==="amber" ? "#ffb32b" : (t==="paper" ? "#33301f" : "#3dff77");
+}
+function matrixBg(){
+  var t = document.documentElement.getAttribute("data-theme");
+  return t==="paper" ? "rgba(233,227,207,0.22)" : "rgba(0,8,2,0.16)";
+}
+function startMatrix(){
+  mode = "matrix"; hidePrompt();
+  text("wake up, guest ...", "dim");
+  sizeMatrix();
+  var t = document.documentElement.getAttribute("data-theme");
+  mtx.ctx.fillStyle = t==="paper" ? "#e9e3cf" : "#000802";
+  mtx.ctx.fillRect(0,0,fx.width,fx.height);
+  screenEl.classList.add("fx-on");
+  mtx.lastT = 0;
+  mtx.raf = requestAnimationFrame(matrixFrame);
+}
+function matrixFrame(ts){
+  if (mode!=="matrix") return;
+  mtx.raf = requestAnimationFrame(matrixFrame);
+  if (ts - mtx.lastT < 50) return; // ~20fps: chunky, period-correct
+  mtx.lastT = ts;
+  var ctx = mtx.ctx, w = screenEl.clientWidth, h = screenEl.clientHeight;
+  ctx.fillStyle = matrixBg();
+  ctx.fillRect(0,0,w,h);
+  ctx.font = mtx.fontSize+"px VT323, monospace";
+  var ink = matrixInk();
+  for (var i=0;i<mtx.cols;i++){
+    var ch = GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    var y = mtx.drops[i]*mtx.fontSize;
+    ctx.fillStyle = ink;
+    ctx.globalAlpha = 1;
+    ctx.fillText(ch, i*mtx.fontSize, y);
+    ctx.globalAlpha = 0.5;
+    ctx.fillText(GLYPHS[Math.floor(Math.random()*GLYPHS.length)], i*mtx.fontSize, y-mtx.fontSize);
+    ctx.globalAlpha = 1;
+    if (y > h && Math.random() > 0.975) mtx.drops[i] = Math.random()*-20;
+    mtx.drops[i]++;
+  }
+}
+function stopMatrix(){
+  cancelAnimationFrame(mtx.raf);
+  screenEl.classList.remove("fx-on");
+  text("...he is the one. back to work.", "faint");
+  mode = "shell"; showPrompt();
+}
+
+/* ---------------- input ---------------- */
+document.addEventListener("keydown", function(e){
+  if (e.metaKey) return;
+  if (mode==="matrix"){
+    e.preventDefault(); stopMatrix(); return;
+  }
+  if (mode==="snakeover"){
+    e.preventDefault(); closeSnakeOver(); return;
+  }
+  if (mode==="snake"){
+    var k = e.key;
+    if (k==="ArrowUp"||k==="w"||k==="W"){ e.preventDefault(); snakeDir("up"); }
+    else if (k==="ArrowDown"||k==="s"||k==="S"){ e.preventDefault(); snakeDir("down"); }
+    else if (k==="ArrowLeft"||k==="a"||k==="A"){ e.preventDefault(); snakeDir("left"); }
+    else if (k==="ArrowRight"||k==="d"||k==="D"){ e.preventDefault(); snakeDir("right"); }
+    else if (k==="q"||k==="Q"||k==="Escape"){ e.preventDefault(); endSnake(true); }
+    return;
+  }
+  if (mode!=="shell") return;
+
+  if (e.ctrlKey){
+    if (e.key==="c" || e.key==="C"){
+      e.preventDefault();
+      line('<span class="dim">'+esc(ps1())+"</span>"+esc(buf)+"^C");
+      buf=""; renderTyped(); histIdx=-1;
+    } else if (e.key==="l" || e.key==="L"){
+      e.preventDefault(); out.innerHTML="";
+    }
+    return;
+  }
+
+  switch(e.key){
+    case "Enter": e.preventDefault(); run(buf); break;
+    case "Backspace": e.preventDefault(); buf = buf.slice(0,-1); renderTyped(); break;
+    case "Tab": e.preventDefault(); complete(); break;
+    case "ArrowUp":
+      e.preventDefault();
+      if (!hist.length) break;
+      if (histIdx===-1){ histStash = buf; histIdx = hist.length-1; }
+      else if (histIdx>0) histIdx--;
+      buf = hist[histIdx]; renderTyped();
+      break;
+    case "ArrowDown":
+      e.preventDefault();
+      if (histIdx===-1) break;
+      histIdx++;
+      if (histIdx>=hist.length){ histIdx=-1; buf=histStash; }
+      else buf = hist[histIdx];
+      renderTyped();
+      break;
+    default:
+      if (e.key.length===1){
+        e.preventDefault();
+        if (buf.length<160) buf += e.key;
+        renderTyped();
+      }
+  }
+});
+
+// matrix exits on tap/click too
+screenEl.addEventListener("pointerdown", function(){
+  if (mode==="matrix") stopMatrix();
+  else if (mode==="snakeover") closeSnakeOver();
+});
+
+// swipe steering for snake
+var touchStart = null;
+screenEl.addEventListener("touchstart", function(e){
+  if (mode!=="snake") return;
+  touchStart = [e.touches[0].clientX, e.touches[0].clientY];
+}, {passive:true});
+screenEl.addEventListener("touchend", function(e){
+  if (mode!=="snake" || !touchStart) return;
+  var dx = e.changedTouches[0].clientX - touchStart[0];
+  var dy = e.changedTouches[0].clientY - touchStart[1];
+  if (Math.abs(dx)<18 && Math.abs(dy)<18) return;
+  if (Math.abs(dx) > Math.abs(dy)) snakeDir(dx>0?"right":"left");
+  else snakeDir(dy>0?"down":"up");
+  touchStart = null;
+}, {passive:true});
+
+// d-pad
+document.querySelectorAll(".dpad button").forEach(function(b){
+  b.addEventListener("pointerdown", function(e){
+    e.preventDefault(); e.stopPropagation();
+    snakeDir(b.getAttribute("data-dir"));
+  });
+});
+
+/* ---------------- command palette (mobile) ---------------- */
+var CHIPS_1 = ["help","snake","matrix","ls","cat readme.txt","cat manifesto.txt","cat todo.txt","whoami"];
+var CHIPS_2 = ["cat poems/dawn.txt","cat poems/static.txt","ls -a secrets","theme amber","theme paper","theme green","about","date","clear","exit"];
+function buildChips(rowEl, cmds){
+  cmds.forEach(function(c){
+    var b = document.createElement("button");
+    b.className = "chip"; b.type = "button"; b.textContent = c;
+    b.addEventListener("click", function(){ chipRun(c); });
+    rowEl.appendChild(b);
+  });
+}
+buildChips(document.getElementById("prow1"), CHIPS_1);
+buildChips(document.getElementById("prow2"), CHIPS_2);
+
+async function chipRun(cmd){
+  if (mode==="matrix"){ stopMatrix(); }
+  if (mode==="snakeover"){ closeSnakeOver(); }
+  if (mode==="snake"){ endSnake(true); }
+  if (mode!=="shell") return;
+  buf = ""; renderTyped();
+  await autoType(cmd);
+  run(buf);
+}
+
+/* ---------------- visibility / resize ---------------- */
+var snakePausedByTab = false;
+document.addEventListener("visibilitychange", function(){
+  if (document.hidden){
+    if (mode==="snake" && snakeState){ clearInterval(snakeState.timer); snakePausedByTab = true; }
+    if (mode==="matrix") cancelAnimationFrame(mtx.raf);
+  } else {
+    if (snakePausedByTab && snakeState){ snakeState.timer = setInterval(stepSnake, snakeState.speed); snakePausedByTab = false; }
+    if (mode==="matrix"){ mtx.raf = requestAnimationFrame(matrixFrame); }
+  }
+});
+window.addEventListener("resize", function(){
+  if (mode==="matrix") sizeMatrix();
+});
+
+/* ---------------- go ---------------- */
+document.fonts.ready.then(function(){ boot(); }).catch(function(){ boot(); });
+})();
+</script>
+</body>
+</html>

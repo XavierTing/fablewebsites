@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KŌCHA-AN 更茶庵 — a tea house in the mountains</title>
+<meta name="description" content="更茶庵 Kōcha-an — a tea house above the clouds. Four teas, one room, and the practice of doing very little, very well.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="KŌCHA-AN 更茶庵 — a tea house in the mountains">
+<meta property="og:description" content="更茶庵 Kōcha-an — a tea house above the clouds. Four teas, one room, and the practice of doing very little, very well.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/23-teahouse/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/23-teahouse/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KŌCHA-AN 更茶庵 — a tea house in the mountains">
+<meta name="twitter:description" content="更茶庵 Kōcha-an — a tea house above the clouds. Four teas, one room, and the practice of doing very little, very well.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/23-teahouse/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍵</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5f2ea;
+  --ink:#2b2926;
+  --ink-soft:#5a564f;
+  --tea:#6a7a5a;
+  --hair:#d8d2c4;
+  --paper-deep:#ece8dc;
+  --ease-calm:cubic-bezier(.22,.9,.24,1);
+  --serif:"Shippori Mincho", serif;
+  --sans:"Zen Kaku Gothic New", sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:300;
+  font-size:16px;
+  line-height:2;
+  letter-spacing:.02em;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--tea);color:var(--paper)}
+:focus-visible{outline:1px solid var(--tea);outline-offset:4px}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--paper)}
+::-webkit-scrollbar-thumb{background:var(--hair);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--tea)}
+html{scrollbar-width:thin;scrollbar-color:var(--hair) var(--paper)}
+a{color:inherit;text-decoration:none}
+
+/* ---------- paper grain ---------- */
+.grain{
+  position:fixed;inset:0;z-index:60;pointer-events:none;
+  opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- fixed chrome ---------- */
+.backlink{
+  position:fixed;top:2rem;left:2rem;z-index:70;
+  font-family:var(--sans);font-weight:300;
+  font-size:.625rem;letter-spacing:.32em;
+  color:var(--ink-soft);
+  border-bottom:1px solid transparent;
+  transition:color .6s var(--ease-calm), border-color .6s var(--ease-calm);
+  padding-bottom:2px;
+}
+.backlink:hover{color:var(--tea);border-color:var(--tea)}
+
+/* steam teacup, bottom-right */
+.cup{
+  position:fixed;right:2rem;bottom:2rem;z-index:70;
+  width:44px;height:64px;pointer-events:none;
+}
+.cup svg{display:block;width:100%;height:100%;overflow:visible}
+.cup .bowl{stroke:var(--ink-soft);fill:none;stroke-width:1.1}
+.cup .wisp{
+  stroke:var(--ink-soft);fill:none;stroke-width:1;
+  stroke-linecap:round;
+  filter:blur(1.1px);
+  opacity:0;
+  stroke-dasharray:34 60;
+  animation:steam 6.5s var(--ease-calm) infinite;
+}
+.cup .wisp.w2{animation-delay:3.2s}
+@keyframes steam{
+  0%{stroke-dashoffset:34;opacity:0;transform:translateY(3px)}
+  18%{opacity:.55}
+  70%{opacity:.25}
+  100%{stroke-dashoffset:-62;opacity:0;transform:translateY(-7px)}
+}
+
+/* ---------- shared layout ---------- */
+.col{
+  width:min(620px, calc(100% - 3rem));
+  margin-inline:auto;
+}
+section{padding:32vh 0}
+.label{
+  font-family:var(--sans);font-weight:300;
+  font-size:.625rem;letter-spacing:.42em;
+  color:var(--tea);
+  text-transform:uppercase;
+  margin-bottom:3.5rem;
+}
+.label .kanji{
+  font-family:var(--serif);font-size:.8125rem;letter-spacing:.6em;
+  color:var(--ink-soft);margin-left:1em;
+}
+h2{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(1.5rem, 1.1rem + 1.6vw, 2.125rem);
+  line-height:1.7;
+  letter-spacing:.06em;
+  margin-bottom:2.5rem;
+}
+p{color:var(--ink-soft);max-width:52ch}
+p + p{margin-top:2em}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(12px);
+  transition:opacity 1.2s var(--ease-calm), transform 1.2s var(--ease-calm)}
+.reveal.in{opacity:1;transform:none}
+.reveal:nth-child(2){transition-delay:.12s}
+.reveal:nth-child(3){transition-delay:.22s}
+
+/* ---------- entrance ---------- */
+.entrance{
+  min-height:100vh;min-height:100svh;
+  padding:0;
+  display:grid;place-items:center;
+  position:relative;
+}
+.entrance-inner{
+  display:flex;align-items:center;gap:clamp(2.5rem, 8vw, 6.5rem);
+}
+.enso{width:clamp(150px, 24vw, 230px);height:auto;flex:none}
+.enso path{
+  fill:none;stroke:var(--ink);stroke-width:5;
+  stroke-linecap:round;
+  stroke-dasharray:1000;
+  stroke-dashoffset:1000;
+  opacity:.88;
+}
+.loaded .enso path{animation:draw 3s cubic-bezier(.5,.05,.3,1) .6s forwards}
+@keyframes draw{to{stroke-dashoffset:64}}
+.name-vert{
+  display:flex;flex-direction:row;align-items:flex-start;
+  gap:1.9rem;
+}
+.name-vert .kanji{
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(2.4rem, 2rem + 3vw, 4rem);
+  letter-spacing:.32em;
+  line-height:1;
+}
+.name-vert .romaji{
+  writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:var(--sans);font-weight:300;
+  font-size:.625rem;letter-spacing:.42em;
+  color:var(--ink-soft);
+  margin-top:.2rem;
+}
+.invite{
+  position:absolute;left:50%;bottom:16vh;transform:translateX(-50%);
+  text-align:center;
+  font-size:.75rem;letter-spacing:.18em;color:var(--ink-soft);
+  opacity:0;
+}
+.loaded .invite{animation:appear 2s var(--ease-calm) 2.8s forwards}
+@keyframes appear{to{opacity:1}}
+@media (max-height:720px){
+  .entrance-inner{transform:translateY(-4vh)}
+  .enso{width:clamp(110px,18vh,160px)}
+  .name-vert .kanji{font-size:clamp(1.9rem,5.6vh,2.8rem)}
+  .invite{bottom:7vh}
+}
+.enter{
+  display:inline-block;margin-top:2.2rem;
+  color:var(--ink-soft);
+  animation:pulse 4.5s ease-in-out infinite;
+}
+.enter .stroke{
+  display:block;width:1px;height:44px;margin:0 auto 0.9rem;
+  background:var(--ink-soft);
+}
+.enter .word{font-size:.625rem;letter-spacing:.42em;text-transform:uppercase;padding-left:.42em}
+.enter:hover{color:var(--tea)}
+.enter:hover .stroke{background:var(--tea)}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.9}}
+
+/* ---------- the water ---------- */
+.water-field{
+  width:100%;height:52vh;min-height:320px;
+  margin-top:4rem;
+  position:relative;
+}
+.water-field svg{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.ripple{
+  fill:none;stroke:var(--ink);stroke-width:1;
+  vector-effect:non-scaling-stroke;
+  opacity:0;
+  transform-box:fill-box;transform-origin:center;
+}
+.anim .ripple{animation:ripple 7s cubic-bezier(.17,.6,.35,1) infinite}
+.anim .ripple.r2{animation-delay:.7s}
+.anim .ripple.r3{animation-delay:1.4s}
+@keyframes ripple{
+  0%{transform:scale(0);opacity:0}
+  4%{opacity:.5}
+  46%{opacity:0;transform:scale(230)}
+  100%{opacity:0;transform:scale(230)}
+}
+.drop{
+  fill:var(--ink);opacity:0;
+  transform-box:fill-box;transform-origin:center;
+}
+.anim .drop{animation:drop 7s ease-out infinite}
+@keyframes drop{
+  0%{opacity:.6;transform:scale(1)}
+  5%{opacity:0;transform:scale(.2)}
+  100%{opacity:0}
+}
+.no-anim .ripple{opacity:.25;transform:scale(80)}
+.no-anim .ripple.r2{transform:scale(140)}
+.no-anim .ripple.r3{transform:scale(200)}
+
+/* ---------- menu ---------- */
+.menu-list{list-style:none;margin-top:1rem}
+.tea{
+  position:relative;
+  padding:3.2rem 1.5rem;
+  border-top:1px solid var(--hair);
+  display:grid;
+  grid-template-columns:8.25rem 1fr auto;
+  grid-template-areas:"kanji names figures" "kanji note figures";
+  column-gap:2.2rem;row-gap:.4rem;
+  align-items:baseline;
+}
+.tea:last-child{border-bottom:1px solid var(--hair)}
+.tea::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg, var(--wash) 0%, transparent 78%);
+  opacity:0;transition:opacity .9s var(--ease-calm);
+  pointer-events:none;
+}
+.tea:hover::before{opacity:1}
+.tea .t-kanji{
+  grid-area:kanji;align-self:center;
+  font-family:var(--serif);font-weight:400;
+  font-size:1.75rem;letter-spacing:.14em;
+  line-height:1.4;
+  transition:color .9s var(--ease-calm);
+  position:relative;
+}
+.tea:hover .t-kanji{color:var(--tint)}
+.tea .t-names{grid-area:names;position:relative}
+.tea .t-romaji{
+  font-size:.6875rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--ink);
+}
+.tea .t-note{
+  grid-area:note;position:relative;
+  font-family:var(--serif);
+  font-size:.9375rem;line-height:1.9;letter-spacing:.03em;
+  color:var(--ink-soft);
+  max-width:34ch;
+}
+.tea .t-fig{
+  grid-area:figures;align-self:center;position:relative;
+  text-align:right;
+  font-size:.6875rem;letter-spacing:.14em;
+  color:var(--ink-soft);
+  font-variant-numeric:tabular-nums;
+  line-height:2.1;
+  white-space:nowrap;
+}
+.tea .t-fig .deg{color:var(--ink)}
+.tea--matcha{--wash:rgba(106,122,74,.10);--tint:#5c6e46}
+.tea--hojicha{--wash:rgba(160,112,58,.10);--tint:#8a6134}
+.tea--genmaicha{--wash:rgba(178,152,84,.12);--tint:#8f7a3e}
+.tea--sencha{--wash:rgba(96,138,116,.10);--tint:#4e7a63}
+
+/* ---------- the room ---------- */
+.room{position:relative}
+.room-stage{
+  position:relative;
+  width:min(880px, calc(100% - 3rem));
+  margin:6rem auto 0;
+  height:74vh;min-height:460px;
+}
+.room-stage > *{position:absolute;will-change:transform}
+.blk-a{ /* tall paper block */
+  left:8%;top:6%;width:34%;height:70%;
+  background:var(--paper-deep);
+}
+.blk-b{ /* outlined void */
+  left:50%;top:26%;width:38%;height:38%;
+  border:1px solid var(--hair);
+}
+.blk-c{ /* small tea block, golden offset */
+  left:38.2%;top:61.8%;width:13%;height:21%;
+  background:var(--tea);opacity:.85;
+}
+.blk-line{ /* accent line */
+  left:61.8%;top:2%;width:1px;height:88%;
+  background:var(--tea);
+}
+.room-caption{
+  margin-top:5rem;text-align:center;
+  font-family:var(--serif);font-size:.875rem;letter-spacing:.12em;
+  color:var(--ink-soft);
+}
+
+/* ---------- the way ---------- */
+.way p{
+  font-family:var(--serif);
+  font-size:clamp(1.0625rem, .95rem + .5vw, 1.25rem);
+  line-height:2.4;
+  letter-spacing:.04em;
+  color:var(--ink);
+  max-width:44ch;
+}
+.way p + p{margin-top:3em}
+.way em{font-style:normal;color:var(--tea)}
+
+/* ---------- visit ---------- */
+.visit-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:start;margin-top:1rem;
+}
+.visit dl{font-size:.8125rem;letter-spacing:.06em}
+.visit dt{
+  font-size:.625rem;letter-spacing:.36em;text-transform:uppercase;
+  color:var(--tea);margin-top:2.4rem;
+}
+.visit dt:first-child{margin-top:0}
+.visit dd{color:var(--ink-soft);margin-top:.4rem;line-height:2.1}
+.visit dd .fig{font-variant-numeric:tabular-nums}
+
+/* map */
+.map{
+  position:relative;aspect-ratio:4/5;
+  border:1px solid var(--hair);
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(216,210,196,.35) 1px, transparent 1px) 0 0/100% 25%;
+}
+.map > *{position:absolute}
+.map .river{
+  left:-12%;top:-10%;width:70%;height:80%;
+  border:none;border-right:1.5px solid var(--hair);
+  border-radius:0 0 62% 0/0 0 88% 0;
+  transform:rotate(8deg);
+}
+.map .river2{
+  left:-8%;top:52%;width:52%;height:70%;
+  border:none;border-right:1.5px solid var(--hair);
+  border-radius:0 55% 0 0/0 70% 0 0;
+  transform:rotate(-4deg);
+}
+.map .road{
+  left:12%;top:78%;width:110%;height:1px;
+  background:var(--ink-soft);opacity:.5;
+  transform:rotate(-14deg);transform-origin:left center;
+}
+.map .path{
+  left:56%;top:24%;width:1px;height:58%;
+  background:repeating-linear-gradient(to bottom, var(--ink-soft) 0 5px, transparent 5px 11px);
+  opacity:.6;
+  transform:rotate(9deg);
+}
+.map .here{
+  left:60%;top:20%;width:9px;height:9px;border-radius:50%;
+  background:var(--tea);
+  transform:translate(-50%,-50%);
+}
+.map .here::after{
+  content:"";position:absolute;inset:-7px;border-radius:50%;
+  border:1px solid var(--tea);opacity:.5;
+}
+.map .m-label{
+  font-size:.5625rem;letter-spacing:.24em;color:var(--ink-soft);
+  line-height:1;
+}
+.map .l-here{left:64%;top:14%;color:var(--tea);letter-spacing:.3em}
+.map .l-river{left:16%;top:38%;transform:rotate(72deg)}
+.map .l-road{left:16%;top:70%;transform:rotate(-14deg)}
+.map .l-station{left:6%;top:88%}
+.map .station-dot{
+  left:9%;top:83.5%;width:5px;height:5px;
+  background:var(--ink-soft);
+  transform:rotate(45deg);
+}
+.map .compass{
+  right:8%;top:6%;
+  font-family:var(--serif);font-size:.6875rem;letter-spacing:0;
+  color:var(--ink-soft);text-align:center;line-height:1.2;
+}
+.map .compass::after{
+  content:"";display:block;width:1px;height:18px;margin:4px auto 0;
+  background:var(--ink-soft);
+}
+
+/* ---------- footer ---------- */
+footer{
+  padding:20vh 0 14vh;
+  text-align:center;
+}
+footer .f-kanji{
+  font-family:var(--serif);font-size:1.125rem;letter-spacing:.6em;
+  padding-left:.6em; /* optical centering vs letterspacing */
+  margin-bottom:1.6rem;
+}
+footer .f-line{
+  font-size:.625rem;letter-spacing:.3em;color:var(--ink-soft);
+  text-transform:uppercase;
+}
+footer .f-rule{
+  width:32px;height:1px;background:var(--hair);
+  margin:3rem auto 0;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 640px){
+  section{padding:24vh 0}
+  .backlink{top:1.25rem;left:1.25rem}
+  .cup{right:1.1rem;bottom:1.1rem;width:36px;height:52px}
+  .entrance-inner{gap:2.2rem}
+  .enso{width:120px}
+  .name-vert{height:250px;gap:1.1rem}
+  .invite{bottom:12vh;width:100%;padding:0 1.5rem}
+  .tea{
+    grid-template-columns:auto 1fr;
+    grid-template-areas:"kanji names" "kanji note" "kanji figures";
+    padding:2.6rem .25rem;column-gap:1.4rem;
+  }
+  .tea .t-fig{text-align:left;margin-top:1.1rem;line-height:1.9}
+  .room-stage{height:56vh;min-height:380px}
+  .visit-grid{grid-template-columns:1fr;gap:3.5rem}
+  .map{max-width:320px}
+}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .enso path{stroke-dashoffset:64;animation:none}
+  .invite{opacity:1;animation:none}
+  .enter{animation:none;opacity:.7}
+  .cup .wisp{animation:none;opacity:.3;stroke-dashoffset:0}
+  .anim .ripple,.anim .drop{animation:none}
+  .anim .ripple{opacity:.25;transform:scale(80)}
+  .anim .ripple.r2{transform:scale(140)}
+  .anim .ripple.r3{transform:scale(200)}
+  .anim .drop{opacity:0}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+
+<div class="cup" aria-hidden="true">
+  <svg viewBox="0 0 44 64">
+    <path class="wisp w1" d="M22 34 C 19 29, 25 25, 22 20 C 19 15, 24 11, 22 6"/>
+    <path class="wisp w2" d="M27 33 C 25 29, 30 25, 27 21 C 24 17, 29 12, 27 8"/>
+    <path class="bowl" d="M11 44 C 11 53, 15 58, 22 58 C 29 58, 33 53, 33 44 Z M9 62 L 35 62"/>
+  </svg>
+</div>
+
+<!-- ENTRANCE -->
+<section class="entrance" id="top">
+  <div class="entrance-inner">
+    <svg class="enso" viewBox="0 0 200 200" aria-hidden="true">
+      <path pathLength="1000" d="M104 22
+        C 63 20, 26 52, 24 96
+        C 22 142, 58 178, 102 178
+        C 146 178, 180 144, 178 100
+        C 176 60, 148 30, 112 25"/>
+    </svg>
+    <h1 class="name-vert">
+      <span class="kanji">更茶庵</span>
+      <span class="romaji">KŌCHA·AN</span>
+    </h1>
+  </div>
+  <div class="invite">
+    <div>The kettle has been on since dawn. Come up when you are ready.</div>
+    <a class="enter" href="#water" aria-label="Enter — scroll to the water">
+      <span class="stroke" aria-hidden="true"></span>
+      <span class="word">Enter</span>
+    </a>
+  </div>
+</section>
+
+<!-- THE WATER -->
+<section id="water">
+  <div class="col">
+    <div class="reveal"><div class="label">The Water <span class="kanji">水</span></div></div>
+    <h2 class="reveal">Everything begins with what falls on the mountain.</h2>
+    <p class="reveal">Snowmelt takes eleven years to pass through the granite above us. It arrives at our spring with almost nothing in it — which is to say, perfect. We do not filter it. We wait for it.</p>
+  </div>
+  <div class="water-field" id="waterField" aria-hidden="true">
+    <svg viewBox="0 0 1440 520" preserveAspectRatio="xMidYMid slice">
+      <g id="dropPoint" transform="translate(890,240)">
+        <circle class="drop" r="2.5"/>
+        <circle class="ripple r1" r="1"/>
+        <circle class="ripple r2" r="1"/>
+        <circle class="ripple r3" r="1"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- THE SEASONAL MENU -->
+<section id="menu">
+  <div class="col">
+    <div class="reveal"><div class="label">The Seasonal Menu <span class="kanji">献立</span></div></div>
+    <h2 class="reveal">Four teas. One for each direction the wind comes from.</h2>
+    <ul class="menu-list reveal">
+      <li class="tea tea--matcha">
+        <span class="t-kanji">抹茶</span>
+        <span class="t-names"><span class="t-romaji">Matcha · Okumidori</span></span>
+        <span class="t-note">Shaded thirty days, milled by stone. Drinking it is like standing inside a leaf.</span>
+        <span class="t-fig"><span class="deg">80°C</span><br>whisked · 0:40</span>
+      </li>
+      <li class="tea tea--hojicha">
+        <span class="t-kanji">ほうじ茶</span>
+        <span class="t-names"><span class="t-romaji">Hōjicha · First Fire</span></span>
+        <span class="t-note">Roasted the way evening arrives — slowly, then all at once. Warm wood, warm amber.</span>
+        <span class="t-fig"><span class="deg">95°C</span><br>steeped · 0:30</span>
+      </li>
+      <li class="tea tea--genmaicha">
+        <span class="t-kanji">玄米茶</span>
+        <span class="t-names"><span class="t-romaji">Genmaicha · Harvest Moon</span></span>
+        <span class="t-note">Green tea and toasted rice, a farmer's economy that became a comfort. Straw, steam, field.</span>
+        <span class="t-fig"><span class="deg">85°C</span><br>steeped · 1:00</span>
+      </li>
+      <li class="tea tea--sencha">
+        <span class="t-kanji">煎茶</span>
+        <span class="t-names"><span class="t-romaji">Sencha · Cloud Gate</span></span>
+        <span class="t-note">Picked before the spring mist lifts. Jade in the cup, and a sweetness that ends like a bell.</span>
+        <span class="t-fig"><span class="deg">70°C</span><br>steeped · 1:10</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- THE ROOM -->
+<section class="room" id="room">
+  <div class="col">
+    <div class="reveal"><div class="label">The Room <span class="kanji">間</span></div></div>
+    <h2 class="reveal">Eight mats, one window, and nothing that asks for attention.</h2>
+  </div>
+  <div class="room-stage" aria-hidden="true">
+    <div class="blk-a" data-speed="-0.06"></div>
+    <div class="blk-b" data-speed="0.05"></div>
+    <div class="blk-c" data-speed="-0.12"></div>
+    <div class="blk-line" data-speed="0.09"></div>
+  </div>
+  <p class="room-caption reveal">The window is placed where the mountain looks best in November.</p>
+</section>
+
+<!-- THE WAY -->
+<section class="way" id="way">
+  <div class="col">
+    <div class="reveal"><div class="label">The Way <span class="kanji">道</span></div></div>
+    <p class="reveal">We believe slowness is not the absence of speed. It is the presence of attention. A cup poured at the right temperature, at the right moment, for the right person, is the fastest thing we know — it arrives <em>exactly on time</em>.</p>
+    <p class="reveal">So the house keeps almost nothing. A kettle, four teas, the sound of water. What remains when everything unnecessary is gone is not emptiness. It is room — for the season, for the guest, for the hour you did not know you needed.</p>
+  </div>
+</section>
+
+<!-- VISIT -->
+<section id="visit">
+  <div class="col">
+    <div class="reveal"><div class="label">Visiting <span class="kanji">案内</span></div></div>
+    <h2 class="reveal">Above the last bus stop, past the cedar with the rope.</h2>
+    <div class="visit-grid">
+      <div class="visit reveal">
+        <dl>
+          <dt>Where</dt>
+          <dd>Kōcha-an 更茶庵<br>Upper Kagerō Trail, Kiso Valley<br>Nagano — 1,240 m above the sea</dd>
+          <dt>When</dt>
+          <dd><span class="fig">Thursday — Sunday, 10:00 – 16:00</span><br>Closed when it storms. Open when it snows.</dd>
+          <dt>How</dt>
+          <dd>Six seats, by the pot. No reservations —<br>the walk up is the reservation.</dd>
+        </dl>
+      </div>
+      <div class="map reveal" role="img" aria-label="A hand-drawn map: from the station, follow the road, cross the river, and climb the footpath to Kōcha-an.">
+        <div class="river"></div>
+        <div class="river2"></div>
+        <div class="road"></div>
+        <div class="path"></div>
+        <div class="station-dot"></div>
+        <div class="here"></div>
+        <span class="m-label l-here">茶庵</span>
+        <span class="m-label l-river">KAGERŌ RIVER</span>
+        <span class="m-label l-road">MOUNTAIN ROAD</span>
+        <span class="m-label l-station">STATION · 40 MIN ON FOOT</span>
+        <div class="compass">北</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="reveal">
+    <div class="f-kanji">更茶庵</div>
+    <div class="f-line">Kōcha·an — est. one autumn, above the clouds</div>
+    <div class="f-rule"></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* screenshot helper: ?scroll=<px|selector> jumps instantly */
+  var params = new URLSearchParams(location.search);
+  var s = params.get('scroll');
+  if(s){
+    document.documentElement.style.scrollBehavior = 'auto';
+    requestAnimationFrame(function(){
+      var t = /^\d+$/.test(s) ? +s : (document.querySelector(s) ? document.querySelector(s).offsetTop : 0);
+      window.scrollTo(0, t);
+      setTimeout(function(){ window.scrollTo(0, t); }, 400);
+    });
+  }
+
+  document.documentElement.classList.add('loaded');
+  document.body.classList.add('loaded');
+
+  /* reveals */
+  var reveals = document.querySelectorAll('.reveal');
+  if(reduced){
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }else{
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.15, rootMargin:'0px 0px -8% 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+  }
+
+  /* water: run CSS ripple loop only while visible & tab shown */
+  var field = document.getElementById('waterField');
+  if(reduced){
+    field.classList.add('no-anim');
+  }else{
+    var visible = false;
+    function sync(){ field.classList.toggle('anim', visible && !document.hidden); }
+    new IntersectionObserver(function(entries){
+      visible = entries[0].isIntersecting; sync();
+    }, {threshold:0.1}).observe(field);
+    document.addEventListener('visibilitychange', sync);
+  }
+
+  /* room parallax */
+  var blocks = Array.prototype.slice.call(document.querySelectorAll('[data-speed]'));
+  var stage = document.querySelector('.room-stage');
+  if(!reduced && blocks.length){
+    var ticking = false;
+    function parallax(){
+      ticking = false;
+      var r = stage.getBoundingClientRect();
+      if(r.bottom < -200 || r.top > window.innerHeight + 200) return;
+      var mid = r.top + r.height/2 - window.innerHeight/2;
+      blocks.forEach(function(b){
+        b.style.transform = 'translateY(' + (mid * parseFloat(b.dataset.speed)).toFixed(1) + 'px)';
+      });
+    }
+    function onScroll(){
+      if(!ticking && !document.hidden){ ticking = true; requestAnimationFrame(parallax); }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll, {passive:true});
+    parallax();
+  }
+})();
+</script>
+</body>
+</html>

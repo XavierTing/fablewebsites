@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOLD — a paper atelier</title>
+<meta name="description" content="FOLD is a paper atelier in Kyoto and Copenhagen. One sheet, no cuts, only folds — origami practiced the old way, taught the slow way.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="FOLD — a paper atelier">
+<meta property="og:description" content="FOLD is a paper atelier in Kyoto and Copenhagen. One sheet, no cuts, only folds — origami practiced the old way, taught the slow way.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/04-origami/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/04-origami/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FOLD — a paper atelier">
+<meta name="twitter:description" content="FOLD is a paper atelier in Kyoto and Copenhagen. One sheet, no cuts, only folds — origami practiced the old way, taught the slow way.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/04-origami/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%23f6f1e7'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle' font-family='serif' fill='%234a5568'%3E折%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --paper:#f6f1e7;
+  --paper-deep:#efe7d7;
+  --cream:#f2e9d8;
+  --ink:#33302a;
+  --ink-soft:#6b6455;
+  --ink-faint:#9a9182;
+  --blush:#e8b4a0;
+  --blush-deep:#d99a82;
+  --sage:#a8b8a0;
+  --sage-deep:#8fa286;
+  --indigo:#4a5568;
+  --indigo-deep:#3a4353;
+  --crease:rgba(51,48,42,.16);
+  --crease-soft:rgba(51,48,42,.09);
+  --shadow-warm:38,30,18;
+  --disp:"Shippori Mincho",serif;
+  --jp:"Zen Kaku Gothic New",sans-serif;
+  --body:"Inter",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  font-family:var(--body);
+  background:
+    radial-gradient(1200px 700px at 12% -6%, rgba(255,252,244,.9), transparent 60%),
+    radial-gradient(1000px 800px at 108% 18%, rgba(232,180,160,.10), transparent 55%),
+    radial-gradient(1400px 900px at 50% 118%, rgba(74,85,104,.07), transparent 60%),
+    var(--paper);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* paper grain */
+body::before{
+  content:"";position:fixed;inset:0;z-index:80;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.055 0'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+::selection{background:var(--blush);color:var(--ink)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--paper)}
+::-webkit-scrollbar-thumb{background:#d6cab5;border-radius:8px;border:2px solid var(--paper)}
+::-webkit-scrollbar-thumb:hover{background:#c4b69e}
+:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;border-radius:2px}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+
+/* ============ CHROME ============ */
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:90;background:transparent}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--blush-deep),var(--indigo));transform-origin:0 50%;transform:scaleX(0)}
+
+.fable-link{
+  position:fixed;left:22px;bottom:22px;z-index:70;
+  font-family:var(--jp);font-size:10px;letter-spacing:.28em;font-weight:700;
+  color:var(--ink-soft);padding:9px 14px 8px;border:1px solid var(--crease);
+  background:rgba(246,241,231,.82);backdrop-filter:blur(6px);
+  transition:color .3s,border-color .3s,transform .3s cubic-bezier(.23,1,.32,1);
+}
+.fable-link:hover{color:var(--ink);border-color:var(--ink-faint);transform:translateY(-2px)}
+
+.site-head{
+  position:absolute;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:30px clamp(24px,4.5vw,64px);
+}
+.brand{display:flex;align-items:baseline;gap:14px}
+.brand b{font-family:var(--disp);font-weight:700;font-size:22px;letter-spacing:.30em}
+.brand span{font-family:var(--jp);font-size:10.5px;letter-spacing:.24em;color:var(--ink-soft)}
+.site-nav{display:flex;gap:clamp(18px,3vw,40px)}
+.site-nav a{
+  font-family:var(--jp);font-size:10.5px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--ink-soft);padding-bottom:3px;
+  background:linear-gradient(var(--ink),var(--ink)) left bottom / 0% 1px no-repeat;
+  transition:background-size .45s cubic-bezier(.23,1,.32,1),color .3s;
+}
+.site-nav a:hover{color:var(--ink);background-size:100% 1px}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;min-height:100vh;
+  display:grid;grid-template-columns:minmax(400px,5fr) 7fr;align-items:center;
+  padding:110px clamp(24px,4.5vw,64px) 60px;gap:20px;
+}
+.kicker{
+  font-family:var(--jp);font-size:11px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--ink-soft);display:flex;align-items:center;gap:16px;margin-bottom:30px;
+}
+.kicker::before{content:"";width:44px;height:1px;background:var(--ink-faint);flex:none}
+.hero h1{
+  font-family:var(--disp);font-weight:600;
+  font-size:clamp(3rem,6.4vw,5.9rem);line-height:1.04;letter-spacing:-.012em;
+  margin-bottom:30px;
+}
+.hero h1 em{font-style:normal;color:var(--blush-deep)}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line>span{display:block;transform:translateY(110%);animation:riseIn 1.2s cubic-bezier(.16,1,.3,1) forwards}
+.hero h1 .line:nth-child(2)>span{animation-delay:.12s}
+.hero h1 .line:nth-child(3)>span{animation-delay:.24s}
+@keyframes riseIn{to{transform:translateY(0)}}
+.lede{
+  max-width:42ch;color:var(--ink-soft);font-size:clamp(.98rem,1.15vw,1.08rem);
+  margin-bottom:38px;opacity:0;animation:fadeUp 1.1s cubic-bezier(.16,1,.3,1) .5s forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:fadeUp 1.1s cubic-bezier(.16,1,.3,1) .68s forwards}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--jp);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  padding:15px 26px;border:1px solid var(--ink);color:var(--ink);background:var(--cream);
+  box-shadow:0 1px 2px rgba(var(--shadow-warm),.10),0 10px 22px -10px rgba(var(--shadow-warm),.28);
+  transition:transform .4s cubic-bezier(.23,1,.32,1),box-shadow .4s,background .3s;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 2px 3px rgba(var(--shadow-warm),.10),0 20px 34px -12px rgba(var(--shadow-warm),.34);background:#f7efdf}
+.btn.ghost{background:transparent;border-color:var(--crease);color:var(--ink-soft);box-shadow:none}
+.btn.ghost:hover{border-color:var(--ink);color:var(--ink);box-shadow:0 14px 26px -14px rgba(var(--shadow-warm),.3)}
+
+.hero-stage{position:relative;height:min(72vh,680px);min-height:420px;opacity:0;animation:fadeUp 1.4s cubic-bezier(.16,1,.3,1) .35s forwards}
+.stage-shadow{
+  position:absolute;left:50%;bottom:26%;width:44%;height:48px;transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,rgba(56,44,28,.30),rgba(56,44,28,.10) 55%,transparent 72%);
+  filter:blur(7px);
+  animation:shadowBob 7s ease-in-out infinite alternate;
+}
+@keyframes shadowBob{from{transform:translateX(-50%) scale(1);opacity:1}to{transform:translateX(-50%) scale(.9);opacity:.75}}
+.scene{position:absolute;inset:0;perspective:1500px}
+.tilt,.float,.turntable{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
+.float{animation:bob 7s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(8px)}to{transform:translateY(-9px)}}
+.turntable{animation:spin linear infinite;animation-duration:48s}
+@keyframes spin{from{transform:rotateY(var(--a0,0deg))}to{transform:rotateY(calc(var(--a0,0deg) + 360deg))}}
+.facet{
+  position:absolute;left:0;top:0;width:100px;height:100px;
+  transform-origin:0 0;clip-path:polygon(0% 0%,100% 0%,0% 100%);
+  backface-visibility:visible;
+}
+.stage-caption{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--jp);font-size:10px;font-weight:700;letter-spacing:.30em;text-transform:uppercase;color:var(--ink-faint);
+}
+.scroll-hint{
+  position:absolute;bottom:96px;left:clamp(24px,4.5vw,64px);
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--jp);font-size:9.5px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-faint);
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--ink-faint),transparent);animation:hintDrop 2.2s ease-in-out infinite}
+@keyframes hintDrop{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ============ SECTIONS COMMON ============ */
+section{padding:clamp(80px,10vw,140px) clamp(24px,4.5vw,64px)}
+.sec-head{display:flex;align-items:baseline;gap:22px;margin-bottom:clamp(40px,5vw,72px);border-top:1px solid var(--crease);padding-top:26px;position:relative}
+.sec-head::before{content:"";position:absolute;top:-1px;left:0;width:64px;height:1px;background:var(--ink)}
+.sec-no{font-family:var(--jp);font-size:11px;font-weight:700;letter-spacing:.3em;color:var(--blush-deep)}
+.sec-head h2{font-family:var(--disp);font-weight:600;font-size:clamp(1.9rem,3.4vw,3rem);letter-spacing:-.01em}
+.sec-jp{margin-left:auto;font-family:var(--jp);font-size:12px;letter-spacing:.4em;color:var(--ink-faint)}
+.reveal{opacity:0;transform:translateY(34px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}
+.reveal.in-view{opacity:1;transform:none}
+
+/* ============ PRACTICE ============ */
+.practice-grid{display:grid;grid-template-columns:1fr minmax(300px,560px) 1fr;gap:40px}
+.practice-side{display:flex;justify-content:center}
+.v-text{
+  writing-mode:vertical-rl;font-family:var(--disp);font-size:clamp(1.1rem,1.6vw,1.5rem);
+  letter-spacing:.5em;color:var(--ink-faint);
+}
+.manifesto{font-family:var(--disp);font-weight:500;font-size:clamp(1.35rem,2vw,1.8rem);line-height:1.75;letter-spacing:.002em}
+.manifesto p+p{margin-top:1.4em}
+.manifesto strong{font-weight:700;color:var(--indigo)}
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1080px;margin:clamp(56px,7vw,96px) auto 0}
+.principle{
+  background:var(--cream);border:1px solid var(--crease-soft);padding:30px 26px 26px;position:relative;
+  box-shadow:0 1px 2px rgba(var(--shadow-warm),.06),0 16px 34px -18px rgba(var(--shadow-warm),.22);
+  transition:transform .5s cubic-bezier(.23,1,.32,1),box-shadow .5s;
+}
+.principle:hover{transform:translateY(-5px);box-shadow:0 2px 3px rgba(var(--shadow-warm),.07),0 30px 48px -20px rgba(var(--shadow-warm),.3)}
+.principle::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--p-tint,var(--blush))}
+.principle .p-jp{font-family:var(--disp);font-size:2rem;color:var(--p-tint,var(--blush));line-height:1;display:block;margin-bottom:16px}
+.principle h3{font-family:var(--jp);font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin-bottom:10px}
+.principle p{font-size:.9rem;color:var(--ink-soft)}
+
+/* ============ WORKS ============ */
+.work{perspective:1600px;margin-bottom:clamp(36px,4vw,56px)}
+.w-sheet{
+  background:var(--cream);border:1px solid var(--crease-soft);
+  box-shadow:0 1px 2px rgba(var(--shadow-warm),.07),0 14px 30px -14px rgba(var(--shadow-warm),.22),0 46px 90px -40px rgba(var(--shadow-warm),.3);
+}
+.w-top{
+  display:flex;align-items:baseline;gap:22px;padding:26px 34px;
+  border-bottom:1px dashed var(--crease);
+  opacity:0;transform:translateY(20px);
+  transition:opacity .9s cubic-bezier(.16,1,.3,1) var(--d,0s),transform .9s cubic-bezier(.16,1,.3,1) var(--d,0s);
+}
+.work.in-view .w-top{opacity:1;transform:none}
+.w-no{font-family:var(--jp);font-size:11px;font-weight:700;letter-spacing:.28em;color:var(--blush-deep)}
+.w-top h3{font-family:var(--disp);font-weight:600;font-size:clamp(1.5rem,2.4vw,2.1rem);letter-spacing:.01em}
+.w-jp{font-family:var(--disp);font-weight:500;color:var(--ink-faint);font-size:.75em;margin-left:8px}
+.w-paper{margin-left:auto;font-family:var(--jp);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint)}
+.w-fold{
+  transform-origin:50% 0;transform:rotateX(-95deg);position:relative;
+  transition:transform 1.5s cubic-bezier(.22,1,.3,1) calc(var(--d,0s) + .15s);
+  background:var(--cream);
+}
+.work.in-view .w-fold{transform:rotateX(0)}
+.w-fold::after{
+  content:"";position:absolute;inset:0 0 auto 0;height:110px;pointer-events:none;
+  background:linear-gradient(rgba(56,44,28,.20),transparent);
+  opacity:1;transition:opacity 1.6s ease calc(var(--d,0s) + .3s);
+}
+.work.in-view .w-fold::after{opacity:0}
+.w-body{display:grid;grid-template-columns:minmax(280px,460px) 1fr;gap:clamp(24px,4vw,72px);padding:36px 34px 40px;align-items:center}
+.work:nth-of-type(even) .w-body{grid-template-columns:1fr minmax(280px,460px)}
+.work:nth-of-type(even) .w-stage{order:2}
+.w-stage{position:relative;height:300px}
+.mini-shadow{
+  position:absolute;left:50%;bottom:16%;width:58%;height:26px;transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,rgba(56,44,28,.26),transparent 70%);filter:blur(5px);
+}
+.mini-scene{position:absolute;inset:0;perspective:900px}
+.w-text p{color:var(--ink-soft);max-width:58ch;font-size:.98rem}
+.w-quote{font-family:var(--disp);font-size:clamp(1.15rem,1.6vw,1.4rem);color:var(--ink);line-height:1.6;margin-bottom:18px;max-width:34ch}
+.w-meta{display:flex;gap:34px;margin-top:26px;padding-top:20px;border-top:1px dashed var(--crease);flex-wrap:wrap}
+.w-meta div{min-width:90px}
+.w-meta dt{font-family:var(--jp);font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:5px}
+.w-meta dd{font-family:var(--disp);font-size:1.05rem;font-weight:600}
+
+/* ============ WORKSHOPS ============ */
+.table-wrap{overflow-x:auto;border:1px solid var(--crease-soft);background:var(--cream);
+  box-shadow:0 1px 2px rgba(var(--shadow-warm),.06),0 20px 44px -22px rgba(var(--shadow-warm),.26)}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th{
+  font-family:var(--jp);font-size:9.5px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--ink-faint);text-align:left;padding:18px 22px 14px;border-bottom:1px solid var(--crease);
+}
+td{padding:20px 22px;border-bottom:1px dashed var(--crease-soft);vertical-align:middle;transition:background .35s}
+tr:last-child td{border-bottom:none}
+tbody tr{position:relative;cursor:pointer}
+tbody tr:hover td{background:#f7efdd}
+td.t-date{font-family:var(--jp);font-weight:700;font-size:.85rem;letter-spacing:.12em;white-space:nowrap}
+td.t-title{font-family:var(--disp);font-weight:600;font-size:1.12rem}
+td.t-title small{display:block;font-family:var(--body);font-weight:400;font-size:.78rem;color:var(--ink-soft);letter-spacing:0;margin-top:2px}
+td.t-kanji{font-family:var(--disp);font-size:1.5rem;color:var(--blush-deep);width:60px}
+td.t-city{font-size:.9rem;color:var(--ink-soft)}
+td.t-seats{font-family:var(--jp);font-size:.85rem;letter-spacing:.1em;color:var(--ink-soft);white-space:nowrap}
+.chip{
+  display:inline-block;font-family:var(--jp);font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  padding:6px 14px 5px;border-radius:999px;border:1px solid transparent;white-space:nowrap;
+}
+.chip.open{background:rgba(168,184,160,.35);border-color:rgba(143,162,134,.5);color:#4e6046}
+.chip.wait{background:rgba(232,180,160,.32);border-color:rgba(217,154,130,.55);color:#8d5240}
+.chip.full{background:rgba(51,48,42,.06);border-color:var(--crease);color:var(--ink-faint)}
+.workshops-note{margin-top:22px;font-size:.85rem;color:var(--ink-faint);display:flex;gap:10px;align-items:baseline}
+.workshops-note b{font-family:var(--jp);letter-spacing:.2em;font-size:.7rem;color:var(--ink-soft)}
+
+/* ============ FOOTER ============ */
+footer{position:relative;padding:clamp(70px,8vw,110px) clamp(24px,4.5vw,64px) 120px;border-top:1px solid var(--crease);overflow:hidden}
+.foot-kanji{
+  position:absolute;right:-2%;bottom:-16%;font-family:var(--disp);font-weight:700;
+  font-size:clamp(16rem,30vw,26rem);line-height:1;color:rgba(51,48,42,.045);pointer-events:none;user-select:none;
+}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;gap:44px;position:relative}
+.foot-brand b{font-family:var(--disp);font-size:1.7rem;font-weight:700;letter-spacing:.28em;display:block;margin-bottom:14px}
+.foot-brand p{color:var(--ink-soft);font-size:.9rem;max-width:32ch}
+footer h4{font-family:var(--jp);font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:18px}
+footer ul{list-style:none}
+footer li{margin-bottom:10px;font-size:.9rem;color:var(--ink-soft)}
+footer li a{background:linear-gradient(var(--ink),var(--ink)) left bottom / 0% 1px no-repeat;transition:background-size .4s cubic-bezier(.23,1,.32,1),color .3s;padding-bottom:2px}
+footer li a:hover{color:var(--ink);background-size:100% 1px}
+.foot-bottom{position:relative;margin-top:70px;padding-top:24px;border-top:1px dashed var(--crease);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--jp);font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint)}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1060px){
+  .practice-grid{grid-template-columns:1fr}
+  .practice-side{display:none}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:112px;gap:0;min-height:0}
+  .hero h1{margin-bottom:24px}
+  .lede{margin-bottom:30px}
+  .hero-stage{height:400px;order:2;margin-top:6px}
+  .w-top{flex-wrap:wrap;gap:6px 18px;padding:22px 24px}
+  .w-paper{margin-left:0;flex-basis:100%;order:3}
+  .w-body{grid-template-columns:1fr;padding:26px 24px 32px}
+  .work:nth-of-type(even) .w-body{grid-template-columns:1fr}
+  .work:nth-of-type(even) .w-stage{order:0}
+  .w-stage{height:250px}
+  .principles{grid-template-columns:1fr}
+  .site-nav{display:none}
+  .scroll-hint{display:none}
+}
+@media (max-height:800px){
+  .scroll-hint{display:none}
+  .foot-grid{grid-template-columns:1fr}
+  .foot-kanji{font-size:20rem;bottom:-6%}
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+  .turntable{transform:rotateY(var(--a0,0deg))}
+  .hero h1 .line>span{transform:none;animation:none}
+  .lede,.hero-cta,.hero-stage{opacity:1;animation:none}
+  .reveal,.work .w-top{opacity:1;transform:none}
+  .work .w-fold{transform:none}
+  .work .w-fold::after{opacity:0}
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+<a class="fable-link" href="/">XAVIER FABLE ×30</a>
+
+<header class="site-head">
+  <a class="brand" href="#top" aria-label="FOLD — home"><b>FOLD</b><span>折り紙工房</span></a>
+  <nav class="site-nav" aria-label="Primary">
+    <a href="#practice">The Practice</a>
+    <a href="#works">Folded Works</a>
+    <a href="#workshops">Workshops</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" aria-label="Introduction">
+    <div class="hero-copy">
+      <p class="kicker">紙の工房 — Paper Atelier · Kyoto / Copenhagen</p>
+      <h1>
+        <span class="line"><span>One sheet.</span></span>
+        <span class="line"><span>No cuts.</span></span>
+        <span class="line"><span><em>Only folds.</em></span></span>
+      </h1>
+      <p class="lede">FOLD is a paper atelier practicing origami the old way — a single square, no scissors, no glue, transformed by the memory of the hands. We fold, we teach, and we send small paper animals out into the world.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#workshops">Reserve a seat</a>
+        <a class="btn ghost" href="#works">View the works</a>
+      </div>
+    </div>
+    <div class="hero-stage" aria-hidden="true">
+      <div class="stage-shadow"></div>
+      <div class="scene" id="heroScene"></div>
+      <p class="stage-caption">Orizuru — 22 facets · one square · zero cuts</p>
+    </div>
+    <p class="scroll-hint">Unfold</p>
+  </section>
+
+  <!-- PRACTICE -->
+  <section id="practice" aria-label="The practice">
+    <div class="sec-head reveal">
+      <span class="sec-no">01</span>
+      <h2>The Practice</h2>
+      <span class="sec-jp">実 践</span>
+    </div>
+    <div class="practice-grid">
+      <div class="practice-side reveal"><span class="v-text">紙は全てを覚えている</span></div>
+      <div class="manifesto reveal">
+        <p>Every morning begins the same way: a square of washi, thirty-two grams, the colour of weak tea. We warm it between our palms before the first crease, because cold paper argues and warm paper listens.</p>
+        <p>A fold is a decision you cannot hide. Ink can be painted over; clay can be pressed smooth again. But <strong>the paper remembers everything</strong> — every hesitation, every correction, every moment your attention wandered. This is why we practice. Not to make cranes, but to make one honest decision after another, twenty-three times in a row.</p>
+        <p>The atelier keeps two rooms: one in Kyoto beside the Kamo river, one in Copenhagen above a bakery. Both smell of kozo fibre and morning. Both hold the same rule, written above the door in pencil: <strong>begin again</strong>.</p>
+      </div>
+      <div class="practice-side reveal"><span class="v-text">一枚の紙から</span></div>
+    </div>
+    <div class="principles">
+      <div class="principle reveal" style="--p-tint:var(--blush)">
+        <span class="p-jp">一</span>
+        <h3>One sheet</h3>
+        <p>Everything we make begins as a single square. Limitation is not the obstacle — it is the entire subject.</p>
+      </div>
+      <div class="principle reveal" style="--p-tint:var(--sage)">
+        <span class="p-jp">二</span>
+        <h3>No cuts</h3>
+        <p>Scissors solve problems the fold should have solved. If the form will not come, the sequence is wrong, not the paper.</p>
+      </div>
+      <div class="principle reveal" style="--p-tint:var(--indigo)">
+        <span class="p-jp">三</span>
+        <h3>Only folds</h3>
+        <p>A finished piece can always be unfolded back to its square — a map of every choice, creased in light and shadow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section id="works" aria-label="Folded works">
+    <div class="sec-head reveal">
+      <span class="sec-no">02</span>
+      <h2>Folded Works</h2>
+      <span class="sec-jp">作 品</span>
+    </div>
+
+    <article class="work" style="--d:0s">
+      <div class="w-sheet">
+        <div class="w-top">
+          <span class="w-no">001</span>
+          <h3>Orizuru<span class="w-jp">折鶴</span></h3>
+          <span class="w-paper">Kozo washi · 24 cm</span>
+        </div>
+        <div class="w-fold">
+          <div class="w-body">
+            <div class="w-stage" aria-hidden="true">
+              <div class="mini-shadow"></div>
+              <div class="mini-scene" data-model="crane"></div>
+            </div>
+            <div class="w-text">
+              <p class="w-quote">“The crane is the first word every folder learns, and the last one anyone masters.”</p>
+              <p>Folded from a single 24-centimetre square of mulberry washi in blush, dyed in the studio with safflower. The beak is dipped in sumi ink — the only mark we allow ourselves. A thousand of these carry a wish; ours carry the day they were folded, pencilled inside the left wing.</p>
+              <dl class="w-meta">
+                <div><dt>Folds</dt><dd>23</dd></div>
+                <div><dt>Time</dt><dd>4 min</dd></div>
+                <div><dt>Practice</dt><dd>26 yrs</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="work" style="--d:.1s">
+      <div class="w-sheet">
+        <div class="w-top">
+          <span class="w-no">002</span>
+          <h3>Kitsune<span class="w-jp">狐</span></h3>
+          <span class="w-paper">Momigami · 18 cm</span>
+        </div>
+        <div class="w-fold">
+          <div class="w-body">
+            <div class="w-stage" aria-hidden="true">
+              <div class="mini-shadow"></div>
+              <div class="mini-scene" data-model="fox"></div>
+            </div>
+            <div class="w-text">
+              <p class="w-quote">“Two folds give it ears. The third fold gives it an opinion.”</p>
+              <p>The fox mask is folded from crumpled momigami, tea-green, soft as cloth after kneading. It is the piece we give to students on their last day — a reminder that the simplest sequence, done with full attention, already has a face and is already watching you work.</p>
+              <dl class="w-meta">
+                <div><dt>Folds</dt><dd>9</dd></div>
+                <div><dt>Time</dt><dd>70 sec</dd></div>
+                <div><dt>Edition</dt><dd>Gift only</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="work" style="--d:.2s">
+      <div class="w-sheet">
+        <div class="w-top">
+          <span class="w-no">003</span>
+          <h3>Fune<span class="w-jp">舟</span></h3>
+          <span class="w-paper">Indigo aizome · 30 cm</span>
+        </div>
+        <div class="w-fold">
+          <div class="w-body">
+            <div class="w-stage" aria-hidden="true">
+              <div class="mini-shadow"></div>
+              <div class="mini-scene" data-model="boat"></div>
+            </div>
+            <div class="w-text">
+              <p class="w-quote">“Every boat we fold is folded to be lost.”</p>
+              <p>Aizome paper, indigo-dyed and waxed at the keel, folded the way every child in the world seems to already know. Each August we fold three hundred and set them on the Kamo at dusk. None come back. That is the point — some work is finished only when you let the river have it.</p>
+              <dl class="w-meta">
+                <div><dt>Folds</dt><dd>8</dd></div>
+                <div><dt>Fleet</dt><dd>300 / yr</dd></div>
+                <div><dt>Returned</dt><dd>0</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- WORKSHOPS -->
+  <section id="workshops" aria-label="Workshops">
+    <div class="sec-head reveal">
+      <span class="sec-no">03</span>
+      <h2>Workshops</h2>
+      <span class="sec-jp">教 室</span>
+    </div>
+    <div class="table-wrap reveal">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Session</th><th aria-label="Kanji"></th><th>Studio</th><th>Seats</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="t-date">SEP 12</td>
+            <td class="t-title">First Crane<small>Beginners — bring nothing but your hands</small></td>
+            <td class="t-kanji">初</td>
+            <td class="t-city">Kyoto — riverside room</td>
+            <td class="t-seats">12 seats</td>
+            <td><span class="chip open">Open</span></td>
+          </tr>
+          <tr>
+            <td class="t-date">SEP 26</td>
+            <td class="t-title">Wet-Folding Animals<small>Curved forms, damp paper, steady breath</small></td>
+            <td class="t-kanji">獣</td>
+            <td class="t-city">Copenhagen — above the bakery</td>
+            <td class="t-seats">8 seats</td>
+            <td><span class="chip open">Open</span></td>
+          </tr>
+          <tr>
+            <td class="t-date">OCT 10</td>
+            <td class="t-title">Tessellations<small>One sheet, two hundred creases, no shortcuts</small></td>
+            <td class="t-kanji">繰</td>
+            <td class="t-city">Kyoto — riverside room</td>
+            <td class="t-seats">10 seats</td>
+            <td><span class="chip wait">Waitlist</span></td>
+          </tr>
+          <tr>
+            <td class="t-date">OCT 24</td>
+            <td class="t-title">One Sheet, One Hour<small>Live online — paper posted to your door</small></td>
+            <td class="t-kanji">集</td>
+            <td class="t-city">Online — everywhere</td>
+            <td class="t-seats">Unlimited</td>
+            <td><span class="chip open">Open</span></td>
+          </tr>
+          <tr>
+            <td class="t-date">NOV 07</td>
+            <td class="t-title">Winter Intensive<small>Five days, one crane a day, silence optional</small></td>
+            <td class="t-kanji">冬</td>
+            <td class="t-city">Kyoto — riverside room</td>
+            <td class="t-seats">6 seats</td>
+            <td><span class="chip full">Full</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="workshops-note reveal"><b>NOTE</b> All materials provided — kozo, momigami and aizome squares from our own press. Offcuts return to the pulper; nothing is wasted, nothing is cut.</p>
+  </section>
+
+</main>
+
+<footer aria-label="Footer">
+  <span class="foot-kanji" aria-hidden="true">折</span>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <b>FOLD</b>
+      <p>A paper atelier in two cities. One sheet, no cuts, only folds — since the first crane, 1998.</p>
+    </div>
+    <div>
+      <h4>Kyoto</h4>
+      <ul>
+        <li>2-14 Kamo Riverside</li>
+        <li>Sakyō-ku, Kyoto</li>
+        <li>Thu–Sun, 10:00–17:00</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Copenhagen</h4>
+      <ul>
+        <li>Brødgade 9, 2. sal</li>
+        <li>1158 København K</li>
+        <li>Fri–Sat, 11:00–16:00</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Correspondence</h4>
+      <ul>
+        <li><a href="#top">hello@fold.paper</a></li>
+        <li><a href="#works">Commission a piece</a></li>
+        <li><a href="#workshops">Teach with us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 FOLD 折り紙工房</span>
+    <span>Folded, not printed</span>
+    <a href="/">XAVIER FABLE ×30 — back to gallery</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- vector helpers ---------- */
+function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];}
+function add(a,b){return [a[0]+b[0],a[1]+b[1],a[2]+b[2]];}
+function mul(a,s){return [a[0]*s,a[1]*s,a[2]*s];}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+function norm(a){var l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];}
+function r4(n){return Math.round(n*10000)/10000;}
+
+/* light from upper-front-left (design space, y up) */
+var LIGHT = norm([-0.45,0.82,0.5]);
+var S = 100; /* base facet square px */
+
+var PALETTE = {
+  blush:  {h:17,  s:58, lo:50, hi:86},
+  blushW: {h:20,  s:60, lo:55, hi:89},
+  sage:   {h:100, s:16, lo:42, hi:78},
+  indigo: {h:218, s:19, lo:23, hi:54},
+  cream:  {h:39,  s:48, lo:66, hi:93},
+  ink:    {h:220, s:14, lo:16, hi:30}
+};
+
+/* Build one triangular facet mapped onto 3D points A,B,C (design space, y-up) */
+function facet(A,B,C,colName,center,scale){
+  var col = PALETTE[colName];
+  A=mul(A,scale); B=mul(B,scale); C=mul(C,scale);
+  /* shading normal, oriented outward from model center */
+  var n = norm(cross(sub(B,A),sub(C,A)));
+  var cent = mul(add(add(A,B),C),1/3);
+  if (dot(n,sub(cent,mul(center,scale))) < 0) n = mul(n,-1);
+  var diff = Math.max(0,dot(n,LIGHT));
+  var rim  = Math.max(0,dot(n,norm([0.5,-0.2,-0.6])))*0.18;
+  var l = col.lo + (col.hi-col.lo)*Math.min(1,diff+rim);
+  /* inflate 2% to close antialias hairlines while keeping crease reads */
+  A = add(cent,mul(sub(A,cent),1.02));
+  B = add(cent,mul(sub(B,cent),1.02));
+  C = add(cent,mul(sub(C,cent),1.02));
+  /* to CSS space (y down) */
+  var a=[A[0],-A[1],A[2]], b=[B[0],-B[1],B[2]], c=[C[0],-C[1],C[2]];
+  var e1=mul(sub(b,a),1/S), e2=mul(sub(c,a),1/S), e3=norm(cross(e1,e2));
+  var m=[e1[0],e1[1],e1[2],0, e2[0],e2[1],e2[2],0, e3[0],e3[1],e3[2],0, a[0],a[1],a[2],1].map(r4);
+  var d=document.createElement('div');
+  d.className='facet';
+  d.style.transform='matrix3d('+m.join(',')+')';
+  var hsl=function(dl){return 'hsl('+col.h+','+col.s+'%,'+Math.max(8,Math.min(94,l+dl))+'%)';};
+  d.style.background='linear-gradient(135deg,'+hsl(6)+' 0%,'+hsl(0)+' 55%,'+hsl(-5)+' 100%)';
+  return d;
+}
+
+/* ---------- models (design space: x right, y up, z toward viewer) ---------- */
+function mx(p){return [-p[0],p[1],p[2]];}
+
+function craneTris(){
+  var F=[0,2,92], B=[0,6,-78], K=[0,-42,6], TF=[0,40,30], TB=[0,40,-26], R=[30,2,4], L=mx(R);
+  var NT=[0,66,152], NR=[5,26,122], NL=mx(NR);
+  var HT=[0,44,190], HR=[4,58,162], HL=mx(HR);
+  var TT=[0,84,-158], TR=[5,38,-118], TL=mx(TR);
+  var W=[158,66,-34], C=[78,56,2], W2=mx(W), C2=mx(C);
+  var t=[];
+  function add3(a,b,c,col){t.push({v:[a,b,c],c:col});}
+  /* body right */
+  add3(F,TF,R,'blush'); add3(TF,TB,R,'blush'); add3(TB,B,R,'blush'); add3(F,R,K,'blush'); add3(R,B,K,'blush');
+  /* body left */
+  add3(F,TF,L,'blush'); add3(TF,TB,L,'blush'); add3(TB,B,L,'blush'); add3(F,L,K,'blush'); add3(L,B,K,'blush');
+  /* neck */
+  add3(F,NT,NR,'blush'); add3(F,NL,NT,'blush');
+  /* head (ink-dipped beak) */
+  add3(NT,HR,HT,'indigo'); add3(NT,HT,HL,'indigo');
+  /* tail */
+  add3(B,TR,TT,'blush'); add3(B,TT,TL,'blush');
+  /* wings */
+  add3(C,TF,TB,'blushW'); add3(C,TB,W,'blushW'); add3(C,W,TF,'blushW');
+  add3(C2,TF,TB,'blushW'); add3(C2,TB,W2,'blushW'); add3(C2,W2,TF,'blushW');
+  return {tris:t, center:[0,22,0]};
+}
+
+function foxTris(){
+  var N=[0,-36,20], C=[0,24,4], Rc=[40,8,-2], Lc=mx(Rc), J=[0,-6,-16];
+  var EiR=[13,20,2], EtR=[38,64,-10], EiL=mx(EiR), EtL=mx(EtR);
+  var t=[];
+  function add3(a,b,c,col){t.push({v:[a,b,c],c:col});}
+  add3(N,Rc,C,'sage'); add3(N,C,Lc,'sage');       /* face halves */
+  add3(N,J,Rc,'sage'); add3(N,Lc,J,'sage');       /* jaw */
+  add3(EiR,EtR,Rc,'sage'); add3(EiL,EtL,Lc,'sage'); /* ears */
+  /* inner ears, slightly proud of the surface */
+  function inner(a,b,c){var cen=mul(add(add(a,b),c),1/3);
+    return [add(cen,mul(sub(a,cen),0.52)),add(cen,mul(sub(b,cen),0.52)),add(cen,mul(sub(c,cen),0.52))]
+      .map(function(p){return [p[0],p[1],p[2]+4];});}
+  var ir=inner(EiR,EtR,Rc), il=inner(EiL,EtL,Lc);
+  add3(ir[0],ir[1],ir[2],'blush'); add3(il[0],il[1],il[2],'blush');
+  add3([0,-36,21],[6,-22,16],[-6,-22,16],'indigo'); /* nose */
+  return {tris:t, center:[0,8,-14]};
+}
+
+function boatTris(){
+  var Bw=[0,18,60], St=[0,18,-60], Gr1=[24,18,34], Gr2=[24,18,-34], Gl1=mx(Gr1), Gl2=mx(Gr2);
+  var K1=[0,-20,38], K2=[0,-20,-38];
+  var P1=[0,20,30], P2=[0,20,-30], Pk=[0,52,0];
+  var t=[];
+  function add3(a,b,c,col){t.push({v:[a,b,c],c:col});}
+  add3(Bw,Gr1,K1,'indigo'); add3(Gr1,K2,K1,'indigo'); add3(Gr1,Gr2,K2,'indigo'); add3(Gr2,St,K2,'indigo');
+  add3(Bw,Gl1,K1,'indigo'); add3(Gl1,K2,K1,'indigo'); add3(Gl1,Gl2,K2,'indigo'); add3(Gl2,St,K2,'indigo');
+  add3(P1,Pk,P2,'cream');
+  return {tris:t, center:[0,4,0]};
+}
+
+var MODELS = {crane:craneTris, fox:foxTris, boat:boatTris};
+
+function buildScene(sceneEl, modelName, scale, a0, dur, topPct){
+  var model = MODELS[modelName]();
+  var turn = document.createElement('div');
+  turn.className='turntable';
+  turn.style.setProperty('--a0', a0+'deg');
+  turn.style.animationDuration = dur+'s';
+  turn.style.top = (topPct||50)+'%';
+  model.tris.forEach(function(tr){
+    turn.appendChild(facet(tr.v[0],tr.v[1],tr.v[2],tr.c,model.center,scale));
+  });
+  sceneEl.appendChild(turn);
+  return turn;
+}
+
+/* ---------- hero crane + tilt ---------- */
+/* Once the hero-stage entrance finishes, clear the fill-forwards animation.
+   A persistently-active opacity animation keeps the stage on a composited
+   layer whose 3D contents some rasterizers (incl. headless capture) drop. */
+var stageEl = document.querySelector('.hero-stage');
+if (stageEl){
+  var settleStage = function(){ stageEl.style.opacity='1'; stageEl.style.animation='none'; };
+  stageEl.addEventListener('animationend', settleStage, {once:true});
+  setTimeout(settleStage, 2400); /* fallback */
+}
+var heroScene = document.getElementById('heroScene');
+if (heroScene){
+  var tilt=document.createElement('div'); tilt.className='tilt';
+  var flo=document.createElement('div'); flo.className='float';
+  heroScene.appendChild(tilt); tilt.appendChild(flo);
+  var heroModel=craneTris();
+  var heroScale=Math.min(1.65, Math.max(1.05, window.innerWidth/380));
+  var heroTurn=document.createElement('div');
+  heroTurn.className='turntable';
+  heroTurn.style.setProperty('--a0','-70deg');
+  heroTurn.style.animationDuration='48s';
+  heroTurn.style.top='61.5%';
+  heroModel.tris.forEach(function(tr){
+    heroTurn.appendChild(facet(tr.v[0],tr.v[1],tr.v[2],tr.c,heroModel.center,heroScale));
+  });
+  flo.appendChild(heroTurn);
+
+  var baseX=9, cur={x:0,y:0}, tgt={x:0,y:0}, rafId=null;
+  tilt.style.transform='rotateX('+baseX+'deg)';
+  function loop(){
+    cur.x+=(tgt.x-cur.x)*0.055;
+    cur.y+=(tgt.y-cur.y)*0.055;
+    tilt.style.transform='rotateX('+(baseX+cur.x)+'deg) rotateY('+cur.y+'deg)';
+    rafId=requestAnimationFrame(loop);
+  }
+  var fine = window.matchMedia('(pointer: fine)').matches;
+  if (!REDUCED && fine){
+    window.addEventListener('pointermove',function(e){
+      tgt.y=(e.clientX/window.innerWidth-0.5)*15;
+      tgt.x=-(e.clientY/window.innerHeight-0.5)*9;
+    },{passive:true});
+    document.addEventListener('visibilitychange',function(){
+      if (document.hidden){ if(rafId){cancelAnimationFrame(rafId);rafId=null;} }
+      else if (!rafId){ rafId=requestAnimationFrame(loop); }
+    });
+    rafId=requestAnimationFrame(loop);
+  }
+}
+
+/* ---------- mini sculptures ---------- */
+var miniSpecs = {crane:{s:0.82,a0:-102,d:30,top:55}, fox:{s:1.5,a0:-72,d:34,top:52}, boat:{s:1.5,a0:-142,d:26,top:54}};
+document.querySelectorAll('.mini-scene').forEach(function(el){
+  var m=el.getAttribute('data-model'), sp=miniSpecs[m];
+  if (sp) buildScene(el,m,sp.s,sp.a0,sp.d,sp.top);
+});
+
+/* ---------- scroll reveals ---------- */
+var revealEls = document.querySelectorAll('.reveal, .work');
+if (REDUCED || !('IntersectionObserver' in window)){
+  revealEls.forEach(function(el){el.classList.add('in-view');});
+} else {
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in-view'); io.unobserve(en.target); }
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -5% 0px'});
+  revealEls.forEach(function(el){io.observe(el);});
+}
+
+/* ---------- progress bar ---------- */
+var bar=document.getElementById('progressBar');
+function onScroll(){
+  var h=document.documentElement;
+  var max=h.scrollHeight-h.clientHeight;
+  bar.style.transform='scaleX('+(max>0?h.scrollTop/max:0)+')';
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+
+/* ---------- ?scroll= support for screenshots ---------- */
+try{
+  var q=new URLSearchParams(window.location.search);
+  var sy=q.get('scroll');
+  if (sy!==null){
+    /* deterministic state for jumped-to screenshots: settle all reveals, jump instantly */
+    revealEls.forEach(function(el){el.classList.add('in-view');});
+    document.documentElement.style.scrollBehavior='auto';
+    var el2=document.getElementById(sy);
+    requestAnimationFrame(function(){
+      if (el2) el2.scrollIntoView();
+      else window.scrollTo(0,parseInt(sy,10)||0);
+    });
+  }
+}catch(e){}
+})();
+</script>
+</body>
+</html>

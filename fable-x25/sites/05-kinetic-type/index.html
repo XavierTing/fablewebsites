@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE ELASTIC WORD — A Manifesto on Living Letterforms</title>
+<meta name="description" content="A pure-typography manifesto where variable fonts are the imagery. Weight, width, slant and wonk — letterforms that breathe, stretch and lean under your cursor.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="THE ELASTIC WORD — A Manifesto on Living Letterforms">
+<meta property="og:description" content="A pure-typography manifesto where variable fonts are the imagery. Weight, width, slant and wonk — letterforms that breathe, stretch and lean under your cursor.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/05-kinetic-type/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/05-kinetic-type/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="THE ELASTIC WORD — A Manifesto on Living Letterforms">
+<meta name="twitter:description" content="A pure-typography manifesto where variable fonts are the imagery. Weight, width, slant and wonk — letterforms that breathe, stretch and lean under your cursor.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/05-kinetic-type/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230d0d0d'/%3E%3Ctext x='50' y='74' font-size='70' font-family='Georgia,serif' font-weight='900' fill='%23c8ff00' text-anchor='middle'%3EE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Roboto+Flex:opsz,slnt,wdth,wght,GRAD@8..144,-10..0,25..151,100..1000,-200..150&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d0d0d;
+    --bone:#faf7f0;
+    --acid:#c8ff00;
+    --ink-12:rgba(13,13,13,.12);
+    --ink-38:rgba(13,13,13,.38);
+    --ink-62:rgba(13,13,13,.62);
+    --u:8px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  }
+  body{
+    background:var(--bone);
+    color:var(--ink);
+    font-family:"Roboto Flex",system-ui,sans-serif;
+    font-variation-settings:"wght" 420,"wdth" 100,"opsz" 14;
+    font-size:16px;
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--acid);color:var(--ink)}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:var(--bone)}
+  ::-webkit-scrollbar-thumb{background:var(--ink);border:3px solid var(--bone);border-radius:6px}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- small caps label system ---------- */
+  .lbl{
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-variation-settings:"wght" 560,"wdth" 100,"opsz" 11;
+    color:var(--ink-62);
+  }
+  .lbl b{color:var(--ink);font-weight:inherit}
+
+  /* ---------- fixed chrome ---------- */
+  .backlink{
+    position:fixed;top:20px;left:24px;z-index:60;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    font-variation-settings:"wght" 700,"wdth" 100;
+    padding:6px 10px;
+    background:var(--bone);
+    box-shadow:0 0 0 1px var(--ink-12);
+    border-bottom:2px solid transparent;
+    transition:border-color .25s cubic-bezier(.22,1,.36,1), letter-spacing .35s cubic-bezier(.22,1,.36,1);
+  }
+  .backlink:hover{border-bottom-color:var(--acid);letter-spacing:.3em}
+  .progress{
+    position:fixed;top:0;left:0;height:3px;width:100%;z-index:70;
+    transform-origin:0 50%;transform:scaleX(0);
+    background:var(--acid);
+    pointer-events:none;
+  }
+  .grain{
+    position:fixed;inset:-50%;z-index:80;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .cursor{
+    position:fixed;top:0;left:0;z-index:90;pointer-events:none;
+    width:14px;height:14px;border-radius:50%;
+    background:var(--acid);
+    mix-blend-mode:multiply;
+    transform:translate(-50%,-50%) scale(0);
+    outline:1.5px solid var(--ink);outline-offset:2px;
+  }
+  @media (hover:none), (prefers-reduced-motion:reduce){ .cursor{display:none} }
+
+  /* ---------- section scaffolding ---------- */
+  section{position:relative}
+  .rule-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+    padding:calc(var(--u)*2) clamp(24px,4vw,64px);
+    border-top:1px solid var(--ink);
+  }
+  .wrap{padding-left:clamp(24px,4vw,64px);padding-right:clamp(24px,4vw,64px)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:calc(var(--u)*10) clamp(24px,4vw,64px) calc(var(--u)*3);
+  }
+  .hero-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+  .hero-mid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+  .hero-word{
+    font-size:clamp(3.4rem,15.5vw,15rem);
+    line-height:.86;
+    white-space:nowrap;
+    letter-spacing:-.015em;
+    user-select:none;
+    cursor:crosshair;
+  }
+  .hero-word span{
+    display:inline-block;
+    font-variation-settings:"wght" 200,"wdth" 80,"GRAD" 0;
+    transform:translateY(115%);
+    opacity:0;
+    will-change:font-variation-settings;
+  }
+  .ready .hero-word span{
+    transition:transform 1.1s cubic-bezier(.16,1,.3,1), opacity .7s ease;
+    transform:translateY(0);opacity:1;
+  }
+  .hero-sub{
+    margin-top:calc(var(--u)*5);
+    font-family:"Fraunces",serif;
+    font-style:italic;
+    font-variation-settings:"opsz" 32,"wght" 380,"SOFT" 40,"WONK" 0;
+    font-size:clamp(1.05rem,1.8vw,1.45rem);
+    color:var(--ink-62);
+    opacity:0;transform:translateY(14px);
+  }
+  .ready .hero-sub{transition:opacity .9s ease .7s, transform .9s cubic-bezier(.16,1,.3,1) .7s;opacity:1;transform:none}
+  .hero-bottom{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+  .hero-bottom .lbl .tick{color:var(--ink);background:var(--acid);padding:1px 5px}
+
+  /* ---------- PREFACE ---------- */
+  .preface{padding:calc(var(--u)*14) 0 calc(var(--u)*16)}
+  .preface-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:clamp(24px,4vw,64px);align-items:start}
+  .preface p{
+    font-family:"Fraunces",serif;
+    font-variation-settings:"opsz" 18,"wght" 420,"SOFT" 0,"WONK" 0;
+    font-size:clamp(1.15rem,1.6vw,1.4rem);
+    line-height:1.65;
+    max-width:34em;
+  }
+  .preface p + p{margin-top:1.2em}
+  .preface em{
+    font-style:italic;
+    font-variation-settings:"opsz" 18,"wght" 560,"SOFT" 60,"WONK" 1;
+  }
+  .preface .acid-mark{background:linear-gradient(transparent 62%, var(--acid) 62%, var(--acid) 94%, transparent 94%)}
+
+  /* ---------- MANIFESTO STATEMENTS ---------- */
+  .stmt{
+    min-height:86svh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:calc(var(--u)*8) clamp(24px,4vw,64px);
+  }
+  .stmt .idx{margin-bottom:calc(var(--u)*4);display:flex;align-items:center;gap:14px}
+  .stmt .idx .bar{display:inline-block;width:34px;height:2px;background:var(--ink-12);position:relative;overflow:hidden}
+  .stmt .idx .bar i{position:absolute;inset:0;background:var(--acid);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+  .stmt .idx .live{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    font-variation-settings:"wght" 700,"wdth" 100;
+    font-variant-numeric:tabular-nums;
+    background:var(--acid);color:var(--ink);padding:2px 8px;
+    min-width:7.5em;text-align:center;
+  }
+  .stmt-text{will-change:font-variation-settings}
+  .stmt-weight .stmt-text{
+    font-size:clamp(2.2rem,7vw,6.6rem);
+    line-height:1.02;letter-spacing:-.02em;
+    max-width:16em;
+    font-variation-settings:"wght" 100,"wdth" 100,"GRAD" 0;
+  }
+  .stmt-width .stmt-text{
+    font-size:clamp(2.6rem,9.5vw,9.4rem);
+    line-height:.92;letter-spacing:.01em;
+    text-transform:uppercase;
+    font-variation-settings:"wght" 780,"wdth" 25;
+    white-space:nowrap;
+  }
+  .stmt-width .stmt-text small{display:block;font-size:.38em;letter-spacing:.04em;font-variation-settings:"wght" 300,"wdth" 25;color:var(--ink-62)}
+  .stmt-slant .stmt-text{
+    font-size:clamp(2rem,5.6vw,5.2rem);
+    line-height:1.12;letter-spacing:-.015em;
+    max-width:17em;
+    font-variation-settings:"wght" 520,"wdth" 100;
+  }
+  .stmt-slant .w{display:inline-block;font-variation-settings:"slnt" 0,"wght" 520;will-change:font-variation-settings}
+  .stmt-slant .w.hot{color:var(--ink)}
+  .stmt-wonk .stmt-text{
+    font-family:"Fraunces",serif;
+    font-size:clamp(2.4rem,7.6vw,7.2rem);
+    line-height:1;letter-spacing:-.015em;
+    max-width:13em;
+    font-variation-settings:"opsz" 144,"wght" 480,"SOFT" 0,"WONK" 0;
+  }
+  .stmt-wonk .stmt-text .rumor{
+    text-decoration:underline;
+    text-decoration-color:var(--acid);
+    text-decoration-thickness:.07em;
+    text-underline-offset:.09em;
+  }
+  .stmt .gloss{
+    margin-top:calc(var(--u)*4);
+    max-width:30em;color:var(--ink-62);
+    font-size:.95rem;line-height:1.6;
+    font-variation-settings:"wght" 420,"wdth" 100;
+  }
+
+  /* ---------- PLAYGROUND ---------- */
+  .playground{border-top:0}
+  .play-grid{
+    display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+    gap:clamp(24px,4vw,72px);
+    align-items:center;
+    padding-top:calc(var(--u)*6);padding-bottom:calc(var(--u)*10);
+  }
+  .glyph-stage{
+    position:relative;
+    border:1px solid var(--ink);
+    min-height:clamp(340px,58vh,620px);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    background:
+      linear-gradient(var(--ink-12) 1px, transparent 1px) 0 0/100% 25% no-repeat border-box,
+      radial-gradient(circle at 50% 55%, rgba(13,13,13,.035), transparent 60%);
+    background-position:0 72%;
+  }
+  .glyph-stage::after{
+    content:"BASELINE";position:absolute;left:10px;top:calc(72% - 18px);
+    font-size:9px;letter-spacing:.22em;color:var(--ink-38);
+  }
+  #glyph{
+    font-family:"Fraunces",serif;
+    font-size:clamp(14rem,30vw,26rem);
+    line-height:1;
+    font-variation-settings:"opsz" 144,"wght" 640,"SOFT" 0,"WONK" 1;
+    transform:translateY(-4%);
+    user-select:none;
+  }
+  .glyph-picker{position:absolute;top:10px;right:10px;display:flex;gap:4px}
+  .glyph-picker button{
+    font-family:"Fraunces",serif;font-size:17px;
+    font-variation-settings:"opsz" 20,"wght" 500,"SOFT" 0,"WONK" 0;
+    width:34px;height:34px;border:1px solid var(--ink-12);background:transparent;color:var(--ink);
+    cursor:pointer;transition:background .2s ease,border-color .2s ease;
+  }
+  .glyph-picker button:hover{border-color:var(--ink)}
+  .glyph-picker button[aria-pressed="true"]{background:var(--acid);border-color:var(--ink)}
+  .controls{display:flex;flex-direction:column;gap:calc(var(--u)*4)}
+  .ctl label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .ctl output{
+    font-variation-settings:"wght" 700,"wdth" 100;
+    font-size:15px;font-variant-numeric:tabular-nums;
+    background:var(--acid);padding:0 6px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:26px;background:transparent;cursor:grab;display:block;
+  }
+  input[type=range]:active{cursor:grabbing}
+  input[type=range]::-webkit-slider-runnable-track{
+    height:2px;border-radius:0;
+    background:linear-gradient(to right, var(--ink) 0 var(--fill,50%), var(--ink-12) var(--fill,50%) 100%);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:18px;height:18px;border-radius:50%;
+    background:var(--ink);
+    border:3px solid var(--bone);
+    box-shadow:0 0 0 1.5px var(--ink);
+    margin-top:-8px;
+    transition:background .2s ease, transform .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  input[type=range]:hover::-webkit-slider-thumb,
+  input[type=range]:focus-visible::-webkit-slider-thumb{background:var(--acid);transform:scale(1.15)}
+  input[type=range]::-moz-range-track{height:2px;background:var(--ink-12)}
+  input[type=range]::-moz-range-progress{height:2px;background:var(--ink)}
+  input[type=range]::-moz-range-thumb{
+    width:12px;height:12px;border-radius:50%;background:var(--ink);border:3px solid var(--bone);box-shadow:0 0 0 1.5px var(--ink);
+  }
+  .readout{
+    margin-top:calc(var(--u)*1);
+    padding:14px 16px;
+    border:1px solid var(--ink);
+    font-family:ui-monospace,"SF Mono",Menlo,monospace;
+    font-size:12px;line-height:1.7;
+    overflow-x:auto;white-space:nowrap;
+    background:var(--ink);color:var(--bone);
+  }
+  .readout .k{color:var(--acid)}
+
+  /* ---------- WALL ---------- */
+  .wall-head{padding-top:calc(var(--u)*6);padding-bottom:calc(var(--u)*5);display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:12px}
+  .wall-head h2{
+    font-size:clamp(2rem,5vw,4.4rem);line-height:.95;letter-spacing:-.02em;
+    font-variation-settings:"wght" 850,"wdth" 92;text-transform:uppercase;
+  }
+  .wall-head h2 .t{font-family:"Fraunces",serif;font-style:italic;text-transform:none;font-variation-settings:"opsz" 144,"wght" 500,"SOFT" 100,"WONK" 1}
+  .wall{
+    display:grid;grid-template-columns:repeat(8,1fr);
+    gap:1px;background:var(--ink);border:1px solid var(--ink);
+    margin:0 clamp(24px,4vw,64px) calc(var(--u)*12);
+  }
+  .cell{
+    background:var(--bone);
+    aspect-ratio:1/1.05;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:10px 10px 8px;
+    cursor:crosshair;
+    transition:background .3s ease;
+  }
+  .cell .word{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(1.4rem,2.6vw,2.5rem);line-height:1;
+    transition:font-variation-settings .55s cubic-bezier(.22,1,.36,1), color .3s ease;
+  }
+  .cell .tag{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-38);transition:color .3s ease;font-variant-numeric:tabular-nums}
+  .cell:hover{background:var(--ink)}
+  .cell:hover .word{color:var(--bone)}
+  .cell:hover .tag{color:var(--acid)}
+
+  /* ---------- COLOPHON ---------- */
+  .colophon{
+    background:var(--ink);color:var(--bone);
+    padding:calc(var(--u)*12) clamp(24px,4vw,64px) calc(var(--u)*5);
+  }
+  .colophon ::selection{background:var(--acid);color:var(--ink)}
+  .colo-word{
+    font-family:"Fraunces",serif;
+    font-size:clamp(2.6rem,8.5vw,8rem);
+    line-height:.95;letter-spacing:-.02em;
+    font-variation-settings:"opsz" 144,"wght" 560,"SOFT" 100,"WONK" 1;
+    margin-bottom:calc(var(--u)*10);
+    max-width:9em;
+  }
+  .colo-word .thin{font-family:"Roboto Flex",sans-serif;font-variation-settings:"wght" 140,"wdth" 130}
+  .colo-grid{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(24px,4vw,64px);
+    padding-top:calc(var(--u)*4);
+    border-top:1px solid rgba(250,247,240,.25);
+  }
+  .colo-grid .lbl{color:rgba(250,247,240,.55);margin-bottom:14px;display:block}
+  .colo-grid p, .colo-grid li{font-size:.9rem;line-height:1.7;color:rgba(250,247,240,.8);font-variation-settings:"wght" 380,"wdth" 100}
+  .colo-grid ul{list-style:none}
+  .colo-grid li b{color:var(--bone);font-variation-settings:"wght" 700;font-variant-numeric:tabular-nums}
+  .colo-grid li i{font-style:normal;color:var(--acid)}
+  .colo-grid a{border-bottom:1px solid rgba(250,247,240,.35);transition:border-color .2s ease,color .2s ease}
+  .colo-grid a:hover{color:var(--acid);border-bottom-color:var(--acid)}
+  .colo-foot{
+    margin-top:calc(var(--u)*10);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(250,247,240,.5);
+  }
+  .colo-foot .acid{color:var(--acid)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1024px){
+    .wall{grid-template-columns:repeat(5,1fr)}
+    .play-grid{grid-template-columns:minmax(0,1fr)}
+    .glyph-stage,.controls{min-width:0}
+  }
+  @media (max-width:640px){
+    .hero{padding-top:calc(var(--u)*11)}
+    .hero-word{font-size:19.5vw}
+    .preface-grid{grid-template-columns:1fr;gap:24px}
+    .stmt{min-height:78svh}
+    .stmt-width .stmt-text{font-size:10.5vw;letter-spacing:0}
+    .wall{grid-template-columns:repeat(2,1fr)}
+    .cell .word{font-size:2rem}
+    .colo-grid{grid-template-columns:1fr}
+    .hero-bottom .lbl:last-child{display:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">Xavier Fable ×30</a>
+<div class="progress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="hero-top">
+    <span class="lbl"><b>The Elastic Word</b> — a manifesto on living letterforms</span>
+    <span class="lbl">№ 05 / Kinetic Type</span>
+  </div>
+  <div class="hero-mid">
+    <h1 class="hero-word" id="heroWord" aria-label="ELASTIC">
+      <span>E</span><span>L</span><span>A</span><span>S</span><span>T</span><span>I</span><span>C</span>
+    </h1>
+    <p class="hero-sub">Type was never meant to hold still.</p>
+  </div>
+  <div class="hero-bottom">
+    <span class="lbl">Scroll — the argument unfolds</span>
+    <span class="lbl">Cursor <span class="tick">=</span> pressure &nbsp;·&nbsp; proximity <span class="tick">=</span> weight</span>
+  </div>
+</header>
+
+<!-- ================= PREFACE ================= -->
+<section class="preface">
+  <div class="rule-head">
+    <span class="lbl"><b>00</b> — Preface</span>
+    <span class="lbl">Fraunces · opsz 9→144</span>
+  </div>
+  <div class="wrap preface-grid" style="padding-top:calc(var(--u)*8)">
+    <span class="lbl">On the end of<br>frozen letters</span>
+    <div>
+      <p>For five hundred years we cast our alphabet in metal and called the stiffness <em>craft</em>. A letter weighed what the foundry said it weighed. It leaned only when a punchcutter allowed it to lean. The word sat on the page like a fossil — beautiful, and finished, and dead.</p>
+      <p>The variable font ended that. A single file now holds every weight between hairline and black, every width between crushed and sprawling, every degree of lean. <span class="acid-mark">A letterform is no longer a picture of a shape; it is a range of possible shapes,</span> waiting for pressure. What follows is not a specimen. It is a demonstration of a material.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MANIFESTO ================= -->
+<section class="manifesto">
+  <div class="rule-head">
+    <span class="lbl"><b>01</b> — The Manifesto</span>
+    <span class="lbl">Four axes · scroll-driven</span>
+  </div>
+
+  <div class="stmt stmt-weight" data-fx="weight">
+    <div class="idx"><span class="lbl">01 · wght 100 → 1000</span><span class="bar"><i></i></span><span class="live">wght 100</span></div>
+    <p class="stmt-text">A letter should gain weight the longer you look at it.</p>
+    <p class="gloss">Weight is not a property. It is a temperature — and attention is heat. This sentence is set at hairline 100 when it enters the page and reaches black 1000 before it leaves.</p>
+  </div>
+
+  <div class="stmt stmt-width" data-fx="width">
+    <div class="idx"><span class="lbl">02 · wdth 25 → 151</span><span class="bar"><i></i></span><span class="live">wdth 25</span></div>
+    <p class="stmt-text">Language<br>stretches.<small>meaning survives the pull</small></p>
+    <p class="gloss">Compress a word and it whispers through a crowd; expand it and it fills a room without raising its voice. Width is volume for the eyes.</p>
+  </div>
+
+  <div class="stmt stmt-slant" data-fx="slant">
+    <div class="idx"><span class="lbl">03 · slnt 0 → −10</span><span class="bar"><i></i></span><span class="live">slnt 0.0°</span></div>
+    <p class="stmt-text">Italics are not a style — they are a direction of thought, and a sentence can change its mind one word at a time.</p>
+    <p class="gloss">Watch the lean travel through the line as you scroll: each word tips ten degrees forward, the typographic equivalent of leaning in.</p>
+  </div>
+
+  <div class="stmt stmt-wonk" data-fx="wonk">
+    <div class="idx"><span class="lbl">04 · SOFT 0 → 100 · WONK 0 → 1</span><span class="bar"><i></i></span><span class="live">soft 0 · w0</span></div>
+    <p class="stmt-text">Perfection is a <span class="rumor">rumor</span> started by rulers.</p>
+    <p class="gloss">Fraunces carries two confessions in its file: SOFT, which melts every corner, and WONK, which lets the letters remember they were once drawn by a hand. Scroll, and watch the serif forgive itself.</p>
+  </div>
+</section>
+
+<!-- ================= PLAYGROUND ================= -->
+<section class="playground">
+  <div class="rule-head">
+    <span class="lbl"><b>02</b> — Specimen Playground</span>
+    <span class="lbl">Drag the sliders · the glyph obeys</span>
+  </div>
+  <div class="wrap play-grid">
+    <div class="glyph-stage">
+      <div id="glyph">R</div>
+      <div class="glyph-picker" role="group" aria-label="Choose glyph">
+        <button type="button" aria-pressed="true">R</button><button type="button">g</button><button type="button">a</button><button type="button">&amp;</button><button type="button">Q</button>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <label for="axOpsz"><span class="lbl">Optical size · opsz</span><output id="oOpsz">144</output></label>
+        <input type="range" id="axOpsz" min="9" max="144" value="144" step="1" aria-label="Optical size">
+      </div>
+      <div class="ctl">
+        <label for="axWght"><span class="lbl">Weight · wght</span><output id="oWght">640</output></label>
+        <input type="range" id="axWght" min="100" max="900" value="640" step="1" aria-label="Weight">
+      </div>
+      <div class="ctl">
+        <label for="axSoft"><span class="lbl">Softness · SOFT</span><output id="oSoft">0</output></label>
+        <input type="range" id="axSoft" min="0" max="100" value="0" step="1" aria-label="Softness">
+      </div>
+      <div class="ctl">
+        <label for="axWonk"><span class="lbl">Wonk · WONK</span><output id="oWonk">1</output></label>
+        <input type="range" id="axWonk" min="0" max="1" value="1" step="1" aria-label="Wonk">
+      </div>
+      <div class="readout" id="readout"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WALL ================= -->
+<section class="wallsec">
+  <div class="rule-head">
+    <span class="lbl"><b>03</b> — The Wall</span>
+    <span class="lbl">One word · forty settings · hover to morph</span>
+  </div>
+  <div class="wrap wall-head">
+    <h2>Forty ways<br>to say <span class="t">type</span></h2>
+    <span class="lbl" style="max-width:26em;text-transform:none;letter-spacing:.02em;font-size:.95rem;line-height:1.6">Every cell below is the same four letters from the same two files. Nothing is a different font. Everything is a different decision.</span>
+  </div>
+  <div class="wall" id="wall"></div>
+</section>
+
+<!-- ================= COLOPHON ================= -->
+<footer class="colophon">
+  <p class="colo-word">Set loose, <span class="thin">not set in stone.</span></p>
+  <div class="colo-grid">
+    <div>
+      <span class="lbl">Colophon</span>
+      <p>The Elastic Word is a working manifesto: every effect on this page is live text, rendered by your browser from two variable font files. No images were used, or needed. Ink #0d0d0d on bone #faf7f0, with one acid interruption.</p>
+    </div>
+    <div>
+      <span class="lbl">Type</span>
+      <ul>
+        <li><b>Fraunces</b> — Undercase Type. Axes: opsz, wght, SOFT, WONK, ital.</li>
+        <li style="margin-top:10px"><b>Roboto Flex</b> — Font Bureau for Google Fonts. Axes: wght, wdth, slnt, opsz, GRAD.</li>
+        <li style="margin-top:10px">Served via <a href="https://fonts.google.com" rel="noopener">Google Fonts</a>, full axis ranges requested.</li>
+      </ul>
+    </div>
+    <div>
+      <span class="lbl">Axis glossary</span>
+      <ul>
+        <li><i>wght</i> — <b>100–1000</b> · from breath to shout</li>
+        <li><i>wdth</i> — <b>25–151</b> · crushed to sprawling</li>
+        <li><i>slnt</i> — <b>0 to −10</b> · the lean of intent</li>
+        <li><i>opsz</i> — <b>8–144</b> · eyes at every distance</li>
+        <li><i>GRAD</i> — <b>−200–150</b> · weight without width</li>
+        <li><i>SOFT</i> — <b>0–100</b> · corners, forgiven</li>
+        <li><i>WONK</i> — <b>0/1</b> · the hand, remembered</li>
+      </ul>
+    </div>
+  </div>
+  <div class="colo-foot">
+    <span>© 2026 The Elastic Word</span>
+    <span>Site <span class="acid">05</span> of 30 — <a href="/" style="border-bottom:1px solid rgba(250,247,240,.35)">Xavier Fable ×30</a></span>
+    <span>100% text · 0 images</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var clamp = function(v,a,b){ return v<a?a:(v>b?b:v); };
+  var smooth = function(t){ return t*t*(3-2*t); };
+
+  /* ---------- entrance ---------- */
+  var arm = function(){ document.body.classList.add("ready"); };
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(arm); setTimeout(arm, 2500); }
+  else setTimeout(arm, 300);
+
+  /* ---------- HERO: cursor-proximity spring ---------- */
+  var word = document.getElementById("heroWord");
+  var letters = Array.prototype.slice.call(word.children);
+  var springs = letters.map(function(){ return { w:200, vw:0, d:80, vd:0, g:0, vg:0 }; });
+  var px = null, py = null, hasPointer = false;
+
+  function heroTargets(i){
+    var r = letters[i].getBoundingClientRect();
+    var cx = r.left + r.width/2, cy = r.top + r.height/2;
+    var dist = Math.hypot(px-cx, py-cy);
+    var radius = Math.min(window.innerWidth, 900) * 0.42;
+    var t = clamp(1 - dist/radius, 0, 1);
+    t = smooth(t);
+    return {
+      w: 150 + t*850,          /* wght 150 -> 1000 */
+      d: 70  + t*81,           /* wdth 70  -> 151  */
+      g: -40 + t*190           /* GRAD -40 -> 150  */
+    };
+  }
+  function applyLetter(i){
+    var s = springs[i];
+    letters[i].style.fontVariationSettings =
+      '"wght" ' + s.w.toFixed(1) + ', "wdth" ' + s.d.toFixed(1) + ', "GRAD" ' + s.g.toFixed(1);
+  }
+  function seedPointer(){
+    var r = word.getBoundingClientRect();
+    px = r.left + r.width*0.5; py = r.top + r.height*0.5;
+  }
+  function warmStart(){
+    seedPointer();
+    for (var i=0;i<letters.length;i++){
+      var t = heroTargets(i);
+      springs[i].w = t.w; springs[i].d = t.d; springs[i].g = t.g;
+      applyLetter(i);
+    }
+  }
+
+  document.addEventListener("pointermove", function(e){
+    px = e.clientX; py = e.clientY; hasPointer = true;
+    if (cursorEl) { cx2 = e.clientX; cy2 = e.clientY; cursorOn = true; }
+  }, {passive:true});
+
+  /* ---------- custom cursor ---------- */
+  var cursorEl = document.querySelector(".cursor");
+  var cx2 = -100, cy2 = -100, cursorOn = false, cScale = 0;
+
+  /* ---------- scroll effects registry ---------- */
+  var fxEls = Array.prototype.slice.call(document.querySelectorAll("[data-fx]")).map(function(el){
+    var o = { el: el, text: el.querySelector(".stmt-text"), bar: el.querySelector(".bar i"), live: el.querySelector(".live"), kind: el.getAttribute("data-fx") };
+    if (o.kind === "slant"){
+      var words = o.text.textContent.split(" ");
+      o.text.innerHTML = words.map(function(w){ return '<span class="w">'+w+'</span>'; }).join(" ");
+      o.words = Array.prototype.slice.call(o.text.querySelectorAll(".w"));
+    }
+    return o;
+  });
+
+  function progressOf(el){
+    var vh = window.innerHeight;
+    var r = el.getBoundingClientRect();
+    if (r.bottom < -80 || r.top > vh + 80) return null;
+    return clamp((vh - r.top) / (vh + r.height), 0, 1);
+  }
+  function runFx(o, p){
+    /* remap so the transformation happens across the readable band */
+    var pe = smooth(clamp((p - 0.12) / 0.6, 0, 1));
+    if (o.bar) o.bar.style.transform = "scaleX(" + pe + ")";
+    if (o.kind === "weight"){
+      var w = 100 + 900*pe;
+      o.text.style.fontVariationSettings = '"wght" '+w.toFixed(1)+', "wdth" 100, "GRAD" '+(pe*80).toFixed(1);
+      if (o.live) o.live.textContent = "wght " + Math.round(w);
+    } else if (o.kind === "width"){
+      var d = 25 + 126*pe;
+      o.text.style.fontVariationSettings = '"wght" 780, "wdth" '+d.toFixed(1);
+      o.text.style.letterSpacing = (0.01 - pe*0.02) + "em";
+      if (o.live) o.live.textContent = "wdth " + Math.round(d);
+    } else if (o.kind === "slant"){
+      var n = o.words.length;
+      for (var i=0;i<n;i++){
+        var wi = clamp(pe*(n+2) - i, 0, 1);
+        wi = smooth(wi);
+        o.words[i].style.fontVariationSettings = '"slnt" '+(-10*wi).toFixed(2)+', "wght" '+(520+180*wi).toFixed(0);
+      }
+      if (o.live) o.live.textContent = "slnt −" + (10*clamp(pe*(n+2)/n,0,1)).toFixed(1) + "°";
+    } else if (o.kind === "wonk"){
+      var soft = 100*pe;
+      var wonk = pe > 0.45 ? 1 : 0;
+      var wg = 480 + 200*pe;
+      o.text.style.fontVariationSettings = '"opsz" 144, "wght" '+wg.toFixed(0)+', "SOFT" '+soft.toFixed(1)+', "WONK" '+wonk;
+      if (o.live) o.live.textContent = "soft " + Math.round(soft) + " · w" + wonk;
+    }
+  }
+
+  /* ---------- progress bar ---------- */
+  var progressBar = document.querySelector(".progress");
+
+  /* ---------- main loop ---------- */
+  var running = true;
+  document.addEventListener("visibilitychange", function(){
+    running = !document.hidden;
+    if (running && !reduced) requestAnimationFrame(tick);
+  });
+
+  function tick(){
+    if (!running || reduced) return;
+    /* hero springs */
+    if (px !== null){
+      for (var i=0;i<letters.length;i++){
+        var t = heroTargets(i), s = springs[i];
+        var k = 0.14, damp = 0.68;
+        s.vw = (s.vw + (t.w - s.w) * k) * damp; s.w += s.vw;
+        s.vd = (s.vd + (t.d - s.d) * k) * damp; s.d += s.vd;
+        s.vg = (s.vg + (t.g - s.g) * k) * damp; s.g += s.vg;
+        applyLetter(i);
+      }
+    }
+    /* scroll fx */
+    for (var j=0;j<fxEls.length;j++){
+      var p = progressOf(fxEls[j].el);
+      if (p !== null) runFx(fxEls[j], p);
+    }
+    /* progress bar */
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+    /* cursor */
+    if (cursorOn){
+      var hot = document.querySelector("a:hover,button:hover,input:hover,.cell:hover,.hero-word:hover");
+      cScale += ((hot ? 2.4 : 1) - cScale) * 0.2;
+      cursorEl.style.transform = "translate(" + cx2 + "px," + cy2 + "px) translate(-50%,-50%) scale(" + cScale.toFixed(3) + ")";
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if (reduced){
+    /* static but composed states */
+    warmStart();
+    fxEls.forEach(function(o){ runFx(o, 0.72); });
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    window.addEventListener("scroll", function(){
+      progressBar.style.transform = "scaleX(" + (max > 0 ? window.scrollY/max : 0) + ")";
+    }, {passive:true});
+  } else {
+    warmStart();
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener("resize", function(){ if (!hasPointer) seedPointer(); }, {passive:true});
+
+  /* ---------- PLAYGROUND ---------- */
+  var glyph = document.getElementById("glyph");
+  var readout = document.getElementById("readout");
+  var axes = [
+    { input: document.getElementById("axOpsz"), out: document.getElementById("oOpsz"), tag: "opsz" },
+    { input: document.getElementById("axWght"), out: document.getElementById("oWght"), tag: "wght" },
+    { input: document.getElementById("axSoft"), out: document.getElementById("oSoft"), tag: "SOFT" },
+    { input: document.getElementById("axWonk"), out: document.getElementById("oWonk"), tag: "WONK" }
+  ];
+  function paintSlider(inp){
+    var pct = (inp.value - inp.min) / (inp.max - inp.min) * 100;
+    inp.style.setProperty("--fill", pct + "%");
+  }
+  function updateGlyph(){
+    var parts = axes.map(function(a){
+      a.out.textContent = a.input.value;
+      paintSlider(a.input);
+      return '"' + a.tag + '" ' + a.input.value;
+    });
+    glyph.style.fontVariationSettings = parts.join(", ");
+    readout.innerHTML = '<span class="k">font-variation-settings</span>: ' + parts.join(", ") + ";";
+  }
+  axes.forEach(function(a){ a.input.addEventListener("input", updateGlyph, {passive:true}); });
+  updateGlyph();
+
+  var picker = document.querySelectorAll(".glyph-picker button");
+  picker.forEach(function(b){
+    b.addEventListener("click", function(){
+      picker.forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      glyph.textContent = b.textContent;
+    });
+  });
+
+  /* ---------- WALL: 40 combos ---------- */
+  var wall = document.getElementById("wall");
+  var frag = document.createDocumentFragment();
+  for (var ci = 0; ci < 40; ci++){
+    var cell = document.createElement("div");
+    cell.className = "cell";
+    var wordEl = document.createElement("span");
+    wordEl.className = "word";
+    wordEl.textContent = "type";
+    var tag = document.createElement("span");
+    tag.className = "tag";
+    if (ci % 5 === 2){
+      /* Fraunces cells */
+      var fw = [150, 340, 560, 760, 900][(ci/5|0) % 5];
+      var soft = (ci * 17) % 101;
+      var wonk = ci % 2;
+      var opsz = 9 + Math.round((ci * 3.47) % 135);
+      wordEl.style.fontFamily = '"Fraunces", serif';
+      var base = '"opsz" '+opsz+', "wght" '+fw+', "SOFT" '+soft+', "WONK" '+wonk;
+      var hov  = '"opsz" '+(153-opsz)+', "wght" '+(1000-fw)+', "SOFT" '+(100-soft)+', "WONK" '+(1-wonk);
+      tag.textContent = "FR · " + fw + " · S" + soft + " · W" + wonk;
+    } else {
+      /* prime-stepped so no row or 8-wide column ever repeats */
+      var w = 100 + Math.round(((ci * 337) % 901) / 25) * 25;
+      var d = 25 + (ci * 211) % 127;
+      var sl = ((ci * 7) % 5 === 1) ? -10 : 0;
+      var base = '"wght" '+w+', "wdth" '+d+', "slnt" '+sl+', "GRAD" 0';
+      var hov  = '"wght" '+(1100 - w)+', "wdth" '+(176 - d)+', "slnt" '+(-10 - sl)+', "GRAD" 150';
+      tag.textContent = "RF · " + w + " · " + d + (sl ? " · IT" : "");
+    }
+    wordEl.style.fontVariationSettings = base;
+    (function(el, b, h){
+      cell.addEventListener("mouseenter", function(){ el.style.fontVariationSettings = h; });
+      cell.addEventListener("mouseleave", function(){ el.style.fontVariationSettings = b; });
+    })(wordEl, base, hov);
+    cell.appendChild(wordEl);
+    cell.appendChild(tag);
+    frag.appendChild(cell);
+  }
+  wall.appendChild(frag);
+
+  /* ---------- ?scroll= support for mid-scroll screenshots ---------- */
+  var q = new URLSearchParams(location.search).get("scroll");
+  if (q !== null){
+    var f = parseFloat(q);
+    var jump = function(){
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({ top: f <= 1 ? f * max : f, behavior: "auto" });
+    };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ setTimeout(jump, 250); });
+    setTimeout(jump, 1800);
+  }
+})();
+</script>
+</body>
+</html>

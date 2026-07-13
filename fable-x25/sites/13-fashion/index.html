@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VANTABLUME — Collection 001: EXOSKELETON</title>
+<meta name="description" content="VANTABLUME, maison de couture. Collection 001 — EXOSKELETON. Armour grown, not sewn. Paris, Autumn–Winter 2026.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="VANTABLUME — Collection 001: EXOSKELETON">
+<meta property="og:description" content="VANTABLUME, maison de couture. Collection 001 — EXOSKELETON. Armour grown, not sewn. Paris, Autumn–Winter 2026.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/13-fashion/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/13-fashion/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VANTABLUME — Collection 001: EXOSKELETON">
+<meta name="twitter:description" content="VANTABLUME, maison de couture. Collection 001 — EXOSKELETON. Armour grown, not sewn. Paris, Autumn–Winter 2026.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/13-fashion/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖤</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Archivo:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --ivory: #f2f0ec;
+    --ivory-dim: rgba(242, 240, 236, 0.55);
+    --black-dim: rgba(10, 10, 10, 0.55);
+    --serif: "Cormorant Garamond", "Times New Roman", serif;
+    --sans: "Archivo", "Helvetica Neue", sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    background: var(--black);
+    color: var(--ivory);
+    font-family: var(--serif);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--ivory); color: var(--black); }
+  .light ::selection, .light::selection { background: var(--black); color: var(--ivory); }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: rgba(242,240,236,0.28); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(242,240,236,0.5); }
+
+  a { color: inherit; text-decoration: none; }
+
+  :focus-visible {
+    outline: 1px solid var(--ivory);
+    outline-offset: 4px;
+  }
+  .light :focus-visible { outline-color: var(--black); }
+
+  /* ---------- labels ---------- */
+  .label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- custom cursor ---------- */
+  #cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    border: 1px solid var(--ivory);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: background-color 0.28s var(--ease-out), border-color 0.28s var(--ease-out), width 0.28s var(--ease-out), height 0.28s var(--ease-out), opacity 0.3s ease;
+    mix-blend-mode: difference;
+    opacity: 0;
+    will-change: left, top;
+  }
+  #cursor.on { opacity: 1; }
+  #cursor.hot { background: var(--ivory); width: 14px; height: 14px; }
+  @media (hover: none), (pointer: coarse) { #cursor { display: none; } }
+
+  /* ---------- top strip ---------- */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 40px;
+    mix-blend-mode: difference;
+    color: var(--ivory);
+  }
+  header .label { font-weight: 500; white-space: nowrap; }
+  header .back { opacity: 0.75; transition: opacity 0.3s ease; }
+  header .back:hover { opacity: 1; }
+  header nav { display: flex; gap: 44px; }
+  header nav a { position: relative; opacity: 0.75; transition: opacity 0.3s ease; padding: 4px 0; }
+  header nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease-out);
+  }
+  header nav a:hover { opacity: 1; }
+  header nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+  header .season { opacity: 0.75; }
+  @media (max-width: 860px) {
+    header { padding: 16px 18px; }
+    header .label { font-size: 9px; letter-spacing: 0.22em; }
+    header nav { gap: 18px; }
+    header nav a:nth-child(2), header nav a:nth-child(3) { display: none; }
+    header .season { display: none; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .hero-media, .hero-fallback {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 114%;               /* extra height crops the baked-in wordmark at the frame bottom */
+    object-fit: cover;
+    object-position: 50% 12%;
+  }
+  .hero-fallback { z-index: 0; }
+  .hero-media { z-index: 1; }
+  .hero.kenburns .hero-fallback {
+    animation: kenburns 12s var(--ease-out) forwards;
+  }
+  @keyframes kenburns {
+    from { transform: scale(1.0); }
+    to   { transform: scale(1.06); }
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+      linear-gradient(to bottom, rgba(10,10,10,0.78) 0%, rgba(10,10,10,0) 24%, rgba(10,10,10,0) 55%, rgba(10,10,10,0.62) 100%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 9vh;
+    text-align: center;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.6rem, 10.5vw, 10.5rem);
+    letter-spacing: 0.22em;
+    margin-right: -0.22em;      /* optically re-centre tracked type */
+    line-height: 0.9;
+    white-space: nowrap;
+    color: var(--ivory);
+  }
+  .hero .collection-no {
+    margin-top: 3.2vh;
+    color: rgba(242,240,236,0.8);
+  }
+  .hero .scroll-cue {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 44px;
+    overflow: hidden;
+  }
+  .hero .scroll-cue::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: rgba(242,240,236,0.7);
+    animation: cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  @keyframes cue {
+    0% { top: -100%; }
+    55% { top: 0; }
+    100% { top: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero .scroll-cue::before { animation: none; top: 0; }
+    .hero.kenburns .hero-fallback { animation: none; }
+  }
+
+  .rev { display: inline-block; overflow: hidden; vertical-align: bottom; }
+  .rev > span { display: inline-block; transform: translateY(115%); }
+  .no-motion .rev > span { transform: none; }
+
+  /* ---------- runway (light) ---------- */
+  .runway {
+    background: var(--ivory);
+    color: var(--black);
+    padding: clamp(90px, 14vh, 160px) 0 clamp(60px, 9vh, 120px);
+  }
+  .runway-head {
+    text-align: center;
+    margin-bottom: clamp(70px, 12vh, 150px);
+    padding: 0 20px;
+  }
+  .runway-head .label { color: var(--black-dim); }
+  .runway-head h2 {
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.9rem, 3.6vw, 3.2rem);
+    letter-spacing: 0.04em;
+    margin-top: 18px;
+  }
+
+  .look {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    align-items: center;
+    padding: clamp(40px, 8vh, 100px) 5vw;
+    gap: 0 2vw;
+  }
+  .look-media {
+    position: relative;
+    grid-row: 1;
+    overflow: hidden;
+    height: min(86vh, 46vw * 1.5);
+    max-height: 86vh;
+  }
+  .look-media img {
+    display: block;
+    width: 100%;
+    height: 118%;               /* headroom for parallax drift */
+    object-fit: cover;
+    filter: grayscale(1) contrast(0.62) brightness(1.28);
+    transition: filter 1.6s var(--ease-out);
+    will-change: transform;
+  }
+  .look.in-view .look-media img { filter: grayscale(1) contrast(1) brightness(1); }
+
+  .look-meta { grid-row: 1; position: relative; z-index: 2; }
+  .look-no {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(5rem, 11vw, 11rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(10,10,10,0.30);
+    user-select: none;
+  }
+  .look-name {
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(2rem, 4.2vw, 4rem);
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    margin: 14px 0 26px;
+  }
+  .look-notes {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    line-height: 2.3;
+    color: var(--black-dim);
+    max-width: 34ch;
+  }
+  .look-notes b { font-weight: 500; color: var(--black); }
+
+  .look:nth-of-type(odd)  .look-media { grid-column: 2 / 7; }
+  .look:nth-of-type(odd)  .look-meta  { grid-column: 8 / 12; }
+  .look:nth-of-type(even) .look-media { grid-column: 7 / 12; }
+  .look:nth-of-type(even) .look-meta  { grid-column: 2 / 6; text-align: right; }
+  .look:nth-of-type(even) .look-notes { margin-left: auto; }
+
+  @media (max-width: 860px) {
+    .look { min-height: auto; padding: 12vw 6vw; gap: 0; }
+    .look-media, .look:nth-of-type(odd) .look-media, .look:nth-of-type(even) .look-media {
+      grid-column: 1 / -1; grid-row: 1; height: 118vw; max-height: 78vh;
+    }
+    .look-meta, .look:nth-of-type(odd) .look-meta, .look:nth-of-type(even) .look-meta {
+      grid-column: 1 / -1; grid-row: 2; text-align: left; margin-top: 26px;
+    }
+    .look:nth-of-type(even) .look-notes { margin-left: 0; }
+    .look-no { font-size: 4rem; }
+  }
+
+  /* ---------- detail break ---------- */
+  .detail-break {
+    position: relative;
+    height: 120vh;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .detail-break img {
+    position: absolute;
+    top: -10%;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    will-change: transform;
+  }
+  .detail-break::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(10,10,10,0.18) 0%, rgba(10,10,10,0.66) 100%);
+  }
+  .detail-quote {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 8vw;
+  }
+  .detail-quote blockquote {
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.7rem, 4vw, 3.6rem);
+    line-height: 1.28;
+    letter-spacing: 0.015em;
+    max-width: 22ch;
+    color: var(--ivory);
+  }
+  .detail-quote cite {
+    display: block;
+    margin-top: 34px;
+    font-style: normal;
+    color: var(--ivory-dim);
+  }
+
+  /* ---------- manifesto ---------- */
+  .house {
+    background: var(--black);
+    color: var(--ivory);
+    padding: clamp(100px, 16vh, 190px) 8vw;
+  }
+  .house-grid {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(200px, 0.9fr) 2fr;
+    gap: 60px 9vw;
+  }
+  .house-left .label { color: var(--ivory-dim); }
+  .house-left h2 {
+    font-weight: 300;
+    font-size: clamp(2.4rem, 5vw, 4.6rem);
+    letter-spacing: 0.1em;
+    line-height: 1.05;
+    margin-top: 22px;
+  }
+  .house-copy {
+    column-count: 2;
+    column-gap: 5vw;
+    font-size: clamp(1.06rem, 1.35vw, 1.28rem);
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+    color: rgba(242,240,236,0.88);
+  }
+  .house-copy p { margin-bottom: 1.5em; break-inside: avoid; }
+  .house-copy p:first-child::first-letter {
+    font-size: 3.4em;
+    font-style: italic;
+    float: left;
+    line-height: 0.78;
+    padding: 0.08em 0.12em 0 0;
+  }
+  .house-copy .em { font-style: italic; }
+  @media (max-width: 960px) {
+    .house-grid { grid-template-columns: 1fr; gap: 46px; }
+    .house-copy { column-count: 1; }
+  }
+
+  /* ---------- credits ---------- */
+  .credits {
+    background: var(--ivory);
+    color: var(--black);
+    padding: clamp(90px, 14vh, 170px) 8vw clamp(70px, 10vh, 130px);
+  }
+  .credits-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+  .credits .label { color: var(--black-dim); }
+  .credits h2 {
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.9rem, 3.4vw, 3rem);
+    margin: 18px 0 clamp(50px, 7vh, 80px);
+  }
+  .credit-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(10,10,10,0.14);
+    text-align: left;
+  }
+  .credit-row:first-of-type { border-top: 1px solid rgba(10,10,10,0.14); }
+  .credit-role { color: var(--black-dim); flex-shrink: 0; }
+  .credit-name {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+    letter-spacing: 0.03em;
+    text-align: right;
+  }
+  @media (max-width: 560px) {
+    .credit-row { flex-direction: column; gap: 6px; }
+    .credit-name { text-align: left; }
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    background: var(--ivory);
+    color: var(--black);
+    padding: 0 8vw clamp(60px, 8vh, 90px);
+    text-align: center;
+  }
+  footer .rule {
+    width: 1px; height: 70px;
+    background: rgba(10,10,10,0.3);
+    margin: 0 auto clamp(46px, 6vh, 70px);
+  }
+  footer .enquiries {
+    display: inline-block;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.9rem, 4.4vw, 3.8rem);
+    letter-spacing: 0.02em;
+    position: relative;
+    padding-bottom: 8px;
+    transition: opacity 0.3s ease;
+  }
+  footer .enquiries::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: currentColor;
+    transform: scaleX(0.22);
+    transform-origin: center;
+    transition: transform 0.6s var(--ease-out);
+  }
+  footer .enquiries:hover::after { transform: scaleX(1); }
+  footer .fine {
+    margin-top: clamp(50px, 7vh, 80px);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    color: var(--black-dim);
+  }
+  @media (max-width: 640px) {
+    footer .fine { flex-direction: column; align-items: center; gap: 14px; }
+  }
+
+  /* fade-up utility */
+  .fade-up { opacity: 0; transform: translateY(36px); }
+  .no-motion .fade-up { opacity: 1; transform: none; }
+
+  /* grain */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: 9000;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header>
+  <a class="back label" href="/">Xavier Fable ×30</a>
+  <nav class="label" aria-label="Sections">
+    <a href="#collection">Collection</a>
+    <a href="#house">The House</a>
+    <a href="#credits">Credits</a>
+    <a href="#enquiries">Enquiries</a>
+  </nav>
+  <span class="season label">AW26 — Paris</span>
+</header>
+
+<!-- 01 · HERO -->
+<section class="hero" id="top">
+  <img class="hero-fallback" src="assets/hero.jpg" alt="" aria-hidden="true">
+  <video class="hero-media" autoplay muted loop playsinline preload="auto" poster="assets/hero.jpg" aria-label="Model in the Carapace Gown, plates of black leather shifting in haze">
+    <source src="assets/hero-loop.mp4" type="video/mp4">
+  </video>
+  <div class="hero-inner">
+    <h1 class="rev"><span>VANTABLUME</span></h1>
+    <p class="collection-no label rev"><span>Collection 001 — Exoskeleton</span></p>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"></div>
+</section>
+
+<!-- 02 · RUNWAY -->
+<section class="runway light" id="collection">
+  <div class="runway-head">
+    <p class="label fade-up">The Looks</p>
+    <h2 class="fade-up">Armour grown, not sewn.</h2>
+  </div>
+
+  <article class="look">
+    <div class="look-media"><img src="assets/look2.jpg" alt="Look 01 — sculpted leather corset flaring into a full black silk gown" loading="lazy"></div>
+    <div class="look-meta">
+      <div class="look-no fade-up" aria-hidden="true">01</div>
+      <h3 class="look-name fade-up">Carapace Gown</h3>
+      <p class="look-notes fade-up"><b>Moulded bridle leather</b> over bias-cut gazar — twelve plates, wet-formed on the body, riveted by hand. The corset closes with a single spine of blackened steel. <b>340 hours.</b></p>
+    </div>
+  </article>
+
+  <article class="look">
+    <div class="look-media"><img src="assets/look3.jpg" alt="Look 02 — high-necked column dress scaled entirely in dark lacquered paillettes" loading="lazy"></div>
+    <div class="look-meta">
+      <div class="look-no fade-up" aria-hidden="true">02</div>
+      <h3 class="look-name fade-up">Thorax Column</h3>
+      <p class="look-notes fade-up"><b>Nine thousand lacquered scales</b>, each cut from horn-pressed acetate and sewn singly to a tulle ground. The dress weighs eleven kilograms and moves like water. <b>520 hours.</b></p>
+    </div>
+  </article>
+
+  <article class="look">
+    <div class="look-media"><img src="assets/look4.jpg" alt="Look 03 — asymmetric fishtail gown with an articulated sculptural sleeve" loading="lazy"></div>
+    <div class="look-meta">
+      <div class="look-no fade-up" aria-hidden="true">03</div>
+      <h3 class="look-name fade-up">Chrysalis</h3>
+      <p class="look-notes fade-up"><b>Articulated limb</b> of vegetable-tanned hide on a jointed cane armature; crêpe de chine gown buttoned through with oxidised silver. Worn once, then archived. <b>410 hours.</b></p>
+    </div>
+  </article>
+</section>
+
+<!-- 03 · DETAIL BREAK -->
+<section class="detail-break" aria-label="Fabric detail">
+  <img src="assets/detail.jpg" alt="Macro photograph of overlapping black leather scales and hand stitching" loading="lazy">
+  <div class="detail-quote">
+    <blockquote class="fade-up">&ldquo;We do not dress the body. We give it a second skeleton, and let it decide what to become.&rdquo;</blockquote>
+    <cite class="label fade-up">Mireille Vantablume — Founder, 1987</cite>
+  </div>
+</section>
+
+<!-- 04 · THE HOUSE -->
+<section class="house" id="house">
+  <div class="house-grid">
+    <div class="house-left">
+      <p class="label fade-up">Manifesto</p>
+      <h2 class="fade-up">The House</h2>
+    </div>
+    <div class="house-copy fade-up">
+      <p>Vantablume was founded on a refusal: that softness is the only language a garment may speak. In the atelier on Rue de Poitou, cloth is treated as a living material with a will of its own — boiled, pressed, moulded, persuaded into structures that hold the air around the body like held breath.</p>
+      <p>Collection 001, <span class="em">Exoskeleton</span>, studies the insect wing and the beetle's shell — surfaces that are armour and ornament at once. Every plate is formed by hand over plaster casts of the house's fit models; every scale is sewn by a single petite main from first to last, so that each dress carries one person's patience inside it.</p>
+      <p>Nothing here is seasonal. Nothing is repeated. Each look exists as a single exemplar, numbered, archived, and released only to those who understand that couture is not bought — it is <span class="em">entrusted</span>.</p>
+      <p>The house shows once a year, in silence, without music. What you hear on the runway is the garment itself: the dry click of leather plates, the hush of gazar. This is the sound of Vantablume.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · CREDITS -->
+<section class="credits light" id="credits">
+  <div class="credits-inner">
+    <p class="label fade-up">Défilé 001</p>
+    <h2 class="fade-up">Show credits</h2>
+    <div class="credit-row fade-up"><span class="credit-role label">Creative Direction</span><span class="credit-name">Mireille Vantablume</span></div>
+    <div class="credit-row fade-up"><span class="credit-role label">Head of Atelier</span><span class="credit-name">Ottavio Ferrante</span></div>
+    <div class="credit-row fade-up"><span class="credit-role label">Photography</span><span class="credit-name">Ines Kessler-Blyth</span></div>
+    <div class="credit-row fade-up"><span class="credit-role label">Casting</span><span class="credit-name">Aurelio de Winter</span></div>
+    <div class="credit-row fade-up"><span class="credit-role label">Set &amp; Light</span><span class="credit-name">Studio Corvide, Paris</span></div>
+    <div class="credit-row fade-up"><span class="credit-role label">Sound of Silence</span><span class="credit-name">The Garments Themselves</span></div>
+  </div>
+</section>
+
+<footer class="light" id="enquiries">
+  <div class="rule" aria-hidden="true"></div>
+  <a class="enquiries" href="mailto:atelier@vantablume.fr">enquiries — atelier@vantablume.fr</a>
+  <div class="fine label">
+    <span>Vantablume · 11 Rue de Poitou, Paris III<sup>e</sup></span>
+    <span>By appointment only</span>
+    <span>© MMXXVI</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function () {
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) document.documentElement.classList.add("no-motion");
+
+  /* ----- hero video / ken burns fallback ----- */
+  var video = document.querySelector(".hero-media");
+  var hero = document.querySelector(".hero");
+  function fallbackStill() {
+    video.style.display = "none";
+    if (!reduced) hero.classList.add("kenburns");
+  }
+  if (reduced) {
+    video.removeAttribute("autoplay");
+    video.pause();
+    fallbackStill();
+  } else {
+    var p = video.play();
+    if (p && p.catch) p.catch(fallbackStill);
+    video.addEventListener("error", fallbackStill);
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (reduced) return;
+    if (document.hidden) video.pause();
+    else if (video.style.display !== "none") video.play().catch(function(){});
+  });
+
+  /* ----- custom cursor ----- */
+  var cursor = document.getElementById("cursor");
+  var cx = -100, cy = -100, tx = -100, ty = -100, cursorRaf = null;
+  function cursorTick() {
+    cx += (tx - cx) * 0.22;
+    cy += (ty - cy) * 0.22;
+    cursor.style.left = cx + "px";
+    cursor.style.top = cy + "px";
+    if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) {
+      cursorRaf = requestAnimationFrame(cursorTick);
+    } else { cursorRaf = null; }
+  }
+  window.addEventListener("mousemove", function (e) {
+    tx = e.clientX; ty = e.clientY;
+    cursor.classList.add("on");
+    if (!cursorRaf && !document.hidden) cursorRaf = requestAnimationFrame(cursorTick);
+  }, { passive: true });
+  document.addEventListener("mouseover", function (e) {
+    cursor.classList.toggle("hot", !!e.target.closest("a, button"));
+  });
+  document.addEventListener("mouseleave", function () { cursor.classList.remove("on"); });
+
+  /* ----- scroll choreography ----- */
+  if (!reduced && window.gsap) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* hero type entrance */
+    gsap.to(".rev > span", {
+      y: 0, duration: 1.6, ease: "power4.out", stagger: 0.14, delay: 0.35
+    });
+
+    /* hero drifts up slightly as you leave it */
+    gsap.to(".hero-inner", {
+      yPercent: -18, opacity: 0.25, ease: "none",
+      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+    });
+
+    /* look panels: parallax + contrast reveal */
+    document.querySelectorAll(".look").forEach(function (look) {
+      var img = look.querySelector(".look-media img");
+      gsap.fromTo(img, { yPercent: -12 }, {
+        yPercent: 0, ease: "none",
+        scrollTrigger: { trigger: look, start: "top bottom", end: "bottom top", scrub: true }
+      });
+      ScrollTrigger.create({
+        trigger: look, start: "top 62%",
+        onEnter: function () { look.classList.add("in-view"); },
+        once: true
+      });
+    });
+
+    /* detail macro parallax */
+    gsap.fromTo(".detail-break img", { yPercent: -8 }, {
+      yPercent: 8, ease: "none",
+      scrollTrigger: { trigger: ".detail-break", start: "top bottom", end: "bottom top", scrub: true }
+    });
+
+    /* fade-ups */
+    document.querySelectorAll(".fade-up").forEach(function (el) {
+      gsap.to(el, {
+        opacity: 1, y: 0, duration: 1.3, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 86%" }
+      });
+    });
+  } else {
+    /* no motion: make everything visible and reveal contrast immediately */
+    document.querySelectorAll(".fade-up").forEach(function (el) {
+      el.style.opacity = 1; el.style.transform = "none";
+    });
+    document.querySelectorAll(".look").forEach(function (l) { l.classList.add("in-view"); });
+  }
+
+  /* ----- ?scroll= helper for screenshots (fraction of page or px) ----- */
+  var m = location.search.match(/[?&]scroll=([\d.]+)/);
+  if (m) {
+    var v = parseFloat(m[1]);
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        window.scrollTo(0, v <= 1 ? max * v : v);
+      }, 600);
+    });
+  }
+})();
+</script>
+</body>
+</html>

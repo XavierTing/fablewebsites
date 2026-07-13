@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MALL OF MEMORY™ — now open forever</title>
+<meta name="description" content="An infinite, deserted mall that exists only in memory. Wander the atrium, consult the directory, tune into MALLSOFT FM. Open forever since 1987.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="MALL OF MEMORY™ — now open forever">
+<meta property="og:description" content="An infinite, deserted mall that exists only in memory. Wander the atrium, consult the directory, tune into MALLSOFT FM. Open forever since 1987.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/15-vapor/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/15-vapor/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MALL OF MEMORY™ — now open forever">
+<meta name="twitter:description" content="An infinite, deserted mall that exists only in memory. Wander the atrium, consult the directory, tune into MALLSOFT FM. Open forever since 1987.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/15-vapor/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --pink:#ff71ce;
+  --cyan:#01cdfe;
+  --sun-a:#ff9ecf;
+  --sun-b:#7f7fd5;
+  --sun-c:#2a2a5e;
+  --base:#1a1033;
+  --base-deep:#120a26;
+  --ink:#efe6ff;
+  --ink-dim:#b7a6d9;
+  --serif:"Playfair Display",Georgia,serif;
+  --mono:"VT323",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--base);
+  color:var(--ink);
+  font-family:var(--serif);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--pink);color:#1a0522}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--base-deep)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--pink),var(--sun-b));border-radius:5px;border:2px solid var(--base-deep)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:2px}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ============ BACK LINK ============ */
+.backlink{
+  position:fixed;top:18px;left:18px;z-index:900;
+  font-family:var(--mono);font-size:17px;letter-spacing:.18em;
+  color:var(--ink);
+  padding:7px 14px 6px;
+  border:1px solid rgba(255,113,206,.45);
+  background:rgba(18,10,38,.55);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-radius:3px;
+  text-shadow:0 0 8px rgba(255,113,206,.6);
+  transition:border-color .3s ease,box-shadow .3s ease,color .3s ease;
+}
+.backlink:hover{border-color:var(--cyan);color:#fff;box-shadow:0 0 18px rgba(1,205,254,.35)}
+
+/* ============ AMBIENT: VHS SWEEP + GRAIN ============ */
+.vhs-sweep{
+  position:fixed;left:0;width:100%;height:110px;z-index:850;pointer-events:none;
+  top:-20%;
+  background:
+    linear-gradient(180deg,
+      transparent 0%,
+      rgba(255,255,255,.028) 30%,
+      rgba(1,205,254,.05) 46%,
+      rgba(255,255,255,.09) 50%,
+      rgba(255,113,206,.05) 54%,
+      rgba(255,255,255,.028) 70%,
+      transparent 100%);
+  filter:blur(1px);
+  animation:vhsSweep 17s linear infinite;
+  animation-delay:5s;
+  mix-blend-mode:screen;
+}
+@keyframes vhsSweep{
+  0%{top:-20%;opacity:0}
+  1%{opacity:1}
+  9%{top:112%;opacity:1}
+  10%{opacity:0}
+  100%{top:112%;opacity:0}
+}
+.grain{
+  position:fixed;inset:0;z-index:840;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;height:100svh;min-height:640px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;text-align:center;
+}
+.hero video,.hero .hero-poster{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:
+    radial-gradient(ellipse at 50% 42%, transparent 30%, rgba(18,10,38,.55) 100%),
+    linear-gradient(180deg, rgba(26,16,51,.25) 0%, transparent 30%, transparent 62%, var(--base) 100%);
+}
+.hero-scrim{
+  position:absolute;z-index:1;left:50%;top:44%;transform:translate(-50%,-50%);
+  width:min(1100px,110vw);height:74vh;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(14,7,30,.62) 0%,rgba(14,7,30,.4) 48%,transparent 100%);
+}
+.hero-inner{position:relative;z-index:2;padding:0 24px;transform:translateY(-4vh)}
+.hero-kicker{
+  font-family:var(--mono);font-size:clamp(14px,1.4vw,19px);
+  letter-spacing:.55em;text-indent:.55em;white-space:nowrap;
+  color:#7fe8ff;
+  text-shadow:0 0 12px rgba(1,205,254,.95),0 0 34px rgba(1,205,254,.6),0 2px 10px rgba(6,2,16,.95);
+  margin-bottom:22px;text-transform:uppercase;
+}
+.hero-title{
+  font-family:var(--serif);font-weight:800;
+  font-size:clamp(44px,9.2vw,132px);
+  line-height:.96;letter-spacing:.045em;
+  text-transform:uppercase;
+  background:linear-gradient(180deg,
+    #ffffff 0%, #eaf4ff 16%, #b9d4ee 30%, #6d86b4 44%,
+    #f2f7ff 50%, #8f74b8 56%, #ffd7ee 68%, #fff5fb 82%, #c9d8ef 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 22px rgba(255,113,206,.35)) drop-shadow(0 2px 4px rgba(10,4,24,.7));
+  animation:heroFloat 9s ease-in-out infinite alternate;
+}
+.hero-title .tm{font-size:.32em;vertical-align:1.55em;letter-spacing:0}
+@keyframes heroFloat{
+  from{transform:translateY(-7px)}
+  to{transform:translateY(9px)}
+}
+.hero-jp{
+  font-family:var(--mono);
+  font-size:clamp(19px,2.2vw,30px);
+  letter-spacing:1.1em;text-indent:1.1em;
+  margin-top:26px;color:#ff9ada;
+  text-shadow:0 0 14px rgba(255,113,206,.95),0 0 44px rgba(255,113,206,.6),0 2px 10px rgba(6,2,16,.9);
+  animation:heroFloat 9s ease-in-out infinite alternate-reverse;
+}
+.hero-sub{
+  margin-top:30px;font-style:italic;font-weight:500;
+  font-size:clamp(15px,1.5vw,19px);color:#dccdf5;
+  letter-spacing:.06em;
+  text-shadow:0 1px 8px rgba(6,2,16,.9),0 0 26px rgba(6,2,16,.7);
+}
+.hero-scroll{
+  position:absolute;bottom:92px;left:50%;transform:translateX(-50%);z-index:2;
+  font-family:var(--mono);font-size:15px;letter-spacing:.45em;text-indent:.45em;
+  color:#cfc0ea;text-shadow:0 1px 6px rgba(6,2,16,.95);
+  animation:scrollPulse 2.6s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%,100%{opacity:.45;transform:translate(-50%,0)}50%{opacity:1;transform:translate(-50%,8px)}}
+
+/* marquee ribbon */
+.marquee{
+  position:relative;z-index:5;width:108%;margin:-44px 0 0 -4%;
+  transform:rotate(-1.6deg);
+  background:linear-gradient(90deg,var(--pink),var(--sun-b) 50%,var(--cyan));
+  box-shadow:0 0 34px rgba(255,113,206,.55),0 0 90px rgba(1,205,254,.25);
+  overflow:hidden;padding:11px 0 9px;
+  border-top:1px solid rgba(255,255,255,.55);
+  border-bottom:1px solid rgba(0,0,0,.35);
+}
+.marquee-track{
+  display:flex;width:max-content;
+  animation:marquee 26s linear infinite;
+}
+.marquee span{
+  font-family:var(--mono);font-size:21px;letter-spacing:.3em;
+  color:#160a2e;white-space:nowrap;padding-right:.3em;
+  text-transform:uppercase;
+}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============ GRID DIVIDERS (neon perspective floor / ceiling) ============ */
+.grid-strip{
+  position:relative;height:172px;overflow:hidden;
+  background:linear-gradient(180deg,var(--base) 0%,#180e33 52%,var(--base) 100%);
+  perspective:300px;
+}
+.grid-strip::before{
+  content:"";position:absolute;left:-60%;right:-60%;bottom:-2px;height:440px;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(1,205,254,.62) 0 2px,transparent 2px 46px),
+    repeating-linear-gradient(90deg,rgba(255,113,206,.66) 0 2px,transparent 2px 46px);
+  transform:rotateX(76deg);
+  transform-origin:50% 100%;
+  animation:gridFlow 6s linear infinite;
+  will-change:background-position;
+}
+.grid-strip::after{ /* horizon glow + fade into sections */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(120% 60% at 50% 50%,rgba(1,205,254,.16),transparent 62%),
+    linear-gradient(180deg,var(--base) 0%,transparent 42%,transparent 70%,var(--base) 100%);
+}
+.grid-strip.flip::before{transform:rotateX(-76deg);transform-origin:50% 0;top:-2px;bottom:auto}
+@keyframes gridFlow{from{background-position:0 0}to{background-position:0 46px}}
+
+/* ============ SHARED SECTION CHROME ============ */
+.section{position:relative;padding:110px 24px}
+.shell{max-width:1060px;margin:0 auto}
+.eyebrow{
+  font-family:var(--mono);font-size:17px;letter-spacing:.5em;text-indent:.5em;
+  text-transform:uppercase;color:var(--cyan);
+  text-shadow:0 0 10px rgba(1,205,254,.8);margin-bottom:18px;
+}
+.h2{
+  font-family:var(--serif);font-weight:700;text-transform:uppercase;
+  font-size:clamp(30px,4.6vw,56px);line-height:1.04;letter-spacing:.05em;
+  background:linear-gradient(180deg,#fff 0%,#dcE8fa 35%,#8d9fd0 52%,#f6e5ff 60%,#ffc9e9 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 10px rgba(127,127,213,.4));
+}
+.lede{
+  margin-top:22px;max-width:560px;
+  font-size:clamp(16px,1.35vw,18.5px);line-height:1.75;color:var(--ink-dim);
+  font-weight:500;
+}
+.lede em{color:var(--ink);font-style:italic}
+
+/* reveal states (JS adds .in) */
+.rv{opacity:0;transform:translateY(34px)}
+.rv.in{opacity:1;transform:none;transition:opacity 1.1s cubic-bezier(.22,1,.36,1),transform 1.1s cubic-bezier(.22,1,.36,1)}
+
+/* ============ DIRECTORY ============ */
+.directory{background:
+  radial-gradient(1100px 600px at 85% 0%,rgba(255,113,206,.09),transparent 60%),
+  radial-gradient(900px 500px at 8% 90%,rgba(1,205,254,.07),transparent 60%);
+}
+.dir-board{
+  margin-top:56px;
+  background:linear-gradient(165deg,rgba(34,20,66,.92),rgba(16,8,34,.96));
+  border:1px solid rgba(255,113,206,.28);
+  border-radius:10px;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,.5),
+    0 30px 80px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 0 60px rgba(255,113,206,.12);
+  overflow:hidden;
+  position:relative;
+}
+.dir-board::after{ /* glass sheen */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.02) 48%,rgba(255,255,255,.04) 50%,rgba(255,255,255,.02) 52%,transparent 58%);
+}
+.dir-head{
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  padding:26px 34px 22px;
+  border-bottom:1px solid rgba(255,113,206,.22);
+  background:rgba(255,113,206,.05);
+}
+.dir-head h3{
+  font-family:var(--mono);font-weight:400;font-size:clamp(22px,2.4vw,30px);
+  letter-spacing:.32em;color:var(--pink);
+  text-shadow:0 0 12px rgba(255,113,206,.9),0 0 42px rgba(255,113,206,.45);
+  text-transform:uppercase;
+}
+.dir-head .youarehere{
+  font-family:var(--mono);font-size:16px;letter-spacing:.22em;color:var(--cyan);
+  text-shadow:0 0 10px rgba(1,205,254,.8);white-space:nowrap;
+}
+.youarehere .dot{display:inline-block;width:9px;height:9px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 10px var(--cyan);margin-right:9px;
+  animation:blinkDot 1.8s steps(2,end) infinite;vertical-align:1px}
+@keyframes blinkDot{50%{opacity:.15}}
+.dir-list{list-style:none}
+.dir-list li{border-bottom:1px solid rgba(255,113,206,.13)}
+.dir-list li:last-child{border-bottom:0}
+.dir-link{
+  display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+  padding:19px 34px;cursor:pointer;
+  transition:background .35s ease;
+}
+.dir-link:hover,.dir-link:focus-visible{background:rgba(255,113,206,.06)}
+.store{
+  font-family:var(--mono);font-weight:400;
+  font-size:clamp(19px,2vw,25px);letter-spacing:.12em;
+  color:#ffb8e2;text-shadow:0 0 9px rgba(255,113,206,.75);
+  position:relative;transition:color .3s ease;
+}
+.dir-link:hover .store,.dir-link:focus-visible .store{
+  color:#fff;
+  animation:rgbSplit .42s steps(2,end) 2;
+}
+@keyframes rgbSplit{
+  0%{text-shadow:-3px 0 0 rgba(1,205,254,.95),3px 0 0 rgba(255,42,120,.95),0 0 9px rgba(255,113,206,.75);transform:translateX(1px) skewX(-4deg)}
+  33%{text-shadow:3px 0 0 rgba(1,205,254,.95),-3px 0 0 rgba(255,42,120,.95),0 0 9px rgba(255,113,206,.75);transform:translateX(-2px)}
+  66%{text-shadow:-2px 0 0 rgba(1,205,254,.95),2px 1px 0 rgba(255,42,120,.95),0 0 9px rgba(255,113,206,.75);transform:translateX(0) skewX(3deg)}
+  100%{text-shadow:0 0 9px rgba(255,113,206,.75);transform:none}
+}
+.level{
+  font-family:var(--mono);font-size:clamp(15px,1.5vw,18px);letter-spacing:.14em;
+  color:var(--ink-dim);white-space:nowrap;text-align:right;
+  transition:color .3s ease,text-shadow .3s ease;
+}
+.dir-link:hover .level{color:var(--cyan);text-shadow:0 0 9px rgba(1,205,254,.7)}
+.dir-foot{
+  padding:16px 34px;font-family:var(--mono);font-size:15px;letter-spacing:.2em;
+  color:rgba(183,166,217,.6);border-top:1px solid rgba(255,113,206,.18);
+  background:rgba(0,0,0,.25);
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+
+/* ============ STATUE MONUMENT ============ */
+.monument{
+  position:relative;overflow:hidden;
+  background:linear-gradient(180deg,var(--base) 0%,#241147 30%,#3b1a5e 55%,#241147 82%,var(--base) 100%);
+  padding:130px 24px;
+}
+.sunrays{
+  position:absolute;top:50%;left:50%;width:170vmin;height:170vmin;
+  transform:translate(-50%,-50%);
+  background:repeating-conic-gradient(from 0deg,
+    rgba(255,158,207,.14) 0deg 9deg, transparent 9deg 22deg);
+  border-radius:50%;
+  animation:rays 90s linear infinite;
+  filter:blur(1px);
+  -webkit-mask-image:radial-gradient(circle,#000 0%,rgba(0,0,0,.55) 42%,transparent 72%);
+  mask-image:radial-gradient(circle,#000 0%,rgba(0,0,0,.55) 42%,transparent 72%);
+}
+@keyframes rays{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.monument-grid{
+  position:relative;z-index:2;max-width:1060px;margin:0 auto;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:64px;align-items:center;
+}
+.statue-frame{
+  position:relative;border-radius:200px 200px 12px 12px;overflow:hidden;
+  border:1px solid rgba(255,213,236,.4);
+  box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 70px rgba(255,113,206,.28),inset 0 0 0 1px rgba(0,0,0,.4);
+}
+.statue-frame img{width:100%;height:auto;transform:scale(1.12)}
+.statue-frame::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 60%,rgba(26,16,51,.5) 100%);
+}
+.orb{
+  position:absolute;border-radius:50%;z-index:3;pointer-events:none;
+  background:radial-gradient(circle at 32% 30%,#ffffff 0%,#dfe9f8 18%,#9fb1d9 40%,#5e5f9e 62%,#2e2657 85%);
+  box-shadow:0 10px 34px rgba(0,0,0,.55),inset -6px -8px 18px rgba(20,10,45,.6),0 0 24px rgba(197,214,255,.35);
+  animation:orbFloat 11s ease-in-out infinite alternate;
+}
+.orb.o1{width:74px;height:74px;top:9%;left:42%;animation-duration:12s}
+.orb.o2{width:42px;height:42px;top:62%;left:47%;animation-duration:9s;animation-delay:-4s}
+.orb.o3{width:26px;height:26px;top:24%;right:6%;animation-duration:8s;animation-delay:-2.5s}
+@keyframes orbFloat{
+  from{transform:translateY(-16px) translateX(-4px)}
+  to{transform:translateY(18px) translateX(6px)}
+}
+.monument-copy .h2{margin-bottom:0}
+.plaque{
+  margin-top:30px;padding:22px 26px;
+  border:1px solid rgba(255,158,207,.3);border-radius:6px;
+  background:rgba(18,10,38,.5);backdrop-filter:blur(4px);
+  font-family:var(--mono);font-size:17px;letter-spacing:.13em;line-height:1.9;
+  color:var(--ink-dim);
+}
+.plaque b{color:var(--pink);font-weight:400;text-shadow:0 0 9px rgba(255,113,206,.7)}
+
+/* ============ ARCADE ============ */
+.arcade{
+  position:relative;min-height:96vh;display:flex;align-items:flex-end;
+  overflow:hidden;isolation:isolate;
+}
+.arcade-bg{
+  position:absolute;inset:-6% 0;z-index:0;
+  background:url("assets/arcade.jpg") center 40%/cover no-repeat;
+  will-change:transform;
+}
+.arcade::before{ /* scanlines */
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(4,0,14,.34) 0 1px,transparent 1px 3px);
+  mix-blend-mode:multiply;
+  animation:crtFlicker 4s steps(12) infinite;
+}
+@keyframes crtFlicker{0%,100%{opacity:.9}50%{opacity:.75}62%{opacity:.95}}
+.arcade::after{ /* vignette + copy scrim + fade to base */
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(12,4,26,.78) 0%,rgba(12,4,26,.5) 38%,transparent 66%),
+    radial-gradient(ellipse at center,transparent 45%,rgba(10,3,24,.55) 100%),
+    linear-gradient(180deg,var(--base) 0%,transparent 22%,transparent 50%,rgba(14,6,30,.94) 100%);
+}
+.arcade-copy{
+  position:relative;z-index:3;max-width:1060px;margin:0 auto;width:100%;
+  padding:120px 24px 96px;
+}
+.arcade-copy .lede{max-width:520px}
+.hiscore{
+  margin-top:34px;display:flex;gap:42px;flex-wrap:wrap;
+  font-family:var(--mono);letter-spacing:.16em;
+}
+.hiscore div{font-size:17px;color:var(--ink-dim)}
+.hiscore b{
+  display:block;font-weight:400;font-size:clamp(26px,3vw,36px);color:var(--cyan);
+  text-shadow:0 0 12px rgba(1,205,254,.85);margin-top:4px;
+}
+
+/* ============ MALLSOFT FM ============ */
+.fm{background:
+  radial-gradient(900px 500px at 12% 10%,rgba(1,205,254,.07),transparent 60%),
+  radial-gradient(1000px 600px at 90% 100%,rgba(255,113,206,.08),transparent 60%);
+}
+.deck{
+  margin-top:56px;
+  border-radius:14px;
+  background:linear-gradient(180deg,#2c1b52 0%,#1c0f3b 55%,#150a2e 100%);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 34px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.14),0 0 60px rgba(1,205,254,.08);
+  padding:30px 34px;
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:34px;align-items:center;
+}
+.playbtn{
+  width:86px;height:86px;border-radius:50%;cursor:pointer;border:none;
+  background:radial-gradient(circle at 34% 30%,#ff9ecf,#ff71ce 45%,#b23d94 100%);
+  box-shadow:0 12px 30px rgba(255,113,206,.4),inset 0 2px 6px rgba(255,255,255,.5),inset 0 -6px 14px rgba(90,10,70,.55);
+  display:grid;place-items:center;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease;
+}
+.playbtn:hover{transform:scale(1.07);box-shadow:0 16px 40px rgba(255,113,206,.6),inset 0 2px 6px rgba(255,255,255,.5),inset 0 -6px 14px rgba(90,10,70,.55)}
+.playbtn:active{transform:scale(.97)}
+.playbtn svg{width:30px;height:30px;fill:#2b0b22;transform:translateX(2px)}
+.playbtn .icon-pause{display:none;transform:none}
+.deck.playing .icon-play{display:none}
+.deck.playing .icon-pause{display:block}
+.cassette{
+  background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.25));
+  border:1px solid rgba(255,255,255,.1);border-radius:9px;
+  padding:18px 22px 16px;position:relative;overflow:hidden;
+}
+.cassette-label{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  font-family:var(--mono);letter-spacing:.2em;margin-bottom:14px;flex-wrap:wrap;
+}
+.cassette-label .freq{
+  font-size:clamp(20px,2vw,26px);color:var(--pink);
+  text-shadow:0 0 11px rgba(255,113,206,.85);
+}
+.cassette-label .side{font-size:15px;color:var(--ink-dim)}
+.reels{display:flex;align-items:center;gap:18px}
+.reel{
+  width:58px;height:58px;border-radius:50%;flex:none;
+  border:2px solid rgba(1,205,254,.55);
+  background:
+    radial-gradient(circle,#0c0620 0 26%,transparent 26%),
+    conic-gradient(rgba(1,205,254,.55) 0 12deg,transparent 12deg 60deg,
+      rgba(1,205,254,.55) 60deg 72deg,transparent 72deg 120deg,
+      rgba(1,205,254,.55) 120deg 132deg,transparent 132deg 180deg,
+      rgba(1,205,254,.55) 180deg 192deg,transparent 192deg 240deg,
+      rgba(1,205,254,.55) 240deg 252deg,transparent 252deg 300deg,
+      rgba(1,205,254,.55) 300deg 312deg,transparent 312deg 360deg);
+  box-shadow:0 0 14px rgba(1,205,254,.25),inset 0 0 8px rgba(0,0,0,.7);
+}
+.deck.playing .reel{animation:spin 3.4s linear infinite}
+.deck.playing .reel.r2{animation-duration:2.6s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tape-window{
+  flex:1;height:34px;border-radius:5px;overflow:hidden;position:relative;
+  background:repeating-linear-gradient(90deg,#301a44 0 7px,#241236 7px 14px);
+  border:1px solid rgba(255,255,255,.09);
+  display:flex;align-items:flex-end;gap:3px;padding:4px 6px;
+}
+.eq{width:5px;flex:none;background:linear-gradient(180deg,var(--cyan),var(--pink));border-radius:2px;height:18%;opacity:.85;transition:height .6s ease}
+.deck.playing .eq{animation:eqDance 1.9s ease-in-out infinite}
+@keyframes eqDance{0%,100%{height:16%}25%{height:72%}50%{height:38%}75%{height:88%}}
+.deck-meta{
+  font-family:var(--mono);letter-spacing:.16em;font-size:16px;line-height:2;
+  color:var(--ink-dim);white-space:nowrap;text-align:right;
+}
+.deck-meta b{color:var(--cyan);font-weight:400;text-shadow:0 0 9px rgba(1,205,254,.7)}
+.fm-note{
+  margin-top:22px;font-family:var(--mono);font-size:15.5px;letter-spacing:.16em;
+  color:rgba(183,166,217,.66);
+}
+
+/* ============ FOOTER ============ */
+footer{
+  position:relative;padding:100px 24px 60px;
+  background:
+    linear-gradient(180deg,var(--base) 0%,#0e0722 100%);
+}
+.foot-grid{
+  max-width:1060px;margin:0 auto;
+  display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:56px;
+}
+.foot-title{
+  font-family:var(--serif);font-weight:700;font-size:clamp(24px,2.6vw,34px);
+  letter-spacing:.06em;text-transform:uppercase;line-height:1.15;
+  background:linear-gradient(180deg,#fff,#c3cdea 45%,#f3ddff 55%,#ffc9e9);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.foot-title small{display:block;font-family:var(--mono);font-size:16px;letter-spacing:.4em;color:var(--pink);-webkit-text-fill-color:var(--pink);margin-top:12px;text-shadow:0 0 10px rgba(255,113,206,.7)}
+.foot-blurb{margin-top:20px;font-size:15.5px;line-height:1.8;color:var(--ink-dim);max-width:330px;font-style:italic}
+.foot-h{
+  font-family:var(--mono);font-size:16px;letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;
+  color:var(--cyan);text-shadow:0 0 9px rgba(1,205,254,.7);margin-bottom:20px;
+}
+.hours{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:16.5px;letter-spacing:.14em}
+.hours td{padding:6px 0;color:var(--ink-dim)}
+.hours td:last-child{text-align:right;color:var(--pink);text-shadow:0 0 8px rgba(255,113,206,.6)}
+.webring{list-style:none;font-family:var(--mono);font-size:17px;letter-spacing:.14em}
+.webring li{margin-bottom:14px}
+.webring a{
+  color:var(--ink-dim);display:inline-block;
+  transition:color .3s ease,text-shadow .3s ease,transform .3s ease;
+}
+.webring a:hover{color:var(--cyan);text-shadow:0 0 10px rgba(1,205,254,.8);transform:translateX(6px)}
+.webring .arrow{color:var(--pink)}
+.foot-legal{
+  max-width:1060px;margin:72px auto 0;padding-top:26px;
+  border-top:1px solid rgba(255,113,206,.18);
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:15px;letter-spacing:.22em;color:rgba(183,166,217,.55);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  .monument-grid{grid-template-columns:1fr;gap:52px}
+  .statue-frame{max-width:420px;margin:0 auto}
+  .deck{grid-template-columns:auto minmax(0,1fr);gap:24px}
+  .deck-meta{grid-column:1/-1;text-align:left;white-space:normal}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:44px}
+}
+@media (max-width:640px){
+  .section{padding:84px 18px}
+  .hero-kicker{letter-spacing:.28em;text-indent:.28em;font-size:13px}
+  .hero-jp{letter-spacing:.6em;text-indent:.6em}
+  .marquee{margin-top:-34px}
+  .dir-head{flex-direction:column;gap:10px;padding:22px 22px 18px}
+  .dir-head .youarehere{white-space:normal;font-size:14px;line-height:1.55}
+  .dir-link{padding:16px 22px;flex-direction:column;gap:5px}
+  .level{text-align:left}
+  .dir-foot{padding:14px 22px}
+  .deck{padding:22px;grid-template-columns:1fr}
+  .playbtn{width:74px;height:74px}
+  .foot-grid{grid-template-columns:1fr;gap:40px}
+  .hiscore{gap:26px}
+  .marquee span{font-size:18px}
+  .hero-scroll{bottom:78px}
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-title,.hero-jp,.orb,.sunrays,.marquee-track,.grid-strip::before,
+  .vhs-sweep,.hero-scroll,.arcade::before{animation:none!important}
+  .vhs-sweep{display:none}
+  .rv{opacity:1;transform:none}
+  .dir-link:hover .store{animation:none}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+<div class="vhs-sweep" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="assets/atrium.jpg" aria-hidden="true">
+    <source src="assets/atrium-loop.mp4" type="video/mp4">
+  </video>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <p class="hero-kicker" id="heroKicker">EST. 1987 · CLOSING NEVER</p>
+    <h1 class="hero-title" id="heroTitle">Mall of<br>Memory<span class="tm">™</span></h1>
+    <p class="hero-jp" id="heroJp">記憶のモール</p>
+    <p class="hero-sub" id="heroSub">Every store you remember. None of them were ever real.</p>
+  </div>
+  <p class="hero-scroll" aria-hidden="true">DESCEND</p>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ </span>
+    <span>NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ NOW OPEN FOREVER ✦ </span>
+  </div>
+</div>
+
+<div class="grid-strip" aria-hidden="true"></div>
+
+<!-- ============ DIRECTORY ============ -->
+<section class="section directory" id="directory">
+  <div class="shell">
+    <p class="eyebrow rv">STORE DIRECTORY</p>
+    <h2 class="h2 rv">Everything you<br>came back for</h2>
+    <p class="lede rv">The tenants never change and never open. Their gates are half-lowered, their lights half-on, their sales <em>final in every sense</em>. Consult the board. It has been expecting you.</p>
+
+    <div class="dir-board rv" role="list" aria-label="Mall directory">
+      <div class="dir-head">
+        <h3>LEVEL ∞ DIRECTORY</h3>
+        <span class="youarehere"><span class="dot"></span>YOU ARE HERE · あなたはここにいます</span>
+      </div>
+      <ul class="dir-list">
+        <li><a class="dir-link" href="#directory"><span class="store">Fountain of Lost Time</span><span class="level">LEVEL ∞</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">Waterfall Court</span><span class="level">ALWAYS CLOSING</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">Orange Julius of the Void</span><span class="level">FOOD COURT · LVL 2</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">Sunglass Pavilion™</span><span class="level">DIRECTLY BEHIND YOU</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">The Last Video Rental</span><span class="level">ETERNAL FRIDAY NIGHT</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">Escalator to Nowhere</span><span class="level">BETWEEN FLOORS</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">Photo Booth of Former Selves</span><span class="level">LEVEL B1</span></a></li>
+        <li><a class="dir-link" href="#directory"><span class="store">Muzak &amp; Co.</span><span class="level">YOU CAN HEAR IT NOW</span></a></li>
+      </ul>
+      <div class="dir-foot">
+        <span>RESTROOMS: UNREACHABLE</span>
+        <span>PARKING: YOU WALKED HERE, REMEMBER?</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-strip flip" aria-hidden="true"></div>
+
+<!-- ============ STATUE MONUMENT ============ -->
+<section class="monument" id="monument">
+  <div class="sunrays" aria-hidden="true"></div>
+  <div class="monument-grid">
+    <figure class="statue-frame rv" id="statueFrame">
+      <img id="statueImg" src="assets/statue.jpg" alt="A marble Greek bust wearing aviator sunglasses before a neon sunset grid" loading="lazy" width="1024" height="1536">
+    </figure>
+    <span class="orb o1" aria-hidden="true"></span>
+    <span class="orb o2" aria-hidden="true"></span>
+    <span class="orb o3" aria-hidden="true"></span>
+    <div class="monument-copy">
+      <p class="eyebrow rv">THE PATRON</p>
+      <h2 class="h2 rv">He has watched<br>the fountain<br>since 1987</h2>
+      <p class="lede rv">Marble remembers what shoppers forget. Behind those aviators the sun is always setting on a grid that goes on <em>past the edge of the parking lot, past the edge of the decade</em>. Leave a coin at his pedestal. Wish for nothing. It will come true.</p>
+      <div class="plaque rv">
+        <b>MONUMENT 001 — "CONSUMER, RECLINING"</b><br>
+        MEDIUM: MARBLE, NOSTALGIA, UV COATING<br>
+        DONATED BY: NO ONE · MISSED BY: EVERYONE
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-strip" aria-hidden="true"></div>
+
+<!-- ============ ARCADE ============ -->
+<section class="arcade" id="arcade">
+  <div class="arcade-bg" id="arcadeBg" role="img" aria-label="A neon arcade corridor of glowing cabinets in fog"></div>
+  <div class="arcade-copy">
+    <p class="eyebrow rv">WING C · AFTER HOURS</p>
+    <h2 class="h2 rv">The games play<br>themselves</h2>
+    <p class="lede rv">After midnight the attract modes synchronize. Joysticks lean into corners no hand has touched since the Clinton administration. Somewhere down the corridor a machine celebrates — <em>somebody</em> just beat the high score, and the room was empty when it happened.</p>
+    <div class="hiscore rv" aria-label="High score board">
+      <div>HIGH SCORE<b>999,999</b></div>
+      <div>SET BY<b>NO ONE</b></div>
+      <div>DATED<b>TOMORROW</b></div>
+    </div>
+  </div>
+</section>
+
+<div class="grid-strip flip" aria-hidden="true"></div>
+
+<!-- ============ MALLSOFT FM ============ -->
+<section class="section fm" id="fm">
+  <div class="shell">
+    <p class="eyebrow rv">IN-MALL RADIO</p>
+    <h2 class="h2 rv">Mallsoft FM</h2>
+    <p class="lede rv">Broadcasting to an empty food court since forever. Two detuned sine waves, a slow tide of chords, and the hum of a skylight at dusk. Press play. The mall will keep it on for you, <em>even after you leave</em>.</p>
+
+    <div class="deck rv" id="deck">
+      <button class="playbtn" id="playBtn" aria-label="Play Mallsoft FM ambient radio" aria-pressed="false">
+        <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5v17l14-8.5z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h5v18H5zM14 3h5v18h-5z"/></svg>
+      </button>
+      <div class="cassette">
+        <div class="cassette-label">
+          <span class="freq">94.7 MALLSOFT FM</span>
+          <span class="side">SIDE A: ETERNITY · SIDE B: ALSO ETERNITY</span>
+        </div>
+        <div class="reels">
+          <span class="reel r1" aria-hidden="true"></span>
+          <div class="tape-window" aria-hidden="true">
+            <span class="eq"></span><span class="eq" style="animation-delay:-.3s"></span><span class="eq" style="animation-delay:-.7s"></span><span class="eq" style="animation-delay:-1.1s"></span><span class="eq" style="animation-delay:-.5s"></span><span class="eq" style="animation-delay:-1.4s"></span><span class="eq" style="animation-delay:-.2s"></span><span class="eq" style="animation-delay:-.9s"></span><span class="eq" style="animation-delay:-1.6s"></span><span class="eq" style="animation-delay:-.4s"></span><span class="eq" style="animation-delay:-1.2s"></span><span class="eq" style="animation-delay:-.8s"></span><span class="eq" style="animation-delay:-.1s"></span><span class="eq" style="animation-delay:-1.5s"></span><span class="eq" style="animation-delay:-.6s"></span><span class="eq" style="animation-delay:-1s"></span>
+          </div>
+          <span class="reel r2" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="deck-meta">
+        NOW PLAYING<br>
+        <b id="nowPlaying">— signal idle —</b><br>
+        DURATION: <b>∞</b>
+      </div>
+    </div>
+    <p class="fm-note rv">※ GENERATED LIVE BY THE MALL ITSELF. NO TWO VISITS SOUND THE SAME.</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <p class="foot-title rv">Mall of Memory™<small>記憶のモール</small></p>
+      <p class="foot-blurb rv">A property of Memory Holdings Intl. If you can picture the fountain, you are already inside. Please enjoy your stay. There is no other kind.</p>
+    </div>
+    <div class="rv">
+      <p class="foot-h">Mall Hours</p>
+      <table class="hours">
+        <tbody>
+          <tr><td>MON</td><td>FOREVER</td></tr>
+          <tr><td>TUE</td><td>FOREVER</td></tr>
+          <tr><td>WED</td><td>FOREVER</td></tr>
+          <tr><td>THU</td><td>FOREVER</td></tr>
+          <tr><td>FRI</td><td>FOREVER</td></tr>
+          <tr><td>SAT–SUN</td><td>FOREVER</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="rv">
+      <p class="foot-h">Webring</p>
+      <ul class="webring">
+        <li><a href="/sites/22-y2k/"><span class="arrow">←</span> Y2K.EXE</a></li>
+        <li><a href="/sites/09-terminal/">TERMINAL <span class="arrow">→</span></a></li>
+        <li><a href="/">DIRECTORY OF DIRECTORIES <span class="arrow">↑</span></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-legal">
+    <span>© 1987–∞ MEMORY HOLDINGS INTL.</span>
+    <span>NO REFUNDS · NO EXITS · NO PROOF IT WAS EVER HERE</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- ?scroll=<px> helper (screenshot / deep-link) ---------- */
+  var scrollTo = new URLSearchParams(location.search).get("scroll");
+  if (scrollTo !== null){
+    document.documentElement.style.scrollBehavior = "auto";
+    window.addEventListener("load", function(){
+      requestAnimationFrame(function(){ window.scrollTo(0, parseInt(scrollTo, 10) || 0); });
+    });
+  }
+
+  /* ---------- reveal-on-scroll ---------- */
+  var rvs = document.querySelectorAll(".rv");
+  if (reduced) {
+    rvs.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    },{threshold:.18,rootMargin:"0px 0px -6% 0px"});
+    rvs.forEach(function(el){ io.observe(el); });
+  }
+
+  /* ---------- reduced motion: freeze hero video ---------- */
+  var vid = document.getElementById("heroVideo");
+  if (reduced && vid){ vid.removeAttribute("autoplay"); vid.pause(); }
+  document.addEventListener("visibilitychange", function(){
+    if (!vid) return;
+    if (document.hidden) vid.pause();
+    else if (!reduced) vid.play().catch(function(){});
+  });
+
+  /* ---------- GSAP choreography ---------- */
+  if (!reduced && window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from("#heroKicker",{opacity:0,y:-18,duration:1.2,ease:"power3.out",delay:.25});
+    gsap.from("#heroTitle",{opacity:0,y:44,scale:.96,duration:1.6,ease:"power4.out",delay:.45});
+    gsap.from("#heroJp",{opacity:0,letterSpacing:"1.8em",duration:1.8,ease:"power3.out",delay:.85});
+    gsap.from("#heroSub",{opacity:0,y:16,duration:1.2,ease:"power3.out",delay:1.2});
+    gsap.from(".marquee",{yPercent:120,duration:1.3,ease:"power3.out",delay:1.05});
+
+    // hero content drifts up + fades as you leave
+    gsap.to(".hero-inner",{
+      yPercent:-26,opacity:.0,ease:"none",
+      scrollTrigger:{trigger:".hero",start:"top top",end:"bottom 30%",scrub:true}
+    });
+
+    // statue parallax
+    gsap.fromTo("#statueImg",{yPercent:-7},{yPercent:7,ease:"none",
+      scrollTrigger:{trigger:"#monument",start:"top bottom",end:"bottom top",scrub:true}});
+    gsap.to(".orb.o1",{yPercent:-46,ease:"none",
+      scrollTrigger:{trigger:"#monument",start:"top bottom",end:"bottom top",scrub:true}});
+    gsap.to(".orb.o2",{yPercent:60,ease:"none",
+      scrollTrigger:{trigger:"#monument",start:"top bottom",end:"bottom top",scrub:true}});
+
+    // arcade slow zoom-parallax
+    gsap.fromTo("#arcadeBg",{yPercent:-5,scale:1.06},{yPercent:5,scale:1.0,ease:"none",
+      scrollTrigger:{trigger:"#arcade",start:"top bottom",end:"bottom top",scrub:true}});
+  }
+
+  /* ---------- MALLSOFT FM : generative ambient ---------- */
+  var deck = document.getElementById("deck");
+  var btn = document.getElementById("playBtn");
+  var nowPlaying = document.getElementById("nowPlaying");
+  var trackNames = ["fountain at dusk","skylight hum","food court, 9:41 PM","escalator hymn","palm court reverie","closing announcement (extended)"];
+  var ctx = null, master = null, wet = null, chordTimer = null, activeVoices = [], playing = false, chordIdx = 0;
+
+  function midiToFreq(m){ return 440 * Math.pow(2,(m-69)/12); }
+
+  // dreamy add9 / maj7 shapes, low & slow
+  var CHORDS = [
+    [45, 52, 59, 64, 71],   // Amin9-ish
+    [41, 48, 57, 64, 69],   // Fmaj9-ish
+    [43, 50, 59, 66, 71],   // Gadd9-ish
+    [38, 45, 57, 62, 69],   // Dmin add11-ish
+    [40, 47, 56, 64, 71]    // Emin-maj-ish drift
+  ];
+
+  function buildGraph(){
+    ctx = new (window.AudioContext||window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0;
+
+    var filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = 1100;
+    filter.Q.value = 0.4;
+
+    // slow LFO breathing on the filter
+    var lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.045;
+    var lfoGain = ctx.createGain();
+    lfoGain.gain.value = 420;
+    lfo.connect(lfoGain).connect(filter.frequency);
+    lfo.start();
+
+    // gentle space: feedback delay
+    var delay = ctx.createDelay(2);
+    delay.delayTime.value = 0.52;
+    var fb = ctx.createGain(); fb.gain.value = 0.38;
+    var wetGain = ctx.createGain(); wetGain.gain.value = 0.35;
+    delay.connect(fb).connect(delay);
+    delay.connect(wetGain);
+
+    master.connect(filter);
+    filter.connect(ctx.destination);
+    filter.connect(delay);
+    wetGain.connect(ctx.destination);
+    wet = delay;
+
+    // faint tape hiss
+    var len = ctx.sampleRate * 2;
+    var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    var data = buf.getChannelData(0);
+    for (var i=0;i<len;i++) data[i] = Math.random()*2-1;
+    var hiss = ctx.createBufferSource();
+    hiss.buffer = buf; hiss.loop = true;
+    var hissFilter = ctx.createBiquadFilter();
+    hissFilter.type = "bandpass"; hissFilter.frequency.value = 3200; hissFilter.Q.value = 0.5;
+    var hissGain = ctx.createGain(); hissGain.gain.value = 0.006;
+    hiss.connect(hissFilter).connect(hissGain).connect(ctx.destination);
+    hiss.start();
+  }
+
+  function playChord(notes){
+    var t = ctx.currentTime;
+    var FADE = 4.5, HOLD = 8.5;
+    // fade out previous voices
+    activeVoices.forEach(function(v){
+      v.gain.gain.cancelScheduledValues(t);
+      v.gain.gain.setValueAtTime(v.gain.gain.value, t);
+      v.gain.gain.linearRampToValueAtTime(0, t + FADE);
+      v.oscs.forEach(function(o){ o.stop(t + FADE + .2); });
+    });
+    activeVoices = [];
+    notes.forEach(function(m, i){
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0, t);
+      var level = (i === 0 ? 0.10 : 0.055) * (1 - i*0.06);
+      g.gain.linearRampToValueAtTime(level, t + FADE);
+      g.gain.setValueAtTime(level, t + FADE + HOLD);
+      var oscs = [-6, 5].map(function(cents){
+        var o = ctx.createOscillator();
+        o.type = i === 0 ? "triangle" : "sine";
+        o.frequency.value = midiToFreq(m);
+        o.detune.value = cents + (Math.random()*2-1);
+        o.connect(g);
+        o.start(t + Math.random()*0.4);
+        return o;
+      });
+      g.connect(master);
+      activeVoices.push({gain:g, oscs:oscs});
+    });
+  }
+
+  function nextChord(){
+    chordIdx = (chordIdx + 1 + Math.floor(Math.random()*2)) % CHORDS.length;
+    playChord(CHORDS[chordIdx]);
+  }
+
+  function startFM(){
+    if (!ctx) buildGraph();
+    if (ctx.state === "suspended") ctx.resume();
+    var t = ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(0.9, t + 2.5);
+    playChord(CHORDS[chordIdx]);
+    chordTimer = setInterval(nextChord, 13000);
+    playing = true;
+    deck.classList.add("playing");
+    btn.setAttribute("aria-pressed","true");
+    btn.setAttribute("aria-label","Pause Mallsoft FM ambient radio");
+    nowPlaying.textContent = trackNames[Math.floor(Math.random()*trackNames.length)];
+  }
+
+  function stopFM(){
+    if (!ctx) return;
+    var t = ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(0, t + 1.2);
+    clearInterval(chordTimer);
+    playing = false;
+    deck.classList.remove("playing");
+    btn.setAttribute("aria-pressed","false");
+    btn.setAttribute("aria-label","Play Mallsoft FM ambient radio");
+    nowPlaying.textContent = "— signal idle —";
+    setTimeout(function(){ if (!playing && ctx && ctx.state === "running") ctx.suspend(); }, 1500);
+  }
+
+  btn.addEventListener("click", function(){ playing ? stopFM() : startFM(); });
+
+  document.addEventListener("visibilitychange", function(){
+    if (document.hidden && playing) stopFM();
+  });
+})();
+</script>
+</body>
+</html>

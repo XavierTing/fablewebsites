@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# netlify local state
+.netlify/
+
+# OS
+.DS_Store
+*.log
+
+# raw generated source assets (the compressed versions used by the sites live in
+# fable-x25/sites/*/assets/ and ARE committed; these originals are large & regenerable)
+assets-pipeline/generated/
+
+# scratch screenshots from the iteration/verification passes
+assets-pipeline/gallery-shots/
+assets-pipeline/live-shots/
+assets-pipeline/*.png
+
+# per-site iteration-pass screenshots (the written critique logs in each site's
+# PASSES.md ARE committed; the raw PNGs are heavy process artifacts)
+fable-x25/sites/*/passes/
+fable-x25/*/passes/
+
+# temp
+/tmp/

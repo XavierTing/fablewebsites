@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Water Authority — Annual Report 2026</title>
+<meta name="description" content="Atlas Water Authority Annual Report 2026 — 412 billion litres delivered to 3.2 million people. The year in delivery, storage, consumption, scale and indicators.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="Atlas Water Authority — Annual Report 2026">
+<meta property="og:description" content="Atlas Water Authority Annual Report 2026 — 412 billion litres delivered to 3.2 million people. The year in delivery, storage, consumption, scale and indicators.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/18-annual-report/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/18-annual-report/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Atlas Water Authority — Annual Report 2026">
+<meta name="twitter:description" content="Atlas Water Authority Annual Report 2026 — 412 billion litres delivered to 3.2 million people. The year in delivery, storage, consumption, scale and indicators.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/18-annual-report/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f4f2;
+    --ink:#1a1a1a;
+    --ink60:rgba(26,26,26,.62);
+    --ink40:rgba(26,26,26,.42);
+    --rule:rgba(26,26,26,.22);
+    --rule-soft:rgba(26,26,26,.10);
+    --blue:#0047ff;
+    --blue-soft:rgba(0,71,255,.08);
+    --red:#e63312;
+    --bl:32px; /* baseline unit */
+    --gut:20px;
+    --mx:clamp(20px,4.5vw,56px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Archivo",Helvetica,Arial,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--blue);color:var(--paper)}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:var(--paper)}
+  ::-webkit-scrollbar-thumb{background:var(--ink40);border:3px solid var(--paper);border-radius:0}
+  ::-webkit-scrollbar-thumb:hover{background:var(--ink)}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+  a{color:inherit;text-decoration:none}
+  svg text{user-select:none}
+
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+  .wrap{max-width:1360px;margin:0 auto;padding-left:var(--mx);padding-right:var(--mx)}
+
+  /* ---------- chrome ---------- */
+  .backlink{
+    position:fixed;top:18px;left:18px;z-index:60;
+    font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;
+    padding:7px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+    transition:border-color .25s ease,color .25s ease,background .25s ease;
+  }
+  .backlink:hover{border-color:var(--blue);color:var(--blue)}
+  .gridtoggle{
+    position:fixed;top:18px;right:18px;z-index:60;
+    font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;
+    padding:7px 10px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);
+    cursor:pointer;transition:border-color .25s ease,color .25s ease;
+  }
+  .gridtoggle:hover{border-color:var(--blue);color:var(--blue)}
+  body.grid-on .gridtoggle{background:var(--blue);border-color:var(--blue);color:var(--paper)}
+  .progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:70;background:transparent;pointer-events:none}
+  .progress i{display:block;height:100%;width:0;background:var(--blue)}
+
+  .gridoverlay{position:fixed;inset:0;z-index:55;pointer-events:none;display:none}
+  body.grid-on .gridoverlay{display:block}
+  .gridoverlay .wrap{height:100%;display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut)}
+  .gridoverlay .wrap i{background:rgba(0,71,255,.045);border-left:1px solid rgba(0,71,255,.16);border-right:1px solid rgba(0,71,255,.16)}
+
+  /* ---------- cover ---------- */
+  .cover{
+    position:relative;
+    min-height:100vh;
+    padding:calc(var(--bl)*3) 0 calc(var(--bl)*2);
+    background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--bl) - 1px),var(--rule-soft) calc(var(--bl) - 1px),var(--rule-soft) var(--bl));
+    background-position:0 0;
+    display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .cover .wrap{width:100%}
+  .cover-top{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut);align-items:baseline;border-top:1px solid var(--ink);padding-top:calc(var(--bl) - 17px)}
+  .cover-top .a{grid-column:1/7;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  .cover-top .b{grid-column:7/10;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--ink60)}
+  .cover-top .c{grid-column:10/13;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--ink60);text-align:right}
+  h1.cover-title{
+    margin-top:calc(var(--bl)*2);
+    font-weight:700;letter-spacing:-.035em;
+    font-size:128px;line-height:var(--bl);
+    text-transform:none;
+  }
+  h1.cover-title span{display:block;line-height:calc(var(--bl)*4)}
+  h1.cover-title .yr{color:var(--blue)}
+  .cover-stat{margin-top:calc(var(--bl)*2);display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut);align-items:end}
+  .cover-stat .n{
+    grid-column:1/8;
+    font-weight:700;letter-spacing:-.04em;color:var(--blue);
+    font-size:224px;line-height:calc(var(--bl)*6);
+    font-variant-numeric:tabular-nums;
+  }
+  .cover-stat .d{grid-column:8/13;padding-bottom:6px}
+  .cover-stat .d p.big{font-size:22px;line-height:var(--bl);font-weight:600;letter-spacing:-.01em;max-width:22ch}
+  .cover-stat .d p.sm{margin-top:var(--bl);font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:16px;letter-spacing:.06em;color:var(--ink60);max-width:40ch}
+  .cover-toc{margin-top:calc(var(--bl)*2);border-top:1px solid var(--ink);display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut)}
+  .cover-toc a{
+    grid-column:span 2;
+    padding-top:10px;padding-bottom:var(--bl);
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;line-height:16px;
+    color:var(--ink);border-top:2px solid transparent;margin-top:-1px;
+    transition:color .25s ease,border-color .25s ease;
+  }
+  .cover-toc a em{display:block;font-style:normal;color:var(--ink60);margin-bottom:2px}
+  .cover-toc a:hover{color:var(--blue);border-top-color:var(--blue)}
+  .cover-toc .spacer{grid-column:span 2}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(18px)}
+  .in .rv,.rv.on{opacity:1;transform:none;transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
+  .in .rv:nth-child(2){transition-delay:.08s}
+  .in .rv:nth-child(3){transition-delay:.16s}
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+  /* ---------- chapters ---------- */
+  .chapter{padding:calc(var(--bl)*4) 0 calc(var(--bl)*3)}
+  .ch-head{border-top:1px solid var(--ink);display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut);padding-top:14px}
+  .ch-no{grid-column:1/4}
+  .ch-no .idx{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;color:var(--ink)}
+  .ch-no .idx b{color:var(--blue);font-weight:500}
+  .ch-tt{grid-column:4/11}
+  .ch-tt h2{font-size:clamp(34px,4.4vw,58px);line-height:1.02;font-weight:700;letter-spacing:-.028em;max-width:18ch}
+  .ch-tt .lede{margin-top:22px;font-size:16px;line-height:1.55;color:var(--ink60);max-width:52ch}
+  .ch-tt .lede b{color:var(--ink);font-weight:600}
+  .ch-meta{grid-column:11/13;text-align:right;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;line-height:1.7;color:var(--ink60)}
+  .fig{margin-top:calc(var(--bl)*2)}
+  .fignote{margin-top:18px;padding-top:10px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;color:var(--ink60)}
+
+  /* ---------- statements ---------- */
+  .statement{padding:calc(var(--bl)*5) 0}
+  .statement .wrap{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut)}
+  .statement p.big{
+    grid-column:1/12;
+    font-size:clamp(36px,5.4vw,76px);line-height:1.04;font-weight:700;letter-spacing:-.03em;
+    max-width:20ch;
+  }
+  .statement p.big .f{color:var(--blue)}
+  .statement p.big .fr{color:var(--red)}
+  .statement p.note{grid-column:1/8;margin-top:34px;font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.7;letter-spacing:.06em;color:var(--ink60);max-width:52ch;border-top:1px solid var(--rule);padding-top:12px}
+
+  /* ---------- charts shared ---------- */
+  .chart-svg{display:block;width:100%;height:auto}
+  .chart-svg .rule{stroke:var(--rule-soft);shape-rendering:crispEdges}
+  .chart-svg .rule.zero{stroke:var(--ink);}
+  .chart-svg .tick-t{fill:var(--ink60);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em}
+  .chart-svg .lab{fill:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em}
+  .chart-svg .lab.dim{fill:var(--ink60)}
+
+  /* crosshair */
+  .xh{pointer-events:none;opacity:0;transition:opacity .18s ease}
+  .xh.on{opacity:1}
+  .xh line{stroke:var(--ink);stroke-width:1;shape-rendering:crispEdges}
+  .xh circle{fill:var(--paper);stroke:var(--blue);stroke-width:2}
+  .xh .ro{fill:var(--ink);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em}
+  .xh .ro b{fill:var(--blue)}
+  .xh rect.bg{fill:var(--paper);stroke:var(--ink);stroke-width:1;shape-rendering:crispEdges}
+
+  /* ---------- reservoirs ---------- */
+  .res-readout{margin-top:calc(var(--bl)*1.5);border-top:1px solid var(--rule);padding-top:10px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em}
+  .res-readout .k{color:var(--ink60)}
+  .res-readout .v b{color:var(--blue);font-weight:500}
+  .res-readout .v b.r{color:var(--red)}
+  .res-grid{margin-top:26px;display:grid;grid-template-columns:repeat(6,1fr);gap:var(--gut);row-gap:40px}
+  .res-cell{cursor:default}
+  .res-cell svg{display:block;width:100%;height:auto}
+  .res-cell .nm{margin-top:12px;font-size:13px;font-weight:600;letter-spacing:-.005em;line-height:1.2}
+  .res-cell .dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--ink60);margin-top:3px}
+  .res-cell .dt b{font-weight:500;color:var(--blue)}
+  .res-cell.deficit .dt b{color:var(--red)}
+  .res-cell .ring{stroke:var(--ink);stroke-width:1;fill:none;transition:stroke-width .2s ease}
+  .res-cell:hover .ring{stroke-width:2}
+  .res-cell .water{fill:var(--blue);opacity:.92}
+  .res-cell.deficit .water{fill:var(--red)}
+  .res-cell .floorline{stroke:var(--red);stroke-width:1;stroke-dasharray:3 3}
+
+  /* ---------- isotype ---------- */
+  .iso-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .iso-count{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:clamp(64px,9vw,128px);line-height:1;color:var(--blue);letter-spacing:-.02em}
+  .iso-key{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--ink60);display:flex;align-items:center;gap:10px}
+  .iso-key svg{display:block}
+  .iso-field{margin-top:34px;display:flex;flex-wrap:wrap;gap:22px 26px}
+  .decade{display:flex;gap:5px}
+  .drop{width:13px;height:18px;opacity:0;transform:translateY(4px) scale(.6);transform-origin:50% 100%}
+  .drop.on{opacity:1;transform:none;transition:opacity .45s cubic-bezier(.22,1,.36,1),transform .45s cubic-bezier(.22,1,.36,1)}
+  .drop,.drop use{fill:var(--blue)}
+  @media (prefers-reduced-motion:reduce){.drop{transition:none}}
+
+  /* ---------- sparklines ---------- */
+  .sm-grid{margin-top:calc(var(--bl)*1.5);display:grid;grid-template-columns:repeat(6,1fr);gap:var(--gut);border-top:1px solid var(--ink)}
+  .sm-cell{padding-top:14px;min-width:0}
+  .sm-cell .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;color:var(--ink60);text-transform:uppercase;min-height:28px}
+  .sm-cell .v{margin-top:8px;font-weight:700;font-size:clamp(24px,2vw,30px);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+  .sm-cell .v i{font-style:normal;font-weight:400;font-size:12px;color:var(--ink60);letter-spacing:0;margin-left:2px}
+  .sm-cell .u{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--ink60);margin-top:4px}
+  .sm-cell .sl{margin-top:14px}
+  .sm-cell svg{display:block;width:100%;height:auto;overflow:visible}
+
+  /* ---------- audit + colophon ---------- */
+  .audit{padding:calc(var(--bl)*3) 0}
+  .audit .box{border:1px solid var(--ink);padding:34px 34px 30px;display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut)}
+  .audit h3{grid-column:1/4;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+  .audit .txt{grid-column:4/11;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.75;letter-spacing:.02em;color:var(--ink)}
+  .audit .txt p+p{margin-top:16px}
+  .audit .sig{grid-column:4/11;margin-top:26px;padding-top:14px;border-top:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.7;letter-spacing:.06em;color:var(--ink60)}
+  .audit .sig b{color:var(--ink);font-weight:500}
+
+  .colophon{border-top:1px solid var(--ink);padding:calc(var(--bl)*1.5) 0 calc(var(--bl)*2);margin-top:calc(var(--bl))}
+  .colophon .wrap{display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gut);row-gap:28px}
+  .colophon .cell{grid-column:span 3;font-family:"IBM Plex Mono",monospace;font-size:10px;line-height:1.8;letter-spacing:.08em;color:var(--ink60)}
+  .colophon .cell b{display:block;color:var(--ink);font-weight:500;margin-bottom:6px;letter-spacing:.14em}
+  .colophon a{border-bottom:1px solid var(--rule);transition:color .2s ease,border-color .2s ease}
+  .colophon a:hover{color:var(--blue);border-color:var(--blue)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1020px){
+    .ch-tt{grid-column:1/13;grid-row:2}
+    .ch-no{grid-column:1/7}
+    .ch-meta{grid-column:7/13;grid-row:1}
+    .ch-tt h2{margin-top:14px}
+    .res-grid{grid-template-columns:repeat(4,1fr)}
+    .sm-grid{grid-template-columns:repeat(3,1fr);row-gap:40px}
+    .cover-toc a{grid-column:span 4}
+    .cover-toc .spacer{display:none}
+    .audit h3{grid-column:1/13;margin-bottom:14px}
+    .audit .txt,.audit .sig{grid-column:1/13}
+  }
+  @media (max-width:640px){
+    :root{--bl:28px}
+    h1.cover-title{font-size:54px}
+    h1.cover-title span{line-height:calc(var(--bl)*2)}
+    .cover-stat .n{grid-column:1/13;font-size:96px;line-height:calc(var(--bl)*3)}
+    .cover-stat .d{grid-column:1/13;margin-top:8px}
+    .cover-top .a{grid-column:1/13}
+    .cover-top .b{grid-column:1/8}
+    .cover-top .c{grid-column:8/13}
+    .statement p.big{grid-column:1/13}
+    .statement p.note{grid-column:1/13}
+    .res-grid{grid-template-columns:repeat(3,1fr);gap:14px;row-gap:30px}
+    .res-cell .nm{font-size:11px}
+    .res-cell .dt{font-size:9px}
+    .sm-grid{grid-template-columns:repeat(2,1fr)}
+    .audit .box{padding:22px 18px}
+    .iso-field{gap:16px 18px}
+    .decade{gap:4px}
+    .drop{width:10px;height:14px}
+    .cover-toc a{grid-column:span 6}
+  }
+</style>
+</head>
+<body data-palette="#0047ff,#e63312">
+
+<div class="progress" aria-hidden="true"><i id="pbar"></i></div>
+<a class="backlink mono" href="/">XAVIER FABLE ×30</a>
+<button class="gridtoggle mono" id="gridBtn" aria-pressed="false" title="Toggle layout grid (G)">GRID&nbsp;·&nbsp;G</button>
+<div class="gridoverlay" aria-hidden="true"><div class="wrap"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="dropPath" d="M6.5 0 C6.5 0 12.4 8.4 12.4 12.1 A5.9 5.9 0 1 1 0.6 12.1 C0.6 8.4 6.5 0 6.5 0 Z"/>
+  </defs>
+</svg>
+
+<main>
+
+  <!-- ============ COVER ============ -->
+  <section class="cover" id="cover">
+    <div class="wrap">
+      <div class="cover-top">
+        <div class="a rv">Atlas Water Authority</div>
+        <div class="b rv">Public utility no. 04 · Est. 1911</div>
+        <div class="c rv">For the year ended 30 June 2026</div>
+      </div>
+      <h1 class="cover-title rv"><span>Annual</span><span>Report</span><span class="yr num">2026</span></h1>
+    </div>
+    <div class="wrap">
+      <div class="cover-stat">
+        <div class="n num rv" id="coverNum">412</div>
+        <div class="d rv">
+          <p class="big">billion litres delivered to 3.2 million people, without a single day of restriction.</p>
+          <p class="sm">FY26 SYSTEM DELIVERY · +3.9% ON FY25 (396.5 BL) · EIGHT DISTRICTS · TWELVE RESERVOIRS · 9,140 KM OF MAINS</p>
+        </div>
+      </div>
+      <nav class="cover-toc rv" aria-label="Report contents">
+        <a href="#ch1"><em>01</em>Delivery</a>
+        <a href="#ch2"><em>02</em>Storage</a>
+        <a href="#ch3"><em>03</em>Consumption</a>
+        <a href="#ch4"><em>04</em>Scale</a>
+        <a href="#ch5"><em>05</em>Indicators</a>
+        <a href="#colophon"><em>—</em>Colophon</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============ CH 1 · DELIVERY ============ -->
+  <section class="chapter" id="ch1">
+    <div class="wrap">
+      <header class="ch-head">
+        <div class="ch-no"><p class="idx"><b>01</b>&nbsp;/&nbsp;DELIVERY</p></div>
+        <div class="ch-tt">
+          <h2 class="rv">Twelve months of supply, one unbroken line.</h2>
+          <p class="lede rv">System delivery rose 3.9% to <b>412.0 billion litres</b>. The hottest January on record pushed monthly demand to a peak of 39.6 billion litres — met in full, with treatment plants at 81% of rated capacity and no district placed on restriction.</p>
+        </div>
+        <div class="ch-meta">FIG. 1<br>MONTHLY DELIVERY<br>BILLION LITRES (BL)</div>
+      </header>
+      <div class="fig" id="figDelivery" aria-label="Area chart of monthly water delivery, July 2025 to June 2026"></div>
+      <p class="fignote"><span>SOURCE: ATLAS SCADA TELEMETRY, VALIDATED 14 JUL 2026</span><span>FY26 TOTAL — 412.0 BL</span></p>
+    </div>
+  </section>
+
+  <!-- statement 1 -->
+  <section class="statement" id="s1">
+    <div class="wrap">
+      <p class="big rv">Of every litre delivered, <span class="f num">93.0%</span> arrived at a billed meter.</p>
+      <p class="note rv">383.2 BL OF 412.0 BL DELIVERED WAS METERED AND BILLED. THE REMAINDER IS NON-REVENUE WATER — LEAKAGE, FLUSHING AND FIREFIGHTING — TREATED IN CHAPTER 03.</p>
+    </div>
+  </section>
+
+  <!-- ============ CH 2 · STORAGE ============ -->
+  <section class="chapter" id="ch2">
+    <div class="wrap">
+      <header class="ch-head">
+        <div class="ch-no"><p class="idx"><b>02</b>&nbsp;/&nbsp;STORAGE</p></div>
+        <div class="ch-tt">
+          <h2 class="rv">Twelve reservoirs, drawn to scale.</h2>
+          <p class="lede rv">Combined storage closed the year at <b>859 gigalitres — 69.3% of capacity</b>, equal to 2.1 years of demand. Eleven reservoirs finished inside their operating bands. Redcrest fell below its 45% floor in March and remains under a supplementary transfer order.</p>
+        </div>
+        <div class="ch-meta">FIG. 2<br>RESERVOIR LEVELS, 30 JUN 2026<br>AREA ∝ CAPACITY (GL)</div>
+      </header>
+      <div class="res-readout mono" aria-live="polite">
+        <span class="k" id="resK">SYSTEM TOTAL</span>
+        <span class="v" id="resV"><b>859 GL</b> HELD / 1,240 GL CAPACITY — 69.3%</span>
+      </div>
+      <div class="res-grid" id="resGrid"></div>
+      <p class="fignote"><span>LEVELS AT 00:00 AEST, 30 JUN 2026 · DASHED LINE MARKS THE 45% OPERATING FLOOR</span><span>HOVER A RESERVOIR FOR DETAIL</span></p>
+    </div>
+  </section>
+
+  <!-- statement 2 -->
+  <section class="statement" id="s2">
+    <div class="wrap">
+      <p class="big rv">Storage held above <span class="f num">2.1&nbsp;years</span> of demand, through the driest spring in a decade.</p>
+      <p class="note rv">859 GL HELD ÷ 412 BL ANNUAL DELIVERY = 2.08 YEARS. SPRING CATCHMENT RAINFALL WAS 31% BELOW THE 30-YEAR MEDIAN.</p>
+    </div>
+  </section>
+
+  <!-- ============ CH 3 · CONSUMPTION ============ -->
+  <section class="chapter" id="ch3">
+    <div class="wrap">
+      <header class="ch-head">
+        <div class="ch-no"><p class="idx"><b>03</b>&nbsp;/&nbsp;CONSUMPTION</p></div>
+        <div class="ch-tt">
+          <h2 class="rv">Where the water went.</h2>
+          <p class="lede rv">Metered consumption grew 3.2% to <b>383.2 billion litres</b>. Six of eight districts drew more than the year prior; the Ironquay industrial estate alone accounted for more than a third of the systemwide increase. Westfield and Greyfern fell on the strength of pressure management and 41,000 retrofitted meters.</p>
+        </div>
+        <div class="ch-meta">FIG. 3<br>CONSUMPTION BY DISTRICT<br>FY25 → FY26, BL</div>
+      </header>
+      <div class="fig" id="figSlope" aria-label="Slope chart comparing district consumption, 2025 versus 2026"></div>
+      <p class="fignote"><span>BLUE — INCREASE · GREY — DECREASE · FIGURES IN BILLION LITRES</span><span>FY25 371.2 BL → FY26 383.2 BL</span></p>
+    </div>
+  </section>
+
+  <!-- statement 3 (the red one) -->
+  <section class="statement" id="s3">
+    <div class="wrap">
+      <p class="big rv"><span class="fr num">28.8&nbsp;billion litres</span> never reached a tap.</p>
+      <p class="note rv">NON-REVENUE WATER ROSE TO 7.0% OF DELIVERY (FY25 — 6.4%). MAINS LEAKAGE IS THE AUTHORITY'S LARGEST CAPITAL LINE FOR FY27: 204 KM RENEWED THIS YEAR, 260 KM COMMITTED NEXT.</p>
+    </div>
+  </section>
+
+  <!-- ============ CH 4 · SCALE ============ -->
+  <section class="chapter" id="ch4">
+    <div class="wrap">
+      <header class="ch-head">
+        <div class="ch-no"><p class="idx"><b>04</b>&nbsp;/&nbsp;SCALE</p></div>
+        <div class="ch-tt">
+          <h2 class="rv">One drop, one billion litres.</h2>
+          <p class="lede rv">The year, counted. Each drop below stands for <b>1,000,000,000 litres</b> — about four hundred Olympic pools — grouped in tens. All 412 together would cover the city's central business district to a depth of 26 metres.</p>
+        </div>
+        <div class="ch-meta">FIG. 4<br>FY26 DELIVERY, PICTOGRAM<br>UNIT — 1 BL</div>
+      </header>
+      <div class="fig">
+        <div class="iso-head">
+          <div class="iso-count num" id="isoCount" aria-label="412 billion litres">000</div>
+          <div class="iso-key"><svg width="13" height="18" viewBox="0 0 13 18"><use href="#dropPath" fill="#0047ff"/></svg><span>×&nbsp;1 = 1,000,000,000 LITRES</span></div>
+        </div>
+        <div class="iso-field" id="isoField" role="img" aria-label="Pictogram of 412 drops, one per billion litres delivered"></div>
+      </div>
+      <p class="fignote"><span>412 UNITS · GROUPED IN TENS · FINAL GROUP OF TWO</span><span>1 BL = 1 GIGALITRE = 400 OLYMPIC POOLS</span></p>
+    </div>
+  </section>
+
+  <!-- statement 4 -->
+  <section class="statement" id="s4">
+    <div class="wrap">
+      <p class="big rv">Each person used <span class="f num">218&nbsp;litres</span> a day — the ninth consecutive annual decline.</p>
+      <p class="note rv">RESIDENTIAL DEMAND PER PERSON PER DAY, FY26. DOWN FROM 236 L IN FY17. RESIDENTIAL USE IS 66% OF METERED CONSUMPTION.</p>
+    </div>
+  </section>
+
+  <!-- ============ CH 5 · INDICATORS ============ -->
+  <section class="chapter" id="ch5">
+    <div class="wrap">
+      <header class="ch-head">
+        <div class="ch-no"><p class="idx"><b>05</b>&nbsp;/&nbsp;INDICATORS</p></div>
+        <div class="ch-tt">
+          <h2 class="rv">The decade in six lines.</h2>
+          <p class="lede rv">Ten financial years, FY17 to FY26, at equal scale within each panel. Energy intensity and per-person demand continue their long fall; non-revenue water is the one line moving the wrong way, and the one this Authority is watching most closely.</p>
+        </div>
+        <div class="ch-meta">FIG. 5<br>SMALL MULTIPLES<br>FY17 → FY26</div>
+      </header>
+      <div class="sm-grid" id="smGrid"></div>
+      <p class="fignote"><span>EACH PANEL SCALED TO ITS OWN RANGE · ENDPOINTS LABELLED</span><span>AUDITED SERIES, NOTE 14</span></p>
+    </div>
+  </section>
+
+  <!-- ============ AUDIT ============ -->
+  <section class="audit" id="audit">
+    <div class="wrap">
+      <div class="box rv">
+        <h3>Auditor's<br>Note</h3>
+        <div class="txt">
+          <p>In our opinion, the volumetric and financial statements of Atlas Water Authority present fairly, in all material respects, the operations of the Authority for the year ended 30 June 2026, in accordance with the Public Utilities Reporting Standard (PURS-9).</p>
+          <p>We draw attention, without qualification, to Note 11: non-revenue water of 28.8 BL (7.0% of delivery) exceeds the Authority's licensed target of 6.5%. Management's remediation program is disclosed in Note 12 and is, in our assessment, adequately funded. Metered volumes were verified against telemetry on a sample of 1,900 connections with a maximum observed variance of 0.3%. Figures throughout this report cross-cast: delivery of 412.0 BL equals metered consumption of 383.2 BL plus non-revenue water of 28.8 BL.</p>
+        </div>
+        <div class="sig"><b>Halloran &amp; Pryce, Chartered Auditors</b><br>Registration AU-1147 · 40 Ledger Lane, Meridian<br>Signed 4 September 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COLOPHON ============ -->
+  <footer class="colophon" id="colophon">
+    <div class="wrap">
+      <div class="cell"><b>ATLAS WATER AUTHORITY</b>1 Basin Street, Meridian 4000<br>Public utility no. 04, est. 1911<br>Chair — E. Marchetti<br>Chief Executive — R. Okafor</div>
+      <div class="cell"><b>THIS REPORT</b>Published 12 September 2026<br>Tabled in Assembly 19 Sep 2026<br>Volume 115 of a continuous series<br>Errata to records@atlaswater.gov</div>
+      <div class="cell"><b>COLOPHON</b>Set in Archivo &amp; IBM Plex Mono<br>on a 12-column grid, 32 px baseline.<br>Charts drawn by hand in SVG —<br>no libraries. Press G for the grid.</div>
+      <div class="cell"><b>INDEX</b><a href="#cover">Cover</a> · <a href="#ch1">01</a> · <a href="#ch2">02</a> · <a href="#ch3">03</a> · <a href="#ch4">04</a> · <a href="#ch5">05</a><br><a href="/">XAVIER FABLE ×30 — gallery</a></div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+(() => {
+'use strict';
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS = 'http://www.w3.org/2000/svg';
+const $ = s => document.querySelector(s);
+const fmt1 = n => n.toFixed(1);
+
+/* ---------------- data ---------------- */
+const MONTHS = ['JUL','AUG','SEP','OCT','NOV','DEC','JAN','FEB','MAR','APR','MAY','JUN'];
+const DELIVERY = [31.2,30.8,31.9,33.4,35.1,37.8,39.6,36.9,35.2,33.0,32.4,34.7]; // sum 412.0
+
+const RESERVOIRS = [
+  {n:'Cascabel',    cap:210, lvl:.74},
+  {n:'Thornmere',   cap:185, lvl:.71},
+  {n:'Vantage',     cap:160, lvl:.66},
+  {n:'Aldergate',   cap:128, lvl:.81},
+  {n:'Mirrorlake',  cap:112, lvl:.62},
+  {n:'Stonehollow', cap: 98, lvl:.77},
+  {n:'Redcrest',    cap: 84, lvl:.41, deficit:true},
+  {n:'Fenwick',     cap: 72, lvl:.69},
+  {n:'Duskwater',   cap: 58, lvl:.73},
+  {n:'Palegrove',   cap: 49, lvl:.58},
+  {n:'Ember Tarn',  cap: 44, lvl:.84},
+  {n:'Lowfield',    cap: 40, lvl:.66},
+]; // cap sum 1240 · held 859
+
+const DISTRICTS = [
+  {n:'Meridian Central',   a:68.4, b:71.2},
+  {n:'Harbour East',       a:55.1, b:56.8},
+  {n:'Northbank',          a:49.7, b:51.3},
+  {n:'Westfield',          a:47.2, b:46.1},
+  {n:'Solace Valley',      a:42.6, b:44.9},
+  {n:'Ironquay Industrial',a:40.8, b:45.3},
+  {n:'Greyfern',           a:35.5, b:34.6},
+  {n:'Larkspur Rural',     a:31.9, b:33.0},
+]; // a sum 371.2 · b sum 383.2
+
+const SPARKS = [
+  {k:'Catchment rainfall', u:'MM / YEAR',        f:v=>Math.round(v), s:[842,795,910,724,688,731,856,802,779,761]},
+  {k:'Energy intensity',   u:'KWH / ML TREATED', f:v=>Math.round(v), s:[512,506,498,489,472,470,461,455,450,448]},
+  {k:'Non-revenue water',  u:'% OF DELIVERY',    f:v=>v.toFixed(1),  s:[6.1,6.0,6.2,6.3,6.1,6.4,6.5,6.6,6.8,7.0]},
+  {k:'Sample compliance',  u:'% PASSING ADWG',   f:v=>v.toFixed(1),  s:[99.1,99.2,99.0,99.3,99.4,99.4,99.5,99.6,99.6,99.7]},
+  {k:'Mains renewed',      u:'KM / YEAR',        f:v=>Math.round(v), s:[118,124,131,140,152,160,171,183,196,204]},
+  {k:'Residential demand', u:'L / PERSON / DAY', f:v=>Math.round(v), s:[236,234,233,231,229,227,224,222,220,218]},
+];
+
+/* ---------------- tween engine (pauses when tab hidden) ---------------- */
+const Engine = {
+  list: [], raf: 0,
+  add(t){ t.elapsed = -(t.delay||0); t.lastNow = null; this.list.push(t); this.run(); },
+  run(){
+    if (this.raf || !this.list.length) return;
+    const step = now => {
+      this.raf = 0;
+      if (document.hidden){ this.list.forEach(t => t.lastNow = null); return; }
+      this.list = this.list.filter(t => {
+        if (t.lastNow == null) t.lastNow = now;
+        t.elapsed += Math.min(now - t.lastNow, 64); t.lastNow = now;
+        const p = Math.max(0, Math.min(1, t.elapsed / t.dur));
+        t.fn(t.ease(p));
+        if (p >= 1){ t.done && t.done(); return false; }
+        return true;
+      });
+      if (this.list.length) this.raf = requestAnimationFrame(step);
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+};
+document.addEventListener('visibilitychange', () => { if (!document.hidden) Engine.run(); });
+const outCubic = t => 1 - Math.pow(1 - t, 3);
+const outQuint = t => 1 - Math.pow(1 - t, 5);
+const inOut    = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+function tween(dur, fn, ease = outCubic, delay = 0, done){
+  if (RM){ fn(1); done && done(); return; }
+  Engine.add({dur, fn, ease, delay, done});
+}
+
+/* ---------------- svg helpers ---------------- */
+function el(name, attrs = {}, parent){
+  const e = document.createElementNS(NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const px = v => Math.round(v) + .5; // crisp 1px
+
+/* ================= FIG 1 · AREA CHART ================= */
+const figD = $('#figDelivery');
+let dState = {built:false, animated:false};
+function buildDelivery(){
+  const w = figD.clientWidth; if (!w) return;
+  figD.innerHTML = '';
+  const mobile = w < 640;
+  const h = Math.max(300, Math.min(460, w * .38));
+  const M = {l: mobile ? 34 : 46, r: mobile ? 12 : 20, t: 30, b: 44};
+  const iw = w - M.l - M.r, ih = h - M.t - M.b;
+  const yMax = 42;
+  const X = i => M.l + i * (iw / 11);
+  const Y = v => M.t + ih - (v / yMax) * ih;
+
+  const svg = el('svg', {class:'chart-svg', viewBox:`0 0 ${w} ${h}`, width:w, height:h}, figD);
+
+  // rules + y labels
+  [10,20,30,40].forEach(v => {
+    el('line', {class:'rule', x1:M.l, x2:w-M.r, y1:px(Y(v)), y2:px(Y(v))}, svg);
+    const t = el('text', {class:'tick-t', x:M.l-8, y:Y(v)+3, 'text-anchor':'end'}, svg);
+    t.textContent = v;
+  });
+  el('line', {class:'rule zero', x1:M.l, x2:w-M.r, y1:px(Y(0)), y2:px(Y(0))}, svg);
+
+  // month labels
+  MONTHS.forEach((m,i) => {
+    if (mobile && i % 2 === 1) return;
+    const t = el('text', {class:'tick-t', x:X(i), y:h-24, 'text-anchor': i===0?'start':(i===11?'end':'middle')}, svg);
+    t.textContent = m;
+  });
+  const y25 = el('text', {class:'tick-t', x:X(0), y:h-8, 'text-anchor':'start'}, svg); y25.textContent = '2025';
+  const y26 = el('text', {class:'tick-t', x:X(6), y:h-8, 'text-anchor':'middle'}, svg); y26.textContent = '2026';
+
+  // area + line
+  const pts = DELIVERY.map((v,i) => [X(i), Y(v)]);
+  const lineD = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L');
+  const areaD = lineD + ` L${X(11).toFixed(1)} ${Y(0)} L${X(0).toFixed(1)} ${Y(0)} Z`;
+
+  const clipId = 'dclip';
+  const clip = el('clipPath', {id:clipId}, svg);
+  const clipRect = el('rect', {x:M.l, y:0, width: dState.animated || RM ? iw : 0, height:h}, clip);
+
+  const g = el('g', {'clip-path':`url(#${clipId})`}, svg);
+  el('path', {d:areaD, fill:'rgba(0,71,255,.09)'}, g);
+  el('path', {d:lineD, fill:'none', stroke:'#0047ff', 'stroke-width':2, 'stroke-linejoin':'round'}, g);
+
+  // direct labels: peak (JAN) + last (JUN)
+  const lb = el('g', {'clip-path':`url(#${clipId})`}, svg);
+  const peak = el('text', {class:'lab', x:X(6), y:Y(39.6)-12, 'text-anchor':'middle', 'font-weight':500}, lb);
+  peak.textContent = 'PEAK 39.6';
+  el('circle', {cx:X(6), cy:Y(39.6), r:3, fill:'#0047ff'}, lb);
+  const last = el('text', {class:'lab dim', x:X(11)-6, y:Y(34.7)-12, 'text-anchor':'end'}, lb);
+  last.textContent = '34.7';
+  el('circle', {cx:X(11), cy:Y(34.7), r:3, fill:'#0047ff'}, lb);
+  const first = el('text', {class:'lab dim', x:X(0)+6, y:Y(31.2)-12}, lb);
+  first.textContent = '31.2';
+  el('circle', {cx:X(0), cy:Y(31.2), r:3, fill:'#0047ff'}, lb);
+
+  // crosshair
+  const xh = el('g', {class:'xh'}, svg);
+  const xline = el('line', {y1:M.t, y2:Y(0)}, xh);
+  const xdot = el('circle', {r:4}, xh);
+  const roBG = el('rect', {class:'bg', height:26}, xh);
+  const roT = el('text', {class:'ro', y:0}, xh);
+
+  const hit = el('rect', {x:M.l, y:0, width:iw, height:h, fill:'transparent', style:'cursor:crosshair'}, svg);
+  hit.addEventListener('pointermove', e => {
+    const r = svg.getBoundingClientRect();
+    const sx = (e.clientX - r.left) * (w / r.width);
+    let i = Math.round((sx - M.l) / (iw / 11));
+    i = Math.max(0, Math.min(11, i));
+    const v = DELIVERY[i], cx = X(i), cy = Y(v);
+    xline.setAttribute('x1', px(cx)-.5); xline.setAttribute('x2', px(cx)-.5);
+    xdot.setAttribute('cx', cx); xdot.setAttribute('cy', cy);
+    const label = `${MONTHS[i]} ${i<6?2025:2026} — ${fmt1(v)} BL`;
+    roT.textContent = label;
+    const tw = label.length * 6.9 + 18;
+    let bx = cx + 12; if (bx + tw > w - M.r) bx = cx - 12 - tw;
+    const by = Math.max(M.t, cy - 34);
+    roBG.setAttribute('x', px(bx)-.5); roBG.setAttribute('y', px(by)-.5); roBG.setAttribute('width', tw);
+    roT.setAttribute('x', bx + 9); roT.setAttribute('y', by + 17);
+    xh.classList.add('on');
+  });
+  hit.addEventListener('pointerleave', () => xh.classList.remove('on'));
+
+  dState.clipRect = clipRect; dState.iw = iw; dState.l = M.l;
+  dState.built = true;
+}
+function animateDelivery(){
+  if (dState.animated) return; dState.animated = true;
+  tween(1500, p => { dState.clipRect && dState.clipRect.setAttribute('width', dState.iw * p); }, inOut, 100);
+}
+
+/* ================= FIG 2 · RESERVOIR CIRCLES ================= */
+const resGrid = $('#resGrid'), resK = $('#resK'), resV = $('#resV');
+const RES_DEFAULT_K = 'SYSTEM TOTAL';
+const RES_DEFAULT_V = '<b>859 GL</b> HELD / 1,240 GL CAPACITY — 69.3%';
+let rState = {animated:false, waters:[]};
+function buildReservoirs(){
+  resGrid.innerHTML = ''; rState.waters = [];
+  const cellW = resGrid.clientWidth ? (resGrid.clientWidth / (innerWidth < 641 ? 3 : innerWidth < 1021 ? 4 : 6)) - 20 : 160;
+  const S = Math.max(78, Math.min(190, cellW));
+  const rMax = S/2 - 4;
+  const k = rMax / Math.sqrt(210);
+  RESERVOIRS.forEach((rv, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'res-cell' + (rv.deficit ? ' deficit' : '');
+    cell.tabIndex = 0;
+    const r = Math.sqrt(rv.cap) * k;
+    const c = S/2;
+    const svg = el('svg', {viewBox:`0 0 ${S} ${S}`, role:'img',
+      'aria-label':`${rv.n}: ${Math.round(rv.lvl*100)}% of ${rv.cap} gigalitres`});
+    const cid = 'rc' + idx;
+    const clip = el('clipPath', {id:cid}, svg);
+    el('circle', {cx:c, cy:c, r:r-1}, clip);
+    const g = el('g', {'clip-path':`url(#${cid})`}, svg);
+    const water = el('rect', {class:'water', x:0, width:S, height:S, y: S}, g);
+    el('circle', {class:'ring', cx:c, cy:c, r:r}, svg);
+    if (rv.deficit){
+      const fy = c + r - 2*r*.45;
+      el('line', {class:'floorline', x1:c-r-3, x2:c+r+3, y1:fy, y2:fy}, svg);
+    }
+    cell.appendChild(svg);
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = rv.n;
+    const dt = document.createElement('div'); dt.className = 'dt mono';
+    dt.innerHTML = `<b>${Math.round(rv.lvl*100)}%</b> · ${rv.cap} GL`;
+    cell.appendChild(nm); cell.appendChild(dt);
+    resGrid.appendChild(cell);
+
+    const yFull = c + r - 2*r*rv.lvl; // water top when full
+    rState.waters.push({water, yFull, S, c, r, lvl: rv.lvl});
+    if (rState.animated || RM) water.setAttribute('y', yFull);
+
+    const held = rv.cap * rv.lvl;
+    const show = () => {
+      resK.textContent = rv.n.toUpperCase() + (rv.deficit ? ' · BELOW 45% FLOOR' : '');
+      resV.innerHTML = `<b class="${rv.deficit?'r':''}">${held.toFixed(1).replace(/\.0$/,'')} GL</b> HELD / ${rv.cap} GL CAPACITY — ${Math.round(rv.lvl*100)}%`;
+    };
+    const hide = () => { resK.textContent = RES_DEFAULT_K; resV.innerHTML = RES_DEFAULT_V; };
+    cell.addEventListener('pointerenter', show);
+    cell.addEventListener('pointerleave', hide);
+    cell.addEventListener('focus', show);
+    cell.addEventListener('blur', hide);
+  });
+}
+function animateReservoirs(){
+  if (rState.animated) return; rState.animated = true;
+  rState.waters.forEach((wtr, i) => {
+    tween(1000, p => {
+      const y = wtr.S - (wtr.S - wtr.yFull) * p;
+      wtr.water.setAttribute('y', y);
+    }, outCubic, i * 55);
+  });
+}
+
+/* ================= FIG 3 · SLOPE CHART ================= */
+const figS = $('#figSlope');
+let sState = {animated:false};
+function relax(items, minGap, top, bottom){
+  items.sort((a,b) => a.y - b.y);
+  for (let it = 0; it < 12; it++){
+    for (let i = 1; i < items.length; i++){
+      const d = items[i].y - items[i-1].y;
+      if (d < minGap){ const sh = (minGap - d)/2; items[i-1].y -= sh; items[i].y += sh; }
+    }
+    items[0].y = Math.max(items[0].y, top);
+    items[items.length-1].y = Math.min(items[items.length-1].y, bottom);
+  }
+}
+function buildSlope(){
+  const w = figS.clientWidth; if (!w) return;
+  figS.innerHTML = '';
+  const mobile = w < 640;
+  const h = mobile ? 420 : 470;
+  const M = {t: 44, b: 20};
+  const labL = mobile ? 148 : 250;   // left label zone
+  const labR = mobile ? 62 : 150;    // right label zone
+  const xL = labL, xR = w - labR;
+  const vMin = 29, vMax = 74;
+  const Y = v => M.t + (h - M.t - M.b) * (1 - (v - vMin)/(vMax - vMin));
+
+  const svg = el('svg', {class:'chart-svg', viewBox:`0 0 ${w} ${h}`, width:w, height:h}, figS);
+
+  // column heads + verticals
+  const h1 = el('text', {class:'tick-t', x:xL, y:20, 'text-anchor':'middle', 'font-weight':500}, svg); h1.textContent = 'FY25';
+  const h2 = el('text', {class:'tick-t', x:xR, y:20, 'text-anchor':'middle', 'font-weight':500}, svg); h2.textContent = 'FY26';
+  el('line', {class:'rule', x1:px(xL), x2:px(xL), y1:M.t-8, y2:h-M.b}, svg);
+  el('line', {class:'rule', x1:px(xR), x2:px(xR), y1:M.t-8, y2:h-M.b}, svg);
+
+  // label relaxation
+  const Ls = DISTRICTS.map((d,i) => ({i, y:Y(d.a)}));
+  const Rs = DISTRICTS.map((d,i) => ({i, y:Y(d.b)}));
+  relax(Ls, 17, M.t+4, h-M.b-4); relax(Rs, 17, M.t+4, h-M.b-4);
+  const lY = [], rY = [];
+  Ls.forEach(o => lY[o.i] = o.y); Rs.forEach(o => rY[o.i] = o.y);
+
+  const clipId = 'sclip';
+  const clip = el('clipPath', {id:clipId}, svg);
+  const clipRect = el('rect', {x:0, y:0, width: sState.animated || RM ? w : labL, height:h}, clip);
+
+  const rows = [];
+  DISTRICTS.forEach((d, i) => {
+    const up = d.b >= d.a;
+    const col = up ? '#0047ff' : 'rgba(26,26,26,.55)';
+    const row = el('g', {class:'srow', style:'transition:opacity .25s ease'}, svg);
+    const gClip = el('g', {'clip-path':`url(#${clipId})`}, row);
+    el('line', {x1:xL, y1:Y(d.a), x2:xR, y2:Y(d.b), stroke:col, 'stroke-width':1.5}, gClip);
+    el('circle', {cx:xL, cy:Y(d.a), r:3, fill:col}, row);
+    el('circle', {cx:xR, cy:Y(d.b), r:3, fill:col}, gClip);
+
+    // left label: name + value
+    const lt = el('text', {class:'lab', x:xL-10, y:lY[i]+4, 'text-anchor':'end'}, row);
+    const nmT = el('tspan', {fill:'rgba(26,26,26,.62)'}, lt);
+    const shortN = {'Meridian Central':'Meridian Ctrl','Ironquay Industrial':'Ironquay Ind.','Larkspur Rural':'Larkspur R.'};
+    nmT.textContent = (mobile ? (shortN[d.n] || d.n) : d.n) + '  ';
+    const vlT = el('tspan', {'font-weight':500}, lt);
+    vlT.textContent = fmt1(d.a);
+
+    // right label: value + delta
+    const pct = (d.b - d.a) / d.a * 100;
+    const rt = el('text', {class:'lab', x:xR+10, y:rY[i]+4}, row);
+    const rv = el('tspan', {'font-weight':500, fill: up ? '#0047ff' : '#1a1a1a'}, rt);
+    rv.textContent = fmt1(d.b);
+    if (!mobile){
+      const rd = el('tspan', {fill:'rgba(26,26,26,.5)', dx:8, 'font-size':10}, rt);
+      rd.textContent = (pct >= 0 ? '+' : '−') + Math.abs(pct).toFixed(1) + '%';
+    }
+    rows.push(row);
+    row.addEventListener('pointerenter', () => rows.forEach(r2 => r2.style.opacity = r2 === row ? 1 : .22));
+    row.addEventListener('pointerleave', () => rows.forEach(r2 => r2.style.opacity = 1));
+  });
+
+  sState.clipRect = clipRect; sState.w = w;
+}
+function animateSlope(){
+  if (sState.animated) return; sState.animated = true;
+  tween(1100, p => { sState.clipRect && sState.clipRect.setAttribute('width', sState.w * p); }, inOut, 150);
+}
+
+/* ================= FIG 4 · ISOTYPE ================= */
+const isoField = $('#isoField'), isoCount = $('#isoCount');
+const TOTAL_DROPS = 412;
+let iState = {animated:false, drops:[]};
+(function buildIso(){
+  const frag = document.createDocumentFragment();
+  let dec = null;
+  for (let i = 0; i < TOTAL_DROPS; i++){
+    if (i % 10 === 0){ dec = document.createElement('span'); dec.className = 'decade'; frag.appendChild(dec); }
+    const s = document.createElementNS(NS,'svg');
+    s.setAttribute('class','drop'); s.setAttribute('viewBox','0 0 13 18'); s.setAttribute('aria-hidden','true');
+    const u = document.createElementNS(NS,'use'); u.setAttribute('href','#dropPath');
+    s.appendChild(u); dec.appendChild(s);
+    iState.drops.push(s);
+  }
+  isoField.appendChild(frag);
+  isoCount.textContent = RM ? '412' : '000';
+  if (RM) iState.drops.forEach(d => d.classList.add('on'));
+})();
+function animateIso(){
+  if (iState.animated) return; iState.animated = true;
+  if (RM){ isoCount.textContent = '412'; return; }
+  let shown = 0;
+  tween(2600, p => {
+    const n = Math.round(TOTAL_DROPS * p);
+    for (; shown < n; shown++) iState.drops[shown].classList.add('on');
+    isoCount.textContent = String(n).padStart(3,'0');
+  }, t => 1 - Math.pow(1 - t, 2), 100);
+}
+
+/* ================= FIG 5 · SPARKLINES ================= */
+const smGrid = $('#smGrid');
+let mState = {animated:false, lines:[]};
+function buildSparks(){
+  smGrid.innerHTML = ''; mState.lines = [];
+  SPARKS.forEach((sp, idx) => {
+    const cell = document.createElement('div'); cell.className = 'sm-cell';
+    const last = sp.s[sp.s.length-1], first = sp.s[0];
+    cell.innerHTML = `<div class="k">${sp.k}</div>
+      <div class="v num">${sp.f(last)}</div>
+      <div class="u">${sp.u}</div>
+      <div class="sl"></div>`;
+    smGrid.appendChild(cell);
+    const box = cell.querySelector('.sl');
+    const w = box.clientWidth || 160, h = 64;
+    const pad = {t: 8, b: 18, l: 4, r: 4};
+    const min = Math.min(...sp.s), max = Math.max(...sp.s);
+    const X = i => pad.l + i * ((w - pad.l - pad.r) / (sp.s.length - 1));
+    const Y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - min) / (max - min || 1));
+    const svg = el('svg', {viewBox:`0 0 ${w} ${h}`, width:w, height:h, role:'img',
+      'aria-label':`${sp.k}: ${sp.f(first)} in FY17 to ${sp.f(last)} in FY26`}, box);
+    el('line', {class:'rule', x1:pad.l, x2:w-pad.r, y1:px(h-pad.b+6), y2:px(h-pad.b+6), stroke:'rgba(26,26,26,.14)', 'shape-rendering':'crispEdges'}, svg);
+    const d = 'M' + sp.s.map((v,i) => X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' L');
+    const path = el('path', {d, fill:'none', stroke:'#0047ff', 'stroke-width':1.5, 'stroke-linejoin':'round'}, svg);
+    el('circle', {cx:X(0), cy:Y(first), r:2.5, fill:'rgba(26,26,26,.45)'}, svg);
+    el('circle', {cx:X(sp.s.length-1), cy:Y(last), r:2.5, fill:'#0047ff'}, svg);
+    const t1 = el('text', {class:'tick-t', x:pad.l, y:h-1}, svg); t1.textContent = `FY17 ${sp.f(first)}`;
+    const t2 = el('text', {class:'tick-t', x:w-pad.r, y:h-1, 'text-anchor':'end', fill:'#1a1a1a'}, svg); t2.textContent = `FY26 ${sp.f(last)}`;
+    const len = path.getTotalLength();
+    if (!(mState.animated || RM)){
+      path.setAttribute('stroke-dasharray', len);
+      path.setAttribute('stroke-dashoffset', len);
+    }
+    mState.lines.push({path, len, idx});
+  });
+}
+function animateSparks(){
+  if (mState.animated) return; mState.animated = true;
+  mState.lines.forEach(o => {
+    tween(900, p => o.path.setAttribute('stroke-dashoffset', o.len * (1 - p)), inOut, o.idx * 90,
+      () => { o.path.removeAttribute('stroke-dasharray'); o.path.removeAttribute('stroke-dashoffset'); });
+  });
+}
+
+/* ---------------- build + observe ---------------- */
+function buildAll(){
+  buildDelivery(); buildReservoirs(); buildSlope(); buildSparks();
+}
+buildAll();
+
+let rT;
+addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(buildAll, 180); });
+
+const animators = {ch1: animateDelivery, ch2: animateReservoirs, ch3: animateSlope, ch4: animateIso, ch5: animateSparks};
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in');
+    const fn = animators[en.target.id];
+    if (fn) fn();
+    io.unobserve(en.target);
+  });
+}, {threshold: .18});
+document.querySelectorAll('.chapter, .statement, .cover, .audit').forEach(s => io.observe(s));
+
+/* ---------------- chrome ---------------- */
+const pbar = $('#pbar');
+let ticking = false;
+addEventListener('scroll', () => {
+  if (ticking) return; ticking = true;
+  requestAnimationFrame(() => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    pbar.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
+    ticking = false;
+  });
+}, {passive:true});
+
+const gridBtn = $('#gridBtn');
+function toggleGrid(){
+  const on = document.body.classList.toggle('grid-on');
+  gridBtn.setAttribute('aria-pressed', on);
+}
+gridBtn.addEventListener('click', toggleGrid);
+addEventListener('keydown', e => {
+  if ((e.key === 'g' || e.key === 'G') && !e.metaKey && !e.ctrlKey && !e.altKey) toggleGrid();
+});
+
+/* ---------------- ?section=N deep link ---------------- */
+const params = new URLSearchParams(location.search);
+const sec = params.get('section');
+const scrollPx = params.get('scroll');
+requestAnimationFrame(() => {
+  if (sec){
+    const t = document.getElementById('ch' + sec);
+    if (t) t.scrollIntoView({behavior:'instant', block:'start'});
+  } else if (scrollPx){
+    scrollTo({top: parseInt(scrollPx, 10) || 0, behavior:'instant'});
+  }
+});
+})();
+</script>
+</body>
+</html>

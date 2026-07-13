@@ -1,0 +1,915 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARCANA — a deck for decisions you have already made</title>
+<meta name="description" content="ARCANA is an oracle deck for decisions you have already made. Shuffle, draw three, and let the cards corroborate what you knew before you cut the deck.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="ARCANA — a deck for decisions you have already made">
+<meta property="og:description" content="ARCANA is an oracle deck for decisions you have already made. Shuffle, draw three, and let the cards corroborate what you knew before you cut the deck.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/29-arcana/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/29-arcana/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ARCANA — a deck for decisions you have already made">
+<meta name="twitter:description" content="ARCANA is an oracle deck for decisions you have already made. Shuffle, draw three, and let the cards corroborate what you knew before you cut the deck.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/29-arcana/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕯️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --table:#0c0e0c;
+  --table-2:#0a0c0a;
+  --felt:#101511;
+  --gold:#c9a24b;
+  --gold-bright:#e8c877;
+  --gold-dim:rgba(201,162,75,.4);
+  --hairline:rgba(201,162,75,.22);
+  --ink:#e6ddc8;
+  --dim:rgba(230,221,200,.6);
+  --faint:rgba(230,221,200,.38);
+  --amber:#ffb35c;
+  --cw:clamp(148px,14.5vw,204px);
+  --sans:"Space Grotesk",system-ui,sans-serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--table);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:300;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+}
+::selection{background:var(--gold);color:#100e08}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--table-2)}
+::-webkit-scrollbar-thumb{background:#2a2418;border-radius:5px;border:2px solid var(--table-2)}
+::-webkit-scrollbar-thumb:hover{background:#3d3320}
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--gold);text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ---------- atmosphere ---------- */
+.grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:60;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.8 0 0 0 0 0.7 0 0 0 0 0.5 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:59;
+  background:radial-gradient(ellipse 90% 80% at 50% 42%,transparent 55%,rgba(2,3,2,.55) 100%)}
+
+/* candle glow */
+.glow{position:absolute;left:50%;top:42%;width:160vmin;height:160vmin;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(255,179,92,.17) 0%,rgba(255,158,64,.08) 28%,rgba(201,162,75,.03) 50%,transparent 68%);}
+.glow-core{position:absolute;left:50%;top:42%;width:60vmin;height:60vmin;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(255,201,128,.14) 0%,transparent 65%)}
+@keyframes flicker{
+  0%{opacity:.85;transform:translate(-50%,-50%) scale(1)}
+  23%{opacity:1;transform:translate(-50.4%,-50%) scale(1.02)}
+  41%{opacity:.8;transform:translate(-49.7%,-50.3%) scale(.985)}
+  60%{opacity:.95;transform:translate(-50.2%,-49.8%) scale(1.015)}
+  79%{opacity:.82;transform:translate(-49.8%,-50.2%) scale(.99)}
+  100%{opacity:.92;transform:translate(-50%,-50%) scale(1.005)}
+}
+@keyframes flicker2{
+  0%{opacity:.6}30%{opacity:.9}55%{opacity:.55}80%{opacity:.8}100%{opacity:.65}
+}
+.glow{animation:flicker 5.2s ease-in-out infinite alternate}
+.glow-core{animation:flicker2 2.3s ease-in-out infinite alternate}
+
+/* ---------- cursor ---------- */
+.cursor-dot{position:fixed;left:0;top:0;width:7px;height:7px;border-radius:50%;
+  background:var(--gold-bright);z-index:200;pointer-events:none;opacity:0;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 8px rgba(232,200,119,.7);
+  transition:width .25s ease,height .25s ease,opacity .3s ease}
+.cursor-dot.on{opacity:.9}
+.cursor-dot.hovering{width:15px;height:15px;background:transparent;border:1px solid var(--gold-bright)}
+@media(pointer:fine){
+  body.cursor-live,body.cursor-live button,body.cursor-live a{cursor:none}
+}
+
+/* ---------- back-link ---------- */
+.backlink{position:fixed;top:22px;left:24px;z-index:100;
+  font-size:10px;letter-spacing:.34em;color:var(--gold-dim);
+  padding:8px 2px;transition:color .35s ease}
+.backlink:hover{color:var(--gold-bright)}
+
+/* ---------- ritual table ---------- */
+#ritual{position:relative;min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:clamp(44px,7vh,72px) 20px 64px;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 30%,var(--felt) 0%,var(--table) 62%,var(--table-2) 100%);
+  overflow:hidden}
+#ritual::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:min(920px,88vw);height:1px;
+  background:linear-gradient(90deg,transparent,var(--hairline) 30%,var(--hairline) 70%,transparent)}
+
+.masthead{position:relative;z-index:2;text-align:center;
+  transition:transform .9s cubic-bezier(.4,0,.2,1),margin .9s cubic-bezier(.4,0,.2,1);
+  transform-origin:top center}
+.masthead .rule{width:54px;height:1px;margin:0 auto 22px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+h1{font-family:var(--sans);font-weight:300;
+  font-size:clamp(34px,4.6vw,58px);letter-spacing:.52em;text-indent:.52em;
+  color:var(--gold);line-height:1.05}
+.subtitle{margin-top:16px;font-size:clamp(11px,1.1vw,13px);letter-spacing:.24em;
+  color:var(--dim);font-weight:300}
+.state-drawn .masthead,.state-complete .masthead{transform:scale(.62);margin-bottom:-26px;margin-top:-14px}
+.state-drawn .stage,.state-complete .stage{margin-top:10px}
+#ritual.state-drawn,#ritual.state-complete{padding-top:40px;padding-bottom:44px}
+
+/* stage */
+.stage{position:relative;z-index:2;flex:1;width:100%;max-width:1160px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin-top:clamp(16px,3vh,36px)}
+
+/* deck */
+.deck-zone{position:relative;display:flex;flex-direction:column;align-items:center;
+  transition:opacity .8s ease,transform .8s cubic-bezier(.4,0,.2,1)}
+.state-drawn .deck-zone,.state-complete .deck-zone{
+  opacity:0;transform:scale(.7) translateY(-30px);pointer-events:none;
+  position:absolute;inset:0}
+.deck-zone::before{content:"";position:absolute;left:50%;bottom:-52px;transform:translateX(-50%);
+  width:calc(var(--cw)*2.4);height:84px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(255,180,92,.09) 0%,transparent 68%)}
+.deck{position:relative;width:var(--cw);aspect-ratio:2/3;
+  perspective:1400px;transform-style:preserve-3d;
+  transition:transform .4s cubic-bezier(.34,1.4,.5,1)}
+.deck-btn{display:block;width:100%;height:100%;position:relative;border-radius:10px}
+.deck-btn:hover .dcard:last-child{transform:translate(var(--ox),calc(var(--oy) - 7px)) rotate(var(--or))}
+.dcard{position:absolute;inset:0;border-radius:10px;overflow:hidden;
+  transform:translate(var(--ox),var(--oy)) rotate(var(--or));
+  box-shadow:0 3px 5px rgba(0,0,0,.5),0 14px 34px rgba(0,0,0,.55);
+  transition:transform .45s cubic-bezier(.34,1.3,.5,1);
+  will-change:transform;background:#0d1020}
+.dcard img{width:100%;height:100%;object-fit:cover}
+.dcard::after{content:"";position:absolute;inset:0;border-radius:10px;
+  box-shadow:inset 0 0 0 1px rgba(201,162,75,.16)}
+
+.instruction{position:relative;z-index:2;margin-top:34px;height:20px;
+  font-size:11px;letter-spacing:.42em;text-indent:.42em;color:var(--gold);
+  text-transform:lowercase;text-align:center;
+  transition:opacity .5s ease}
+.instruction.faded{opacity:0}
+@keyframes breathe{0%,100%{opacity:.55}50%{opacity:1}}
+.instruction span{display:inline-block;animation:breathe 3.4s ease-in-out infinite}
+
+/* ---------- spread ---------- */
+.spread{position:relative;z-index:2;width:100%;
+  display:none;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(20px,4vw,56px);
+  max-width:980px;margin:0 auto}
+.state-drawn .spread,.state-complete .spread{display:grid}
+.slot{display:flex;flex-direction:column;align-items:center;text-align:center}
+.slot-label{font-size:10px;letter-spacing:.44em;text-indent:.44em;color:var(--faint);
+  margin-bottom:18px;opacity:0;transition:opacity .8s ease .3s}
+.state-drawn .slot-label,.state-complete .slot-label{opacity:1}
+
+.scard{position:relative;width:var(--cw);aspect-ratio:2/3;perspective:1300px;
+  border-radius:10px}
+.scard-btn{display:block;width:100%;height:100%;border-radius:10px;
+  transition:transform .5s cubic-bezier(.34,1.3,.5,1)}
+.slot:not(.flipped) .scard-btn:hover{transform:translateY(-8px) rotate(.6deg)}
+.scard-inner{position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .95s cubic-bezier(.35,0,.18,1)}
+.slot.flipped .scard-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:10px;overflow:hidden;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:0 4px 8px rgba(0,0,0,.5),0 18px 44px rgba(0,0,0,.55)}
+.face img{width:100%;height:100%;object-fit:cover}
+.face::before{content:"";position:absolute;inset:0;border-radius:10px;
+  box-shadow:inset 0 0 0 1px rgba(201,162,75,.18);z-index:2}
+.face-up{transform:rotateY(180deg)}
+/* gold-foil shine sweep */
+.face-up::after{content:"";position:absolute;inset:-40%;z-index:3;
+  background:linear-gradient(112deg,transparent 42%,rgba(255,236,190,.32) 50%,rgba(255,215,140,.12) 54%,transparent 62%);
+  transform:translateX(-130%);pointer-events:none}
+@keyframes shine{to{transform:translateX(130%)}}
+.slot.flipped .face-up::after{animation:shine 1.25s cubic-bezier(.4,0,.3,1) .55s forwards}
+
+.meaning{margin-top:18px;max-width:300px;opacity:0;transform:translateY(10px);
+  transition:opacity .9s ease .75s,transform .9s cubic-bezier(.4,0,.2,1) .75s;
+  pointer-events:none}
+.slot.flipped .meaning{opacity:1;transform:none;pointer-events:auto}
+.card-name{font-size:12px;letter-spacing:.38em;text-indent:.38em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:12px}
+.reading{font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:clamp(15px,1.25vw,17px);line-height:1.55;color:var(--dim)}
+
+/* ---------- verdict ---------- */
+.verdict{position:relative;z-index:2;margin-top:clamp(22px,3.5vh,40px);text-align:center;
+  max-width:640px;opacity:0;transform:translateY(12px);visibility:hidden;
+  transition:opacity 1.1s ease .4s,transform 1.1s cubic-bezier(.4,0,.2,1) .4s,visibility 0s 1.5s}
+.state-complete .verdict{opacity:1;transform:none;visibility:visible;transition:opacity 1.1s ease .4s,transform 1.1s cubic-bezier(.4,0,.2,1) .4s}
+.verdict-kicker{font-size:10px;letter-spacing:.44em;text-indent:.44em;color:var(--faint);margin-bottom:12px}
+.verdict-line{font-family:var(--serif);font-style:italic;font-size:clamp(17px,1.6vw,21px);
+  line-height:1.5;color:var(--ink)}
+.again{margin-top:26px;display:inline-block;
+  font-size:10px;letter-spacing:.4em;text-indent:.4em;color:var(--gold);
+  border:1px solid var(--hairline);padding:13px 30px 12px;border-radius:2px;
+  transition:border-color .4s ease,color .4s ease,background .4s ease}
+.again:hover{border-color:var(--gold);color:var(--gold-bright);background:rgba(201,162,75,.05)}
+
+/* scroll hint */
+.scroll-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:2;transition:opacity .6s ease}
+.scroll-hint span{display:block;width:1px;height:36px;transform-origin:top;
+  background:linear-gradient(180deg,transparent,var(--gold-dim));
+  animation:drip 3s ease-in-out infinite}
+@keyframes drip{0%,100%{opacity:.25;transform:scaleY(.65)}50%{opacity:1;transform:scaleY(1)}}
+.state-drawn .scroll-hint,.state-complete .scroll-hint{opacity:0}
+
+/* ---------- sections ---------- */
+section{position:relative;padding:clamp(80px,12vh,130px) 24px}
+.sec-head{text-align:center;margin-bottom:clamp(44px,7vh,72px)}
+.sec-kicker{font-size:10px;letter-spacing:.44em;text-indent:.44em;color:var(--faint);margin-bottom:14px}
+.sec-title{font-size:clamp(20px,2.3vw,28px);font-weight:300;letter-spacing:.3em;text-indent:.3em;color:var(--gold)}
+
+/* practice */
+#practice{background:var(--table-2)}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(28px,4vw,56px);
+  max-width:1020px;margin:0 auto}
+.rule-card{text-align:center;padding:0 8px}
+.rule-num{font-family:var(--serif);font-size:26px;color:var(--gold);margin-bottom:16px}
+.rule-num::after{content:"";display:block;width:30px;height:1px;margin:14px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent)}
+.rule-title{font-size:11px;letter-spacing:.3em;text-indent:.3em;color:var(--ink);margin-bottom:12px;text-transform:uppercase}
+.rule-body{font-size:13.5px;color:var(--dim);line-height:1.75;max-width:290px;margin:0 auto}
+
+/* deck gallery */
+#deck-gallery{background:linear-gradient(180deg,var(--table) 0%,var(--table-2) 100%);overflow:hidden}
+.fan{display:flex;justify-content:center;align-items:flex-end;
+  max-width:1240px;margin:0 auto;padding:40px 0 30px}
+.fan-card{position:relative;width:clamp(120px,10.5vw,152px);aspect-ratio:2/3;flex:none;
+  margin:0 -17px;border-radius:8px;
+  transform:rotate(var(--fr)) translateY(var(--fy));
+  transition:transform .55s cubic-bezier(.3,1.25,.45,1),z-index 0s .1s;
+  z-index:1}
+.fan-card:hover,.fan-card:focus-visible{transform:rotate(0deg) translateY(calc(var(--fy) - 26px)) scale(1.09);z-index:10;transition:transform .55s cubic-bezier(.3,1.25,.45,1),z-index 0s}
+.fan-inner{position:relative;display:block;width:100%;height:100%;border-radius:8px;overflow:hidden;
+  box-shadow:0 3px 6px rgba(0,0,0,.5),0 16px 36px rgba(0,0,0,.5)}
+.fan-inner img{width:100%;height:100%;object-fit:cover}
+.fan-inner::before{content:"";position:absolute;inset:0;border-radius:8px;
+  box-shadow:inset 0 0 0 1px rgba(201,162,75,.16);z-index:2}
+.fan-inner::after{content:"";position:absolute;inset:-40%;z-index:3;
+  background:linear-gradient(112deg,transparent 42%,rgba(255,236,190,.3) 50%,transparent 60%);
+  transform:translateX(-130%);transition:transform .9s cubic-bezier(.4,0,.3,1);pointer-events:none}
+.fan-card:hover .fan-inner::after,.fan-card:focus-visible .fan-inner::after{transform:translateX(130%)}
+.fan-hint{text-align:center;margin-top:56px;font-size:10px;letter-spacing:.36em;text-indent:.36em;color:var(--faint)}
+
+/* lightbox */
+.lightbox{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;
+  background:rgba(5,6,5,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity .45s ease;padding:24px}
+.lightbox.open{opacity:1;pointer-events:auto}
+.lb-inner{display:flex;align-items:center;gap:clamp(28px,4vw,60px);max-width:860px;
+  transform:translateY(14px) scale(.98);transition:transform .45s cubic-bezier(.3,1,.4,1)}
+.lightbox.open .lb-inner{transform:none}
+.lb-card{width:min(320px,42vw);flex:none;border-radius:12px;overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.6),0 30px 80px rgba(0,0,0,.6)}
+.lb-card img{width:100%;height:auto}
+.lb-text{max-width:330px}
+.lb-name{font-size:14px;letter-spacing:.4em;text-indent:.4em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:18px}
+.lb-meaning{font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.55;color:var(--dim)}
+.lb-close{position:absolute;top:22px;right:26px;font-size:11px;letter-spacing:.3em;
+  color:var(--faint);padding:10px;transition:color .3s ease}
+.lb-close:hover{color:var(--gold-bright)}
+
+/* footer */
+footer{padding:60px 24px 46px;text-align:center;border-top:1px solid rgba(201,162,75,.1)}
+.foot-mark{font-size:13px;letter-spacing:.5em;text-indent:.5em;color:var(--gold);margin-bottom:18px}
+.foot-line{font-size:12px;color:var(--faint);letter-spacing:.08em;line-height:2}
+.foot-line em{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--dim)}
+.foot-sig{margin-top:22px;font-size:10px;letter-spacing:.3em;color:rgba(230,221,200,.25)}
+
+/* ---------- responsive ---------- */
+@media(max-width:760px){
+  :root{--cw:clamp(140px,40vw,180px)}
+  .backlink{top:16px;left:16px}
+  #ritual{padding-top:64px}
+  .spread{grid-template-columns:1fr;gap:44px;justify-items:center}
+  .state-drawn .masthead,.state-complete .masthead{transform:scale(.8)}
+  .rules{grid-template-columns:1fr;gap:40px}
+  .fan{flex-wrap:wrap;gap:18px;padding:10px 0}
+  .fan-card{width:40vw;margin:0;transform:none}
+  .fan-card:hover,.fan-card:focus-visible{transform:translateY(-8px) scale(1.03)}
+  .state-drawn .masthead,.state-complete .masthead{transform:scale(.8);margin-bottom:2px;margin-top:0}
+  #ritual.state-drawn,#ritual.state-complete{padding-top:52px}
+  .lb-inner{flex-direction:column;gap:22px;text-align:center;max-height:92vh;overflow-y:auto}
+  .lb-card{width:min(230px,56vw)}
+  .lb-text{max-width:300px}
+}
+
+/* ---------- reduced motion / no-anim ---------- */
+html.no-anim *,html.no-anim *::before,html.no-anim *::after{
+  animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .glow,.glow-core,.instruction span{animation:none}
+  .dcard,.scard-btn,.fan-card,.fan-inner::after{transition:none}
+  .scard-inner{transition:none}
+  .slot.flipped .scard-inner{transform:none}
+  .face{backface-visibility:visible;-webkit-backface-visibility:visible;transition:opacity .6s ease}
+  .face-up{transform:none;opacity:0}
+  .slot.flipped .face-up{opacity:1;animation:none}
+  .slot.flipped .face-up::after{animation:none}
+  .slot.flipped .face-down{opacity:0}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<main>
+  <!-- ═══════════ THE TABLE ═══════════ -->
+  <section id="ritual" class="state-idle">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="glow-core" aria-hidden="true"></div>
+
+    <header class="masthead">
+      <div class="rule" aria-hidden="true"></div>
+      <h1>ARCANA</h1>
+      <p class="subtitle">a deck for decisions you have already made</p>
+    </header>
+
+    <div class="stage">
+      <div class="deck-zone" id="deckZone">
+        <div class="deck" id="deck">
+          <button class="deck-btn" id="deckBtn" aria-label="The deck. Click to shuffle."></button>
+        </div>
+      </div>
+
+      <div class="spread" id="spread" aria-live="polite">
+        <div class="slot" data-pos="past">
+          <div class="slot-label">PAST</div>
+          <div class="scard"><button class="scard-btn" aria-label="Turn the past card">
+            <div class="scard-inner">
+              <div class="face face-down"><img src="assets/back.jpg" alt=""></div>
+              <div class="face face-up"><img alt=""></div>
+            </div>
+          </button></div>
+          <div class="meaning"><div class="card-name"></div><p class="reading"></p></div>
+        </div>
+        <div class="slot" data-pos="present">
+          <div class="slot-label">PRESENT</div>
+          <div class="scard"><button class="scard-btn" aria-label="Turn the present card">
+            <div class="scard-inner">
+              <div class="face face-down"><img src="assets/back.jpg" alt=""></div>
+              <div class="face face-up"><img alt=""></div>
+            </div>
+          </button></div>
+          <div class="meaning"><div class="card-name"></div><p class="reading"></p></div>
+        </div>
+        <div class="slot" data-pos="future">
+          <div class="slot-label">FUTURE</div>
+          <div class="scard"><button class="scard-btn" aria-label="Turn the future card">
+            <div class="scard-inner">
+              <div class="face face-down"><img src="assets/back.jpg" alt=""></div>
+              <div class="face face-up"><img alt=""></div>
+            </div>
+          </button></div>
+          <div class="meaning"><div class="card-name"></div><p class="reading"></p></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="instruction" id="instruction"><span>shuffle</span></p>
+
+    <div class="verdict" id="verdict">
+      <p class="verdict-kicker">THE CARDS HAVE SPOKEN</p>
+      <p class="verdict-line" id="verdictLine"></p>
+      <button class="again" id="againBtn">ASK AGAIN</button>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true"><span></span></div>
+  </section>
+
+  <!-- ═══════════ THE PRACTICE ═══════════ -->
+  <section id="practice">
+    <div class="sec-head">
+      <p class="sec-kicker">HOUSE RULES</p>
+      <h2 class="sec-title">THE PRACTICE</h2>
+    </div>
+    <div class="rules">
+      <div class="rule-card">
+        <div class="rule-num">I</div>
+        <h3 class="rule-title">No predictions</h3>
+        <p class="rule-body">The deck does not tell the future. It corroborates the present. Every card you draw is a receipt for a decision already made, printed slightly after the purchase.</p>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">II</div>
+        <h3 class="rule-title">Shuffle honestly</h3>
+        <p class="rule-body">The shuffling is for your benefit; the cards are not superstitious. They know where they are going. They have known, roughly, since you sat down at the table.</p>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">III</div>
+        <h3 class="rule-title">Draw again until honest</h3>
+        <p class="rule-body">If a card contradicts what you already know, you dealt it wrong. Gather the spread, breathe, and ask again — the deck is patient, and you were always going to.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ THE DECK ═══════════ -->
+  <section id="deck-gallery">
+    <div class="sec-head">
+      <p class="sec-kicker">EIGHT CARDS · ONE ANSWER</p>
+      <h2 class="sec-title">THE DECK</h2>
+    </div>
+    <div class="fan" id="fan"></div>
+    <p class="fan-hint">TOUCH A CARD TO READ IT</p>
+  </section>
+
+  <footer>
+    <p class="foot-mark">ARCANA</p>
+    <p class="foot-line"><em>Cartomancy for the already-decided.</em><br>
+    Printed nowhere · dealt nightly · no refunds on foreknowledge</p>
+    <p class="foot-sig">EST. THE MOMENT YOU KNEW · MMXXVI</p>
+  </footer>
+</main>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Card detail">
+  <button class="lb-close" id="lbClose">CLOSE</button>
+  <div class="lb-inner">
+    <div class="lb-card"><img id="lbImg" src="" alt=""></div>
+    <div class="lb-text">
+      <p class="lb-name" id="lbName"></p>
+      <p class="lb-meaning" id="lbMeaning"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ══════════════════ DATA ══════════════════ */
+const CARDS = {
+  compass: {
+    name: "The Compass", img: "assets/compass.jpg",
+    meaning: "Direction. Not the finding of it — the admitting of it. The needle only ever confirms; needles usually do.",
+    readings: {
+      past: [
+        "You asked everyone you knew which way to go, and then you went the way you were already facing. The needle only confirmed it. Needles usually do.",
+        "There was a fork in the road, and you stood at it for a season, dramatically. But your feet had voted before the deliberations opened.",
+        "You once called it being lost. It was actually a very slow, very thorough way of walking toward the same place."
+      ],
+      present: [
+        "You are holding the needle still with your thumb and calling the reading inconclusive. Let go of the needle.",
+        "North has not moved all year. You keep checking anyway, the way one checks a phone that has not buzzed.",
+        "The direction is known. What you are shopping for now is a witness."
+      ],
+      future: [
+        "You will arrive exactly where you have been pointed for months, and you will act surprised. No one will believe you. That is fine.",
+        "The road ahead runs one way, and you have already packed for it. The map you keep consulting is a formality, like reading the terms and conditions.",
+        "Soon you will stop asking for directions — not because you found the way, but because you will admit you always had it."
+      ]
+    }
+  },
+  hourglass: {
+    name: "The Hourglass", img: "assets/hourglass.jpg",
+    meaning: "Time, and the specific hour you keep pretending it isn't. The sand does not care what you call the waiting.",
+    readings: {
+      past: [
+        "You told yourself it wasn't the right time. It was the right time. It was, if anything, slightly past it.",
+        "You measured the waiting in seasons and called it patience. The sand did not care what you called it.",
+        "You kept turning the glass over to buy another hour of not deciding. Notice that the deciding happened anyway, quietly, while you watched the sand."
+      ],
+      present: [
+        "The glass is more than half empty, which you already knew, which is why you stopped looking at it.",
+        "You are waiting for a sign that the waiting is over. This card is, legally speaking, the closest thing to that sign you are going to get.",
+        "Somewhere between the last grain and this one, the decision finished making itself. You are now in the epilogue of your own hesitation."
+      ],
+      future: [
+        "There will be a moment that feels exactly like this one, and then another, until you act. The sand is not infinite. It only pours like it is.",
+        "The deadline you fear is a kindness in costume. When it arrives you will do in an afternoon what you have been circling for a year.",
+        "You will turn the glass one last time, out of ceremony, and then you will finally leave the room. Good."
+      ]
+    }
+  },
+  key: {
+    name: "The Key", img: "assets/key.jpg",
+    meaning: "Permission. Already granted, mostly by you, some time ago, in writing.",
+    readings: {
+      past: [
+        "You already know which door this opens. You have been carrying it in your pocket for a year, calling it a coin.",
+        "Someone handed you this a long time ago and you filed it under later. Later, it turns out, smells of candle wax and looks a great deal like tonight.",
+        "You tried every other key first, thoroughly, on principle. It was never about finding the right one. It was about tiring out the wrong ones."
+      ],
+      present: [
+        "The lock is not stuck. Your hand is on the key and has been for some time, which from a distance looks identical to hesitation.",
+        "You keep asking whether you are allowed. You are holding the permission. That is what a key is.",
+        "This opens exactly one thing, and you know which, and it is not the thing you have been telling people."
+      ],
+      future: [
+        "The door will open on the first try, and you will stand there, briefly offended by how easy it was. Go in anyway.",
+        "You will use it. Not today, perhaps — today you will polish it and put it back in your pocket. But the pocket has a hole in it now, and the key knows the way down.",
+        "One turn, one small click, and the whole architecture of maybe comes quietly down. Bring a bag for the rubble."
+      ]
+    }
+  },
+  moth: {
+    name: "The Moth", img: "assets/moth.jpg",
+    meaning: "Wanting, and its flight plan. The candle is not calling you; it is simply lit.",
+    readings: {
+      past: [
+        "You circled it for months and called the circling research. The flame took attendance every night. You were never once absent.",
+        "You said you were just looking. Moths always say that, in whatever passes for saying among moths.",
+        "It burned you a little, once, and you took that as evidence you should study it more closely. Scholars of the flame all have the same scorch marks."
+      ],
+      present: [
+        "You are mid-orbit and losing altitude and describing it, to friends, as keeping your options open.",
+        "The candle is not calling you. It is simply lit. The wanting is entirely yours, which is the part you keep hoping to outsource.",
+        "You have flown past every other light in the house. Let us not pretend this is about lighting."
+      ],
+      future: [
+        "You will land. Whether the flame is warm or the flame is fire is genuinely unknown — the only settled question, and it has been settled for some time, is that you will land.",
+        "The wings survive this more often than the stories claim. Not always. But you stopped weighing the odds weeks ago, so this line is decorative.",
+        "One night soon the window will be open and the light will be on, and every argument you rehearsed on the sill will stay on the sill."
+      ]
+    }
+  },
+  door: {
+    name: "The Door", img: "assets/door.jpg",
+    meaning: "The threshold. Ajar since you got here. Standing in doorways is not a residence.",
+    readings: {
+      past: [
+        "You have stood on this threshold so long the doormat says your name. Standing in doorways is not a residence, whatever lease you have drawn up.",
+        "You closed it once, gently, so it wouldn't count. It counted. Doors are strict accountants.",
+        "You keep telling the story of when it was open. It was open. You were busy describing the hinges."
+      ],
+      present: [
+        "It is ajar. It has been ajar. The dramatic question of whether it will open was settled by the builder.",
+        "You are through it, technically, by about a foot. The rest of you is negotiating.",
+        "Note that you are reading a card about a door instead of touching a door. The commute between those two activities is shorter than you think."
+      ],
+      future: [
+        "You will walk through it on an ordinary Tuesday, without ceremony, and wonder why you scheduled so much ceremony.",
+        "On the far side there is another room and another door, which will disappoint you for a moment and then, if you are honest, relieve you. You like doors. That was never the problem.",
+        "It closes behind you softly. You will listen for the click for a while afterward, then stop listening, then forget there was a click."
+      ]
+    }
+  },
+  tide: {
+    name: "The Tide", img: "assets/tide.jpg",
+    meaning: "What leaves, and its firm intention to return. The moon has never once consulted you.",
+    readings: {
+      past: [
+        "It went out, and you took it personally. It was the tide. It goes out. The moon has never once consulted you.",
+        "You built something lovely below the waterline and then were shocked, shocked, when the water came back to where the water lives.",
+        "Every time it receded you swore off the sea entirely. The record shows you standing on this same wet sand, swearing, on a schedule."
+      ],
+      present: [
+        "It is coming in. You can spend the next hour moving your towel up the beach in four-foot increments, or you can move it once. This has always been the whole choice.",
+        "You are waist-deep and describing yourself as undecided. The sea has a different word for people standing waist-deep in it.",
+        "What left is on its way back, slightly changed, smelling of salt. Decide before it arrives what you will do with your face."
+      ],
+      future: [
+        "It returns. This is not a prophecy; it is a timetable. The only variable the cards can see is whether you will be on the shore or pretending to be busy inland.",
+        "You will float. Not because you finally learn how, but because you will finally stop performing the drowning.",
+        "High tide arrives at an inconvenient hour, as scheduled. Everything you left below the line will be rearranged, and most of it needed rearranging."
+      ]
+    }
+  },
+  mirror: {
+    name: "The Mirror", img: "assets/mirror.jpg",
+    meaning: "The consultant you keep avoiding. Every card in this deck is a mirror; this one is just honest about it.",
+    readings: {
+      past: [
+        "You asked it who was fairest and it answered a different question, the real one, and you have been pretending not to have heard ever since.",
+        "You spent years auditioning other people for a role you had already cast. The mirror kept posting the cast list. You kept walking past it.",
+        "You called it vanity and looked away. It was never vanity. Vanity would have been easier."
+      ],
+      present: [
+        "The person you keep meaning to consult is in the glass, has been briefed, and has had the answer prepared since spring.",
+        "You are not looking for your reflection. You are looking for a loophole in it.",
+        "Every card in this deck is a mirror. This one is just honest about it."
+      ],
+      future: [
+        "One morning soon the face in the glass will look like someone who has already decided, because it will be. You will recognize them slowly, the way one recognizes a rumor coming true.",
+        "You will catch your reflection in a dark window, mid-stride, going the right way. Try to act like you knew.",
+        "The mirror does not show the future; it shows you — which, the deck regrets to inform you, has always been the same information."
+      ]
+    }
+  },
+  comet: {
+    name: "The Comet", img: "assets/comet.jpg",
+    meaning: "The rare pass. This one. Rare is not the same as never, but it is much closer than your calendar believes.",
+    readings: {
+      past: [
+        "It passed once before, years ago, and you noted the light and finished your soup. You have described that evening as bad timing ever since. It was soup.",
+        "You saw it. You made a wish so specific it was legally a plan. Then you filed the plan under someday, where it has been glowing through the drawer.",
+        "Everyone remembers where they were when it crossed. You were at the window, deciding whether looking counted as wanting."
+      ],
+      present: [
+        "It is overhead now. This is the part of the story you will be asked about later, so consider doing something worth the telling.",
+        "A once-in-a-lifetime thing is, at this very moment, being treated by you as a scheduling conflict.",
+        "The tail you can see is millions of miles of already happened. The head, the bright part, is asking about tonight."
+      ],
+      future: [
+        "It comes back, but not for a long time, and you know the orbit math as well as the deck does. This is the pass. This one.",
+        "You will tell the story of this year for decades. The only detail still unwritten is whether it is the year you watched or the year you went.",
+        "Rare is not the same as never. But it is much, much closer to never than your calendar seems to believe."
+      ]
+    }
+  }
+};
+const ORDER = ["compass","hourglass","key","moth","door","tide","mirror","comet"];
+
+const VERDICTS = [
+  (p,c,f)=>`The ${p} brought you here, the ${c} is holding the candle, and the ${f} has already left to wait for you.`,
+  (p,c,f)=>`You came by way of the ${p}. You are standing in the ${c}. The ${f} is on the road, and it walks quickly.`,
+  (p,c,f)=>`The ${p} explains it, the ${c} confirms it, and the ${f} — well. You knew before you shuffled.`,
+  (p,c,f)=>`First the ${p}, now the ${c}, soon the ${f}. The cards note, for the record, that you did not look surprised.`
+];
+
+/* ══════════════════ SETUP ══════════════════ */
+const params = new URLSearchParams(location.search);
+const forcedState = params.get("state");
+const forcedFlip = parseInt(params.get("flip") || "0", 10);
+const seedParam = params.get("seed");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const noAnim = !!forcedState;
+if (noAnim) document.documentElement.classList.add("no-anim");
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+let seed = seedParam !== null ? (parseInt(seedParam,10)||1) : (Math.floor(Math.random()*1e9)+1);
+let rand = mulberry32(seed);
+
+const ritual = document.getElementById("ritual");
+const deckZone = document.getElementById("deckZone");
+const deckBtn = document.getElementById("deckBtn");
+const spread = document.getElementById("spread");
+const instruction = document.getElementById("instruction");
+const verdictLine = document.getElementById("verdictLine");
+const slots = [...spread.querySelectorAll(".slot")];
+const POSITIONS = ["past","present","future"];
+
+let state = "idle";           // idle | shuffling | shuffled | drawn
+let drawnCards = [];          // 3 card keys
+let flippedCount = 0;
+
+/* build the physical deck: 7 stacked backs */
+const dcards = [];
+(function buildDeck(){
+  const r = mulberry32(1234);
+  for (let i = 0; i < 7; i++){
+    const d = document.createElement("div");
+    d.className = "dcard";
+    d.style.setProperty("--ox", ((r()*2-1)*4).toFixed(1)+"px");
+    d.style.setProperty("--oy", ((r()*2-1)*3 - i*0.6).toFixed(1)+"px");
+    d.style.setProperty("--or", ((r()*2-1)*2.4).toFixed(2)+"deg");
+    d.style.zIndex = i+1;
+    const img = document.createElement("img");
+    img.src = "assets/back.jpg"; img.alt = "";
+    if (i < 6) img.loading = "lazy";
+    d.appendChild(img);
+    deckBtn.appendChild(d);
+    dcards.push(d);
+  }
+})();
+
+function setInstruction(text){
+  if (!text){ instruction.classList.add("faded"); return; }
+  instruction.classList.add("faded");
+  const apply = ()=>{ instruction.innerHTML = "<span>"+text+"</span>"; instruction.classList.remove("faded"); };
+  if (noAnim || reduced) apply(); else setTimeout(apply, 420);
+}
+
+/* ══════════════════ SHUFFLE ══════════════════ */
+function shuffleDeck(done){
+  if (reduced || noAnim){ restackDeck(); done && done(); return; }
+  state = "shuffling";
+  const n = dcards.length;
+  dcards.forEach((d, i)=>{
+    const k = i - (n-1)/2;                 // -3..3
+    const start = `translate(${d.style.getPropertyValue("--ox")},${d.style.getPropertyValue("--oy")}) rotate(${d.style.getPropertyValue("--or")})`;
+    const fanX = k*52, fanY = -46 - Math.abs(k)*7, fanR = k*10;
+    const newOx = ((rand()*2-1)*4).toFixed(1)+"px";
+    const newOy = ((rand()*2-1)*3 - i*0.6).toFixed(1)+"px";
+    const newOr = ((rand()*2-1)*2.4).toFixed(2)+"deg";
+    const end = `translate(${newOx},${newOy}) rotate(${newOr})`;
+    const anim = d.animate([
+      { transform: start, offset: 0 },
+      { transform: `translate(${fanX}px,${fanY}px) rotate(${fanR}deg) translateZ(${(i+1)*2}px)`, offset: .32 },
+      { transform: `translate(${-fanX*0.9}px,${fanY*0.6}px) rotate(${-fanR*0.8}deg) translateZ(${(n-i)*2}px)`, offset: .62 },
+      { transform: end, offset: 1 }
+    ], { duration: 1550, delay: i*38, easing: "cubic-bezier(.6,.05,.3,1)", fill: "none" });
+    anim.onfinish = ()=>{
+      d.style.setProperty("--ox", newOx);
+      d.style.setProperty("--oy", newOy);
+      d.style.setProperty("--or", newOr);
+      if (i === n-1){ done && done(); }
+    };
+  });
+}
+function restackDeck(){
+  const r = mulberry32(seed + 77);
+  dcards.forEach((d,i)=>{
+    d.style.setProperty("--ox", ((r()*2-1)*4).toFixed(1)+"px");
+    d.style.setProperty("--oy", ((r()*2-1)*3 - i*0.6).toFixed(1)+"px");
+    d.style.setProperty("--or", ((r()*2-1)*2.4).toFixed(2)+"deg");
+  });
+}
+
+/* ══════════════════ DRAW ══════════════════ */
+function pickThree(){
+  const pool = [...ORDER];
+  for (let i = pool.length-1; i > 0; i--){
+    const j = Math.floor(rand()*(i+1)); [pool[i],pool[j]] = [pool[j],pool[i]];
+  }
+  return pool.slice(0,3);
+}
+
+function populateSlots(){
+  drawnCards = pickThree();
+  flippedCount = 0;
+  slots.forEach((slot, i)=>{
+    const key = drawnCards[i];
+    const card = CARDS[key];
+    const pos = POSITIONS[i];
+    slot.classList.remove("flipped");
+    slot.querySelector(".face-up img").src = card.img;
+    slot.querySelector(".face-up img").alt = card.name + " — engraved card face";
+    slot.querySelector(".card-name").textContent = card.name;
+    const opts = card.readings[pos];
+    slot.querySelector(".reading").textContent = opts[Math.floor(rand()*opts.length)];
+  });
+  const names = drawnCards.map(k=>CARDS[k].name.replace(/^The\s+/i,"").toLowerCase());
+  let line = VERDICTS[Math.floor(rand()*VERDICTS.length)](...names);
+  verdictLine.textContent = line.charAt(0).toUpperCase() + line.slice(1);
+}
+
+function drawThree(instant){
+  populateSlots();
+  ritual.classList.remove("state-idle","state-complete");
+  ritual.classList.add("state-drawn");
+  state = "drawn";
+  setInstruction("turn the cards");
+  if (instant || reduced || noAnim) return;
+  /* FLIP: animate cards from deck center to their slots */
+  requestAnimationFrame(()=>{
+    const deckRect = deckZone.getBoundingClientRect();
+    const dx0 = deckRect.left + deckRect.width/2;
+    const dy0 = deckRect.top + deckRect.height/2;
+    slots.forEach((slot, i)=>{
+      const cardEl = slot.querySelector(".scard");
+      const r = cardEl.getBoundingClientRect();
+      const dx = dx0 - (r.left + r.width/2);
+      const dy = dy0 - (r.top + r.height/2);
+      cardEl.animate([
+        { transform: `translate(${dx}px,${dy}px) rotate(${(i-1)*4}deg)`, opacity: .0 },
+        { transform: `translate(${dx*.5}px,${dy*.5}px) rotate(${(i-1)*2}deg)`, opacity: 1, offset:.3 },
+        { transform: "none", opacity: 1 }
+      ], { duration: 900, delay: 120 + i*140, easing: "cubic-bezier(.35,0,.2,1)", fill: "backwards" });
+    });
+  });
+}
+
+/* ══════════════════ FLIP ══════════════════ */
+function flipSlot(slot){
+  if (slot.classList.contains("flipped") || state !== "drawn") return;
+  slot.classList.add("flipped");
+  slot.querySelector(".scard-btn").setAttribute("aria-label",
+    slot.querySelector(".card-name").textContent + " — revealed");
+  flippedCount++;
+  if (flippedCount === 3){
+    setInstruction("");
+    const delay = (noAnim || reduced) ? 0 : 1400;
+    setTimeout(()=>{
+      ritual.classList.add("state-complete");
+      state = "complete";
+    }, delay);
+  }
+}
+
+/* ══════════════════ EVENTS ══════════════════ */
+deckBtn.addEventListener("click", ()=>{
+  if (state === "idle"){
+    setInstruction("");
+    shuffleDeck(()=>{
+      state = "shuffled";
+      setInstruction("draw three");
+      deckBtn.setAttribute("aria-label","The deck, shuffled. Click to draw three cards.");
+    });
+    if (reduced || noAnim){ state = "shuffled"; setInstruction("draw three"); }
+  } else if (state === "shuffled"){
+    drawThree(false);
+  }
+});
+slots.forEach(slot=>{
+  slot.querySelector(".scard-btn").addEventListener("click", ()=>flipSlot(slot));
+});
+document.getElementById("againBtn").addEventListener("click", ()=>{
+  seed = Math.floor(Math.random()*1e9)+1;
+  rand = mulberry32(seed);
+  ritual.classList.remove("state-drawn","state-complete");
+  ritual.classList.add("state-idle");
+  state = "idle";
+  slots.forEach(s=>s.classList.remove("flipped"));
+  restackDeck();
+  deckBtn.setAttribute("aria-label","The deck. Click to shuffle.");
+  if (reduced){ state = "shuffled"; setInstruction("draw three"); }
+  else {
+    setInstruction("");
+    setTimeout(()=>{
+      shuffleDeck(()=>{ state = "shuffled"; setInstruction("draw three"); });
+    }, 500);
+  }
+});
+
+/* ══════════════════ GALLERY ══════════════════ */
+const fan = document.getElementById("fan");
+ORDER.forEach((key, i)=>{
+  const card = CARDS[key];
+  const k = i - (ORDER.length-1)/2;         // -3.5..3.5
+  const b = document.createElement("button");
+  b.className = "fan-card";
+  b.style.setProperty("--fr", (k*3.4).toFixed(1)+"deg");
+  b.style.setProperty("--fy", (Math.abs(k)*Math.abs(k)*3.4).toFixed(1)+"px");
+  b.setAttribute("aria-label", card.name + " — view meaning");
+  b.innerHTML = `<span class="fan-inner"><img src="${card.img}" alt="${card.name}" loading="lazy"></span>`;
+  b.addEventListener("click", ()=>openLightbox(key));
+  fan.appendChild(b);
+});
+
+const lightbox = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+const lbName = document.getElementById("lbName");
+const lbMeaning = document.getElementById("lbMeaning");
+let lastFocus = null;
+function openLightbox(key){
+  const card = CARDS[key];
+  lbImg.src = card.img; lbImg.alt = card.name;
+  lbName.textContent = card.name;
+  lbMeaning.textContent = card.meaning;
+  lastFocus = document.activeElement;
+  lightbox.classList.add("open");
+  document.getElementById("lbClose").focus();
+}
+function closeLightbox(){
+  lightbox.classList.remove("open");
+  if (lastFocus) lastFocus.focus();
+}
+document.getElementById("lbClose").addEventListener("click", closeLightbox);
+lightbox.addEventListener("click", e=>{ if (e.target === lightbox) closeLightbox(); });
+document.addEventListener("keydown", e=>{ if (e.key === "Escape" && lightbox.classList.contains("open")) closeLightbox(); });
+
+/* ══════════════════ CURSOR ══════════════════ */
+(function cursor(){
+  if (!matchMedia("(pointer:fine)").matches || noAnim) return;
+  const dot = document.getElementById("cursorDot");
+  document.body.classList.add("cursor-live");
+  let tx = innerWidth/2, ty = innerHeight/2, x = tx, y = ty, raf = null, running = false;
+  function loop(){
+    x += (tx - x) * 0.32; y += (ty - y) * 0.32;
+    dot.style.transform = `translate(${x - 3.5}px,${y - 3.5}px)`;
+    if (Math.abs(tx-x) > .2 || Math.abs(ty-y) > .2){ raf = requestAnimationFrame(loop); }
+    else running = false;
+  }
+  function kick(){ if (!running && !document.hidden){ running = true; raf = requestAnimationFrame(loop); } }
+  addEventListener("mousemove", e=>{
+    tx = e.clientX; ty = e.clientY;
+    dot.classList.add("on");
+    dot.classList.toggle("hovering", !!e.target.closest("button,a"));
+    kick();
+  }, { passive: true });
+  addEventListener("mouseleave", ()=>dot.classList.remove("on"));
+  document.addEventListener("visibilitychange", ()=>{
+    if (document.hidden && raf){ cancelAnimationFrame(raf); running = false; }
+  });
+})();
+
+/* ══════════════════ FORCED STATES (screenshots) ══════════════════ */
+(function applyForcedState(){
+  if (forcedState === "shuffled"){
+    restackDeck(); state = "shuffled"; setInstruction("draw three");
+  } else if (forcedState === "drawn" || forcedState === "complete"){
+    drawThree(true);
+    const n = forcedState === "complete" ? 3 : Math.max(0, Math.min(3, forcedFlip));
+    for (let i = 0; i < n; i++) flipSlot(slots[i]);
+  }
+  const scrollTo = params.get("scroll");
+  if (scrollTo){
+    const el = document.getElementById(scrollTo);
+    if (el) requestAnimationFrame(()=>el.scrollIntoView({ behavior: "auto", block: "start" }));
+  }
+})();
+</script>
+</body>
+</html>

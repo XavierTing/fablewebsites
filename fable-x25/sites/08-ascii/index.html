@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="green">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHOSPHOR — an ASCII rendering engine</title>
+<meta name="description" content="PHOSPHOR is a real-time 3-D to text-mode rendering engine: parametric surfaces, rotation matrices, a z-buffer and a luminance ramp, drawn one character at a time on a simulated CRT.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="PHOSPHOR — an ASCII rendering engine">
+<meta property="og:description" content="PHOSPHOR is a real-time 3-D to text-mode rendering engine: parametric surfaces, rotation matrices, a z-buffer and a luminance ramp, drawn one character at a time on a simulated CRT.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/08-ascii/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/08-ascii/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PHOSPHOR — an ASCII rendering engine">
+<meta name="twitter:description" content="PHOSPHOR is a real-time 3-D to text-mode rendering engine: parametric surfaces, rotation matrices, a z-buffer and a luminance ramp, drawn one character at a time on a simulated CRT.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/08-ascii/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📟</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PHOSPHOR — 1978 lab instrument / CRT text-mode renderer
+   ============================================================ */
+:root{
+  --bg:#0a0f0a;
+  --bg-deep:#060906;
+  --ph:#33ff66;
+  --ph-hot:#d4ffe0;
+  --ph-dim:#1fa344;
+  --ph-faint:#11582a;
+  --ph-ghost:#0c3a1c;
+  --glow:rgba(51,255,102,.45);
+  --glow-soft:rgba(51,255,102,.14);
+  --panel:#131a13;
+  --panel-hi:#212b21;
+  --panel-lo:#0a0e0a;
+  --panel-edge:#2c382c;
+  --steel:#39443a;
+  --steel-hi:#5c6a5d;
+  --label:#8d9c8d;
+  --label-dim:#5a685a;
+  --screen-bg:#050a05;
+  --accent-red:#e0402e;
+}
+[data-theme="amber"]{
+  --bg:#0f0a05;
+  --bg-deep:#0a0703;
+  --ph:#ffb000;
+  --ph-hot:#ffefcf;
+  --ph-dim:#b87700;
+  --ph-faint:#6b4400;
+  --ph-ghost:#452c00;
+  --glow:rgba(255,176,0,.42);
+  --glow-soft:rgba(255,176,0,.12);
+  --panel:#181209;
+  --panel-hi:#2a2112;
+  --panel-lo:#0e0a05;
+  --panel-edge:#3a2f1a;
+  --steel:#443b2b;
+  --steel-hi:#6a5f48;
+  --label:#a09378;
+  --label-dim:#6b6250;
+  --screen-bg:#0a0603;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background:var(--bg);
+  color:var(--ph);
+  font-family:'IBM Plex Mono', 'Menlo', monospace;
+  font-size:15px;
+  line-height:1.65;
+  overflow-x:hidden;
+  transition:background .5s ease;
+}
+::selection{background:var(--ph); color:var(--bg-deep)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg-deep)}
+::-webkit-scrollbar-thumb{background:var(--ph-faint); border:2px solid var(--bg-deep); border-radius:0}
+::-webkit-scrollbar-thumb:hover{background:var(--ph-dim)}
+:focus-visible{outline:1px solid var(--ph); outline-offset:3px}
+a{color:var(--ph)}
+
+/* film grain + ambient vignette on the whole page */
+body::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:60;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:59;
+  background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.5) 100%);
+}
+
+/* ---------- back-link ---------- */
+.backlink{
+  position:fixed; top:14px; left:16px; z-index:100;
+  font-size:10px; letter-spacing:.22em; text-decoration:none;
+  color:var(--label); padding:7px 11px;
+  border:1px solid var(--panel-edge);
+  background:linear-gradient(180deg, var(--panel-hi), var(--panel));
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 2px 6px rgba(0,0,0,.6);
+  transition:color .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.backlink:hover{color:var(--ph); border-color:var(--ph-faint); box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 0 14px var(--glow-soft), 0 2px 6px rgba(0,0,0,.6)}
+
+/* ---------- shared instrument chrome ---------- */
+.lbl{
+  font-size:9px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--label-dim); font-weight:600;
+  text-shadow:0 1px 0 rgba(255,255,255,.06), 0 -1px 0 rgba(0,0,0,.9);
+}
+.lbl.bright{color:var(--label)}
+.rule{height:1px; background:linear-gradient(90deg, transparent, var(--panel-edge), transparent)}
+
+.plate{
+  background:linear-gradient(175deg, var(--panel-hi) 0%, var(--panel) 30%, var(--panel-lo) 100%);
+  border:1px solid var(--panel-edge);
+  border-top-color:var(--steel);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 -8px 24px rgba(0,0,0,.45) inset,
+    0 18px 50px rgba(0,0,0,.55);
+  position:relative;
+}
+.screw{
+  position:absolute; width:10px; height:10px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, var(--steel-hi), var(--steel) 55%, #0c100c 100%);
+  box-shadow:0 1px 2px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.5);
+}
+.screw::after{
+  content:""; position:absolute; left:1.5px; right:1.5px; top:50%; height:1.5px;
+  background:rgba(0,0,0,.75); transform:translateY(-50%) rotate(38deg);
+}
+.screw.tl{top:8px;left:8px}.screw.tr{top:8px;right:8px}
+.screw.bl{bottom:8px;left:8px}.screw.br{bottom:8px;right:8px}
+
+/* engraved instrument heading strip */
+.plate-head{
+  display:flex; align-items:center; gap:14px;
+  padding:10px 34px; border-bottom:1px solid var(--panel-edge);
+  background:linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+}
+.plate-head .tag{
+  font-size:10px; letter-spacing:.3em; color:var(--label); font-weight:700;
+  text-shadow:0 1px 0 rgba(255,255,255,.07), 0 -1px 0 #000;
+  white-space:nowrap;
+}
+.plate-head .rule{flex:1}
+.led{
+  width:7px; height:7px; border-radius:50%; flex:none;
+  background:var(--ph); box-shadow:0 0 8px var(--glow), 0 0 2px var(--ph);
+  animation:led-breathe 2.6s ease-in-out infinite;
+}
+.led.red{background:var(--accent-red); box-shadow:0 0 8px rgba(224,64,46,.6); animation:none; opacity:.85}
+@keyframes led-breathe{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* ---------- CRT screens ---------- */
+.crt{
+  position:relative; background:var(--screen-bg);
+  border-radius:14px; overflow:hidden;
+  border:1px solid #000;
+  box-shadow:
+    0 0 0 3px #0d120d,
+    0 0 40px rgba(0,0,0,.7) inset,
+    0 0 90px var(--glow-soft) inset;
+  cursor:crosshair;
+}
+.crt pre{
+  position:relative; z-index:2;
+  font-family:'IBM Plex Mono','Menlo',monospace;
+  font-weight:500;
+  color:var(--ph);
+  text-shadow:0 0 6px var(--glow), 0 0 22px var(--glow-soft);
+  white-space:pre; user-select:none;
+  padding:0; margin:0 auto; width:max-content;
+}
+.crt pre.dimlayer{position:absolute; inset:0; margin:0 auto; color:var(--ph-faint); text-shadow:0 0 5px var(--glow-soft); z-index:1}
+.crt pre.midlayer{position:absolute; inset:0; margin:0 auto; color:var(--ph-dim); text-shadow:0 0 6px var(--glow); z-index:2}
+.crt pre.hotlayer{position:relative; color:var(--ph-hot); text-shadow:0 0 4px var(--ph), 0 0 14px var(--glow); z-index:3}
+.crt .stage{position:relative; padding:18px 0}
+/* scanlines */
+.crt::before{
+  content:""; position:absolute; inset:0; z-index:4; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.32) 0px, rgba(0,0,0,.32) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:multiply;
+}
+/* barrel vignette + curvature sheen */
+.crt::after{
+  content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:
+    radial-gradient(ellipse 120% 120% at 50% 46%, transparent 58%, rgba(0,0,0,.55) 96%),
+    radial-gradient(ellipse 60% 30% at 50% -6%, rgba(255,255,255,.055), transparent 65%);
+  border-radius:inherit;
+}
+.crt .flicker{position:absolute; inset:0; z-index:6; pointer-events:none; background:var(--ph); opacity:0; mix-blend-mode:overlay}
+@media (prefers-reduced-motion: no-preference){
+  .crt .flicker{animation:flick 7.3s steps(1) infinite}
+  @keyframes flick{
+    0%,100%{opacity:0} 12.2%{opacity:.05} 12.6%{opacity:0}
+    41.7%{opacity:.04} 42%{opacity:0} 78.3%{opacity:.06} 78.7%{opacity:0}
+  }
+}
+
+/* screen bezel unit */
+.crt-unit{padding:22px; border-radius:6px}
+.crt-unit .plaque{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-top:14px; padding:0 4px;
+}
+.plaque .model{font-size:10px; letter-spacing:.3em; color:var(--label); font-weight:700; text-shadow:0 1px 0 rgba(255,255,255,.06),0 -1px 0 #000}
+.plaque .serial{font-size:9px; letter-spacing:.18em; color:var(--label-dim)}
+
+/* ---------- header ---------- */
+header.masthead{
+  max-width:1320px; margin:0 auto; padding:84px 32px 30px;
+}
+.masthead .topline{
+  display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+  flex-wrap:wrap;
+}
+h1.wordmark{
+  font-size:clamp(52px, 9vw, 128px);
+  font-weight:700; letter-spacing:.08em; line-height:.95;
+  text-shadow:0 0 18px var(--glow), 0 0 60px var(--glow-soft);
+  margin-left:-4px;
+}
+h1 .cursor-block{display:inline-block; width:.55em; height:.78em; background:var(--ph); vertical-align:baseline; margin-left:.08em; box-shadow:0 0 18px var(--glow); transform:translateY(.08em)}
+@media (prefers-reduced-motion: no-preference){ h1 .cursor-block{animation:blink 1.1s steps(1) infinite} }
+@keyframes blink{50%{opacity:0}}
+.masthead .sub{
+  margin-top:18px; display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+}
+.masthead .sub .desc{
+  font-size:clamp(11px,1.2vw,13px); letter-spacing:.28em; text-transform:uppercase; color:var(--ph-dim);
+}
+.readout-row{display:flex; gap:10px; flex-wrap:wrap}
+.readout{
+  background:var(--bg-deep); border:1px solid var(--panel-edge);
+  box-shadow:0 2px 6px rgba(0,0,0,.6) inset;
+  padding:5px 10px; min-width:74px;
+}
+.readout .k{font-size:8px; letter-spacing:.22em; color:var(--label-dim); display:block}
+.readout .v{font-size:13px; font-weight:600; color:var(--ph); text-shadow:0 0 8px var(--glow); letter-spacing:.06em}
+
+/* theme rocker switch */
+.rocker{
+  display:flex; align-items:center; gap:10px; user-select:none;
+}
+.rocker .lbl{cursor:pointer; transition:color .25s}
+.rocker .lbl.on{color:var(--ph); text-shadow:0 0 8px var(--glow)}
+.switch{
+  width:46px; height:24px; flex:none; cursor:pointer; position:relative;
+  background:linear-gradient(180deg,#050705,#0e130e);
+  border:1px solid var(--panel-edge); border-radius:3px;
+  box-shadow:0 3px 7px rgba(0,0,0,.8) inset;
+}
+.switch .knob{
+  position:absolute; top:2px; left:2px; width:20px; height:18px;
+  background:linear-gradient(180deg, var(--steel-hi), var(--steel) 60%, #161c16);
+  border-radius:2px; box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 2px 4px rgba(0,0,0,.7);
+  transition:transform .18s cubic-bezier(.7,0,.3,1.4);
+}
+.switch[aria-checked="true"] .knob{transform:translateX(21px)}
+.switch:hover .knob{background:linear-gradient(180deg, #7c8a7c, var(--steel) 60%, #161c16)}
+[data-theme="amber"] .switch:hover .knob{background:linear-gradient(180deg, #8a7c5e, var(--steel) 60%, #1c1810)}
+
+/* ---------- hero layout ---------- */
+.hero{
+  max-width:1320px; margin:0 auto; padding:10px 32px 40px;
+  display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:26px;
+  align-items:stretch;
+}
+
+/* ---------- instrument control panel ---------- */
+.panel{
+  display:flex; flex-direction:column;
+}
+.panel .body{padding:20px 26px 24px; display:flex; flex-direction:column; gap:20px; flex:1}
+.ctl-group{display:flex; flex-direction:column; gap:8px}
+.ctl-group>.lbl{padding-left:2px}
+
+/* latching push buttons */
+.latch-row{display:flex; gap:6px}
+.latch{
+  flex:1; appearance:none; font-family:inherit; cursor:pointer;
+  font-size:9px; letter-spacing:.14em; font-weight:600; padding:9px 4px 8px;
+  color:var(--label);
+  background:linear-gradient(180deg, var(--panel-hi), var(--panel) 55%, var(--panel-lo));
+  border:1px solid var(--panel-edge); border-bottom-color:#000;
+  box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 3px 5px rgba(0,0,0,.55);
+  transition:all .15s ease; position:relative; text-align:center;
+}
+.latch::before{
+  content:""; position:absolute; top:4px; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%;
+  background:#131813; box-shadow:0 1px 1px rgba(0,0,0,.8) inset;
+  transition:all .15s ease;
+}
+.latch:hover{color:var(--ph-dim); border-color:var(--steel)}
+.latch[aria-pressed="true"]{
+  color:var(--ph); text-shadow:0 0 8px var(--glow);
+  background:linear-gradient(180deg, var(--panel-lo), var(--panel));
+  box-shadow:0 3px 6px rgba(0,0,0,.7) inset;
+  transform:translateY(1px);
+}
+.latch[aria-pressed="true"]::before{background:var(--ph); box-shadow:0 0 6px var(--glow)}
+.latch .big{display:block; font-size:15px; letter-spacing:0; margin-bottom:2px; font-weight:400}
+
+/* fader */
+.fader{position:relative; padding:4px 2px 0}
+input[type="range"]{
+  -webkit-appearance:none; appearance:none; width:100%; height:26px; background:transparent; cursor:pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track{
+  height:6px; background:linear-gradient(180deg,#040604,#101510);
+  border:1px solid var(--panel-edge); box-shadow:0 2px 4px rgba(0,0,0,.8) inset;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:14px; height:24px; margin-top:-10px;
+  background:linear-gradient(90deg, var(--steel) 0%, var(--steel-hi) 46%, #f2f6f2 50%, var(--steel-hi) 54%, var(--steel) 100%);
+  border:1px solid #000; border-radius:2px;
+  box-shadow:0 2px 5px rgba(0,0,0,.7);
+  transition:box-shadow .2s ease;
+}
+input[type="range"]:hover::-webkit-slider-thumb{box-shadow:0 0 10px var(--glow-soft), 0 2px 5px rgba(0,0,0,.7)}
+input[type="range"]::-moz-range-track{
+  height:6px; background:#0a0e0a; border:1px solid var(--panel-edge);
+}
+input[type="range"]::-moz-range-thumb{
+  width:14px; height:24px; background:var(--steel-hi); border:1px solid #000; border-radius:2px;
+}
+.fader .ticks{display:flex; justify-content:space-between; font-size:8px; color:var(--label-dim); letter-spacing:.1em; padding:2px 2px 0}
+
+/* light pad */
+.lightpad-wrap{display:flex; gap:14px; align-items:stretch}
+.lightpad{
+  width:112px; height:112px; flex:none; position:relative; cursor:grab; touch-action:none;
+  background:
+    linear-gradient(var(--panel-edge) 1px, transparent 1px) 0 0/25% 25%,
+    linear-gradient(90deg, var(--panel-edge) 1px, transparent 1px) 0 0/25% 25%,
+    radial-gradient(circle at 50% 50%, #0c110c, var(--bg-deep));
+  border:1px solid var(--panel-edge);
+  box-shadow:0 3px 8px rgba(0,0,0,.7) inset;
+}
+.lightpad:active{cursor:grabbing}
+.lightpad .dot{
+  position:absolute; width:12px; height:12px; border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, var(--ph-hot), var(--ph) 60%);
+  box-shadow:0 0 12px var(--glow), 0 0 4px var(--ph);
+  transform:translate(-50%,-50%); left:50%; top:22%;
+  pointer-events:none;
+}
+.lightpad::after{
+  content:""; position:absolute; left:50%; top:50%; width:5px; height:5px;
+  border:1px solid var(--label-dim); border-radius:50%; transform:translate(-50%,-50%);
+}
+.lightpad-meta{display:flex; flex-direction:column; gap:6px; justify-content:center; flex:1}
+.lightpad-meta .readout{min-width:0}
+
+.panel .readout-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.panel-foot{margin-top:auto; padding-top:6px}
+.panel-foot .lbl{display:block; text-align:center; letter-spacing:.3em}
+
+/* ---------- content sections ---------- */
+section.copy{
+  max-width:1320px; margin:0 auto; padding:90px 32px 30px;
+}
+.sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:14px; flex-wrap:wrap}
+.sec-head .idx{font-size:11px; color:var(--label-dim); letter-spacing:.2em}
+.sec-head h2{
+  font-size:clamp(24px,3.4vw,40px); font-weight:600; letter-spacing:.12em;
+  text-shadow:0 0 14px var(--glow-soft);
+}
+.sec-head .rule{flex:1; align-self:center; min-width:60px}
+.copy p.lede{max-width:68ch; color:var(--ph-dim); margin-bottom:8px}
+.copy p.lede strong{color:var(--ph); font-weight:500}
+
+.method-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; margin-top:38px;
+}
+.method-card{padding:26px 26px 30px}
+.method-card .step{font-size:10px; letter-spacing:.26em; color:var(--label-dim); display:block; margin-bottom:14px}
+.method-card h3{font-size:15px; letter-spacing:.16em; font-weight:600; margin-bottom:12px; color:var(--ph)}
+.method-card p{font-size:12.5px; color:var(--label); line-height:1.8}
+.method-card code{
+  display:block; margin-top:16px; padding:12px 14px; font-size:11px; line-height:1.7;
+  background:var(--bg-deep); border:1px solid var(--panel-edge);
+  color:var(--ph-dim); box-shadow:0 2px 6px rgba(0,0,0,.5) inset;
+  overflow-x:auto; white-space:pre;
+}
+.ramp-demo{
+  margin-top:16px; padding:10px 14px; background:var(--bg-deep);
+  border:1px solid var(--panel-edge); box-shadow:0 2px 6px rgba(0,0,0,.5) inset;
+  font-size:17px; letter-spacing:.28em; color:var(--ph); text-shadow:0 0 8px var(--glow);
+  white-space:nowrap; overflow-x:auto;
+}
+
+/* ---------- specimen sections ---------- */
+.specimen{
+  max-width:1320px; margin:0 auto; padding:60px 32px 20px;
+  display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:30px; align-items:start;
+}
+.specimen.flip{grid-template-columns:380px minmax(0,1fr)}
+.specimen .prose{padding-top:22px}
+.specimen .prose .idx{font-size:11px; color:var(--label-dim); letter-spacing:.2em; display:block; margin-bottom:10px}
+.specimen .prose h2{font-size:clamp(22px,2.6vw,32px); letter-spacing:.1em; font-weight:600; margin-bottom:16px; text-shadow:0 0 14px var(--glow-soft)}
+.specimen .prose p{font-size:13px; color:var(--label); line-height:1.85; margin-bottom:14px; max-width:52ch}
+.specimen .prose p b{color:var(--ph-dim); font-weight:500}
+.specimen .prose .hint{font-size:10px; letter-spacing:.2em; color:var(--ph-dim); text-transform:uppercase; border-left:2px solid var(--ph-faint); padding-left:12px}
+.spec-controls{display:flex; gap:8px; padding:14px 26px 18px; border-top:1px solid var(--panel-edge); align-items:center; flex-wrap:wrap}
+.spec-controls .latch{flex:none; min-width:74px}
+.spec-controls .readout{margin-left:auto}
+.spec-controls .rocker{margin-right:4px}
+#life-screen{cursor:crosshair}
+
+/* ---------- footer ---------- */
+footer{
+  margin-top:110px; border-top:1px solid var(--panel-edge);
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.5));
+}
+.foot-inner{max-width:1320px; margin:0 auto; padding:70px 32px 60px}
+.foot-grid{display:grid; grid-template-columns:minmax(0,1.4fr) 1fr 1fr; gap:40px}
+.foot-grid h4{font-size:11px; letter-spacing:.26em; color:var(--label); margin-bottom:16px; font-weight:600; text-shadow:0 1px 0 rgba(255,255,255,.05),0 -1px 0 #000}
+.foot-grid p, .foot-grid li{font-size:12.5px; color:var(--label-dim); line-height:1.85}
+.foot-grid ul{list-style:none}
+.foot-grid li{padding:3px 0}
+.foot-grid li span{color:var(--ph-dim)}
+.foot-base{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  margin-top:56px; padding-top:22px; border-top:1px solid var(--panel-edge);
+  font-size:10px; letter-spacing:.2em; color:var(--label-dim);
+}
+.foot-base .glow{color:var(--ph-dim)}
+
+/* ---------- reveal choreography ---------- */
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1; transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+@media (prefers-reduced-motion: reduce){ .reveal{opacity:1; transform:none; transition:none} }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1060px){
+  .hero{grid-template-columns:1fr}
+  .method-grid{grid-template-columns:1fr}
+  .specimen, .specimen.flip{grid-template-columns:1fr}
+  .specimen.flip .prose{order:-1}
+  .foot-grid{grid-template-columns:1fr}
+  .specimen .prose{padding-top:0}
+}
+@media (max-width: 560px){
+  header.masthead{padding:76px 18px 22px}
+  .hero{padding:8px 18px 30px}
+  section.copy{padding:64px 18px 20px}
+  .specimen{padding:44px 18px 12px}
+  .foot-inner{padding:50px 18px 44px}
+  .crt-unit{padding:14px}
+  .panel .body{padding:16px 18px 20px}
+  .plate-head{padding:9px 18px}
+  .method-card{padding:20px 18px 24px}
+  .spec-controls{padding:12px 16px 16px}
+  .spec-controls .readout{margin-left:0}
+  .crt-unit .plaque{flex-wrap:wrap; row-gap:5px}
+  .plaque .model{letter-spacing:.2em; font-size:9px}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="masthead">
+  <div class="topline">
+    <div>
+      <h1 class="wordmark">PHOSPHOR<span class="cursor-block"></span></h1>
+      <div class="sub">
+        <span class="desc">Real-time 3-D &#8594; text-mode rendering engine</span>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px; align-items:flex-end">
+      <div class="rocker" id="theme-rocker">
+        <span class="lbl on" id="lbl-green">P31&nbsp;GREEN</span>
+        <div class="switch" id="theme-switch" role="switch" aria-checked="false" aria-label="Toggle amber phosphor theme" tabindex="0"><div class="knob"></div></div>
+        <span class="lbl" id="lbl-amber">P3&nbsp;AMBER</span>
+      </div>
+      <div class="readout-row">
+        <div class="readout"><span class="k">RASTER</span><span class="v" id="ro-grid">—</span></div>
+        <div class="readout"><span class="k">REFRESH</span><span class="v" id="ro-fps">—</span></div>
+        <div class="readout"><span class="k">POINTS</span><span class="v" id="ro-pts">—</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO: THE ENGINE ============ -->
+<div class="hero">
+  <div class="plate crt-unit">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="crt" id="hero-crt">
+      <div class="stage"><pre id="hero-screen" aria-label="Live ASCII render of a rotating 3D object"></pre></div>
+      <div class="flicker"></div>
+    </div>
+    <div class="plaque">
+      <span class="model">PHOSPHOR&nbsp;· CRT-9&nbsp;· VECTOR-TO-TEXT&nbsp;DISPLAY</span>
+      <span class="serial">SER.&nbsp;NO.&nbsp;1978-0331&nbsp;·&nbsp;60Hz</span>
+    </div>
+  </div>
+
+  <aside class="plate panel">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="plate-head"><span class="tag">CONTROL</span><div class="rule"></div><span class="led"></span></div>
+    <div class="body">
+      <div class="ctl-group">
+        <span class="lbl">Object · parametric surface</span>
+        <div class="latch-row" id="obj-row" role="group" aria-label="Object selector">
+          <button class="latch" data-obj="torus" aria-pressed="true"><span class="big">◎</span>TORUS</button>
+          <button class="latch" data-obj="cube" aria-pressed="false"><span class="big">▣</span>CUBE</button>
+          <button class="latch" data-obj="icosa" aria-pressed="false"><span class="big">◇</span>ICOSA</button>
+        </div>
+      </div>
+
+      <div class="ctl-group">
+        <span class="lbl">Character ramp · luminance map</span>
+        <div class="latch-row" id="ramp-row" role="group" aria-label="Character ramp selector">
+          <button class="latch" data-ramp="classic" aria-pressed="true"><span class="big">.:*#@</span>CLASSIC</button>
+          <button class="latch" data-ramp="blocks" aria-pressed="false"><span class="big">░▒▓█</span>BLOCKS</button>
+          <button class="latch" data-ramp="braille" aria-pressed="false"><span class="big">⠛⠿⣿</span>BRAILLE</button>
+        </div>
+      </div>
+
+      <div class="ctl-group">
+        <span class="lbl">Angular velocity</span>
+        <div class="fader">
+          <input type="range" id="speed" min="0" max="200" value="80" aria-label="Rotation speed">
+          <div class="ticks"><span>HOLD</span><span>·</span><span>1×</span><span>·</span><span>2.5×</span></div>
+        </div>
+      </div>
+
+      <div class="ctl-group">
+        <span class="lbl">Lamp bearing · drag to aim</span>
+        <div class="lightpad-wrap">
+          <div class="lightpad" id="lightpad" role="slider" aria-label="Light direction pad" tabindex="0" aria-valuetext="azimuth 0, elevation 55"><div class="dot" id="light-dot"></div></div>
+          <div class="lightpad-meta">
+            <div class="readout"><span class="k">AZIMUTH</span><span class="v" id="ro-az">+000°</span></div>
+            <div class="readout"><span class="k">ELEVATION</span><span class="v" id="ro-el">+55°</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-foot">
+        <div class="rule"></div>
+        <span class="lbl" style="margin-top:10px">Z-BUF · λ = N̂ · L̂ · TYPE 1978</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ============ METHOD ============ -->
+<section class="copy" id="method">
+  <div class="sec-head reveal">
+    <span class="idx">SEC/01</span>
+    <h2>THE MATHEMATICS OF LIGHT, TYPESET</h2>
+    <div class="rule"></div>
+  </div>
+  <p class="lede reveal d1">No triangles. No GPU. Every frame above is computed the way it was done when the display <em>was</em> the terminal: a cloud of points on a parametric surface, spun by rotation matrices, sorted by a z-buffer, and lit by a single dot product — then quantized into type. <strong>Brightness becomes ink density.</strong> That is the whole engine.</p>
+
+  <div class="method-grid">
+    <div class="plate method-card reveal">
+      <span class="lbl step">STAGE 01 — SURFACE</span>
+      <h3>PARAMETRIC POINTS</h3>
+      <p>The torus is swept from two angles: θ walks the small cross-section circle, φ carries that circle around the axis of revolution. Each (θ, φ) pair yields a 3-D point and — crucially — its surface normal, which comes free from the same trigonometry.</p>
+      <code>x = (R₂ + R₁cosθ)·cosφ
+y =  R₁·sinθ
+z = (R₂ + R₁cosθ)·sinφ</code>
+    </div>
+    <div class="plate method-card reveal d1">
+      <span class="lbl step">STAGE 02 — SPIN &amp; SORT</span>
+      <h3>ROTATION + Z-BUFFER</h3>
+      <p>Three rotations — spin, tilt, precession — tumble the cloud each frame, the way a gyroscope wobbles on its bearing. Points project to the character grid through 1/z perspective. A z-buffer keeps, per cell, only the nearest point — so the far wall of the donut hides correctly behind the near one.</p>
+      <code>ooz = 1 / (K₂ + z)
+col = cx + K₁·ooz·x
+row = cy − ½K₁·ooz·y   // cells are 2:1</code>
+    </div>
+    <div class="plate method-card reveal d2">
+      <span class="lbl step">STAGE 03 — LUMINANCE</span>
+      <h3>THE CHARACTER RAMP</h3>
+      <p>Lambert's law, one multiply-add per point: λ = N̂ · L̂. The result indexes a ramp of glyphs ordered by how much ink they lay on the cell. Dense glyph, bright surface. The ramp <em>is</em> the palette.</p>
+      <div class="ramp-demo">&nbsp;.:-=+*#%@</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SPECIMEN 01: FIRE ============ -->
+<div class="specimen" id="fire">
+  <div class="plate crt-unit reveal">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="crt" id="fire-crt">
+      <div class="stage">
+        <pre class="dimlayer" id="fire-dim" aria-hidden="true"></pre>
+        <pre class="midlayer" id="fire-mid" aria-hidden="true"></pre>
+        <pre class="hotlayer" id="fire-hot" aria-label="ASCII fire simulation"></pre>
+      </div>
+      <div class="flicker"></div>
+    </div>
+    <div class="spec-controls">
+      <div class="rocker">
+        <span class="lbl">FUEL</span>
+        <div class="switch" id="fuel-switch" role="switch" aria-checked="true" aria-label="Fuel feed" tabindex="0"><div class="knob"></div></div>
+      </div>
+      <button class="latch" id="fire-gust">GUST</button>
+      <div class="readout"><span class="k">CORE TEMP</span><span class="v" id="ro-temp">36 GY</span></div>
+    </div>
+  </div>
+  <div class="prose reveal d1">
+    <span class="idx">SPECIMEN/01 · PROPAGATION</span>
+    <h2>FIRE, ONE ROW AT A TIME</h2>
+    <p>The oldest trick in the demoscene: heat is just an integer. The bottom row of the buffer is pinned to maximum temperature; every frame, each cell steals heat from the cell below it, minus a small random loss, drifted one column left or right by the wind.</p>
+    <p>That single rule — <b>copy up, cool down, jitter sideways</b> — produces turbulence, licking tongues, and ember decay with no fluid dynamics at all. Here the temperature field is quantized twice: once into the glyph ramp, once into three phosphor intensities layered on the tube.</p>
+    <p class="hint">Cut the FUEL switch and watch it starve · GUST kicks the wind</p>
+  </div>
+</div>
+
+<!-- ============ SPECIMEN 02: LIFE ============ -->
+<div class="specimen flip" id="life">
+  <div class="prose reveal">
+    <span class="idx">SPECIMEN/02 · AUTOMATON</span>
+    <h2>CONWAY, ON THE TUBE</h2>
+    <p>Four rules, no exceptions: a live cell with two or three neighbours survives; a dead cell with exactly three is born; everything else returns to vacuum. From that austerity comes traffic — gliders, oscillators, and the gun below, discovered by Bill Gosper in 1970, firing a glider every thirty generations.</p>
+    <p>Dying cells leave a brief <b>phosphor ghost</b> — the same persistence a real P31 tube would give you, done here with a second, dimmer text layer one generation behind.</p>
+    <p class="hint">Click or drag on the tube to seed live cells</p>
+  </div>
+  <div class="plate crt-unit reveal d1">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="crt" id="life-crt">
+      <div class="stage">
+        <pre class="dimlayer" id="life-dim" aria-hidden="true"></pre>
+        <pre class="hotlayer" id="life-screen" aria-label="Conway's Game of Life. Click to seed cells."></pre>
+      </div>
+      <div class="flicker"></div>
+    </div>
+    <div class="spec-controls">
+      <div class="rocker">
+        <span class="lbl">RUN</span>
+        <div class="switch" id="life-run" role="switch" aria-checked="true" aria-label="Run simulation" tabindex="0"><div class="knob"></div></div>
+      </div>
+      <button class="latch" id="life-step">STEP</button>
+      <button class="latch" id="life-soup">SOUP</button>
+      <button class="latch" id="life-clear">CLEAR</button>
+      <div class="readout"><span class="k">GEN / POP</span><span class="v" id="ro-gen">0 / 0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-grid reveal">
+      <div>
+        <h4>ON TEXT-MODE GRAPHICS</h4>
+        <p>Before the framebuffer, the character generator was the only brush. Teletext painted weather maps at 40×24. PETSCII artists on the Commodore 64 built portraits from quarter-blocks. The demoscene turned VGA text mode into a competition category of its own — and the tradition never died, it just moved: to BBS door art, to htop, to the donut.c that still ships in every systems programmer's heart. PHOSPHOR is a museum piece that runs at 60 frames per second.</p>
+      </div>
+      <div>
+        <h4>LINEAGE</h4>
+        <ul>
+          <li><span>1976</span> — Teletext, Ceefax level 1</li>
+          <li><span>1982</span> — PETSCII scene, C64</li>
+          <li><span>1993</span> — DOOM fire, PSX port</li>
+          <li><span>1996</span> — ANSI art, ACiD / iCE</li>
+          <li><span>2006</span> — donut.c, a1k0n</li>
+          <li><span>1970</span> — Gosper's glider gun</li>
+        </ul>
+      </div>
+      <div>
+        <h4>INSTRUMENT</h4>
+        <ul>
+          <li><span>ENGINE</span> — pure DOM, one &lt;pre&gt; per tube</li>
+          <li><span>SHADING</span> — Lambert, N̂·L̂, 10-step ramp</li>
+          <li><span>HIDDEN SURF.</span> — 1/z buffer</li>
+          <li><span>PHOSPHOR</span> — P31 green / P3 amber</li>
+          <li><span>GLASS</span> — scanlines @ 3px, barrel vignette</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>PHOSPHOR TEXT-MODE LABORATORIES</span>
+      <span class="glow">EST. 1978 · REISSUED 2026</span>
+      <span>A XAVIER FABLE ×30 SPECIMEN — <a href="/" style="color:var(--ph-dim); text-decoration:none">RETURN TO GALLERY</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile = matchMedia('(max-width: 700px)');
+
+/* ============================================================
+   0 · SHARED — screen sizing (exact monospace cell metrics)
+   ============================================================ */
+// Set font-size so `cols` characters fill the crt width; rows are 2:1 cells.
+// maxH (optional) caps total glyph height so the whole render — object centred —
+// stays inside the viewport instead of overflowing the fold.
+function fitScreen(crt, pres, cols, rows, maxH){
+  const avail = crt.clientWidth - 8;
+  let fs = avail / (cols * 0.6);
+  if (maxH && rows) fs = Math.min(fs, maxH / (rows * 1.2));
+  fs = Math.max(4, Math.min(fs, 15));
+  for (const p of pres){
+    p.style.fontSize = fs + 'px';
+    p.style.lineHeight = (fs * 1.2).toFixed(3) + 'px';
+    p.style.letterSpacing = '0';
+  }
+  return fs;
+}
+
+/* ============================================================
+   1 · HERO — 3-D point-cloud → ASCII engine (donut math)
+   ============================================================ */
+const heroCrt = $('hero-crt'), heroPre = $('hero-screen');
+const RAMPS = {
+  classic: " .:-=+*#%@",
+  blocks: " ·░░▒▒▓▓██",
+  braille: " ⠁⠃⠇⠏⠟⠿⡿⣿⣿",
+};
+let COLS = 120, ROWS = 46;
+let ramp = RAMPS.classic;
+let rampName = 'classic';
+let objName = 'torus';
+let speed = 0.8;                     // 0..2.5
+// Precession model: tilt (wobbles), precession about view axis, spin about own axis.
+// Keeps the torus hole facing the viewer at all times — it never degenerates to an egg.
+let psi = -0.5, wob = 0, spin = 0.6; // precession phase, wobble phase, own-axis spin
+let light = {az: 0, el: 55};         // degrees
+let K2 = 5, K1 = 40;
+let zbuf, lbuf, rowBuf;
+
+function gridDims(){
+  if (mobile.matches){ COLS = 78; ROWS = 40; }
+  else { COLS = 120; ROWS = 46; }
+}
+function computeK(){
+  const r = 3;                                   // bounding radius of all objects
+  const f = r / Math.sqrt(K2*K2 - r*r);          // max projected extent factor
+  K1 = 0.94 * Math.min(COLS/2, ROWS) / f;
+}
+function allocBufs(){
+  zbuf = new Float32Array(COLS*ROWS);
+  lbuf = new Float32Array(COLS*ROWS);
+  rowBuf = new Array(ROWS);
+}
+
+/* ---- geometry: Float32Array [x,y,z,nx,ny,nz] * N ---- */
+function buildTorus(){
+  const R1 = 1, R2 = 2, TH = 90, PH = 240;
+  const out = new Float32Array(TH*PH*6); let i = 0;
+  for (let t = 0; t < TH; t++){
+    const th = t/TH * Math.PI*2, ct = Math.cos(th), st = Math.sin(th);
+    for (let p = 0; p < PH; p++){
+      const ph = p/PH * Math.PI*2, cp = Math.cos(ph), sp = Math.sin(ph);
+      out[i++] = (R2 + R1*ct)*cp; out[i++] = R1*st; out[i++] = (R2 + R1*ct)*sp;
+      out[i++] = ct*cp;           out[i++] = st;    out[i++] = ct*sp;
+    }
+  }
+  return out;
+}
+function buildCube(){
+  const h = 1.75, N = 64;
+  const faces = [
+    [[0,0,1],[1,0,0],[0,1,0]], [[0,0,-1],[-1,0,0],[0,1,0]],
+    [[1,0,0],[0,0,-1],[0,1,0]], [[-1,0,0],[0,0,1],[0,1,0]],
+    [[0,1,0],[1,0,0],[0,0,-1]], [[0,-1,0],[1,0,0],[0,0,1]],
+  ];
+  const out = new Float32Array(6*N*N*6); let i = 0;
+  for (const [n,u,v] of faces){
+    for (let a = 0; a < N; a++) for (let b = 0; b < N; b++){
+      const ua = (a/(N-1)*2-1)*h, vb = (b/(N-1)*2-1)*h;
+      out[i++] = n[0]*h + u[0]*ua + v[0]*vb;
+      out[i++] = n[1]*h + u[1]*ua + v[1]*vb;
+      out[i++] = n[2]*h + u[2]*ua + v[2]*vb;
+      out[i++] = n[0]; out[i++] = n[1]; out[i++] = n[2];
+    }
+  }
+  return out;
+}
+function buildIcosa(){
+  const g = (1+Math.sqrt(5))/2;
+  let verts = [
+    [-1,g,0],[1,g,0],[-1,-g,0],[1,-g,0],
+    [0,-1,g],[0,1,g],[0,-1,-g],[0,1,-g],
+    [g,0,-1],[g,0,1],[-g,0,-1],[-g,0,1],
+  ];
+  const s = 2.85/Math.hypot(1,g);
+  verts = verts.map(v => v.map(c => c*s));
+  const F = [
+    [0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],
+    [1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],
+    [3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],
+    [4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1],
+  ];
+  const n = 34, pts = [];
+  for (const [a,b,c] of F){
+    const A0 = verts[a], B0 = verts[b], C0 = verts[c];
+    const u = [B0[0]-A0[0],B0[1]-A0[1],B0[2]-A0[2]];
+    const v = [C0[0]-A0[0],C0[1]-A0[1],C0[2]-A0[2]];
+    let nx = u[1]*v[2]-u[2]*v[1], ny = u[2]*v[0]-u[0]*v[2], nz = u[0]*v[1]-u[1]*v[0];
+    const len = Math.hypot(nx,ny,nz); nx/=len; ny/=len; nz/=len;
+    // ensure outward
+    const cx=(A0[0]+B0[0]+C0[0])/3, cy=(A0[1]+B0[1]+C0[1])/3, cz=(A0[2]+B0[2]+C0[2])/3;
+    if (nx*cx+ny*cy+nz*cz < 0){ nx=-nx; ny=-ny; nz=-nz; }
+    for (let i2 = 0; i2 <= n; i2++) for (let j = 0; j <= n-i2; j++){
+      const w1 = i2/n, w2 = j/n, w0 = 1-w1-w2;
+      pts.push(
+        A0[0]*w0+B0[0]*w1+C0[0]*w2, A0[1]*w0+B0[1]*w1+C0[1]*w2, A0[2]*w0+B0[2]*w1+C0[2]*w2,
+        nx, ny, nz
+      );
+    }
+  }
+  return new Float32Array(pts);
+}
+const GEO = { torus: buildTorus(), cube: buildCube(), icosa: buildIcosa() };
+
+function lightVec(){
+  const az = light.az*Math.PI/180, el = light.el*Math.PI/180;
+  // Light sits on the viewer's side (negative z), aimed by azimuth/elevation.
+  const c = Math.cos(el);
+  let x = Math.sin(az)*c, y = Math.sin(el), z = -Math.cos(az)*c*0.75 - 0.25;
+  const len = Math.hypot(x,y,z);
+  return [x/len, y/len, z/len];
+}
+
+function renderHero(){
+  const pts = GEO[objName];
+  const n = pts.length/6;
+  const [Lx,Ly,Lz] = lightVec();
+  // R = Rz(psi) · Rx(tilt) · Ry(spin) — precession keeps |axis·view| ≈ const
+  const tilt = -0.82 + 0.24*Math.sin(wob);
+  const cp = Math.cos(psi), sp = Math.sin(psi);
+  const ca = Math.cos(tilt), sa = Math.sin(tilt);
+  const cs = Math.cos(spin), ss = Math.sin(spin);
+  const m00 = cp*cs - sp*sa*ss,  m01 = -sp*ca,  m02 = cp*ss + sp*sa*cs;
+  const m10 = sp*cs + cp*sa*ss,  m11 =  cp*ca,  m12 = sp*ss - cp*sa*cs;
+  const m20 = -ca*ss,            m21 =  sa,     m22 = ca*cs;
+  zbuf.fill(0); lbuf.fill(0);
+  const cx = COLS/2, cy = ROWS/2, K1x = K1, K1y = K1*0.5;
+  for (let i = 0; i < n; i++){
+    const o = i*6;
+    const x = pts[o], y = pts[o+1], z = pts[o+2];
+    const nx0 = pts[o+3], ny0 = pts[o+4], nz0 = pts[o+5];
+    const rx = m00*x + m01*y + m02*z;
+    const ry = m10*x + m11*y + m12*z;
+    const rz = m20*x + m21*y + m22*z;
+    const ooz = 1/(K2 + rz);
+    const px = (cx + K1x*ooz*rx) | 0;
+    const py = (cy - K1y*ooz*ry) | 0;
+    if (px < 0 || px >= COLS || py < 0 || py >= ROWS) continue;
+    const idx = py*COLS + px;
+    if (ooz > zbuf[idx]){
+      zbuf[idx] = ooz;
+      const nx = m00*nx0 + m01*ny0 + m02*nz0;
+      const ny = m10*nx0 + m11*ny0 + m12*nz0;
+      const nz = m20*nx0 + m21*ny0 + m22*nz0;
+      lbuf[idx] = nx*Lx + ny*Ly + nz*Lz;
+    }
+  }
+  const rl = ramp.length;
+  for (let r = 0; r < ROWS; r++){
+    let line = '';
+    const base = r*COLS;
+    for (let c2 = 0; c2 < COLS; c2++){
+      const idx = base + c2;
+      if (zbuf[idx] === 0){ line += ' '; continue; }
+      let t = lbuf[idx]*0.5 + 0.5;               // -1..1 → 0..1
+      t = Math.pow(t, 1.75);                      // contrast curve
+      let ci = 1 + (t*(rl-1)) | 0;                // visible surface never blank
+      if (ci >= rl) ci = rl-1;
+      line += ramp[ci];
+    }
+    rowBuf[r] = line;
+  }
+  heroPre.textContent = rowBuf.join('\n');
+}
+
+/* ---- boot sequence ---- */
+const BOOT = [
+"PHOSPHOR BIOS v2.4 — TEXT-MODE LABORATORIES",
+"",
+"  RASTER ............... OK",
+"  Z-BUFFER 32f .......... OK",
+"  LUMINANCE RAMP ....... 10 STEPS",
+"  LAMP ................. N·L LAMBERT",
+"  PHOSPHOR ............. P31",
+"",
+"  LOADING SOLID: TORUS ▓▓▓▓▓▓▓▓▓▓",
+];
+let booting = !reduced;
+function drawBoot(prog){
+  const lines = [];
+  const show = Math.floor(prog * BOOT.length + 0.999);
+  for (let i = 0; i < ROWS; i++){
+    if (i >= 3 && i-3 < Math.min(show, BOOT.length)) lines.push('   ' + BOOT[i-3]);
+    else lines.push('');
+  }
+  heroPre.textContent = lines.join('\n');
+}
+
+/* ---- main loop ---- */
+let last = performance.now(), bootT0 = last;
+let fpsAcc = 0, fpsN = 0, fpsLast = last;
+function frame(now){
+  const dt = Math.min(0.05, (now - last)/1000); last = now;
+  if (booting){
+    const t = (now - bootT0)/1600;
+    if (t >= 1) booting = false; else { drawBoot(t); requestAnimationFrame(frame); return; }
+  }
+  psi  += dt * 0.55 * speed;
+  wob  += dt * 0.80 * speed;
+  spin += dt * 1.30 * speed;
+  renderHero();
+  fpsAcc += dt; fpsN++;
+  if (now - fpsLast > 600){
+    $('ro-fps').textContent = fpsN ? Math.round(fpsN/fpsAcc) + ' Hz' : '—';
+    fpsAcc = 0; fpsN = 0; fpsLast = now;
+  }
+  if (!reduced) requestAnimationFrame(frame);
+}
+
+/* ---- controls ---- */
+function bindLatchRow(rowEl, attr, cb){
+  rowEl.addEventListener('click', e => {
+    const btn = e.target.closest('.latch'); if (!btn) return;
+    for (const b of rowEl.querySelectorAll('.latch')) b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+    cb(btn.dataset[attr]);
+  });
+}
+bindLatchRow($('obj-row'), 'obj', v => { objName = v; updatePts(); if (reduced) renderHero(); });
+bindLatchRow($('ramp-row'), 'ramp', v => { rampName = v; ramp = RAMPS[v]; if (reduced) renderHero(); });
+$('speed').addEventListener('input', e => { speed = e.target.value/80; });
+
+/* deep-link presets (?obj=cube&ramp=blocks) — also used by the test harness */
+{
+  const q = new URLSearchParams(location.search);
+  const qo = q.get('obj'), qr = q.get('ramp');
+  const press = (row, attr, val) => {
+    for (const b of row.querySelectorAll('.latch'))
+      b.setAttribute('aria-pressed', String(b.dataset[attr] === val));
+  };
+  if (qo && GEO[qo]){ objName = qo; press($('obj-row'), 'obj', qo); }
+  if (qr && RAMPS[qr]){ rampName = qr; ramp = RAMPS[qr]; press($('ramp-row'), 'ramp', qr); }
+}
+
+function updatePts(){
+  $('ro-pts').textContent = (GEO[objName].length/6).toLocaleString('en-US');
+}
+
+/* light pad */
+const pad = $('lightpad'), dot = $('light-dot');
+function setLightFromPad(nx, ny){ // -1..1 each
+  nx = Math.max(-1, Math.min(1, nx)); ny = Math.max(-1, Math.min(1, ny));
+  light.az = nx * 80;
+  light.el = -ny * 80;
+  dot.style.left = (50 + nx*42) + '%';
+  dot.style.top  = (50 + ny*42) + '%';
+  const fmt = v => (v<0?'−':'+') + String(Math.abs(Math.round(v))).padStart(3,'0') + '°';
+  $('ro-az').textContent = fmt(light.az);
+  $('ro-el').textContent = fmt(light.el);
+  pad.setAttribute('aria-valuetext', `azimuth ${Math.round(light.az)}, elevation ${Math.round(light.el)}`);
+  if (reduced && !booting) renderHero();
+}
+let padActive = false;
+function padEvent(e){
+  const r = pad.getBoundingClientRect();
+  setLightFromPad(((e.clientX - r.left)/r.width)*2 - 1, ((e.clientY - r.top)/r.height)*2 - 1);
+}
+pad.addEventListener('pointerdown', e => { padActive = true; pad.setPointerCapture(e.pointerId); padEvent(e); });
+pad.addEventListener('pointermove', e => { if (padActive) padEvent(e); });
+pad.addEventListener('pointerup', () => padActive = false);
+pad.addEventListener('keydown', e => {
+  const step = 8; let nx = light.az/80, ny = -light.el/80;
+  if (e.key === 'ArrowLeft') nx -= step/80; else if (e.key === 'ArrowRight') nx += step/80;
+  else if (e.key === 'ArrowUp') ny -= step/80; else if (e.key === 'ArrowDown') ny += step/80;
+  else return;
+  e.preventDefault(); setLightFromPad(nx, ny);
+});
+setLightFromPad(-0.35, -0.62);
+
+/* ============================================================
+   2 · FIRE — DOOM-style cellular propagation
+   ============================================================ */
+const fireCrt = $('fire-crt');
+const fireDim = $('fire-dim'), fireMid = $('fire-mid'), fireHot = $('fire-hot');
+let FW = 100, FH = 32, fireBuf;
+const FIRE_RAMP = " .':^\"~-=+i!lI?/\\|()1{}[]rcvunxzjft*e%x#WM&8B@$";
+let fuel = true, wind = 0, gustT = 0;
+function fireInit(){
+  if (mobile.matches){ FW = 66; FH = 26; } else { FW = 100; FH = 32; }
+  fireBuf = new Uint8Array(FW*FH);
+  for (let x = 0; x < FW; x++) fireBuf[(FH-1)*FW + x] = 36;
+}
+function fireStep(){
+  const base = (FH-1)*FW;
+  for (let x = 0; x < FW; x++) fireBuf[base + x] = fuel ? 36 : 0;
+  if (gustT > 0) gustT--;
+  const w = gustT > 0 ? wind : 0;
+  for (let y = 1; y < FH; y++){
+    const rowOff = y*FW;
+    for (let x = 0; x < FW; x++){
+      const src = rowOff + x;
+      const v = fireBuf[src];
+      const r = (Math.random()*3) | 0;
+      let dx = x - r + 1 + w;
+      if (dx < 0) dx = 0; else if (dx >= FW) dx = FW-1;
+      const dst = src - FW - x + dx;
+      // avg loss ≈ 1.45/row → flames die ~3/4 up the tube, leaving dark headroom
+      fireBuf[dst] = v === 0 ? 0 : Math.max(0, v - 1 - ((Math.random()*1.9) | 0));
+    }
+  }
+}
+function fireDraw(){
+  const rl = FIRE_RAMP.length - 1;
+  let dim = '', mid = '', hot = '';
+  for (let y = 0; y < FH; y++){
+    const off = y*FW;
+    for (let x = 0; x < FW; x++){
+      const v = fireBuf[off + x];
+      if (v === 0){ dim += ' '; mid += ' '; hot += ' '; continue; }
+      const ch = FIRE_RAMP[Math.min(rl, 1 + ((v/36*rl) | 0))];
+      if (v < 12){ dim += ch; mid += ' '; hot += ' '; }
+      else if (v < 25){ dim += ' '; mid += ch; hot += ' '; }
+      else { dim += ' '; mid += ' '; hot += ch; }
+    }
+    if (y < FH-1){ dim += '\n'; mid += '\n'; hot += '\n'; }
+  }
+  fireDim.textContent = dim; fireMid.textContent = mid; fireHot.textContent = hot;
+}
+$('fuel-switch').addEventListener('click', function(){
+  fuel = !fuel;
+  this.setAttribute('aria-checked', String(fuel));
+  $('ro-temp').textContent = fuel ? '36 GY' : 'COLD';
+});
+$('fuel-switch').addEventListener('keydown', function(e){ if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); this.click(); } });
+$('fire-gust').addEventListener('click', () => { wind = Math.random() < 0.5 ? -1 : 1; gustT = 40; });
+
+let fireAcc = 0;
+function fireFrame(dt){
+  fireAcc += dt;
+  const stepT = 1/26;
+  let steps = 0;
+  while (fireAcc >= stepT && steps < 4){ fireStep(); fireAcc -= stepT; steps++; }
+  if (steps) fireDraw();
+}
+
+/* ============================================================
+   3 · LIFE — Conway's automaton with phosphor ghosts
+   ============================================================ */
+const lifeCrt = $('life-crt');
+const lifePre = $('life-screen'), lifeDim = $('life-dim');
+let LW = 100, LH = 34, lifeA, lifeB, ghost, gen = 0, lifeRunning = true;
+function lifeInit(){
+  if (mobile.matches){ LW = 66; LH = 28; } else { LW = 100; LH = 34; }
+  lifeA = new Uint8Array(LW*LH); lifeB = new Uint8Array(LW*LH); ghost = new Uint8Array(LW*LH);
+  gen = 0;
+  seedGun();
+}
+const GUN = [
+  [0,4],[0,5],[1,4],[1,5],
+  [10,4],[10,5],[10,6],[11,3],[11,7],[12,2],[12,8],[13,2],[13,8],
+  [14,5],[15,3],[15,7],[16,4],[16,5],[16,6],[17,5],
+  [20,2],[20,3],[20,4],[21,2],[21,3],[21,4],[22,1],[22,5],
+  [24,0],[24,1],[24,5],[24,6],
+  [34,2],[34,3],[35,2],[35,3],
+];
+function seedGun(){
+  const ox = Math.max(2, ((LW-38)/2)|0) - 14, oy = 3;
+  for (const [x,y] of GUN){
+    const px = x + ox + 14, py = y + oy;
+    if (px >= 0 && px < LW && py >= 0 && py < LH) lifeA[py*LW + px] = 1;
+  }
+  // a couple of pre-launched gliders heading away
+  const glider = [[0,2],[1,0],[1,2],[2,1],[2,2]];
+  for (const [gx,gy] of [[LW-20, LH-12],[LW-32, LH-8]]){
+    for (const [x,y] of glider){
+      const px = gx+x, py = gy+y;
+      if (px>=0 && px<LW && py>=0 && py<LH) lifeA[py*LW+px] = 1;
+    }
+  }
+  // pulsar (period 3) lower-left — fills the vacuum with a steady heartbeat
+  const PULSAR = [
+    [2,0],[3,0],[4,0],[8,0],[9,0],[10,0],
+    [0,2],[5,2],[7,2],[12,2],[0,3],[5,3],[7,3],[12,3],[0,4],[5,4],[7,4],[12,4],
+    [2,5],[3,5],[4,5],[8,5],[9,5],[10,5],[2,7],[3,7],[4,7],[8,7],[9,7],[10,7],
+    [0,8],[5,8],[7,8],[12,8],[0,9],[5,9],[7,9],[12,9],[0,10],[5,10],[7,10],[12,10],
+    [2,12],[3,12],[4,12],[8,12],[9,12],[10,12],
+  ];
+  for (const [x,y] of PULSAR){
+    const px = x + 5, py = y + LH - 15;
+    if (px >= 0 && px < LW && py >= 0 && py < LH) lifeA[py*LW+px] = 1;
+  }
+  // two lightweight spaceships cruising right along the lower half
+  const LWSS = [[0,0],[3,0],[4,1],[0,2],[4,2],[1,3],[2,3],[3,3],[4,3]];
+  for (const [sx,sy] of [[((LW*0.45)|0), LH-10],[((LW*0.68)|0), LH-5]]){
+    for (const [x,y] of LWSS){
+      const px = sx+x, py = sy+y;
+      if (px>=0 && px<LW && py>=0 && py<LH) lifeA[py*LW+px] = 1;
+    }
+  }
+}
+function lifeStep(){
+  for (let y = 0; y < LH; y++){
+    const ym = ((y-1+LH)%LH)*LW, y0 = y*LW, yp = ((y+1)%LH)*LW;
+    for (let x = 0; x < LW; x++){
+      const xm = (x-1+LW)%LW, xp = (x+1)%LW;
+      const n = lifeA[ym+xm]+lifeA[ym+x]+lifeA[ym+xp]
+              + lifeA[y0+xm]              +lifeA[y0+xp]
+              + lifeA[yp+xm]+lifeA[yp+x]+lifeA[yp+xp];
+      const alive = lifeA[y0+x];
+      const next = alive ? (n === 2 || n === 3 ? 1 : 0) : (n === 3 ? 1 : 0);
+      lifeB[y0+x] = next;
+      if (alive && !next) ghost[y0+x] = 4;
+      else if (ghost[y0+x] > 0) ghost[y0+x]--;
+    }
+  }
+  const t = lifeA; lifeA = lifeB; lifeB = t;
+  gen++;
+}
+function lifeDraw(){
+  let hot = '', dim = '', pop = 0;
+  for (let y = 0; y < LH; y++){
+    const off = y*LW;
+    for (let x = 0; x < LW; x++){
+      if (lifeA[off+x]){ hot += '█'; dim += ' '; pop++; }
+      else {
+        hot += ' ';
+        const g = ghost[off+x];
+        dim += g > 2 ? '▓' : g > 0 ? '░' : ' ';
+      }
+    }
+    if (y < LH-1){ hot += '\n'; dim += '\n'; }
+  }
+  lifePre.textContent = hot; lifeDim.textContent = dim;
+  $('ro-gen').textContent = gen + ' / ' + pop;
+}
+let lifeAcc = 0;
+function lifeFrame(dt){
+  if (!lifeRunning) return;
+  lifeAcc += dt;
+  if (lifeAcc >= 1/11){ lifeStep(); lifeDraw(); lifeAcc = 0; }
+}
+/* seeding by click / drag */
+let lifePainting = false;
+function lifeSeed(e){
+  const r = lifePre.getBoundingClientRect();
+  const cw = r.width / LW, chh = r.height / LH;
+  const x = ((e.clientX - r.left)/cw) | 0, y = ((e.clientY - r.top)/chh) | 0;
+  if (x < 0 || x >= LW || y < 0 || y >= LH) return;
+  for (const [dx,dy] of [[0,0],[1,0],[0,1],[1,1]]){
+    const px = x+dx, py = y+dy;
+    if (px < LW && py < LH) lifeA[py*LW+px] = 1;
+  }
+  lifeDraw();
+}
+lifeCrt.addEventListener('pointerdown', e => { lifePainting = true; lifeCrt.setPointerCapture(e.pointerId); lifeSeed(e); });
+lifeCrt.addEventListener('pointermove', e => { if (lifePainting) lifeSeed(e); });
+lifeCrt.addEventListener('pointerup', () => lifePainting = false);
+$('life-run').addEventListener('click', function(){
+  lifeRunning = !lifeRunning;
+  this.setAttribute('aria-checked', String(lifeRunning));
+});
+$('life-run').addEventListener('keydown', function(e){ if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); this.click(); } });
+$('life-step').addEventListener('click', () => { lifeStep(); lifeDraw(); });
+$('life-clear').addEventListener('click', () => { lifeA.fill(0); ghost.fill(0); gen = 0; lifeDraw(); });
+$('life-soup').addEventListener('click', () => {
+  for (let i = 0; i < lifeA.length; i++) lifeA[i] = Math.random() < 0.16 ? 1 : 0;
+  gen = 0; lifeDraw();
+});
+
+/* ============================================================
+   4 · specimen loop (single rAF, paused off-screen & hidden)
+   ============================================================ */
+let specLast = performance.now();
+const onScreen = new Map();
+const visObs = new IntersectionObserver(es => {
+  for (const e of es) onScreen.set(e.target, e.isIntersecting);
+}, {rootMargin: '80px'});
+visObs.observe(fireCrt); visObs.observe(lifeCrt);
+function specLoop(now){
+  const dt = Math.min(0.08, (now - specLast)/1000); specLast = now;
+  if (onScreen.get(fireCrt)) fireFrame(dt);
+  if (onScreen.get(lifeCrt)) lifeFrame(dt);
+  requestAnimationFrame(specLoop);
+}
+
+/* ============================================================
+   5 · theme, reveal, layout, boot
+   ============================================================ */
+const themeSwitch = $('theme-switch');
+function setTheme(amber){
+  document.documentElement.dataset.theme = amber ? 'amber' : 'green';
+  themeSwitch.setAttribute('aria-checked', String(amber));
+  $('lbl-green').classList.toggle('on', !amber);
+  $('lbl-amber').classList.toggle('on', amber);
+}
+themeSwitch.addEventListener('click', () => setTheme(document.documentElement.dataset.theme !== 'amber'));
+themeSwitch.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); themeSwitch.click(); } });
+$('lbl-green').addEventListener('click', () => setTheme(false));
+$('lbl-amber').addEventListener('click', () => setTheme(true));
+if (new URLSearchParams(location.search).get('theme') === 'amber') setTheme(true);
+
+const revObs = new IntersectionObserver(es => {
+  for (const e of es) if (e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target); }
+}, {threshold: 0.12});
+for (const el of document.querySelectorAll('.reveal')) revObs.observe(el);
+
+function layout(){
+  gridDims(); computeK(); allocBufs();
+  // Cap hero glyph height so the tube (and the centred donut) fit above the fold.
+  const heroMaxH = mobile.matches ? null : Math.min(innerHeight * 0.52, 470);
+  fitScreen(heroCrt, [heroPre], COLS, ROWS, heroMaxH);
+  $('ro-grid').textContent = COLS + '×' + ROWS;
+  fireInit(); fitScreen(fireCrt, [fireDim, fireMid, fireHot], FW);
+  lifeInit(); fitScreen(lifeCrt, [lifeDim, lifePre], LW);
+  lifeDraw();
+  if (!booting) renderHero();
+}
+let rsT;
+addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(layout, 160); });
+
+/* fonts affect metrics — re-fit once loaded */
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout());
+
+layout();
+updatePts();
+if (reduced){
+  booting = false;
+  // settle the specimens into an interesting still
+  for (let i = 0; i < 60; i++) fireStep();
+  fireDraw();
+  for (let i = 0; i < 40; i++) lifeStep();
+  lifeDraw();
+  lifeRunning = false;
+  renderHero();
+  $('ro-fps').textContent = 'HOLD';
+} else {
+  requestAnimationFrame(frame);
+  requestAnimationFrame(specLoop);
+}
+})();
+</script>
+</body>
+</html>

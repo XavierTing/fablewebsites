@@ -1,0 +1,14 @@
+import puppeteer from 'puppeteer';
+const [target,out,w='1440',h='900',y='800',waitMs='1800']=process.argv.slice(2);
+const url=target.startsWith('http')?target:'file://'+target;
+const b=await puppeteer.launch({headless:'new',args:['--no-sandbox','--enable-webgl','--use-gl=angle']});
+const p=await b.newPage();
+await p.setViewport({width:+w,height:+h,deviceScaleFactor:1});
+const errs=[];p.on('console',m=>m.type()==='error'&&errs.push(m.text().slice(0,200)));p.on('pageerror',e=>errs.push('PE:'+String(e).slice(0,160)));
+await p.goto(url,{waitUntil:'networkidle2',timeout:30000});
+await new Promise(r=>setTimeout(r,+waitMs));
+await p.evaluate(yy=>window.scrollTo(0,yy),+y);
+await new Promise(r=>setTimeout(r,1400));
+await p.screenshot({path:out});
+await b.close();
+console.log('SHOT',out,errs.length?('ERRORS:'+[...new Set(errs)].slice(0,5).join(' | ')):'NO_ERRORS');

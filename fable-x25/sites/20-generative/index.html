@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EPHEMERA — a generative gallery. No two visits alike.</title>
+<meta name="description" content="EPHEMERA is a generative-art gallery that composes four unique works for every visitor. Seeded by 32 bits of entropy, drawn live in your browser, gone when you leave.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="EPHEMERA — a generative gallery. No two visits alike.">
+<meta property="og:description" content="EPHEMERA is a generative-art gallery that composes four unique works for every visitor. Seeded by 32 bits of entropy, drawn live in your browser, gone when you leave.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/20-generative/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/20-generative/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EPHEMERA — a generative gallery. No two visits alike.">
+<meta name="twitter:description" content="EPHEMERA is a generative-art gallery that composes four unique works for every visitor. Seeded by 32 bits of entropy, drawn live in your browser, gone when you leave.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/20-generative/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E❋%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wall:#fbfaf8;
+  --wall-deep:#f3f1ec;
+  --ink:#211f1c;
+  --caption:#645f57;
+  --hairline:#e2ded5;
+  --frame-edge:#c9c2b3;
+  --gold:#a9853c;
+  --serif:"Cormorant", Georgia, serif;
+  --sans:"Archivo", Helvetica, Arial, sans-serif;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-sweep:cubic-bezier(.76,0,.24,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--wall);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--ink);color:var(--wall)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--wall)}
+::-webkit-scrollbar-thumb{background:#d4cfc2;border-radius:5px;border:2px solid var(--wall)}
+::-webkit-scrollbar-thumb:hover{background:#bdb7a7}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:1px}
+
+/* grain */
+body::after{
+  content:"";position:fixed;inset:0;z-index:70;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* back link */
+.backlink{
+  position:fixed;top:22px;left:24px;z-index:50;
+  font:600 11px/1 var(--sans);letter-spacing:.22em;text-decoration:none;color:var(--caption);
+  padding:8px 10px;border:1px solid transparent;transition:color .3s var(--ease-out),border-color .3s var(--ease-out),background .3s var(--ease-out);
+  background:color-mix(in srgb, var(--wall) 72%, transparent);backdrop-filter:blur(6px);
+}
+.backlink:hover{color:var(--ink);border-color:var(--hairline)}
+
+/* wayfinding rail */
+.rail{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:18px;align-items:center}
+.rail a{
+  font:500 11px/1 var(--serif);font-style:italic;text-decoration:none;color:#b3ada0;
+  letter-spacing:.06em;transition:color .3s,transform .3s var(--ease-out);position:relative;padding:2px 4px;
+}
+.rail a:hover{color:var(--ink)}
+.rail a.on{color:var(--ink);transform:scale(1.35)}
+.rail::before,.rail::after{content:"";width:1px;height:34px;background:var(--hairline)}
+
+/* wipe */
+.wipe{
+  position:fixed;inset:0;z-index:80;background:var(--wall);
+  transform:translateX(-102%);pointer-events:none;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  border-right:1px solid var(--hairline);
+}
+.wipe.go{transition:transform .55s var(--ease-sweep)}
+.wipe .w-k{font:600 10px/1 var(--sans);letter-spacing:.34em;color:var(--caption)}
+.wipe .w-h{font:italic 500 clamp(2rem,5vw,3.4rem)/1 var(--serif);color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:clamp(90px,12vh,140px) 24px 64px;position:relative;
+}
+.kicker{font:600 clamp(9px,1vw,11px)/1.5 var(--sans);letter-spacing:.34em;color:var(--caption);text-transform:uppercase}
+.hero h1{
+  font:400 clamp(3.6rem,11.5vw,9.6rem)/.95 var(--serif);
+  letter-spacing:.13em;text-indent:.13em;/* balance tracking */
+  margin:clamp(18px,3vh,30px) 0 0;text-transform:uppercase;font-feature-settings:"lnum";
+}
+.hero h1 .flower{font-style:italic;color:var(--gold)}
+.hero .sub{
+  font:italic 400 clamp(1.15rem,1.7vw,1.45rem)/1.55 var(--serif);color:#4c473f;
+  max-width:56ch;margin:clamp(20px,3.4vh,34px) auto 0;
+}
+.edition-badge{
+  margin-top:clamp(26px,4.5vh,44px);display:inline-flex;align-items:center;gap:14px;
+  border:1px solid var(--hairline);background:#fff;padding:12px 22px;
+  font:500 11px/1 var(--sans);letter-spacing:.22em;color:var(--caption);
+  box-shadow:0 1px 2px rgba(40,34,20,.05),0 10px 26px -18px rgba(40,34,20,.28);
+}
+.edition-badge b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.14em}
+.hero-actions{margin-top:clamp(22px,3.6vh,36px);display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.scroll-cue{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  font:600 9px/1 var(--sans);letter-spacing:.3em;color:#b3ada0;text-decoration:none;
+  display:flex;flex-direction:column;align-items:center;gap:10px;transition:color .3s;
+}
+.scroll-cue:hover{color:var(--ink)}
+.scroll-cue::after{content:"";width:1px;height:42px;background:linear-gradient(var(--hairline),var(--caption))}
+
+/* buttons */
+.btn{
+  appearance:none;cursor:pointer;background:transparent;border:1px solid var(--ink);color:var(--ink);
+  font:600 11px/1 var(--sans);letter-spacing:.2em;padding:14px 24px;text-transform:uppercase;
+  transition:background .35s var(--ease-out),color .35s var(--ease-out),transform .35s var(--ease-out),box-shadow .35s var(--ease-out);
+}
+.btn:hover{background:var(--ink);color:var(--wall);transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(30,25,15,.5)}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:var(--ink);color:var(--wall)}
+.btn.primary:hover{background:#3a352c}
+.btn.small{padding:10px 14px;font-size:9.5px;letter-spacing:.16em;border-color:#cfc9bb;color:#57524a}
+.btn.small:hover{border-color:var(--ink);background:var(--ink);color:var(--wall)}
+
+/* ---------- rooms ---------- */
+.gallery{max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
+.room{padding:clamp(64px,10vh,120px) 0}
+.room-head{display:flex;align-items:baseline;gap:22px;margin-bottom:clamp(30px,5vh,52px)}
+.room-no{font:600 11px/1 var(--sans);letter-spacing:.3em;color:var(--ink);white-space:nowrap}
+.room-head .rule{flex:1;height:1px;background:var(--hairline);align-self:center}
+.room-algo{font:500 10px/1.5 var(--sans);letter-spacing:.24em;color:var(--caption);white-space:nowrap}
+
+.piece{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:clamp(28px,4vw,56px);align-items:start}
+.placard{position:sticky;top:clamp(90px,16vh,160px)}
+.room.alt .piece{grid-template-columns:300px minmax(0,1fr)}
+.room.alt .art{order:2}
+.room.alt .placard{order:1}
+
+.frame{
+  background:#fff;
+  padding:clamp(16px,2.2vw,30px);
+  border:1px solid var(--frame-edge);
+  outline:1px solid #efece5;outline-offset:-5px;
+  box-shadow:
+    0 1px 2px rgba(40,34,20,.08),
+    0 24px 48px -24px rgba(40,34,20,.35),
+    0 60px 90px -60px rgba(40,34,20,.25);
+}
+.frame canvas{display:block;width:100%;height:auto;background:#f2efe8}
+.curator{
+  font:italic 400 15px/1.6 var(--serif);color:var(--caption);
+  margin-top:18px;max-width:56ch;
+}
+
+.placard{
+  background:#fff;border:1px solid var(--hairline);padding:26px 26px 22px;
+  box-shadow:0 1px 2px rgba(40,34,20,.05),0 14px 30px -22px rgba(40,34,20,.3);
+  position:relative;
+}
+.placard::before{content:"";position:absolute;top:0;left:26px;right:26px;height:2px;background:var(--ink)}
+.p-title{font:italic 500 clamp(1.45rem,1.8vw,1.7rem)/1.15 var(--serif);color:var(--ink);min-height:2.2em;display:flex;align-items:end}
+.p-algo{font:600 9.5px/1.6 var(--sans);letter-spacing:.24em;color:var(--gold);margin-top:10px;text-transform:uppercase}
+.p-chips{display:flex;gap:6px;margin:14px 0 4px}
+.p-chips span{width:20px;height:20px;border:1px solid rgba(30,25,15,.14);transition:transform .3s var(--ease-out)}
+.p-chips span:hover{transform:translateY(-3px)}
+.p-meta{font:400 12px/1.7 var(--sans);color:var(--caption);letter-spacing:.02em}
+.p-meta.p-edition{font-variant-numeric:tabular-nums}
+.p-meta:first-of-type{margin-top:10px}
+.p-actions{display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--hairline)}
+
+/* ---------- process wall text ---------- */
+.process{
+  background:var(--wall-deep);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);
+  padding:clamp(70px,12vh,130px) 24px;text-align:center;position:relative;
+}
+.process .kicker{color:#94897a}
+.process h2{font:400 clamp(2rem,4.4vw,3.4rem)/1.1 var(--serif);letter-spacing:.1em;text-indent:.1em;text-transform:uppercase;margin-top:18px}
+.process .body{
+  font:400 clamp(1.05rem,1.4vw,1.2rem)/1.85 var(--serif);color:#413c34;
+  max-width:64ch;margin:30px auto 0;text-align:left;
+}
+.process .body em{font-style:italic}
+.process .seedline{
+  margin:36px auto 0;display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px;
+  font:500 11px/1 var(--sans);letter-spacing:.18em;color:var(--caption);
+}
+.process .seedline code{
+  font:500 12px/1 var(--sans);letter-spacing:.14em;color:var(--ink);background:#fff;
+  border:1px solid var(--hairline);padding:10px 16px;font-variant-numeric:tabular-nums;
+}
+
+/* ---------- footer ---------- */
+footer{padding:clamp(64px,10vh,110px) clamp(20px,4vw,56px) 46px;max-width:1280px;margin:0 auto}
+.foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:clamp(28px,4vw,64px);padding-top:44px;border-top:1px solid var(--hairline)}
+.foot-mark{font:400 clamp(1.7rem,2.4vw,2.2rem)/1 var(--serif);letter-spacing:.14em;text-transform:uppercase}
+.foot-mark .flower{font-style:italic;color:var(--gold)}
+footer p{font:400 13px/1.8 var(--sans);color:var(--caption);margin-top:14px;max-width:38ch}
+footer h4{font:600 10px/1 var(--sans);letter-spacing:.28em;color:var(--ink);text-transform:uppercase}
+footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid #cfc9bb;transition:border-color .3s}
+footer a:hover{border-color:var(--ink)}
+.foot-base{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:60px;padding-top:22px;border-top:1px solid var(--hairline);
+  font:500 10px/1.6 var(--sans);letter-spacing:.22em;color:#a29b8c;text-transform:uppercase}
+
+/* reveals */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+
+noscript{display:block;text-align:center;padding:40px;font:italic 400 1.2rem var(--serif);color:var(--caption)}
+
+@media (max-width:980px){
+  .rail{display:none}
+  .piece,.room.alt .piece{grid-template-columns:1fr;gap:26px}
+  .room.alt .art{order:1}.room.alt .placard{order:2}
+  .placard{max-width:460px}
+}
+@media (max-width:640px){
+  .backlink{top:14px;left:14px}
+  .foot-grid{grid-template-columns:1fr;gap:34px}
+  .hero{padding-top:110px}
+  .p-actions{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .wipe.go{transition:none}
+  *{animation-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+
+<nav class="rail" aria-label="Rooms">
+  <a href="#flow" data-room="flow">I</a>
+  <a href="#lattice" data-room="lattice">II</a>
+  <a href="#strata" data-room="strata">III</a>
+  <a href="#bloom" data-room="bloom">IV</a>
+</nav>
+
+<div class="wipe" aria-hidden="true">
+  <span class="w-k">REHANGING THE GALLERY</span>
+  <span class="w-h" id="wipeHash">—</span>
+</div>
+
+<noscript>EPHEMERA is drawn live by algorithms in your browser — it requires JavaScript to exist at all.</noscript>
+
+<header class="hero">
+  <p class="kicker reveal in">A generative gallery · admission free · repetition impossible</p>
+  <h1 class="reveal in d1">EPHE<span class="flower">M</span>ERA</h1>
+  <p class="sub reveal in d2">Four algorithms hang four works composed at the instant you arrived. They were not designed; they were seeded. Close this window and the exhibition is gone — return, and the gallery hangs another.</p>
+  <div class="edition-badge reveal in d3">YOUR EDITION <b id="editionHash">#0000-0000</b></div>
+  <div class="hero-actions reveal in d3">
+    <button class="btn primary" id="newVisit">New Visit ↻</button>
+    <a class="btn" href="#flow" style="text-decoration:none;display:inline-flex;align-items:center">Enter the gallery</a>
+  </div>
+  <a class="scroll-cue" href="#flow">ROOM I</a>
+</header>
+
+<main class="gallery">
+
+  <!-- ROOM I — FLOW -->
+  <section class="room" id="flow">
+    <div class="room-head reveal"><span class="room-no">ROOM I</span><span class="rule"></span><span class="room-algo">FLOW · CURL-NOISE STREAMLINES</span></div>
+    <div class="piece">
+      <div class="art reveal">
+        <figure class="frame"><canvas id="c-flow" width="960" height="1200" aria-label="Generative flow-field artwork, unique to this visit"></canvas></figure>
+        <p class="curator">Two thousand particles ride a divergence-free noise field until their ink runs out. No stroke is ever retraced, and none will occur again.</p>
+      </div>
+      <aside class="placard reveal d1" aria-label="Placard for the Flow piece">
+        <h3 class="p-title" data-f="title">—</h3>
+        <p class="p-algo">Flow — curl-noise field</p>
+        <div class="p-chips" data-f="chips" aria-hidden="true"></div>
+        <p class="p-meta">Generative ink on virtual paper · 1 of 1</p>
+        <p class="p-meta p-edition" data-f="edition">Edition #—</p>
+        <p class="p-meta" data-f="date">—</p>
+        <div class="p-actions">
+          <button class="btn small" data-act="regen" data-piece="flow">↻ Redraw</button>
+          <button class="btn small" data-act="save" data-piece="flow">⤓ Save PNG</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ROOM II — LATTICE -->
+  <section class="room alt" id="lattice">
+    <div class="room-head reveal"><span class="room-no">ROOM II</span><span class="rule"></span><span class="room-algo">LATTICE · GOLDEN-RATIO SUBDIVISION</span></div>
+    <div class="piece">
+      <div class="art reveal">
+        <figure class="frame"><canvas id="c-lattice" width="1080" height="1080" aria-label="Generative recursive subdivision artwork, unique to this visit"></canvas></figure>
+        <p class="curator">A plane cut and re-cut at the golden section until the cells refuse to divide. A few are gilded — the algorithm alone decides which.</p>
+      </div>
+      <aside class="placard reveal d1" aria-label="Placard for the Lattice piece">
+        <h3 class="p-title" data-f="title">—</h3>
+        <p class="p-algo">Lattice — recursive subdivision</p>
+        <div class="p-chips" data-f="chips" aria-hidden="true"></div>
+        <p class="p-meta">Generative ink on virtual paper · 1 of 1</p>
+        <p class="p-meta p-edition" data-f="edition">Edition #—</p>
+        <p class="p-meta" data-f="date">—</p>
+        <div class="p-actions">
+          <button class="btn small" data-act="regen" data-piece="lattice">↻ Redraw</button>
+          <button class="btn small" data-act="save" data-piece="lattice">⤓ Save PNG</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ROOM III — STRATA -->
+  <section class="room" id="strata">
+    <div class="room-head reveal"><span class="room-no">ROOM III</span><span class="rule"></span><span class="room-algo">STRATA · SEDIMENT &amp; EROSION</span></div>
+    <div class="piece">
+      <div class="art reveal">
+        <figure class="frame"><canvas id="c-strata" width="920" height="1150" aria-label="Generative sediment strata artwork, unique to this visit"></canvas></figure>
+        <p class="curator">Sediment laid down in seconds instead of centuries, then cut by erosion. Look closely for fossils — every visit buries different ones.</p>
+      </div>
+      <aside class="placard reveal d1" aria-label="Placard for the Strata piece">
+        <h3 class="p-title" data-f="title">—</h3>
+        <p class="p-algo">Strata — layered sediment</p>
+        <div class="p-chips" data-f="chips" aria-hidden="true"></div>
+        <p class="p-meta">Generative ink on virtual paper · 1 of 1</p>
+        <p class="p-meta p-edition" data-f="edition">Edition #—</p>
+        <p class="p-meta" data-f="date">—</p>
+        <div class="p-actions">
+          <button class="btn small" data-act="regen" data-piece="strata">↻ Redraw</button>
+          <button class="btn small" data-act="save" data-piece="strata">⤓ Save PNG</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ROOM IV — BLOOM -->
+  <section class="room alt" id="bloom">
+    <div class="room-head reveal"><span class="room-no">ROOM IV</span><span class="rule"></span><span class="room-algo">BLOOM · SYMMETRIC BOTANICAL GROWTH</span></div>
+    <div class="piece">
+      <div class="art reveal">
+        <figure class="frame"><canvas id="c-bloom" width="1080" height="1080" aria-label="Generative botanical bloom artwork, unique to this visit"></canvas></figure>
+        <p class="curator">A branching grammar grown under n-fold symmetry, terminating in petals. Botany, minus the biology.</p>
+      </div>
+      <aside class="placard reveal d1" aria-label="Placard for the Bloom piece">
+        <h3 class="p-title" data-f="title">—</h3>
+        <p class="p-algo">Bloom — radial growth system</p>
+        <div class="p-chips" data-f="chips" aria-hidden="true"></div>
+        <p class="p-meta">Generative ink on virtual paper · 1 of 1</p>
+        <p class="p-meta p-edition" data-f="edition">Edition #—</p>
+        <p class="p-meta" data-f="date">—</p>
+        <div class="p-actions">
+          <button class="btn small" data-act="regen" data-piece="bloom">↻ Redraw</button>
+          <button class="btn small" data-act="save" data-piece="bloom">⤓ Save PNG</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <p class="kicker reveal">Curatorial note</p>
+  <h2 class="reveal d1">How a visit is hung</h2>
+  <div class="body reveal d2">
+    <p>When you arrived, the gallery asked your browser for thirty-two bits of entropy. That number is your <em>edition</em>, and it seeds a deterministic random stream — a mulberry32 generator, for the record-keepers — which then makes every decision on these walls: which of six palettes to grind, where each particle is born, which cell is gilded, where the strata crack, how many ways the bloom repeats itself.</p>
+    <p style="margin-top:1.2em">Nothing is stored and nothing is fetched. The same seed always hangs the same show — pass someone the edition link below and they will stand in this exact room. Press <em>New Visit</em>, and it never existed.</p>
+  </div>
+  <div class="seedline reveal d3">
+    <span>THIS EDITION</span>
+    <code id="seedUrl">?seed=…</code>
+    <button class="btn small" id="copyLink">Copy link</button>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div class="reveal">
+      <div class="foot-mark">EPHE<span class="flower">M</span>ERA</div>
+      <p>A gallery with no storeroom and no permanent collection. Every work is composed on arrival, exhibited once, and destroyed by the act of leaving.</p>
+    </div>
+    <div class="reveal d1">
+      <h4>Palettes</h4>
+      <p>Ground after Hiroshige's blues, desert varnish, the Bauhaus foundry, moss &amp; lichen, twilight mauves, and ink laid with gold.</p>
+    </div>
+    <div class="reveal d2">
+      <h4>Provenance</h4>
+      <p>Drawn live by four hand-built algorithms — flow, lattice, strata, bloom — seeded per visitor. Reproduce any edition via <a href="?seed=A3F29C41">?seed=HEX</a>.</p>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span>EPHEMERA · EST. EVERY TIME</span>
+    <span>SITE 20 OF 25 · <a href="/" style="border:none">XAVIER FABLE ×30</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+/* ============================== utils ============================== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const TAU=Math.PI*2;
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function deriveSeed(master,k){let h=(master^Math.imul(k+0x1F,0x9E3779B9))>>>0;h=Math.imul(h^h>>>16,0x45d9f3b);h=Math.imul(h^h>>>16,0x45d9f3b);return(h^h>>>16)>>>0}
+function randomSeed(){const u=new Uint32Array(1);crypto.getRandomValues(u);return u[0]}
+function fmtHash(u){const h=(u>>>0).toString(16).padStart(8,"0").toUpperCase();return h.slice(0,4)+"-"+h.slice(4)}
+const pick=(r,arr)=>arr[(r()*arr.length)|0];
+const rng2=(r,a,b)=>a+r()*(b-a);
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
+/* seeded value-noise + fbm */
+function makeFbm(seed,oct){
+  const cell=(ix,iy)=>{let h=(Math.imul(ix,374761393)+Math.imul(iy,668265263))^seed;h=Math.imul(h^h>>>13,1274126177);return((h^h>>>16)>>>0)/4294967296};
+  const n2=(x,y)=>{
+    const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+    const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);
+    const a=cell(ix,iy),b=cell(ix+1,iy),c=cell(ix,iy+1),d=cell(ix+1,iy+1);
+    return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;
+  };
+  return (x,y)=>{let s=0,amp=.5,f=1;for(let o=0;o<oct;o++){s+=amp*n2(x*f+o*57.31,y*f-o*31.7);amp*=.5;f*=2.03}return s/(1-Math.pow(.5,oct))};
+}
+
+/* color helpers */
+function hexRgb(h){h=h.replace("#","");return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function rgbHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0;const l=(mx+mn)/2;
+  if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);
+    h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}
+  return[h,s*100,l*100]}
+function shade(hex,dl,ds){const[r,g,b]=hexRgb(hex);const[h,s,l]=rgbHsl(r,g,b);
+  return`hsl(${h.toFixed(1)} ${clamp(s+(ds||0),0,100).toFixed(1)}% ${clamp(l+(dl||0),3,96).toFixed(1)}%)`}
+
+/* ============================== palettes ============================== */
+const PALETTES=[
+  {name:"Hiroshige Blue", paper:"#eef1f1", inks:["#16324a","#2a5d8f","#5b8fb8","#9dc0d4","#3d4f5c"], accent:"#c1502e", gild:"#c8a24b"},
+  {name:"Desert Varnish", paper:"#f4ecdc", inks:["#9c5a2a","#c78d4e","#7a4526","#d9b06a","#5d4a33"], accent:"#456579", gild:"#c8a24b"},
+  {name:"Bauhaus Muted",  paper:"#efe9dc", inks:["#b0473b","#c99a3f","#31566b","#33302a","#7d7365"], accent:"#b0473b", gild:"#c8a24b"},
+  {name:"Moss & Lichen",  paper:"#eff0e3", inks:["#46583a","#71824f","#9aa876","#57694c","#33402c"], accent:"#ad7a3a", gild:"#b3903f"},
+  {name:"Twilight Mauve", paper:"#f2edf0", inks:["#5c4a68","#8a6f92","#b598b4","#75617f","#43364e"], accent:"#cf9a52", gild:"#cf9a52"},
+  {name:"Ink & Gold",     paper:"#f0ebe0", inks:["#25211b","#433c31","#6e6455","#8f8271","#332e26"], accent:"#b98f3e", gild:"#c9a24a"},
+];
+
+/* ============================== titles ============================== */
+const ADJ=["Quiet","Slow","Gilded","Hollow","Vesper","Winter","Feral","Salted","Murmuring","Palest","Low","Broken","Tender","Northern","Late","Still","Certain","Borrowed"];
+const PIG=["Cadmium","Ultramarine","Ochre","Verdigris","Umber","Cobalt","Madder","Sienna","Celadon","Viridian","Alizarin","Gamboge","Indigo","Lapis","Bone","Sepia"];
+const NOUNS={
+  flow:["Current","Drift","Meander","Tide","Weather","Longshore","Undertow","Wind"],
+  lattice:["Ledger","Tessitura","Quarter","Facade","Parcel","Archive","Register","Court"],
+  strata:["Sediment","Horizon","Bedding","Unconformity","Shale","Terrace","Basin","Field"],
+  bloom:["Bloom","Corolla","Whorl","Rosette","Garden","Anthesis","Calyx","Meadow"],
+};
+function makeTitle(r,kind){
+  const t=r(), n=1+((r()*12)|0);
+  if(t<.42)return`${pick(r,ADJ)} ${pick(r,PIG)} No. ${n}`;
+  if(t<.78)return`${pick(r,PIG)} ${pick(r,NOUNS[kind])} No. ${n}`;
+  return`Study for a ${pick(r,ADJ)} ${pick(r,NOUNS[kind])}`;
+}
+
+/* ============================== canvas helpers ============================== */
+function paper(ctx,pal,W,H){
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.globalAlpha=1;ctx.globalCompositeOperation="source-over";
+  ctx.fillStyle=pal.paper;ctx.fillRect(0,0,W,H);
+}
+
+/* ============================== FLOW ============================== */
+function* flowGen(ctx,r,pal,W,H){
+  paper(ctx,pal,W,H);
+  const fbm=makeFbm((r()*4294967296)>>>0,3);
+  const m=64;
+  const scale=rng2(r,.0016,.0038);
+  const count=1700+((r()*500)|0);
+  const inks=pal.inks;
+  const pts=[];
+  for(let i=0;i<count;i++){
+    const acc=r()<.06;
+    pts.push({
+      x:rng2(r,m,W-m), y:rng2(r,m,H-m),
+      life:(rng2(r,90,260))|0,
+      col:acc?pal.accent:pick(r,inks),
+      w:acc?rng2(r,1.5,2.8):rng2(r,.5,1.5),
+      a:acc?.75:rng2(r,.24,.5),
+      on:true
+    });
+  }
+  ctx.lineCap="round";ctx.lineJoin="round";
+  const e=1.2,sp=2.2;
+  const f=(x,y)=>fbm(x*scale,y*scale);
+  let alive=count,frame=0;
+  while(alive>0&&frame<170){
+    for(const p of pts){
+      if(!p.on)continue;
+      ctx.strokeStyle=p.col;ctx.globalAlpha=p.a;ctx.lineWidth=p.w;
+      ctx.beginPath();ctx.moveTo(p.x,p.y);
+      for(let s=0;s<3;s++){
+        const vx=(f(p.x,p.y+e)-f(p.x,p.y-e));
+        const vy=-(f(p.x+e,p.y)-f(p.x-e,p.y));
+        const L=Math.hypot(vx,vy);
+        if(L<1e-6){p.on=false;alive--;break}
+        p.x+=vx/L*sp;p.y+=vy/L*sp;p.life--;
+        ctx.lineTo(p.x,p.y);
+        if(p.x<m||p.x>W-m||p.y<m||p.y>H-m||p.life<=0){p.on=false;alive--;break}
+      }
+      ctx.stroke();
+    }
+    frame++;yield;
+  }
+  ctx.globalAlpha=1;
+}
+
+/* ============================== LATTICE ============================== */
+function* latticeGen(ctx,r,pal,W,H){
+  paper(ctx,pal,W,H);
+  const m=64,PHI=.618;
+  const leaves=[];
+  (function split(x,y,w,h,d){
+    const mn=Math.min(w,h);
+    if(d>=7||mn<H*.075||(d>=3&&r()<.24)){leaves.push({x,y,w,h,d,o:r()});return}
+    const horiz=w>h?true:h>w?false:r()<.5;
+    const t=r()<.5?PHI:1-PHI;
+    if(horiz){split(x,y,w*t,h,d+1);split(x+w*t,y,w*(1-t),h,d+1)}
+    else{split(x,y,w,h*t,d+1);split(x,y+h*t,w,h*(1-t),d+1)}
+  })(m,m,W-2*m,H-2*m,0);
+  leaves.sort((a,b)=>(a.d+a.o*1.6)-(b.d+b.o*1.6));
+  const inks=pal.inks;
+  const drawLeaf=(L)=>{
+    const{x,y,w,h}=L;
+    const pad=Math.min(w,h)*.1+3;
+    const cx=x+w/2,cy=y+h/2,rr=Math.min(w,h)/2-pad;
+    if(rr<4)return;
+    const ink=pick(r,inks);
+    /* cell wash + hairline */
+    if(r()<.34){ctx.globalAlpha=.1;ctx.fillStyle=ink;ctx.fillRect(x+1,y+1,w-2,h-2)}
+    ctx.globalAlpha=.5;ctx.strokeStyle=shade(inks[inks.length-1],20,-10);ctx.lineWidth=1;
+    ctx.strokeRect(x+.5,y+.5,w-1,h-1);
+    ctx.globalAlpha=1;
+    const roll=r();
+    if(roll<.09){ /* gilded */
+      const g=ctx.createRadialGradient(cx-rr*.35,cy-rr*.35,rr*.1,cx,cy,rr*1.05);
+      g.addColorStop(0,"#ecd28a");g.addColorStop(.55,pal.gild);g.addColorStop(1,"#87672a");
+      ctx.fillStyle=g;
+      if(r()<.5){ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.fill()}
+      else ctx.fillRect(cx-rr,cy-rr,rr*2,rr*2);
+      ctx.strokeStyle="rgba(255,246,214,.7)";ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.arc(cx,cy,rr*.62,-.8,1.1);ctx.stroke();
+    }else if(roll<.34){ctx.fillStyle=ink;ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.fill()}
+    else if(roll<.5){ctx.fillStyle=ink;ctx.fillRect(cx-rr,cy-rr,rr*2,rr*2)}
+    else if(roll<.62){ctx.strokeStyle=ink;ctx.lineWidth=Math.max(2,rr*.26);ctx.beginPath();ctx.arc(cx,cy,rr*.78,0,TAU);ctx.stroke()}
+    else if(roll<.74){ /* concentric */
+      ctx.strokeStyle=ink;ctx.lineWidth=Math.max(1.2,rr*.09);
+      for(let k=1;k<=3;k++){ctx.beginPath();ctx.arc(cx,cy,rr*k/3,0,TAU);ctx.stroke()}
+    }else if(roll<.84){ /* half-disc */
+      const a0=(r()*4|0)*Math.PI/2;
+      ctx.fillStyle=ink;ctx.beginPath();ctx.arc(cx,cy,rr,a0,a0+Math.PI);ctx.closePath();ctx.fill();
+    }else if(roll<.93){ /* dot */
+      ctx.fillStyle=ink;ctx.beginPath();ctx.arc(cx,cy,Math.max(2.5,rr*.18),0,TAU);ctx.fill();
+    } /* else blank */
+  };
+  const per=Math.max(1,Math.ceil(leaves.length/130));
+  for(let i=0;i<leaves.length;){
+    for(let k=0;k<per&&i<leaves.length;k++,i++)drawLeaf(leaves[i]);
+    yield;
+  }
+  ctx.globalAlpha=1;
+}
+
+/* ============================== STRATA ============================== */
+function* strataGen(ctx,r,pal,W,H){
+  paper(ctx,pal,W,H);
+  const m=64;
+  const top=m+8,bot=H-m;
+  const n=20+((r()*12)|0);
+  const fbm=makeFbm((r()*4294967296)>>>0,2);
+  /* heights */
+  const wts=[];let sum=0;
+  for(let i=0;i<n;i++){const w=Math.pow(rng2(r,.25,1),1.6);wts.push(w);sum+=w}
+  const hgt=wts.map(w=>w/sum*(bot-top));
+  /* channels */
+  const chs=[];const nch=2+((r()*2)|0);
+  for(let c=0;c<nch;c++)chs.push({cx:rng2(r,m+110,W-m-110),hw:rng2(r,45,130),dp:rng2(r,40,110),deep:n*rng2(r,.35,.85)});
+  /* band params */
+  const amps=[],offs=[];
+  for(let i=0;i<n;i++){amps.push(rng2(r,3,11));offs.push(r()*100)}
+  /* edges */
+  const step=3,xs=[];for(let x=m;x<=W-m;x+=step)xs.push(x);
+  const edges=[];let base=top;
+  for(let i=0;i<n;i++){
+    const e=xs.map(x=>{
+      let sag=0;
+      for(const ch of chs){
+        if(i<ch.deep){
+          const g=Math.exp(-((x-ch.cx)*(x-ch.cx))/(2*ch.hw*ch.hw));
+          sag+=g*ch.dp*Math.pow(1-i/ch.deep,1.35);
+        }
+      }
+      return base+(fbm(x*.008,offs[i])*2-1)*amps[i]+sag;
+    });
+    edges.push(e);base+=hgt[i];
+  }
+  edges.push(xs.map(()=>bot));
+  /* clamp monotonic */
+  for(let i=1;i<edges.length;i++)for(let j=0;j<xs.length;j++)
+    edges[i][j]=Math.max(edges[i][j],edges[i-1][j]+1.2);
+  /* colors */
+  const inks=pal.inks;const cols=[];let ci=(r()*inks.length)|0;
+  for(let i=0;i<n;i++){
+    ci=(ci+(r()<.6?1:2))%inks.length;
+    /* sediment reads as chalky, sun-faded earth: lift lightness so no band ever goes jet-black,
+       and pull saturation back a touch so bold palettes stay harmonious rather than circus-bright */
+    if(r()<.16)cols.push(shade(inks[ci],34,-22));
+    else cols.push(shade(inks[ci],rng2(r,3,15),rng2(r,-14,-2)));
+  }
+  /* fossils (place before drawing so rng order fixed) */
+  const F=[];const nf=5+((r()*5)|0);
+  for(let t=0;t<nf*4&&F.length<nf;t++){
+    const i=1+((r()*(n-2))|0);
+    const j=(rng2(r,.12,.88)*xs.length)|0;
+    const th=edges[i+1][j]-edges[i][j];
+    const type=(r()*5)|0, jr=r(), sz=Math.min(th*.36,rng2(r,10,22));
+    if(th<30)continue;
+    F.push({x:xs[j],y:(edges[i][j]+edges[i+1][j])/2,sz,type,band:i,jr});
+  }
+  const bandPath=(i)=>{
+    ctx.beginPath();ctx.moveTo(xs[0],edges[i][0]);
+    for(let j=1;j<xs.length;j++)ctx.lineTo(xs[j],edges[i][j]);
+    for(let j=xs.length-1;j>=0;j--)ctx.lineTo(xs[j],edges[i+1][j]);
+    ctx.closePath();
+  };
+  /* deposit bottom-up */
+  for(let i=n-1;i>=0;i--){
+    bandPath(i);ctx.fillStyle=cols[i];ctx.globalAlpha=1;ctx.fill();
+    /* definition line along top edge */
+    ctx.beginPath();ctx.moveTo(xs[0],edges[i][0]);
+    for(let j=1;j<xs.length;j++)ctx.lineTo(xs[j],edges[i][j]);
+    ctx.strokeStyle="rgba(20,16,10,.22)";ctx.lineWidth=.8;ctx.stroke();
+    yield;if(i%2===0)yield;
+  }
+  /* fossils */
+  const drawF=(fo)=>{
+    ctx.save();ctx.translate(fo.x,fo.y);ctx.globalAlpha=.8;
+    const c=shade(cols[fo.band].startsWith("hsl")?"#000000":cols[fo.band],0,0);
+    ctx.strokeStyle="rgba(24,19,12,.72)";ctx.fillStyle="rgba(24,19,12,.72)";ctx.lineWidth=1.1;ctx.lineCap="round";
+    const s=fo.sz;
+    if(fo.type===0){ /* ammonite spiral */
+      ctx.beginPath();
+      for(let t=0;t<=1;t+=.02){const a=t*TAU*1.9,rr=s*t;const px=Math.cos(a)*rr,py=Math.sin(a)*rr*.9;t===0?ctx.moveTo(px,py):ctx.lineTo(px,py)}
+      ctx.stroke();
+      for(let k=0;k<7;k++){const t=.5+k*.07,a=t*TAU*1.9,rr=s*t;
+        ctx.beginPath();ctx.moveTo(Math.cos(a)*rr*.82,Math.sin(a)*rr*.74);ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr*.9);ctx.stroke()}
+    }else if(fo.type===1){ /* fern */
+      ctx.rotate((fo.jr-.5)*.8);
+      ctx.beginPath();ctx.moveTo(0,s);ctx.quadraticCurveTo(s*.15,0,0,-s);ctx.stroke();
+      for(let k=0;k<8;k++){const t=k/8,y=s-t*2*s,ln=s*.5*(1-t*.75);
+        ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(ln,y-ln*.45);ctx.moveTo(0,y);ctx.lineTo(-ln,y-ln*.45);ctx.stroke()}
+    }else if(fo.type===2){ /* trilobite */
+      ctx.rotate((fo.jr-.5)*1.2);
+      ctx.beginPath();ctx.ellipse(0,0,s*.55,s,0,0,TAU);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(0,s);ctx.stroke();
+      for(let k=-2;k<=3;k++){ctx.beginPath();ctx.moveTo(-s*.5,k*s*.28);ctx.quadraticCurveTo(0,k*s*.28+3,s*.5,k*s*.28);ctx.stroke()}
+    }else if(fo.type===3){ /* diatom */
+      ctx.beginPath();ctx.arc(0,0,s*.8,0,TAU);ctx.stroke();
+      for(let k=0;k<8;k++){const a=k/8*TAU;ctx.beginPath();ctx.moveTo(Math.cos(a)*s*.25,Math.sin(a)*s*.25);ctx.lineTo(Math.cos(a)*s*.8,Math.sin(a)*s*.8);ctx.stroke()}
+    }else{ /* worm trail */
+      for(let k=0;k<10;k++){const px=(k-4.5)*s*.28,py=Math.sin(k*1.1+fo.jr*6)*s*.4;
+        ctx.beginPath();ctx.arc(px,py,1.6,0,TAU);ctx.fill()}
+    }
+    ctx.restore();
+  };
+  for(const fo of F){drawF(fo);yield;yield;yield}
+  ctx.globalAlpha=1;
+}
+
+/* ============================== BLOOM ============================== */
+function* bloomGen(ctx,r,pal,W,H){
+  paper(ctx,pal,W,H);
+  const cx=W/2,cy=H/2,R=W/2-118;
+  const sym=pick(r,[5,6,7,8,9]);
+  const mirror=r()<.55;
+  const maxD=5+(r()<.45?1:0);
+  const segs=[],pets=[];
+  function addPetals(x,y,ang,d){
+    const p=3+((r()*3)|0), size=rng2(r,10,24);
+    const cs=[pal.accent,shade(pal.inks[2],14,0),shade(pal.inks[1],20,-4)];
+    const col=r()<.14?pal.gild:pick(r,cs);
+    pets.push({x,y,ang,p,size,col,d:d+.5});
+  }
+  function grow(x,y,ang,len,d,wd){
+    if(d>maxD||segs.length>230){addPetals(x,y,ang,d);return}
+    const bend=(r()-.5)*.9;
+    const ex=x+Math.cos(ang)*len, ey=y+Math.sin(ang)*len;
+    const cpx=x+Math.cos(ang)*len*.5+Math.cos(ang+Math.PI/2)*len*bend*.4;
+    const cpy=y+Math.sin(ang)*len*.5+Math.sin(ang+Math.PI/2)*len*bend*.4;
+    segs.push({x,y,cpx,cpy,ex,ey,d,wd});
+    let branched=false;
+    if(r()<.94){grow(ex,ey,ang+bend*.5+(r()-.5)*.4,len*.72,d+1,wd*.7);branched=true}
+    if(r()<.8-d*.07){grow(ex,ey,ang+rng2(r,.4,1),len*.58,d+1,wd*.6);branched=true}
+    if(r()<.62-d*.08){grow(ex,ey,ang-rng2(r,.4,1),len*.58,d+1,wd*.6);branched=true}
+    if(!branched)addPetals(ex,ey,ang,d);
+    else if(d>=2&&r()<.2)pets.push({x:ex,y:ey,ang,p:1,size:rng2(r,3,6),col:r()<.3?pal.gild:pal.accent,d:d+.5});
+  }
+  /* three primary stems fan the sector so the bloom always fills its circle — no sparse ghosts */
+  grow(R*.06,0,(r()-.5)*.25,R*.34,0,4.6);
+  grow(R*.05,0,rng2(r,.3,.72),R*.26,1,3.4);
+  grow(R*.05,0,-rng2(r,.3,.72),R*.22,1,3.0);
+  const items=[...segs.map(s=>({t:"s",d:s.d,o:s})),...pets.map(p=>({t:"p",d:p.d,o:p}))];
+  items.sort((a,b)=>a.d-b.d);
+  /* guides */
+  ctx.save();ctx.translate(cx,cy);
+  ctx.strokeStyle="rgba(30,25,15,.16)";ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(0,0,R+26,0,TAU);ctx.stroke();
+  ctx.setLineDash([2,7]);ctx.beginPath();ctx.arc(0,0,R*.45,0,TAU);ctx.stroke();
+  ctx.setLineDash([]);ctx.restore();
+  const stemCol=shade(pal.inks[pal.inks.length-1],-6,0);
+  const withSym=(fn)=>{
+    for(let k=0;k<sym;k++){
+      for(const mir of(mirror?[1,-1]:[1])){
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(k*TAU/sym);ctx.scale(1,mir);
+        fn();ctx.restore();
+      }
+    }
+  };
+  /* center medallion */
+  withSym(()=>{});
+  {
+    const g=ctx.createRadialGradient(cx-6,cy-6,2,cx,cy,R*.05);
+    g.addColorStop(0,"#ecd28a");g.addColorStop(.6,pal.gild);g.addColorStop(1,"#8a6a2c");
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R*.05,0,TAU);ctx.fill();
+    ctx.strokeStyle="rgba(30,25,15,.35)";ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,R*.075,0,TAU);ctx.stroke();
+  }
+  yield;
+  const per=Math.max(1,Math.ceil(items.length/120));
+  let idx=0;
+  while(idx<items.length){
+    for(let k=0;k<per&&idx<items.length;k++,idx++){
+      const it=items[idx];
+      if(it.t==="s"){
+        const s=it.o;
+        withSym(()=>{
+          ctx.strokeStyle=stemCol;ctx.globalAlpha=.9;ctx.lineWidth=s.wd;ctx.lineCap="round";
+          ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.quadraticCurveTo(s.cpx,s.cpy,s.ex,s.ey);ctx.stroke();
+        });
+      }else{
+        const p=it.o;
+        withSym(()=>{
+          ctx.globalAlpha=.88;
+          if(p.p===1){ /* berry */
+            ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,TAU);ctx.fill();
+            return;
+          }
+          const spread=rng2(()=>.5,0,0)||1.5; /* fixed spread */
+          for(let j=0;j<p.p;j++){
+            const a2=p.ang-(1.5)/2+(p.p===1?0:1.5*j/(p.p-1));
+            ctx.save();ctx.translate(p.x,p.y);ctx.rotate(a2);
+            ctx.fillStyle=p.col;
+            ctx.beginPath();ctx.ellipse(p.size*.55,0,p.size*.6,p.size*.24,0,0,TAU);ctx.fill();
+            ctx.strokeStyle="rgba(24,19,12,.3)";ctx.lineWidth=.8;ctx.stroke();
+            ctx.restore();
+          }
+          /* pistil */
+          ctx.fillStyle=stemCol;ctx.beginPath();ctx.arc(p.x,p.y,1.8,0,TAU);ctx.fill();
+        });
+      }
+    }
+    yield;
+  }
+  ctx.globalAlpha=1;
+}
+
+/* ============================== pieces & driver ============================== */
+const PIECES=[
+  {id:"flow",   gen:flowGen,   W:960, H:1200},
+  {id:"lattice",gen:latticeGen,W:1080,H:1080},
+  {id:"strata", gen:strataGen, W:920, H:1150},
+  {id:"bloom",  gen:bloomGen,  W:1080,H:1080},
+];
+PIECES.forEach((p,i)=>{
+  p.idx=i;
+  p.canvas=$("#c-"+p.id);
+  p.ctx=p.canvas.getContext("2d");
+  p.section=$("#"+p.id);
+  p.started=false;p.it=null;
+});
+
+const active=new Set();let rafId=null;
+function tick(){
+  rafId=null;
+  if(document.hidden)return;
+  for(const it of[...active]){
+    let done=false;
+    try{done=it.next().done}catch(e){done=true;console.error(e)}
+    if(done)active.delete(it);
+  }
+  if(active.size)rafId=requestAnimationFrame(tick);
+}
+function pump(){if(!rafId&&active.size&&!document.hidden)rafId=requestAnimationFrame(tick)}
+document.addEventListener("visibilitychange",pump);
+
+function renderPiece(p,instant){
+  if(p.it){active.delete(p.it);p.it=null}
+  const r=mulberry32(p.seed);
+  const pal=PALETTES[(r()*PALETTES.length)|0];
+  p.pal=pal;
+  p.title=makeTitle(r,p.id);
+  updatePlacard(p);
+  const it=p.gen(p.ctx,r,pal,p.W,p.H);
+  p.started=true;
+  if(instant||reduced){
+    let guard=0;while(!it.next().done&&guard++<20000){}
+  }else{p.it=it;active.add(it);pump()}
+}
+
+const DATE=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+function updatePlacard(p){
+  const s=p.section;
+  s.querySelector('[data-f="title"]').textContent=p.title;
+  s.querySelector('[data-f="edition"]').textContent="Edition #"+fmtHash(p.seed)+" · "+p.pal.name;
+  s.querySelector('[data-f="date"]').textContent="Composed "+DATE+" · unique to this visit";
+  const chips=s.querySelector('[data-f="chips"]');
+  chips.innerHTML="";
+  [...p.pal.inks,p.pal.accent,p.pal.gild].forEach(c=>{
+    const el=document.createElement("span");el.style.background=c;chips.appendChild(el);
+  });
+}
+
+/* ============================== seeding ============================== */
+let master=0;
+function setMaster(seed,push){
+  master=seed>>>0;
+  const hex=(master>>>0).toString(16).padStart(8,"0").toUpperCase();
+  $("#editionHash").textContent="#"+fmtHash(master);
+  const url=location.pathname.split("/").pop()+"?seed="+hex;
+  $("#seedUrl").textContent="?seed="+hex;
+  try{history.replaceState(null,"","?seed="+hex+location.hash)}catch(e){}
+  PIECES.forEach(p=>{p.seed=deriveSeed(master,p.idx)});
+}
+(function init(){
+  const q=new URLSearchParams(location.search).get("seed");
+  let s=null;
+  if(q){const hx=q.replace(/[^0-9a-fA-F]/g,"").slice(0,8);if(hx.length)s=parseInt(hx,16)>>>0}
+  setMaster(s===null?randomSeed():s);
+})();
+
+/* ============================== observers ============================== */
+const io=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(!en.isIntersecting)return;
+    en.target.classList.add("in");
+    io.unobserve(en.target);
+  });
+},{threshold:.18,rootMargin:"0px 0px -6% 0px"});
+$$(".reveal").forEach(el=>io.observe(el));
+
+const pieceIO=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    const p=PIECES.find(x=>x.canvas===en.target);
+    if(en.isIntersecting&&p&&!p.started)renderPiece(p,false);
+  });
+},{threshold:.15});
+PIECES.forEach(p=>pieceIO.observe(p.canvas));
+
+/* rail highlight */
+const railLinks=$$(".rail a");
+const roomIO=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(en.isIntersecting){
+      railLinks.forEach(a=>a.classList.toggle("on",a.dataset.room===en.target.id));
+    }
+  });
+},{threshold:.4});
+PIECES.forEach(p=>roomIO.observe(p.section));
+
+/* ============================== interactions ============================== */
+$("#newVisit").addEventListener("click",()=>{
+  const seed=randomSeed();
+  const wipe=$(".wipe");
+  $("#wipeHash").textContent="#"+fmtHash(seed);
+  if(reduced){
+    setMaster(seed);
+    PIECES.forEach(p=>{if(p.started)renderPiece(p,true)});
+    return;
+  }
+  wipe.classList.add("go");
+  wipe.style.transform="translateX(0)";
+  setTimeout(()=>{
+    setMaster(seed);
+    PIECES.forEach(p=>{if(p.started)renderPiece(p,false)});
+    wipe.style.transform="translateX(102%)";
+    setTimeout(()=>{wipe.classList.remove("go");wipe.style.transform="translateX(-102%)"},600);
+  },620);
+});
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const p=PIECES.find(x=>x.id===b.dataset.piece);if(!p)return;
+  if(b.dataset.act==="regen"){
+    p.seed=randomSeed();
+    renderPiece(p,false);
+  }else if(b.dataset.act==="save"){
+    const a=document.createElement("a");
+    a.download="ephemera-"+p.id+"-"+fmtHash(p.seed).replace("-","")+".png";
+    a.href=p.canvas.toDataURL("image/png");
+    a.click();
+  }
+});
+
+$("#copyLink").addEventListener("click",e=>{
+  const hex=(master>>>0).toString(16).padStart(8,"0").toUpperCase();
+  const url=location.origin!=="null"?location.origin+location.pathname+"?seed="+hex:location.href.split("?")[0]+"?seed="+hex;
+  navigator.clipboard&&navigator.clipboard.writeText(url).then(()=>{
+    const b=e.currentTarget||e.target;const old=b.textContent;
+    b.textContent="Copied ✓";setTimeout(()=>b.textContent=old,1600);
+  }).catch(()=>{});
+});
+
+/* ?scroll= support for screenshots / deep links */
+(function(){
+  const sc=new URLSearchParams(location.search).get("scroll");
+  if(sc)requestAnimationFrame(()=>window.scrollTo(0,parseInt(sc,10)||0));
+})();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Musæum of Lost Things — Wing IV: The Impossible Collection</title>
+<meta name="description" content="Collected objects from histories that never happened. Eight works from the Impossible Collection, on permanent loan from nowhere.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="The Musæum of Lost Things — Wing IV: The Impossible Collection">
+<meta property="og:description" content="Collected objects from histories that never happened. Eight works from the Impossible Collection, on permanent loan from nowhere.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/21-museum/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/21-museum/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Musæum of Lost Things — Wing IV: The Impossible Collection">
+<meta name="twitter:description" content="Collected objects from histories that never happened. Eight works from the Impossible Collection, on permanent loan from nowhere.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/21-museum/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%9B%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Cormorant+SC:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wall:#14120f;
+  --wall-deep:#0e0c0a;
+  --brass:#b08d57;
+  --brass-bright:#d8b57e;
+  --brass-dim:#7a6138;
+  --cream:#f0ead9;
+  --cream-dim:#c8bfa6;
+  --ink:#2a2318;
+  --velvet:#5c1f24;
+  --velvet-bright:#7e2c33;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--wall);
+  color:var(--cream);
+  font-family:"Cormorant Garamond", Georgia, serif;
+  font-size:19px;
+  line-height:1.55;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--brass);color:var(--wall-deep)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--wall-deep)}
+::-webkit-scrollbar-thumb{background:#3a3226;border-radius:5px;border:2px solid var(--wall-deep)}
+::-webkit-scrollbar-thumb:hover{background:var(--brass-dim)}
+:focus-visible{outline:1.5px solid var(--brass);outline-offset:3px;border-radius:2px}
+a{color:var(--brass-bright);text-decoration:none}
+img{max-width:100%;display:block}
+button{font:inherit;background:none;border:none;color:inherit;cursor:pointer}
+
+/* ---------- texture & vignette overlays ---------- */
+body::before{
+  content:"";position:fixed;inset:0;z-index:40;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:41;pointer-events:none;
+  background:radial-gradient(140% 110% at 50% 40%, transparent 55%, rgba(0,0,0,.42) 100%);
+}
+
+/* ---------- back link ---------- */
+.backlink{
+  position:fixed;top:20px;left:22px;z-index:60;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.22em;
+  color:var(--cream-dim);
+  padding:8px 12px;border:1px solid rgba(176,141,87,.35);
+  background:rgba(14,12,10,.55);backdrop-filter:blur(6px);
+  transition:color .35s ease,border-color .35s ease;
+}
+.backlink:hover{color:var(--brass-bright);border-color:var(--brass)}
+
+/* ---------- entrance ---------- */
+.entrance{
+  min-height:100svh;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:120px 24px 90px;
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(216,181,126,.07), transparent 60%),
+    linear-gradient(180deg,#181510 0%, var(--wall) 55%, var(--wall) 100%);
+  overflow:hidden;
+}
+.shaft{
+  position:absolute;top:-12%;left:50%;width:64%;height:88%;
+  transform:translateX(-50%) rotate(0.001deg);
+  background:linear-gradient(178deg, rgba(240,225,190,.10) 0%, rgba(240,225,190,.035) 45%, transparent 78%);
+  clip-path:polygon(38% 0, 62% 0, 92% 100%, 8% 100%);
+  pointer-events:none;
+}
+#motes{position:absolute;inset:0;pointer-events:none}
+.entrance-inner{position:relative;z-index:2;max-width:900px}
+.est{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.5em;text-indent:.5em;
+  color:var(--brass);margin-bottom:34px;text-wrap:balance;
+}
+h1{
+  font-family:"Cormorant SC","Cormorant Garamond",serif;
+  font-weight:500;
+  font-size:clamp(2.5rem, 7.2vw, 5.6rem);
+  line-height:1.04;
+  letter-spacing:.14em;text-indent:.14em;
+  color:#e5dcc4;
+  /* engraved emboss */
+  text-shadow:
+    0 1px 0 rgba(255,244,214,.16),
+    0 -1px 1px rgba(0,0,0,.85),
+    0 3px 14px rgba(0,0,0,.5);
+}
+h1 .ae{color:var(--brass-bright)}
+.rule{
+  width:min(320px,60%);height:1px;margin:38px auto 0;
+  background:linear-gradient(90deg,transparent, var(--brass) 20%, var(--brass-bright) 50%, var(--brass) 80%, transparent);
+  position:relative;
+}
+.rule::after{
+  content:"◆";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-size:9px;color:var(--brass-bright);background:var(--wall);padding:0 12px;
+}
+.wing-plaque{
+  display:inline-block;margin-top:42px;
+  padding:15px 34px 13px;
+  background:linear-gradient(170deg,#c8a468 0%,#a5824e 34%,#8a6a3d 62%,#b6935e 100%);
+  border-radius:3px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,240,205,.75),
+    inset 0 -1px 1px rgba(40,26,10,.7),
+    inset 0 0 0 1px rgba(70,50,22,.4),
+    0 4px 16px rgba(0,0,0,.55),
+    0 1px 3px rgba(0,0,0,.6);
+  position:relative;
+}
+.wing-plaque::before,.wing-plaque::after{
+  content:"";position:absolute;top:50%;width:7px;height:7px;border-radius:50%;
+  transform:translateY(-50%);
+  background:radial-gradient(circle at 35% 30%, #ead9ae, #7c5f33 60%, #4c390f);
+  box-shadow:0 1px 1px rgba(0,0,0,.6);
+}
+.wing-plaque::before{left:11px}
+.wing-plaque::after{right:11px}
+.wing-plaque span{
+  display:block;
+  font-family:"Cormorant SC","Cormorant Garamond",serif;font-weight:600;
+  font-size:clamp(.82rem,1.5vw,1.05rem);
+  letter-spacing:.34em;text-indent:.34em;
+  color:#2e2210;
+  text-shadow:0 1px 0 rgba(255,240,200,.5);
+}
+.hours{
+  margin-top:44px;
+  font-size:clamp(1.05rem,1.7vw,1.3rem);
+  font-style:italic;color:var(--cream-dim);font-weight:400;text-wrap:balance;
+}
+.hours b{
+  font-style:normal;font-weight:500;
+  font-family:"Cormorant SC",serif;letter-spacing:.22em;font-size:.78em;
+  color:var(--brass);display:block;margin-bottom:6px;
+}
+.scroll-cue{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.35em;text-indent:.35em;
+  color:rgba(200,191,166,.55);z-index:2;
+  animation:cue 3.2s ease-in-out infinite;
+}
+@keyframes cue{0%,100%{opacity:.4;transform:translate(-50%,0)}50%{opacity:.9;transform:translate(-50%,7px)}}
+@media (prefers-reduced-motion:reduce){.scroll-cue{animation:none}}
+
+/* entrance load-in */
+.entrance-inner > *{opacity:0;transform:translateY(22px);animation:rise 1.4s cubic-bezier(.19,1,.22,1) forwards}
+.entrance-inner > *:nth-child(1){animation-delay:.15s}
+.entrance-inner > *:nth-child(2){animation-delay:.3s}
+.entrance-inner > *:nth-child(3){animation-delay:.55s}
+.entrance-inner > *:nth-child(4){animation-delay:.75s}
+.entrance-inner > *:nth-child(5){animation-delay:.95s}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.entrance-inner > *{animation:none;opacity:1;transform:none}}
+
+/* ---------- foreword ---------- */
+.foreword{
+  max-width:660px;margin:0 auto;padding:110px 28px 90px;text-align:center;
+}
+.section-label{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.42em;text-indent:.42em;
+  color:var(--brass);margin-bottom:30px;
+}
+.foreword p{
+  font-size:clamp(1.25rem,2.2vw,1.6rem);line-height:1.6;font-weight:400;color:#ddd3ba;
+}
+.foreword p + p{margin-top:1.3em;font-size:clamp(1.05rem,1.8vw,1.25rem);color:var(--cream-dim)}
+.foreword em{color:var(--brass-bright);font-style:italic}
+
+/* ---------- rope divider ---------- */
+.rope-divider{
+  width:min(560px,82%);margin:0 auto;display:block;opacity:.9;
+}
+
+/* ---------- gallery ---------- */
+.gallery{max-width:1240px;margin:0 auto;padding:40px 40px 40px}
+.row{
+  display:grid;grid-template-columns:5fr 7fr;gap:clamp(36px,6vw,90px);
+  align-items:center;
+  padding:70px 0;
+}
+.row.rev{grid-template-columns:7fr 5fr}
+.row.rev .exhibit:first-child{order:2}
+.row.rev .exhibit:last-child{order:1}
+
+.exhibit{display:flex;flex-direction:column;align-items:center}
+.frame-wrap{position:relative;width:100%}
+.frame{
+  position:relative;width:100%;
+  padding:clamp(10px,1.4vw,16px);
+  background:
+    linear-gradient(135deg,#4a3a22 0%,#6d5530 18%,#3c2e18 42%,#7c6238 60%,#463619 82%,#5d4827 100%);
+  border-radius:2px;
+  box-shadow:
+    inset 0 0 0 1px rgba(216,181,126,.28),
+    0 18px 45px rgba(0,0,0,.65),
+    0 4px 12px rgba(0,0,0,.5);
+  cursor:pointer;
+  transition:transform .6s cubic-bezier(.19,1,.22,1), box-shadow .6s cubic-bezier(.19,1,.22,1);
+}
+.frame:hover{
+  transform:translateY(-4px);
+  box-shadow:
+    inset 0 0 0 1px rgba(216,181,126,.45),
+    0 26px 60px rgba(0,0,0,.7),
+    0 6px 16px rgba(0,0,0,.5);
+}
+.frame .art{
+  position:relative;overflow:hidden;background:#000;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.8), inset 0 2px 10px rgba(0,0,0,.7);
+  border:1px solid rgba(216,181,126,.35);
+}
+.frame .art img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 1.1s cubic-bezier(.19,1,.22,1);
+}
+.no-webgl .frame:hover .art img{transform:scale(1.035)}
+.frame .art canvas{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+  opacity:0;transition:opacity .25s ease;pointer-events:none;
+}
+.frame .art canvas.on{opacity:1}
+.art.r-p{aspect-ratio:1024/1536}
+.art.r-l{aspect-ratio:1536/1024}
+/* picture-light glow */
+.spot{
+  position:absolute;left:-14%;right:-14%;top:-16%;height:86%;
+  background:radial-gradient(46% 46% at 50% 19%, rgba(255,219,160,.17), rgba(255,219,160,.045) 48%, transparent 70%);
+  pointer-events:none;z-index:3;
+}
+.frame::after{ /* light falling on frame face */
+  content:"";position:absolute;inset:0;border-radius:2px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,226,170,.14),transparent 40%);
+}
+.wall-label{
+  margin-top:26px;
+  background:linear-gradient(175deg,#f4efdf,#e7dfc7);
+  color:var(--ink);
+  padding:14px 20px 12px;
+  min-width:min(300px,88%);max-width:88%;
+  text-align:left;
+  box-shadow:0 3px 10px rgba(0,0,0,.5), inset 0 0 0 1px rgba(120,100,60,.18);
+  border-radius:1px;
+}
+.wall-label .t{font-weight:600;font-size:1.06rem;line-height:1.25;letter-spacing:.01em}
+.wall-label .a{font-style:italic;font-size:.92rem;color:#5d5238;margin-top:3px}
+.wall-label .c{
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.16em;
+  color:#8a7a54;margin-top:8px;
+}
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(34px)}
+.reveal.in{opacity:1;transform:none;transition:opacity 1.1s cubic-bezier(.19,1,.22,1),transform 1.1s cubic-bezier(.19,1,.22,1)}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+
+/* ---------- wall quotes ---------- */
+.wall-quote{
+  max-width:620px;margin:0 auto;padding:58px 28px;text-align:center;
+}
+.wall-quote blockquote{
+  font-size:clamp(1.3rem,2.4vw,1.75rem);line-height:1.45;font-weight:400;font-style:italic;
+  color:#e0d6bc;
+}
+.wall-quote blockquote::before{content:"“";color:var(--brass);margin-right:2px}
+.wall-quote blockquote::after{content:"”";color:var(--brass);margin-left:2px}
+.wall-quote cite{
+  display:block;margin-top:20px;font-style:normal;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.24em;
+  color:var(--brass);
+}
+
+/* ---------- visitor info ---------- */
+.visit{
+  border-top:1px solid rgba(176,141,87,.22);
+  border-bottom:1px solid rgba(176,141,87,.22);
+  background:linear-gradient(180deg,rgba(216,181,126,.03),transparent 70%);
+  padding:100px 28px;margin-top:60px;
+}
+.visit-inner{max-width:1000px;margin:0 auto;text-align:center}
+.visit-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:56px;margin-top:64px;text-align:center;
+}
+.visit-card h3{
+  font-family:"Cormorant SC",serif;font-weight:600;font-size:1.02rem;
+  letter-spacing:.3em;text-indent:.3em;color:var(--brass-bright);margin-bottom:18px;
+}
+.visit-card p{color:var(--cream-dim);font-size:1.08rem;line-height:1.6}
+.visit-card p i{color:#ddd3ba}
+
+/* ---------- donations footer ---------- */
+footer{
+  padding:110px 28px 56px;text-align:center;position:relative;
+  background:linear-gradient(180deg,var(--wall),var(--wall-deep));
+}
+.donate{max-width:640px;margin:0 auto}
+.donate h2{
+  font-family:"Cormorant SC",serif;font-weight:500;
+  font-size:clamp(1.6rem,3.4vw,2.4rem);letter-spacing:.2em;text-indent:.2em;
+  color:#e5dcc4;margin-bottom:28px;
+  text-shadow:0 1px 0 rgba(255,244,214,.12),0 -1px 1px rgba(0,0,0,.8);
+}
+.donate p{
+  font-size:clamp(1.15rem,2vw,1.4rem);font-style:italic;color:var(--cream-dim);line-height:1.6;
+}
+.colophon{
+  margin-top:90px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;
+  color:#6d6450;line-height:2.1;
+}
+.colophon a{color:#8a7a54;transition:color .3s}
+.colophon a:hover{color:var(--brass-bright)}
+
+/* ---------- lightbox ---------- */
+.lightbox{
+  position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+  background:rgba(8,7,5,.92);backdrop-filter:blur(10px);
+  opacity:0;pointer-events:none;transition:opacity .45s ease;
+}
+.lightbox[hidden]{display:none}
+.lightbox.open{opacity:1;pointer-events:auto}
+.lb-inner{
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.85fr);
+  gap:clamp(28px,4vw,64px);align-items:center;
+  width:min(1180px,92vw);max-height:88vh;padding:0 8px;
+  opacity:0;transform:translateY(18px) scale(.985);
+  transition:opacity .5s cubic-bezier(.19,1,.22,1) .08s,transform .5s cubic-bezier(.19,1,.22,1) .08s;
+}
+.lightbox.open .lb-inner{opacity:1;transform:none}
+.lb-img-wrap{position:relative;display:flex;justify-content:center}
+.lb-img-wrap img{
+  max-height:82vh;max-width:100%;width:auto;object-fit:contain;
+  border:1px solid rgba(216,181,126,.4);
+  box-shadow:0 30px 80px rgba(0,0,0,.8);
+  background:#000;
+}
+.placard{
+  background:linear-gradient(172deg,#f4efdf 0%,#ece4cc 60%,#e2d8bd 100%);
+  color:var(--ink);padding:clamp(26px,3vw,40px) clamp(26px,3vw,42px);
+  box-shadow:0 18px 50px rgba(0,0,0,.6), inset 0 0 0 1px rgba(120,100,60,.2);
+  border-radius:2px;max-height:82vh;overflow-y:auto;
+}
+.placard::-webkit-scrollbar{width:6px}
+.placard::-webkit-scrollbar-thumb{background:#b8a878}
+.placard .cat{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.24em;
+  color:#8a7a54;margin-bottom:18px;display:flex;justify-content:space-between;gap:12px;
+}
+.placard h2{
+  font-weight:600;font-size:clamp(1.4rem,2.4vw,1.8rem);line-height:1.2;letter-spacing:.005em;
+  color:#231c10;
+}
+.placard .artist{font-style:italic;font-size:1.08rem;color:#5d5238;margin-top:10px}
+.placard dl{margin-top:22px;border-top:1px solid rgba(120,100,60,.3);padding-top:18px}
+.placard dt{
+  font-family:"Cormorant SC",serif;font-weight:600;font-size:.8rem;
+  letter-spacing:.26em;color:#8a7a54;
+}
+.placard dd{margin:3px 0 15px;font-size:1.05rem;line-height:1.5;color:#3a3221}
+.placard .acq{font-style:italic;color:#4a4028}
+.lb-close{
+  position:absolute;top:26px;right:30px;z-index:2;
+  font-family:"Cormorant Garamond",serif;font-size:34px;line-height:1;color:var(--cream-dim);
+  width:52px;height:52px;border:1px solid rgba(176,141,87,.4);border-radius:50%;
+  transition:color .3s,border-color .3s,transform .5s cubic-bezier(.19,1,.22,1);
+}
+.lb-close:hover{color:var(--brass-bright);border-color:var(--brass);transform:rotate(90deg)}
+.lb-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  font-size:30px;color:var(--cream-dim);width:52px;height:52px;
+  border:1px solid rgba(176,141,87,.3);border-radius:50%;
+  transition:color .3s,border-color .3s,background .3s;
+  display:flex;align-items:center;justify-content:center;padding-bottom:4px;
+}
+.lb-nav:hover{color:var(--brass-bright);border-color:var(--brass);background:rgba(176,141,87,.08)}
+.lb-prev{left:26px}.lb-next{right:26px}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .row,.row.rev{grid-template-columns:1fr;gap:74px;padding:48px 0}
+  .row.rev .exhibit:first-child{order:1}
+  .row.rev .exhibit:last-child{order:2}
+  .gallery{padding:20px 26px}
+  .lb-inner{grid-template-columns:1fr;overflow-y:auto;max-height:86vh;gap:24px;padding:0 4px}
+  .lb-img-wrap img{max-height:52vh}
+  .placard{max-height:none;overflow:visible}
+  .lb-nav{top:auto;bottom:18px;transform:none}
+  .lb-prev{left:calc(50% - 66px)}.lb-next{right:calc(50% - 66px)}
+  .lb-close{top:14px;right:14px;width:44px;height:44px;font-size:28px}
+  .visit-grid{grid-template-columns:1fr;gap:44px}
+  .backlink{top:14px;left:14px;font-size:10px;padding:7px 10px}
+  .wall-label{max-width:100%;min-width:0;width:100%}
+}
+@media (max-width:480px){
+  .est{font-size:9.5px;letter-spacing:.34em;text-indent:.34em}
+  .wing-plaque{padding:14px 30px 12px}
+  .wing-plaque span{letter-spacing:.22em;text-indent:0;text-wrap:balance;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/" aria-label="Back to the XAVIER FABLE ×30 gallery">XAVIER FABLE ×30</a>
+
+<!-- ═══════════ ENTRANCE ═══════════ -->
+<header class="entrance">
+  <div class="shaft" aria-hidden="true"></div>
+  <canvas id="motes" aria-hidden="true"></canvas>
+  <div class="entrance-inner">
+    <p class="est">EST. NEVER — CONDEMNED SOON — OPEN NOW</p>
+    <h1>The Mus<span class="ae">æ</span>um<br>of Lost Things</h1>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="wing-plaque"><span>Wing IV · The Impossible Collection</span></div>
+    <p class="hours"><b>Opening Hours</b>whenever remembered · closed during moments of certainty</p>
+  </div>
+  <p class="scroll-cue" aria-hidden="true">DESCEND</p>
+</header>
+
+<!-- ═══════════ FOREWORD ═══════════ -->
+<section class="foreword reveal">
+  <p class="section-label">FROM THE DIRECTOR'S FOREWORD</p>
+  <p>Every object in this wing has been rigorously authenticated as <em>never having existed</em>. Our conservators work by candlelight, restoring paintings to conditions they never enjoyed, in centuries that declined to occur.</p>
+  <p>Visitors are reminded that the collection cannot be stolen. It can only be forgotten, which is worse, and which is why we keep the lights low and the doors unlocked.</p>
+</section>
+
+<svg class="rope-divider" viewBox="0 0 560 70" fill="none" aria-hidden="true">
+  <rect x="26" y="8" width="6" height="54" rx="2" fill="#8a6a3d"/>
+  <circle cx="29" cy="8" r="6" fill="#c8a468"/>
+  <rect x="528" y="8" width="6" height="54" rx="2" fill="#8a6a3d"/>
+  <circle cx="531" cy="8" r="6" fill="#c8a468"/>
+  <path d="M35 14 Q 158 58 280 58 Q 402 58 525 14" stroke="#5c1f24" stroke-width="9" stroke-linecap="round"/>
+  <path d="M35 14 Q 158 58 280 58 Q 402 58 525 14" stroke="#7e2c33" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  <circle cx="35" cy="14" r="4.5" fill="#b08d57"/><circle cx="525" cy="14" r="4.5" fill="#b08d57"/>
+</svg>
+
+<!-- ═══════════ THE COLLECTION ═══════════ -->
+<main class="gallery" id="collection">
+
+  <!-- ROW 1 -->
+  <div class="row">
+    <figure class="exhibit reveal" data-piece="0">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: The City of Ys-Vitrea, Seen at the Hour of Its Descent">
+          <div class="art r-p"><img src="assets/piece1.jpg" alt="Romantic oil painting of a drowned cathedral city beneath green water" loading="eager"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">The City of Ys-Vitrea, Seen at the Hour of Its Descent</div>
+        <div class="a">attrib. a follower of Caspar Aldous Merrow</div>
+        <div class="c">CAT. Nº LT.IV.001</div>
+      </figcaption>
+    </figure>
+    <figure class="exhibit reveal" data-piece="1">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: The Comet Anselm over the Township of Verity, Ohio">
+          <div class="art r-l"><img src="assets/piece2.jpg" alt="1858 daguerreotype of a comet suspended over a small town" loading="eager"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">The Comet Anselm over the Township of Verity, Ohio</div>
+        <div class="a">attrib. E. Quill Hastings, itinerant photographer</div>
+        <div class="c">CAT. Nº LT.IV.002</div>
+      </figcaption>
+    </figure>
+  </div>
+
+  <aside class="wall-quote reveal">
+    <blockquote>Every museum is a rescue operation. Ours simply arrives before the objects exist.</blockquote>
+    <cite>— FOREWORD TO THE FIRST CATALOGUE, UNPUBLISHED, FORTHCOMING, 1791</cite>
+  </aside>
+
+  <!-- ROW 2 -->
+  <div class="row rev">
+    <figure class="exhibit reveal" data-piece="2">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: The Cartographer Weaves the Isle of Sanc Perduta">
+          <div class="art r-p"><img src="assets/piece3.jpg" alt="Medieval tapestry of a cartographer weaving a map of an island that was never found" loading="lazy"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">The Cartographer Weaves the Isle of Sanc Perduta</div>
+        <div class="a">Workshop of the Blind Weavers of Arras-sur-Nulle</div>
+        <div class="c">CAT. Nº LT.IV.003</div>
+      </figcaption>
+    </figure>
+    <figure class="exhibit reveal" data-piece="3">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: The Keeper of Cape Yūrei Releases the Year's Unanswered Letters">
+          <div class="art r-l"><img src="assets/piece4.jpg" alt="Ukiyo-e woodblock print of a lighthouse keeper releasing paper lanterns over the sea" loading="lazy"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">The Keeper of Cape Yūrei Releases the Year's Unanswered Letters</div>
+        <div class="a">attrib. Utagawa Hiroshige IV, who declined to exist</div>
+        <div class="c">CAT. Nº LT.IV.004</div>
+      </figcaption>
+    </figure>
+  </div>
+
+  <aside class="wall-quote reveal">
+    <blockquote>We do not ask whether a thing happened. We ask whether it is still happening, somewhere it shouldn't.</blockquote>
+    <cite>— DIRECTOR'S ADDRESS, DELIVERED TO AN EMPTY ROTUNDA</cite>
+  </aside>
+
+  <!-- ROW 3 -->
+  <div class="row">
+    <figure class="exhibit reveal" data-piece="4">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: Vanitas with Hourglass Running Upward">
+          <div class="art r-p"><img src="assets/piece5.jpg" alt="Dutch vanitas still life with skull, flowers, and an hourglass" loading="lazy"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">Vanitas with Hourglass Running Upward</div>
+        <div class="a">attrib. the Monogrammist V.G.N. (Delft?, active never)</div>
+        <div class="c">CAT. Nº LT.IV.005</div>
+      </figcaption>
+    </figure>
+    <figure class="exhibit reveal" data-piece="5">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: Grand Terminus of the Cetacean Line, Rush Hour">
+          <div class="art r-l"><img src="assets/piece6.jpg" alt="Surrealist painting of whales as trains in a grand railway station" loading="lazy"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">Grand Terminus of the Cetacean Line, Rush Hour</div>
+        <div class="a">Odilon Marchetti-Blau (disputed by Belgium)</div>
+        <div class="c">CAT. Nº LT.IV.006</div>
+      </figcaption>
+    </figure>
+  </div>
+
+  <aside class="wall-quote reveal">
+    <blockquote>The collection is complete. It has always been complete. We continue to add to it.</blockquote>
+    <cite>— WALL TEXT, WING IV (THIS ONE)</cite>
+  </aside>
+
+  <!-- ROW 4 -->
+  <div class="row rev">
+    <figure class="exhibit reveal" data-piece="6">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: Saint Astrolabia, Patroness of Uncharted Stars">
+          <div class="art r-p"><img src="assets/piece7.jpg" alt="Byzantine mosaic of an astronomer saint holding an astrolabe against gold" loading="lazy"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">Saint Astrolabia, Patroness of Uncharted Stars</div>
+        <div class="a">Mosaicists of the Basilica of Holy-Wisdom-That-Was-Not</div>
+        <div class="c">CAT. Nº LT.IV.007</div>
+      </figcaption>
+    </figure>
+    <figure class="exhibit reveal" data-piece="7">
+      <div class="frame-wrap">
+        <div class="spot" aria-hidden="true"></div>
+        <div class="frame" role="button" tabindex="0" aria-label="View placard: Plate XIV — Moths of the Cathedral Species">
+          <div class="art r-l"><img src="assets/piece8.jpg" alt="Victorian watercolour study of moths with stained-glass wings" loading="lazy"></div>
+        </div>
+      </div>
+      <figcaption class="wall-label">
+        <div class="t">Plate XIV — Moths of the Cathedral Species <i>(Vitraria nocturna)</i></div>
+        <div class="a">Miss Emeline Thorne, F.L.S. (elected posthumously, in advance)</div>
+        <div class="c">CAT. Nº LT.IV.008</div>
+      </figcaption>
+    </figure>
+  </div>
+
+</main>
+
+<svg class="rope-divider" viewBox="0 0 560 70" fill="none" aria-hidden="true">
+  <rect x="26" y="8" width="6" height="54" rx="2" fill="#8a6a3d"/>
+  <circle cx="29" cy="8" r="6" fill="#c8a468"/>
+  <rect x="528" y="8" width="6" height="54" rx="2" fill="#8a6a3d"/>
+  <circle cx="531" cy="8" r="6" fill="#c8a468"/>
+  <path d="M35 14 Q 158 58 280 58 Q 402 58 525 14" stroke="#5c1f24" stroke-width="9" stroke-linecap="round"/>
+  <path d="M35 14 Q 158 58 280 58 Q 402 58 525 14" stroke="#7e2c33" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  <circle cx="35" cy="14" r="4.5" fill="#b08d57"/><circle cx="525" cy="14" r="4.5" fill="#b08d57"/>
+</svg>
+
+<!-- ═══════════ VISITOR INFORMATION ═══════════ -->
+<section class="visit reveal">
+  <div class="visit-inner">
+    <p class="section-label">VISITOR INFORMATION</p>
+    <div class="visit-grid">
+      <div class="visit-card">
+        <h3>Admission</h3>
+        <p>Entry is free. The exit charges a small toll of forgetting, <i>collected automatically</i>. Members forget nothing and are miserable.</p>
+      </div>
+      <div class="visit-card">
+        <h3>House Rules</h3>
+        <p>Do not touch the objects; <i>the objects remember being touched.</i> Photography is permitted but will not come out.</p>
+      </div>
+      <div class="visit-card">
+        <h3>Getting Here</h3>
+        <p>The Musæum stands wherever a building has been demolished and missed. Follow the smell of rain on a street <i>that was renamed.</i></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DONATIONS ═══════════ -->
+<footer>
+  <div class="donate reveal">
+    <h2>Donations</h2>
+    <p>We accept objects that never existed.<br>Leave them by the door of your childhood home;<br>our couriers pass nightly.</p>
+  </div>
+  <div class="colophon">
+    THE MUSÆUM OF LOST THINGS · WING IV<br>
+    A FICTION FOR <a href="/">XAVIER FABLE ×30</a> · NO OBJECTS WERE HARMED, OR REAL
+  </div>
+</footer>
+
+<!-- ═══════════ LIGHTBOX ═══════════ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Artwork placard view" hidden>
+  <button class="lb-close" id="lbClose" aria-label="Close placard view">×</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous work">‹</button>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next work">›</button>
+  <div class="lb-inner">
+    <div class="lb-img-wrap"><img id="lbImg" src="" alt=""></div>
+    <article class="placard" id="lbPlacard">
+      <div class="cat"><span id="lbCat"></span><span>ON LOAN FROM NOWHERE</span></div>
+      <h2 id="lbTitle"></h2>
+      <p class="artist" id="lbArtist"></p>
+      <dl>
+        <dt>Date</dt><dd id="lbDate"></dd>
+        <dt>Medium</dt><dd id="lbMedium"></dd>
+        <dt>Acquisition</dt><dd class="acq" id="lbAcq"></dd>
+      </dl>
+    </article>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const params = new URLSearchParams(location.search);
+
+/* ─────────── catalogue data ─────────── */
+const WORKS = [
+  {src:"assets/piece1.jpg", cat:"CAT. Nº LT.IV.001",
+   title:"The City of Ys-Vitrea, Seen at the Hour of Its Descent",
+   artist:"Attributed to a follower of Caspar Aldous Merrow (Anglo-Breton, act. 1821–1859?)",
+   date:"c. 1834, though the varnish predates the canvas",
+   medium:"Oil on linen; seawater glaze, original brine",
+   acq:"Recovered from an estate sale in a coastal town no map will confirm. The paint remains damp in humid weather, and invigilators report the faint tolling of bells when the gallery is empty. Gift of the widow of the last bell-ringer, who asked only that it hang facing away from the sea."},
+  {src:"assets/piece2.jpg", cat:"CAT. Nº LT.IV.002",
+   title:"The Comet Anselm over the Township of Verity, Ohio",
+   artist:"Attributed to E. Quill Hastings, itinerant photographer (American, dates unrecorded)",
+   date:"Dated 1858; the comet keeps no orbital record",
+   medium:"Daguerreotype on silvered copper, hand-tinted with starlight (?)",
+   acq:"Found in three separate attics in three separate states, each plate identical to the grain. Astronomers agree that no comet passed that year; the townspeople of Verity, in surviving letters, agree that it did. Purchased with funds from the Society of Unwitnessed Events."},
+  {src:"assets/piece3.jpg", cat:"CAT. Nº LT.IV.003",
+   title:"The Cartographer Weaves the Isle of Sanc Perduta",
+   artist:"Workshop of the Blind Weavers of Arras-sur-Nulle (Franco-Flemish, fl. an adjacent 14th century)",
+   date:"Late 1300s, by a calendar since discontinued",
+   medium:"Wool and silk; thread dyed with a blue that no longer occurs",
+   acq:"The island appears on no chart, yet sailors who study the tapestry too long report homesickness for its harbours. Bequest of an admiral who resigned his commission to go and look for it. He left no forwarding address, which the Musæum considers a good sign."},
+  {src:"assets/piece4.jpg", cat:"CAT. Nº LT.IV.004",
+   title:"The Keeper of Cape Yūrei Releases the Year's Unanswered Letters",
+   artist:"Attributed to Utagawa Hiroshige IV, a master who declined to exist",
+   date:"Ansei era, in a year the era did not contain",
+   medium:"Woodblock print; ink, mica and lamp-smoke on mulberry paper",
+   acq:"One impression from an edition of ten thousand, of which this is the only copy. Each lantern bears a name too small to read; visitors occasionally find their own. Acquired in exchange for a letter the Musæum has agreed never to send."},
+  {src:"assets/piece5.jpg", cat:"CAT. Nº LT.IV.005",
+   title:"Vanitas with Hourglass Running Upward",
+   artist:"Attributed to the Monogrammist V.G.N. (Delft?, active never)",
+   date:"1663 by the old reckoning; the skull disputes this",
+   medium:"Oil on oak panel; memento mori, memento nihil",
+   acq:"Under raking light the flowers can be observed to wilt, and then to unwilt. A previous owner kept the panel covered on birthdays. Transferred from the Musæum's own vaults, where it was catalogued eleven years before it was painted — a clerical error we have chosen to honour."},
+  {src:"assets/piece6.jpg", cat:"CAT. Nº LT.IV.006",
+   title:"Grand Terminus of the Cetacean Line, Rush Hour",
+   artist:"Odilon Marchetti-Blau (Belgian, 1888–1961; disputed by Belgium)",
+   date:"1927, painted from a memory of 1974",
+   medium:"Oil on canvas; timetables, brine",
+   acq:"Marchetti-Blau claimed to have commuted on the Cetacean Line for eleven years, and produced a season ticket as proof. The ticket is genuine. The line is not. Donated by the Estate of Platform Nine, with the request that departures be announced quietly."},
+  {src:"assets/piece7.jpg", cat:"CAT. Nº LT.IV.007",
+   title:"Saint Astrolabia, Patroness of Uncharted Stars",
+   artist:"Mosaicists of the Basilica of Holy-Wisdom-That-Was-Not (Byzantine, itinerant)",
+   date:"6th century; restored, regrettably, in the 26th",
+   medium:"Glass tesserae, gold leaf, fragments of a sky",
+   acq:"The saint's halo contains forty-one stars; each night the attendants count forty-two. Removed from a basilica that survives only in the memoirs of pilgrims who never travelled. The Musæum maintains her feast day, which falls whenever it is needed."},
+  {src:"assets/piece8.jpg", cat:"CAT. Nº LT.IV.008",
+   title:"Plate XIV — Moths of the Cathedral Species (Vitraria nocturna)",
+   artist:"Miss Emeline Thorne, F.L.S. (British, 1851–1889; elected posthumously, in advance)",
+   date:"1889, from the folio “Lepidoptera of Buildings That Dream”",
+   medium:"Watercolour and leadline on vellum; pigment, apparently, still luminous at matins",
+   acq:"Thorne recorded that the moths hatched from rose windows at dusk and returned before matins, ferrying small amounts of coloured light between parishes. Her pinned specimens went on refracting for decades. Purchased at auction from a cathedral that denies having windows."}
+];
+
+/* ─────────── scroll reveal ─────────── */
+const revealEls = document.querySelectorAll(".reveal");
+if (reduced) { revealEls.forEach(el=>el.classList.add("in")); }
+else {
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target);} });
+  },{threshold:.12, rootMargin:"0px 0px -6% 0px"});
+  revealEls.forEach(el=>io.observe(el));
+}
+
+/* ─────────── dust motes in the light shaft ─────────── */
+(function(){
+  const cv = document.getElementById("motes");
+  if (reduced || !cv) return;
+  const ctx = cv.getContext("2d");
+  let W,H,motes=[],running=false,raf=0;
+  function size(){
+    const r = cv.parentElement.getBoundingClientRect();
+    const dpr = Math.min(devicePixelRatio||1,2);
+    W = r.width; H = r.height;
+    cv.width = W*dpr; cv.height = H*dpr;
+    cv.style.width = W+"px"; cv.style.height = H+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function inShaft(x,y){ // matches the CSS clip-path trapezoid, roughly
+    const cx = W*0.5, topHalf = W*0.078, botHalf = W*0.27;
+    const t = Math.min(Math.max(y/(H*0.78),0),1);
+    const half = topHalf + (botHalf-topHalf)*t;
+    return Math.abs(x-cx) < half && y < H*0.8;
+  }
+  function spawn(){
+    let x,y,tries=0;
+    do { x = W*(0.2+Math.random()*0.6); y = Math.random()*H*0.8; tries++; } while(!inShaft(x,y) && tries<24);
+    return {x,y, r:0.4+Math.random()*1.3, vx:(Math.random()-.5)*.08, vy:-0.03-Math.random()*.12,
+            a:0.06+Math.random()*.2, ph:Math.random()*Math.PI*2, sp:.3+Math.random()*.7};
+  }
+  function init(){ size(); motes = Array.from({length: W>700?64:34}, spawn); }
+  let t=0;
+  function tick(){
+    if(!running) return;
+    t+=0.016;
+    ctx.clearRect(0,0,W,H);
+    for(const m of motes){
+      m.x += m.vx + Math.sin(t*m.sp+m.ph)*0.06;
+      m.y += m.vy;
+      if(m.y < -4 || !inShaft(m.x,m.y)) Object.assign(m, spawn(), {y:H*0.78});
+      const tw = 0.55+0.45*Math.sin(t*m.sp*2+m.ph);
+      ctx.beginPath();
+      ctx.arc(m.x,m.y,m.r,0,7);
+      ctx.fillStyle = "rgba(240,225,190,"+(m.a*tw)+")";
+      ctx.fill();
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function setRun(on){ if(on&&!running){running=true;tick();} else if(!on){running=false;cancelAnimationFrame(raf);} }
+  init();
+  addEventListener("resize", init);
+  const vis = new IntersectionObserver(e=>setRun(e[0].isIntersecting && !document.hidden),{threshold:0});
+  vis.observe(cv);
+  document.addEventListener("visibilitychange",()=>setRun(!document.hidden && cv.getBoundingClientRect().bottom>0));
+})();
+
+/* ─────────── WebGL hover distortion ─────────── */
+const VERT = `attribute vec2 aPos; varying vec2 vUv;
+void main(){ vUv = aPos*0.5+0.5; gl_Position = vec4(aPos,0.0,1.0); }`;
+const FRAG = `precision mediump float;
+uniform sampler2D uTex; uniform vec2 uMouse; uniform float uTime;
+uniform float uAmp; uniform float uAspect; varying vec2 vUv;
+void main(){
+  vec2 uv = vUv;
+  vec2 d = uv - uMouse; d.x *= uAspect;
+  float dist = length(d);
+  float ring = sin(dist*30.0 - uTime*5.2) * exp(-dist*4.2);
+  float swell = exp(-dist*7.0);
+  vec2 dir = dist > 0.0005 ? d/dist : vec2(0.0);
+  vec2 off = dir * (ring*0.022 + swell*0.008) * uAmp;
+  float r = texture2D(uTex, uv + off*1.18).r;
+  float g = texture2D(uTex, uv + off).g;
+  float b = texture2D(uTex, uv + off*0.82).b;
+  float glow = swell * uAmp * 0.05;
+  gl_FragColor = vec4(vec3(r,g,b) + glow*vec3(1.0,0.9,0.7), 1.0);
+}`;
+
+const effects = [];
+let glOK = false;
+
+function makeEffect(artEl, img){
+  const canvas = document.createElement("canvas");
+  artEl.appendChild(canvas);
+  const gl = canvas.getContext("webgl",{antialias:false,alpha:false,preserveDrawingBuffer:false});
+  if(!gl) return null;
+  function sh(type,src){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+  let prog;
+  try{
+    prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER,VERT));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER,FRAG));
+    gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)) throw new Error("link");
+  }catch(e){ canvas.remove(); return null; }
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1, 3,-1, -1,3]),gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog,"aPos");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  try{
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);
+  }catch(e){ canvas.remove(); return null; } /* file:// tainted texture → CSS fallback */
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  const U = n=>gl.getUniformLocation(prog,n);
+  const uMouse=U("uMouse"), uTime=U("uTime"), uAmp=U("uAmp"), uAspect=U("uAspect");
+  const fx = {
+    canvas, gl, uMouse, uTime, uAmp, uAspect,
+    mx:.5, my:.5, tx:.5, ty:.5,
+    amp:0, target:0, time:Math.random()*10, hover:false, pinned:false,
+    size(){
+      const r = artEl.getBoundingClientRect();
+      if(r.width<2) return;
+      const dpr = Math.min(devicePixelRatio||1,2);
+      const w = Math.round(r.width*dpr), h = Math.round(r.height*dpr);
+      if(canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; gl.viewport(0,0,w,h); }
+      fx.aspect = r.width/r.height;
+    },
+    render(dt){
+      fx.mx += (fx.tx-fx.mx)*Math.min(1,dt*9);
+      fx.my += (fx.ty-fx.my)*Math.min(1,dt*9);
+      fx.amp += (fx.target-fx.amp)*Math.min(1,dt*(fx.target>fx.amp?7:2.4));
+      fx.time += dt;
+      gl.useProgram(prog);
+      gl.uniform2f(uMouse,fx.mx,1-fx.my);
+      gl.uniform1f(uTime,fx.time);
+      gl.uniform1f(uAmp,fx.amp);
+      gl.uniform1f(uAspect,fx.aspect||1);
+      gl.drawArrays(gl.TRIANGLES,0,3);
+    }
+  };
+  fx.size();
+  addEventListener("resize",fx.size);
+  const frame = artEl.closest(".frame");
+  frame.addEventListener("pointerenter",e=>{ if(e.pointerType==="touch")return;
+    fx.hover=true; fx.target=1; canvas.classList.add("on");
+    const r=artEl.getBoundingClientRect();
+    fx.mx=fx.tx=(e.clientX-r.left)/r.width; fx.my=fx.ty=(e.clientY-r.top)/r.height;
+  });
+  frame.addEventListener("pointermove",e=>{ if(!fx.hover)return;
+    const r=artEl.getBoundingClientRect();
+    fx.tx=(e.clientX-r.left)/r.width; fx.ty=(e.clientY-r.top)/r.height;
+  });
+  frame.addEventListener("pointerleave",()=>{ if(fx.pinned)return; fx.hover=false; fx.target=0; });
+  return fx;
+}
+
+function initGL(){
+  const arts = document.querySelectorAll(".art");
+  let made = 0;
+  arts.forEach(art=>{
+    const img = art.querySelector("img");
+    const build = ()=>{
+      const fx = makeEffect(art,img);
+      if(fx){ effects.push(fx); made++; glOK = true;
+        if(pendingHover!==null && +art.closest(".exhibit").dataset.piece===pendingHover) pinHover(fx);
+      } else if(made===0){ document.body.classList.add("no-webgl"); }
+    };
+    if(img.complete && img.naturalWidth) build();
+    else img.addEventListener("load",build,{once:true});
+  });
+}
+
+/* shared render loop — only draws active effects */
+let last = performance.now(), rafId = 0, loopOn = false;
+function loop(now){
+  if(!loopOn) return;
+  const dt = Math.min(0.05,(now-last)/1000); last = now;
+  let any = false;
+  for(const fx of effects){
+    if(fx.hover || fx.pinned || fx.amp>0.004){
+      fx.render(dt); any = true;
+      if(!fx.hover && !fx.pinned && fx.amp<=0.004) fx.canvas.classList.remove("on");
+    } else if(fx.canvas.classList.contains("on")) fx.canvas.classList.remove("on");
+  }
+  rafId = requestAnimationFrame(loop);
+}
+function startLoop(){ if(!loopOn){ loopOn=true; last=performance.now(); rafId=requestAnimationFrame(loop);} }
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){ loopOn=false; cancelAnimationFrame(rafId); } else startLoop();
+});
+
+/* ?hover=N — pin a simulated hover mid-ripple (for verification screenshots) */
+let pendingHover = params.has("hover") ? Math.max(0,Math.min(7,(+params.get("hover")||1)-1)) : null;
+if(pendingHover!==null){
+  const ex = document.querySelector('.exhibit[data-piece="'+pendingHover+'"]');
+  if(ex){
+    const im = ex.querySelector("img"); im.loading = "eager";
+    ex.classList.add("in");
+    setTimeout(()=>ex.scrollIntoView({block:"center",behavior:"instant"}),60);
+  }
+}
+function pinHover(fx){
+  fx.pinned = true; fx.hover = true; fx.target = 1; fx.amp = 1;
+  fx.mx=fx.tx=0.54; fx.my=fx.ty=0.48;
+  fx.canvas.classList.add("on");
+  const ex = document.querySelector('.exhibit[data-piece="'+pendingHover+'"]');
+  if(ex){ ex.classList.add("in");
+    setTimeout(()=>ex.scrollIntoView({block:"center",behavior:"instant"}),80); }
+}
+
+if(!reduced){ initGL(); startLoop(); }
+else document.body.classList.add("no-webgl");
+if(reduced || !window.WebGLRenderingContext) document.body.classList.add("no-webgl");
+
+/* ?scroll=N px — jump for mid-scroll screenshots */
+if(params.has("scroll")) setTimeout(()=>scrollTo(0,+params.get("scroll")||0),120);
+
+/* ─────────── lightbox ─────────── */
+const lb = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+const els = {cat:document.getElementById("lbCat"),title:document.getElementById("lbTitle"),
+  artist:document.getElementById("lbArtist"),date:document.getElementById("lbDate"),
+  medium:document.getElementById("lbMedium"),acq:document.getElementById("lbAcq")};
+let current = 0, lastFocus = null;
+function show(i){
+  current = (i+WORKS.length)%WORKS.length;
+  const w = WORKS[current];
+  lbImg.src = w.src; lbImg.alt = w.title;
+  els.cat.textContent = w.cat; els.title.textContent = w.title;
+  els.artist.textContent = w.artist; els.date.textContent = w.date;
+  els.medium.textContent = w.medium; els.acq.textContent = w.acq;
+}
+function openLB(i){
+  lastFocus = document.activeElement;
+  show(i); lb.hidden = false;
+  requestAnimationFrame(()=>lb.classList.add("open"));
+  document.body.style.overflow = "hidden";
+  document.getElementById("lbClose").focus();
+}
+function closeLB(){
+  lb.classList.remove("open");
+  document.body.style.overflow = "";
+  setTimeout(()=>{ lb.hidden = true; },450);
+  if(lastFocus) lastFocus.focus();
+}
+document.querySelectorAll(".exhibit").forEach(ex=>{
+  const i = +ex.dataset.piece;
+  const frame = ex.querySelector(".frame");
+  frame.addEventListener("click",()=>openLB(i));
+  frame.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openLB(i);} });
+});
+document.getElementById("lbClose").addEventListener("click",closeLB);
+document.getElementById("lbPrev").addEventListener("click",()=>show(current-1));
+document.getElementById("lbNext").addEventListener("click",()=>show(current+1));
+lb.addEventListener("click",e=>{ if(e.target===lb) closeLB(); });
+addEventListener("keydown",e=>{
+  if(lb.hidden) return;
+  if(e.key==="Escape") closeLB();
+  if(e.key==="ArrowLeft") show(current-1);
+  if(e.key==="ArrowRight") show(current+1);
+});
+
+/* ?placard=N — open lightbox for screenshots */
+if(params.has("placard")) setTimeout(()=>openLB(Math.max(0,Math.min(7,(+params.get("placard")||1)-1))),300);
+})();
+</script>
+</body>
+</html>

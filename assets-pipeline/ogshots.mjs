@@ -1,0 +1,34 @@
+// Capture 1200x630 og:image screenshots for every page, served over local HTTP.
+import puppeteer from 'puppeteer';
+import { mkdirSync } from 'fs';
+import { execSync } from 'child_process';
+
+const ROOT = '/Users/xavierting/Desktop/Xavier Agentic Workflow/Website Inspiration/fable-x25';
+const BASE = 'http://localhost:8899';
+const slugs = ['01-liquid-metal','02-terrain','03-cosmos','04-origami','05-kinetic-type','06-brutalist-mag','07-type-clock','08-ascii','09-terminal','10-synth','11-ink','12-fractal','13-fashion','14-noir','15-vapor','16-deco','17-flora','18-annual-report','19-weather','20-generative','21-museum','22-y2k','23-teahouse','24-clay','25-architecture','26-vivarium','27-gravity-poems','28-sleeper','29-arcana','30-orrery'];
+// per-site extra query params so the shot shows the site "alive"
+const params = { '10-synth':'?awake=1', '27-gravity-poems':'?ch=1&settle=1', '28-sleeper':'?scene=dusk', '29-arcana':'?state=drawn&flip=3' };
+const waits  = { '09-terminal':7000, '20-generative':6500, '11-ink':6000, '04-origami':5000, '26-vivarium':6000, '27-gravity-poems':6000, '28-sleeper':6000, '29-arcana':5000, '30-orrery':5000 };
+
+const pages = [
+  { url: '/', png: ROOT + '/assets/og.png', dir: ROOT + '/assets' },
+  { url: '/guide/', png: ROOT + '/guide/assets/og.png', dir: ROOT + '/guide/assets' },
+  ...slugs.map(s => ({ url: `/sites/${s}/${params[s]||''}`, png: `${ROOT}/sites/${s}/assets/og.png`, dir: `${ROOT}/sites/${s}/assets`, wait: waits[s] })),
+];
+
+const b = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox','--enable-webgl','--use-gl=angle'] });
+for (const pg of pages) {
+  mkdirSync(pg.dir, { recursive: true });
+  const p = await b.newPage();
+  await p.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
+  try { await p.goto(BASE + pg.url, { waitUntil: 'networkidle2', timeout: 30000 }); } catch (e) { console.log('NAV-WARN', pg.url, e.message.slice(0,60)); }
+  await new Promise(r => setTimeout(r, pg.wait || 4200));
+  await p.screenshot({ path: pg.png });
+  // convert to jpg (smaller) via sips, keep as og.jpg
+  const jpg = pg.png.replace(/\.png$/, '.jpg');
+  execSync(`sips -s format jpeg -s formatOptions 82 "${pg.png}" --out "${jpg}" >/dev/null 2>&1 && rm "${pg.png}"`);
+  console.log('OG', pg.url);
+  await p.close();
+}
+await b.close();
+console.log('DONE');

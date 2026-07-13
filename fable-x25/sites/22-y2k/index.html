@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHROMEHEART 2000 — the future we were promised</title>
+<meta name="description" content="A loving Y2K revival: liquid chrome typography, gel buttons, holographic artifacts and unbroken techno-optimism. Best viewed at 1024×768, enjoyed at any size.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="CHROMEHEART 2000 — the future we were promised">
+<meta property="og:description" content="A loving Y2K revival: liquid chrome typography, gel buttons, holographic artifacts and unbroken techno-optimism. Best viewed at 1024×768, enjoyed at any size.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/22-y2k/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/22-y2k/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CHROMEHEART 2000 — the future we were promised">
+<meta name="twitter:description" content="A loving Y2K revival: liquid chrome typography, gel buttons, holographic artifacts and unbroken techno-optimism. Best viewed at 1024×768, enjoyed at any size.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/22-y2k/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💿</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@500;700;900&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky1:#7db9ff; --sky2:#a8d8ff; --sky3:#d4b8ff; --sky4:#f2dbff;
+  --pink:#ff69d8; --pink-deep:#e33bb8;
+  --ink:#241a5e; --ink-soft:#4a3f8f;
+  --chrome-hi:#ffffff; --chrome-lo:#8fa2e0;
+  --card-bg:rgba(255,255,255,.58);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  font-family:'Nunito',system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 80% -8%, rgba(255,255,255,.55), transparent 60%),
+    radial-gradient(900px 700px at 12% 110%, rgba(255,150,230,.28), transparent 60%),
+    linear-gradient(178deg, var(--sky1) 0%, var(--sky2) 26%, #c3c6ff 55%, var(--sky3) 76%, var(--sky4) 100%);
+  background-attachment:fixed;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+::selection{background:var(--pink);color:#fff}
+:focus-visible{outline:3px solid var(--pink);outline-offset:3px;border-radius:6px}
+a{color:var(--ink);text-decoration:none}
+
+::-webkit-scrollbar{width:14px}
+::-webkit-scrollbar-track{background:linear-gradient(180deg,#bfe0ff,#e2ccff)}
+::-webkit-scrollbar-thumb{
+  border-radius:99px;border:3px solid rgba(255,255,255,.001);background-clip:padding-box;
+  background-image:linear-gradient(180deg,#ffffff, #cfe2ff 40%, #93a9ea 55%, #dcd0ff);
+}
+::-webkit-scrollbar-thumb:hover{background-image:linear-gradient(180deg,#fff,#ffd1f2 45%,#f491dd 60%,#ffe2f7)}
+
+/* ---------- gel / chrome shared bits ---------- */
+.gel{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+  border-radius:999px;border:1px solid rgba(255,255,255,.85);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(214,236,255,.42) 42%, rgba(142,178,255,.30) 52%, rgba(255,255,255,.55) 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.95),
+    inset 0 -8px 14px rgba(96,110,225,.30),
+    inset 0 -2px 3px rgba(255,255,255,.6),
+    0 10px 24px rgba(84,70,190,.28);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  cursor:pointer;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s ease, filter .28s ease;
+}
+.gel::before{
+  content:"";position:absolute;left:12%;right:12%;top:7%;height:42%;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0));
+  pointer-events:none;
+}
+.gel:hover{transform:translateY(-2px) scale(1.04);filter:saturate(1.15) brightness(1.04)}
+.gel:active{transform:scale(1.05,.8)}
+.gel.squish{animation:squish .5s cubic-bezier(.34,1.7,.5,1)}
+@keyframes squish{
+  0%{transform:scale(1)}
+  35%{transform:scale(1.14,.68)}
+  62%{transform:scale(.94,1.08)}
+  100%{transform:scale(1)}
+}
+.gel--pink{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,206,242,.5) 42%, rgba(255,105,216,.42) 55%, rgba(255,255,255,.55) 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.95),
+    inset 0 -8px 14px rgba(227,59,184,.38),
+    inset 0 -2px 3px rgba(255,255,255,.6),
+    0 10px 26px rgba(227,59,184,.30);
+}
+.techno{font-family:'Orbitron',sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.kicker{font-family:'Orbitron',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* ---------- fixed chrome ---------- */
+.fable-link{
+  position:fixed;left:16px;bottom:16px;z-index:90;
+  padding:.5rem 1rem;font-family:'Orbitron',sans-serif;font-weight:700;
+  font-size:.66rem;letter-spacing:.22em;color:var(--ink);
+}
+.site-nav{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;
+  display:flex;gap:.5rem;padding:.45rem .55rem;border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,.25));
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:inset 0 1px 2px #fff, 0 12px 32px rgba(80,60,190,.22);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.site-nav .gel{padding:.5rem 1.15rem;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase}
+.site-nav .brand{color:var(--pink-deep)}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:7.5rem 1.25rem 5rem;text-align:center;overflow:hidden;
+}
+.hero-inner{position:relative;z-index:5;width:min(1060px,100%)}
+.chrome-wordmark{
+  width:100%;height:auto;display:block;
+  filter:drop-shadow(0 22px 34px rgba(64,36,148,.38)) drop-shadow(0 4px 8px rgba(64,36,148,.25));
+}
+.est-chip{
+  display:inline-flex;margin-bottom:1.4rem;padding:.5rem 1.3rem;
+  font-size:.66rem;color:var(--ink);cursor:default;
+}
+.tagline{
+  margin-top:1.9rem;font-size:clamp(1.05rem,1rem + 1vw,1.5rem);
+  font-weight:600;color:var(--ink);
+  text-shadow:0 1px 0 rgba(255,255,255,.8);
+}
+.tagline em{font-style:italic;color:var(--pink-deep)}
+.hero-cta{margin-top:2.2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.hero-cta .gel{padding:.95rem 2.1rem;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase}
+
+/* floating chrome & bubbles */
+.bubble{
+  position:absolute;border-radius:50%;pointer-events:none;z-index:2;
+  background:
+    radial-gradient(circle at 31% 24%, rgba(255,255,255,.95) 0 7%, rgba(255,255,255,0) 22%),
+    radial-gradient(circle at 66% 79%, rgba(255,255,255,.55) 0 5%, rgba(255,255,255,0) 14%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.02) 52%, rgba(255,255,255,.16) 70%, rgba(190,220,255,.42) 86%, rgba(255,255,255,.85) 96%, rgba(255,255,255,0) 100%);
+  box-shadow:inset 0 0 18px rgba(255,255,255,.25);
+}
+.bubble::after{
+  content:"";position:absolute;left:20%;top:12%;width:26%;height:16%;
+  border-radius:50%;transform:rotate(-28deg);
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,0));
+}
+.flare{position:absolute;pointer-events:none;z-index:1}
+.flare-core{
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,.95) 0 8%, rgba(255,255,255,.5) 22%, rgba(255,255,255,0) 62%);
+}
+.flare-streak{
+  position:absolute;top:50%;left:50%;width:560px;height:3px;transform:translate(-50%,-50%);
+  background:linear-gradient(90deg,transparent, rgba(255,255,255,.95) 50%, transparent);
+  filter:blur(1px);
+}
+.flare-streak.v{transform:translate(-50%,-50%) rotate(90deg);width:300px}
+.flare-ring{
+  position:absolute;border-radius:50%;border:2px solid transparent;
+  background:conic-gradient(from 0deg, rgba(255,150,220,.5), rgba(150,220,255,.5), rgba(220,180,255,.5), rgba(255,150,220,.5)) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  opacity:.7;
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero-inner{animation:bob 9s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+  .bubble{animation:drift var(--dur,22s) ease-in-out infinite alternate}
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1)}
+    100%{transform:translate(var(--dx,30px), var(--dy,-70px)) scale(1.06)}
+  }
+  .flare-core{animation:pulse 7s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+}
+
+/* ---------- marquee ---------- */
+.marquee{
+  position:relative;z-index:6;overflow:hidden;padding:1.05rem 0;
+  background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.35) 45%, rgba(160,180,255,.30) 55%, rgba(255,255,255,.6));
+  border-top:1px solid rgba(255,255,255,.9);border-bottom:1px solid rgba(255,255,255,.9);
+  box-shadow:0 10px 30px rgba(84,70,190,.18), inset 0 2px 2px #fff;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.marquee-track{display:flex;width:max-content;gap:0}
+.marquee-row{display:flex;align-items:center;gap:2.4rem;padding-right:2.4rem;white-space:nowrap}
+.marquee-row .mq-word{font-family:'Orbitron',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.42em;color:var(--ink)}
+.marquee-row .mq-glyph{font-size:1.05rem;color:var(--pink-deep);line-height:1}
+.marquee-row svg{display:block;height:22px;width:auto}
+@media (prefers-reduced-motion:no-preference){
+  .marquee-track{animation:mq 26s linear infinite}
+  @keyframes mq{to{transform:translateX(-50%)}}
+}
+
+/* ---------- sections ---------- */
+.section{position:relative;z-index:5;padding:6.5rem 1.5rem}
+.wrap{width:min(1120px,100%);margin:0 auto}
+.section-head{text-align:center;margin-bottom:3rem}
+.section-head h2{
+  font-family:'Audiowide',sans-serif;font-weight:400;
+  font-size:clamp(1.7rem, 1.2rem + 2.6vw, 3rem);
+  letter-spacing:.06em;line-height:1.12;margin:.55rem 0 .8rem;
+  background:linear-gradient(180deg,#eaf3ff 3%, #9fb4ec 30%, #4453a8 47%, #1a1350 50%, #dfe9ff 53%, #7d8cd6 74%, #c8a6ee 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:.6px rgba(38,30,96,.28);
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.7)) drop-shadow(0 8px 16px rgba(48,26,120,.4));
+}
+.section-head p{max-width:46ch;margin:0 auto;color:var(--ink-soft);font-weight:600}
+
+/* metallic-bordered frosted card */
+.plastic{
+  position:relative;border-radius:26px;padding:2px;
+  background:linear-gradient(160deg,#ffffff, #b9c8f0 22%, #f3f7ff 40%, #8d9ce2 58%, #ffffff 78%, #cbb6f2 100%);
+  box-shadow:0 24px 60px rgba(70,50,170,.28), 0 3px 8px rgba(70,50,170,.18);
+}
+.plastic-in{
+  border-radius:24px;height:100%;
+  background:var(--card-bg);
+  backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.95), inset 0 -1px 2px rgba(255,255,255,.5);
+  overflow:hidden;
+}
+
+/* manifesto */
+.manifesto .plastic-in{padding:clamp(2rem,4vw,3.6rem)}
+.manifesto-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(1.8rem,3.5vw,3.2rem);align-items:center}
+.manifesto p{margin-bottom:1.15rem;font-size:1.04rem;color:#2c2366}
+.manifesto p strong{color:var(--pink-deep)}
+.manifesto p:last-child{margin-bottom:0}
+.stat-stack{display:flex;flex-direction:column;gap:1rem}
+.stat{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding:1rem 1.4rem}
+.stat{
+  border-radius:18px;border:1px solid rgba(255,255,255,.9);
+  background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(230,238,255,.45));
+  box-shadow:inset 0 1px 2px #fff, 0 8px 18px rgba(84,70,190,.14);
+}
+.stat b{font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:900;color:var(--ink)}
+.stat span{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+.stat b .pink{color:var(--pink-deep)}
+
+/* ---------- collection ---------- */
+.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+.artifact{--mx:50%;--my:30%;--ang:220deg;position:relative}
+.artifact .plastic-in{display:flex;flex-direction:column;padding:1.4rem 1.4rem 1.5rem;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.artifact:hover .plastic-in{transform:translateY(-6px)}
+.artifact-stage{
+  position:relative;height:210px;border-radius:18px;margin-bottom:1.15rem;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,.75), rgba(255,255,255,.1) 60%),
+    linear-gradient(180deg, rgba(190,215,255,.5), rgba(216,190,255,.5));
+  box-shadow:inset 0 2px 3px #fff, inset 0 -10px 24px rgba(90,80,200,.18);
+  overflow:hidden;
+}
+.artifact-stage::after{ /* holographic foil sheen */
+  content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;
+  background:conic-gradient(from var(--ang) at var(--mx) var(--my),
+    rgba(255,120,220,.55), rgba(255,235,140,.4), rgba(120,255,210,.45),
+    rgba(120,190,255,.55), rgba(200,140,255,.5), rgba(255,120,220,.55));
+  mix-blend-mode:color-dodge;
+  transition:opacity .35s ease;pointer-events:none;
+}
+.artifact:hover .artifact-stage::after{opacity:.75}
+.artifact h3{font-family:'Orbitron',sans-serif;font-weight:900;font-size:.95rem;letter-spacing:.16em;text-transform:uppercase}
+.artifact .num{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.3em;color:var(--pink-deep);margin-bottom:.3rem}
+.artifact p{font-size:.9rem;color:var(--ink-soft);font-weight:600;margin-top:.4rem}
+.obj{position:relative;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.artifact:hover .obj{transform:scale(1.07) rotate(-2deg)}
+
+/* object 1: chrome orb */
+.obj-orb{width:130px;height:130px;border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 26%, #ffffff 0 9%, rgba(255,255,255,0) 26%),
+    radial-gradient(circle at 70% 82%, rgba(255,182,240,.85) 0 7%, rgba(255,182,240,0) 24%),
+    linear-gradient(180deg,#eaf6ff 0%, #b8d4f7 28%, #5d74c9 46%, #241a5e 50%, #e9f2ff 54%, #93a7e6 72%, #d9c6fa 100%);
+  box-shadow:inset -6px -10px 22px rgba(30,20,90,.35), inset 4px 6px 14px rgba(255,255,255,.9), 0 16px 26px rgba(50,30,130,.35);
+}
+.obj-orb::after{content:"";position:absolute;left:18%;top:10%;width:34%;height:20%;border-radius:50%;
+  background:linear-gradient(180deg,#fff,rgba(255,255,255,0));transform:rotate(-25deg)}
+/* object 3: holo disc */
+.obj-disc{width:140px;height:140px;border-radius:50%;
+  background:
+    radial-gradient(circle, #f2f6ff 0 13%, #aab4d8 14% 15.5%, transparent 16%),
+    conic-gradient(from 210deg, #ffd1f2, #fff3b8, #c8ffd9, #b9e0ff, #d9c1ff, #ffc9ec, #fff3b8, #c4f2ff, #ffd1f2);
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.85), inset 0 0 24px rgba(255,255,255,.5), 0 16px 26px rgba(50,30,130,.3);
+  position:relative;overflow:hidden;
+}
+.obj-disc::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 30deg, rgba(255,255,255,0) 0 40deg, rgba(255,255,255,.85) 55deg, rgba(255,255,255,0) 75deg, rgba(255,255,255,0) 200deg, rgba(255,255,255,.7) 218deg, rgba(255,255,255,0) 240deg)}
+.obj-disc::after{content:"";position:absolute;left:50%;top:50%;width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,#cdd8f2 0 40%, #fff 44% 100%);box-shadow:0 0 0 5px #eef3ff, 0 0 0 6px #b9c2de}
+/* object 4: bubble ring */
+.obj-ring{width:140px;height:140px;border-radius:50%;position:relative;
+  background:radial-gradient(circle, transparent 0 38%, rgba(200,225,255,.55) 46%, rgba(255,255,255,.9) 52%, rgba(150,170,235,.75) 60%, rgba(255,255,255,.95) 66%, transparent 70%);
+  filter:drop-shadow(0 14px 20px rgba(50,30,130,.3));
+}
+.obj-ring::before{content:"";position:absolute;left:16%;top:8%;width:30%;height:14%;border-radius:50%;transform:rotate(-30deg);
+  background:linear-gradient(180deg,#fff,rgba(255,255,255,0))}
+.obj-ring::after{content:"";position:absolute;right:14%;bottom:12%;width:16%;height:9%;border-radius:50%;transform:rotate(-30deg);
+  background:linear-gradient(180deg,rgba(255,182,240,.9),rgba(255,182,240,0))}
+/* object 6: orbit gyro */
+.obj-gyro{width:150px;height:150px;position:relative;transform-style:preserve-3d}
+.obj-gyro .g-ring{position:absolute;inset:0;border-radius:50%;border:5px solid;transform-style:preserve-3d}
+.obj-gyro .g1{border-color:#fff #a4b6ec #6d7dd0 #dfe9ff;transform:rotateX(66deg)}
+.obj-gyro .g2{inset:16px;border-color:#ffd1f2 #f78ade #e33bb8 #ffd1f2;transform:rotateX(66deg) rotateY(52deg)}
+.obj-gyro .g3{inset:32px;border-color:#fff #bcd6ff #8aa4ea #eef4ff;transform:rotateX(66deg) rotateY(-52deg)}
+.obj-gyro .g-core{position:absolute;left:50%;top:50%;width:34px;height:34px;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 32% 28%, #fff 0 18%, #ffb6ef 40%, #d84fc0 75%, #8f1f7e);box-shadow:0 6px 14px rgba(150,30,130,.45)}
+@media (prefers-reduced-motion:no-preference){
+  .obj-gyro{animation:gyro 14s linear infinite}
+  @keyframes gyro{to{transform:rotateZ(360deg)}}
+}
+
+/* ---------- webring / footer ---------- */
+.footer{position:relative;z-index:5;padding:5.5rem 1.5rem 7rem}
+.footer .plastic-in{padding:clamp(2rem,4vw,3.4rem);text-align:center}
+.counter-label{margin-bottom:1rem}
+.counter{
+  display:inline-flex;gap:6px;padding:10px 12px;border-radius:14px;
+  background:linear-gradient(180deg,#f7faff,#c7d2ef 30%, #8b98c9 50%, #dfe6f8);
+  box-shadow:inset 0 2px 2px #fff, inset 0 -3px 6px rgba(40,30,100,.35), 0 12px 26px rgba(70,50,170,.3);
+}
+.counter .digit{
+  width:34px;height:48px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.5rem;color:#7dffca;
+  background:linear-gradient(180deg,#05070f, #101a30 48%, #05070f 52%, #0a1122);
+  box-shadow:inset 0 0 8px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.15);
+  text-shadow:0 0 10px rgba(125,255,202,.75);
+}
+.counter .comma{align-self:flex-end;padding-bottom:4px;color:#39406b;font-weight:900}
+.counter-note{margin-top:.9rem;font-size:.86rem;font-weight:700;color:var(--ink-soft)}
+.badges{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:2.2rem 0}
+.badge88{
+  display:inline-flex;flex-direction:column;justify-content:center;width:118px;height:42px;border-radius:6px;
+  font-family:'Orbitron',sans-serif;font-weight:700;font-size:.5rem;letter-spacing:.12em;line-height:1.5;color:#241a5e;
+  background:linear-gradient(180deg,#fff, #cfe0ff 40%, #96abe8 52%, #e6ecff);
+  border:1px solid #fff;box-shadow:0 6px 14px rgba(70,50,170,.25), inset 0 1px 1px #fff;
+  text-transform:uppercase;
+}
+.badge88 b{font-size:.56rem;color:var(--pink-deep)}
+.webring{
+  margin-top:1.4rem;padding-top:2rem;border-top:1px dashed rgba(90,70,190,.35);
+  display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;
+}
+.webring .gel{padding:.6rem 1.3rem;font-family:'Orbitron',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase}
+.webring-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink)}
+.fine{margin-top:2.4rem;font-size:.78rem;font-weight:600;color:var(--ink-soft)}
+.fine .heart{color:var(--pink-deep)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(30px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1)}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
+
+/* sparkle trail */
+.spark{
+  position:fixed;z-index:200;pointer-events:none;font-size:14px;line-height:1;
+  will-change:transform,opacity;user-select:none;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  .collection-grid{grid-template-columns:repeat(2,1fr)}
+  .manifesto-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .site-nav{top:10px;gap:.35rem;padding:.35rem .45rem}
+  .site-nav .gel{padding:.42rem .8rem;font-size:.56rem;letter-spacing:.12em}
+  .hero{padding-top:6rem}
+  .collection-grid{grid-template-columns:1fr}
+  .artifact-stage{height:190px}
+  .counter .digit{width:26px;height:40px;font-size:1.15rem}
+  .section{padding:4.5rem 1.1rem}
+}
+</style>
+</head>
+<body>
+
+<a class="fable-link gel" href="/">XAVIER FABLE ×30</a>
+
+<nav class="site-nav" aria-label="Main">
+  <a class="gel brand" href="#top">CH▸2K</a>
+  <a class="gel" href="#manifesto">Manifesto</a>
+  <a class="gel" href="#collection">Collection</a>
+  <a class="gel" href="#webring">Webring</a>
+</nav>
+
+<header class="hero" id="top">
+  <!-- lens flare -->
+  <div class="flare" style="top:6%;right:10%">
+    <div class="flare-core"></div>
+    <div class="flare-streak"></div>
+    <div class="flare-streak v"></div>
+    <div class="flare-ring" style="left:-70px;top:-70px;width:480px;height:480px"></div>
+    <div class="flare-ring" style="left:30px;top:30px;width:280px;height:280px;opacity:.5"></div>
+  </div>
+  <!-- bubbles -->
+  <div class="bubble" style="width:190px;height:190px;left:6%;top:16%;--dx:44px;--dy:-60px;--dur:24s"></div>
+  <div class="bubble" style="width:90px;height:90px;left:16%;bottom:14%;--dx:-30px;--dy:-90px;--dur:19s"></div>
+  <div class="bubble" style="width:130px;height:130px;right:8%;bottom:22%;--dx:-46px;--dy:-50px;--dur:27s"></div>
+  <div class="bubble" style="width:56px;height:56px;right:22%;top:24%;--dx:26px;--dy:60px;--dur:16s"></div>
+  <div class="bubble" style="width:70px;height:70px;left:38%;top:10%;--dx:-20px;--dy:44px;--dur:21s"></div>
+
+  <div class="hero-inner">
+    <span class="est-chip gel techno">★ est. Y2K — polished daily ★</span>
+
+    <svg class="chrome-wordmark" viewBox="0 0 1000 452" role="img" aria-label="CHROMEHEART">
+      <defs>
+        <linearGradient id="chromeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#091743"/>
+          <stop offset=".07" stop-color="#20489a"/>
+          <stop offset=".18" stop-color="#5f9ae6"/>
+          <stop offset=".31" stop-color="#bcdaff"/>
+          <stop offset=".43" stop-color="#ffffff"/>
+          <stop offset=".485" stop-color="#ffffff"/>
+          <stop offset=".508" stop-color="#141043"/>
+          <stop offset=".522" stop-color="#3a3f86"/>
+          <stop offset=".57" stop-color="#c3d2f7"/>
+          <stop offset=".66" stop-color="#8f9ee2"/>
+          <stop offset=".76" stop-color="#6f6fc8"/>
+          <stop offset=".86" stop-color="#9d86dc"/>
+          <stop offset=".94" stop-color="#e6b4ee"/>
+          <stop offset="1" stop-color="#fff0ff"/>
+        </linearGradient>
+        <linearGradient id="edgeGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset=".45" stop-color="#7183d6"/>
+          <stop offset=".5" stop-color="#180d45"/>
+          <stop offset=".56" stop-color="#ffffff"/>
+          <stop offset="1" stop-color="#b491ea"/>
+        </linearGradient>
+        <linearGradient id="glossGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffffff" stop-opacity=".95"/>
+          <stop offset=".3" stop-color="#ffffff" stop-opacity=".35"/>
+          <stop offset=".46" stop-color="#ffffff" stop-opacity="0"/>
+          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="chromeFx" x="-6%" y="-18%" width="112%" height="136%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.0055 0.013" numOctaves="2" seed="7" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="5.5" xChannelSelector="R" yChannelSelector="G" result="disp"/>
+          <feGaussianBlur in="disp" stdDeviation="1.6" result="soft"/>
+          <feSpecularLighting in="soft" surfaceScale="3.4" specularConstant="0.5" specularExponent="18" lighting-color="#ffffff" result="specTop">
+            <feDistantLight azimuth="235" elevation="60"/>
+          </feSpecularLighting>
+          <feSpecularLighting in="soft" surfaceScale="3" specularConstant="0.42" specularExponent="14" lighting-color="#ffb3ec" result="specPink">
+            <feDistantLight azimuth="70" elevation="24"/>
+          </feSpecularLighting>
+          <feComposite in="specTop" in2="disp" operator="in" result="specTopIn"/>
+          <feComposite in="specPink" in2="disp" operator="in" result="specPinkIn"/>
+          <feComposite in="disp" in2="specTopIn" operator="arithmetic" k1="0" k2="1" k3=".55" k4="0" result="s1"/>
+          <feComposite in="s1" in2="specPinkIn" operator="arithmetic" k1="0" k2="1" k3=".4" k4="0"/>
+        </filter>
+        <filter id="shadowFx" x="-10%" y="-20%" width="120%" height="140%">
+          <feGaussianBlur stdDeviation="6"/>
+        </filter>
+      </defs>
+      <g style="font-family:'Audiowide',sans-serif;font-size:172px;text-anchor:middle">
+        <!-- drop shadow layer -->
+        <g filter="url(#shadowFx)" fill="#3c2a86" opacity=".4" transform="translate(0,12)">
+          <text x="500" y="188" textLength="952" lengthAdjust="spacingAndGlyphs">CHROME</text>
+          <text x="500" y="398" textLength="952" lengthAdjust="spacingAndGlyphs">HEART</text>
+        </g>
+        <!-- liquid chrome -->
+        <g filter="url(#chromeFx)">
+          <g fill="url(#chromeGrad)" stroke="url(#edgeGrad)" stroke-width="5" paint-order="stroke fill">
+            <text x="500" y="188" textLength="952" lengthAdjust="spacingAndGlyphs">CHROME</text>
+            <text x="500" y="398" textLength="952" lengthAdjust="spacingAndGlyphs">HEART</text>
+          </g>
+          <g fill="url(#glossGrad)">
+            <text x="500" y="188" textLength="952" lengthAdjust="spacingAndGlyphs">CHROME</text>
+            <text x="500" y="398" textLength="952" lengthAdjust="spacingAndGlyphs">HEART</text>
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <p class="tagline">The future we were promised, <em>polished to a mirror shine.</em></p>
+
+    <div class="hero-cta">
+      <a class="gel gel--pink" href="#collection">✦ Enter the shine</a>
+      <a class="gel" href="#manifesto">Read the manifesto</a>
+    </div>
+  </div>
+</header>
+
+<!-- marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="mqTrack">
+    <div class="marquee-row">
+      <span class="mq-word">CHROMEHEART 2000</span><span class="mq-glyph">★</span>
+      <svg viewBox="0 0 40 30"><path d="M20 15 C12 2 2 4 3 12 C4 19 13 21 20 15 C27 21 36 19 37 12 C38 4 28 2 20 15 Z M20 13 L20 24" fill="none" stroke="#e33bb8" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span class="mq-glyph" style="color:#241a5e">✧</span><span class="mq-word">SHINE FOREVER</span><span class="mq-glyph">♡</span>
+      <svg viewBox="0 0 40 30"><ellipse cx="20" cy="15" rx="17" ry="7" fill="none" stroke="#5a6fd0" stroke-width="2.2"/><circle cx="20" cy="15" r="4.5" fill="#e33bb8"/><circle cx="35" cy="11" r="2.2" fill="#fff" stroke="#5a6fd0" stroke-width="1"/></svg>
+      <span class="mq-word">Y2K COMPLIANT</span><span class="mq-glyph" style="color:#241a5e">★</span>
+      <span class="mq-word">DIAL IN</span><span class="mq-glyph">✧</span>
+    </div>
+    <div class="marquee-row">
+      <span class="mq-word">CHROMEHEART 2000</span><span class="mq-glyph">★</span>
+      <svg viewBox="0 0 40 30"><path d="M20 15 C12 2 2 4 3 12 C4 19 13 21 20 15 C27 21 36 19 37 12 C38 4 28 2 20 15 Z M20 13 L20 24" fill="none" stroke="#e33bb8" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <span class="mq-glyph" style="color:#241a5e">✧</span><span class="mq-word">SHINE FOREVER</span><span class="mq-glyph">♡</span>
+      <svg viewBox="0 0 40 30"><ellipse cx="20" cy="15" rx="17" ry="7" fill="none" stroke="#5a6fd0" stroke-width="2.2"/><circle cx="20" cy="15" r="4.5" fill="#e33bb8"/><circle cx="35" cy="11" r="2.2" fill="#fff" stroke="#5a6fd0" stroke-width="1"/></svg>
+      <span class="mq-word">Y2K COMPLIANT</span><span class="mq-glyph" style="color:#241a5e">★</span>
+      <span class="mq-word">DIAL IN</span><span class="mq-glyph">✧</span>
+    </div>
+  </div>
+</div>
+
+<!-- manifesto -->
+<section class="section manifesto" id="manifesto">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">manifesto.txt — last modified 12/31/1999</span>
+      <h2>Techno-Optimism, Reflected</h2>
+    </div>
+    <div class="plastic reveal">
+      <div class="plastic-in">
+        <div class="manifesto-grid">
+          <div>
+            <p>Somewhere between the dial tone and the millennium, we believed the future would be <strong>soft, round, and mirror-finished</strong>. Computers came in candy colors. Interfaces looked wet. Every surface promised that tomorrow had already been detailed, waxed, and parked in the driveway.</p>
+            <p>CHROMEHEART 2000 is a preservation society for that feeling. Not the irony — the <strong>sincerity</strong>. The conviction that a new century was a gift you unwrapped, and inside was a translucent purple everything.</p>
+            <p>We polish, therefore we hope. Every artifact in this archive is buffed until it reflects the person looking at it — because that was always the point. The future was never chrome. <strong>The future was you, in the chrome.</strong></p>
+          </div>
+          <div class="stat-stack">
+            <div class="stat"><span>Shine level</span><b><span class="pink">100</span>%</b></div>
+            <div class="stat"><span>Cynicism detected</span><b>0.00%</b></div>
+            <div class="stat"><span>Bandwidth of dreams</span><b>56k <span class="pink">→ ∞</span></b></div>
+            <div class="stat"><span>Millennium bugs</span><b>FIXED</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- collection -->
+<section class="section" id="collection">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">the archive — six recovered objects</span>
+      <h2>Artifacts of the Shine Age</h2>
+      <p>Each piece rendered in pure light. Tilt your cursor across an artifact to see its holographic foil.</p>
+    </div>
+    <div class="collection-grid">
+
+      <div class="artifact plastic reveal"><div class="plastic-in">
+        <div class="artifact-stage"><div class="obj obj-orb"></div></div>
+        <span class="num">ARTIFACT / 01</span>
+        <h3>Chrome Orb</h3>
+        <p>A perfect sphere of undiluted tomorrow. Reflects only good news.</p>
+      </div></div>
+
+      <div class="artifact plastic reveal"><div class="plastic-in">
+        <div class="artifact-stage">
+          <svg class="obj" width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
+            <defs>
+              <linearGradient id="starG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffd7f4"/><stop offset=".45" stop-color="#ff77db"/>
+                <stop offset=".75" stop-color="#d92eae"/><stop offset="1" stop-color="#ff9fe6"/>
+              </linearGradient>
+              <linearGradient id="starGloss" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M75 8 L93 55 L143 57 L104 88 L118 137 L75 108 L32 137 L46 88 L7 57 L57 55 Z"
+              fill="url(#starG)" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"
+              style="filter:drop-shadow(0 12px 16px rgba(170,30,140,.4))"/>
+            <path d="M75 8 L93 55 L143 57 L104 88 L118 137 L75 108 L32 137 L46 88 L7 57 L57 55 Z" fill="url(#starGloss)" transform="translate(0,2) scale(1)" opacity=".8"/>
+            <ellipse cx="60" cy="42" rx="17" ry="9" fill="#fff" opacity=".9" transform="rotate(-18 60 42)"/>
+          </svg>
+        </div>
+        <span class="num">ARTIFACT / 02</span>
+        <h3>Gel Star</h3>
+        <p>Squeezable optimism. Bounces back at 60 frames per second.</p>
+      </div></div>
+
+      <div class="artifact plastic reveal"><div class="plastic-in">
+        <div class="artifact-stage"><div class="obj obj-disc"></div></div>
+        <span class="num">ARTIFACT / 03</span>
+        <h3>Holographic Disc</h3>
+        <p>700 megabytes of forever. Burn once, shine eternal.</p>
+      </div></div>
+
+      <div class="artifact plastic reveal"><div class="plastic-in">
+        <div class="artifact-stage"><div class="obj obj-ring"></div></div>
+        <span class="num">ARTIFACT / 04</span>
+        <h3>Bubble Ring</h3>
+        <p>Zero-gravity jewelry, sized for the commute to the moon office.</p>
+      </div></div>
+
+      <div class="artifact plastic reveal"><div class="plastic-in">
+        <div class="artifact-stage">
+          <svg class="obj" width="150" height="150" viewBox="0 0 150 150" aria-hidden="true">
+            <defs>
+              <linearGradient id="petalG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#c9d6f7"/>
+                <stop offset=".52" stop-color="#5d6fc4"/><stop offset=".62" stop-color="#eef4ff"/>
+                <stop offset="1" stop-color="#c9aef2"/>
+              </linearGradient>
+              <radialGradient id="floCore" cx=".35" cy=".3" r=".9">
+                <stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#ffb6ef"/>
+                <stop offset=".8" stop-color="#e33bb8"/><stop offset="1" stop-color="#8f1f7e"/>
+              </radialGradient>
+            </defs>
+            <g style="filter:drop-shadow(0 12px 16px rgba(60,40,150,.4))">
+              <g fill="url(#petalG)" stroke="#fff" stroke-width="2">
+                <ellipse cx="75" cy="34" rx="20" ry="32"/>
+                <ellipse cx="75" cy="34" rx="20" ry="32" transform="rotate(60 75 75)"/>
+                <ellipse cx="75" cy="34" rx="20" ry="32" transform="rotate(120 75 75)"/>
+                <ellipse cx="75" cy="34" rx="20" ry="32" transform="rotate(180 75 75)"/>
+                <ellipse cx="75" cy="34" rx="20" ry="32" transform="rotate(240 75 75)"/>
+                <ellipse cx="75" cy="34" rx="20" ry="32" transform="rotate(300 75 75)"/>
+              </g>
+              <circle cx="75" cy="75" r="19" fill="url(#floCore)" stroke="#fff" stroke-width="2.5"/>
+            </g>
+          </svg>
+        </div>
+        <span class="num">ARTIFACT / 05</span>
+        <h3>Metallic Flower</h3>
+        <p>Grows toward any light source. Waters itself with dew.exe.</p>
+      </div></div>
+
+      <div class="artifact plastic reveal"><div class="plastic-in">
+        <div class="artifact-stage">
+          <div class="obj obj-gyro">
+            <div class="g-ring g1"></div>
+            <div class="g-ring g2"></div>
+            <div class="g-ring g3"></div>
+            <div class="g-core"></div>
+          </div>
+        </div>
+        <span class="num">ARTIFACT / 06</span>
+        <h3>Orbit Gyro</h3>
+        <p>A desktop model of everything, spinning politely since 1999.</p>
+      </div></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- footer -->
+<footer class="footer" id="webring">
+  <div class="wrap">
+    <div class="plastic reveal">
+      <div class="plastic-in">
+        <p class="kicker counter-label">you are visitor number</p>
+        <div class="counter" id="counter" aria-label="Visitor counter">
+          <span class="digit">0</span><span class="digit">0</span>
+          <span class="comma">,</span>
+          <span class="digit">0</span><span class="digit">0</span><span class="digit">0</span>
+          <span class="comma">,</span>
+          <span class="digit">0</span><span class="digit">0</span><span class="digit">0</span>
+        </div>
+        <p class="counter-note">…since 12:00 AM, January 1st, 2000. The odometer never lies.</p>
+
+        <div class="badges" aria-hidden="true">
+          <span class="badge88"><b>BEST VIEWED</b><span>at 1024 × 768</span></span>
+          <span class="badge88"><b>Y2K READY</b><span>bug-free build</span></span>
+          <span class="badge88"><b>MADE WITH</b><span>gel &amp; chrome</span></span>
+        </div>
+
+        <div class="webring">
+          <a class="gel" href="/sites/09-terminal/">◄ prev · 09 TERMINAL</a>
+          <span class="webring-title">⋆ chromeheart webring ⋆</span>
+          <a class="gel" href="/sites/15-vapor/">15 VAPOR · next ►</a>
+        </div>
+
+        <p class="fine">© 2000–∞ CHROMEHEART Preservation Society. All reflections reserved. Handcrafted with <span class="heart">♡</span> on a translucent purple machine.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* reveal on scroll */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  /* gel squish on click */
+  document.querySelectorAll('.gel').forEach(function(b){
+    b.addEventListener('click', function(){
+      b.classList.remove('squish'); void b.offsetWidth; b.classList.add('squish');
+    });
+    b.addEventListener('animationend', function(){ b.classList.remove('squish'); });
+  });
+
+  /* holographic foil follows cursor */
+  document.querySelectorAll('.artifact').forEach(function(card){
+    card.addEventListener('pointermove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height;
+      card.style.setProperty('--mx', (x*100).toFixed(1)+'%');
+      card.style.setProperty('--my', (y*100).toFixed(1)+'%');
+      card.style.setProperty('--ang', (Math.atan2(y-.5, x-.5)*180/Math.PI+180).toFixed(0)+'deg');
+    });
+  });
+
+  /* hit counter odometer */
+  var target = 24810763, dur = 2600, counter = document.getElementById('counter');
+  function renderCount(n){
+    var s = String(Math.floor(n)).padStart(8,'0');
+    var digits = counter.querySelectorAll('.digit');
+    for(var i=0;i<digits.length;i++){ if(digits[i].textContent!==s[i]) digits[i].textContent = s[i]; }
+  }
+  var counted = false;
+  var cio = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting || counted) return;
+      counted = true; cio.disconnect();
+      if(reduced){ renderCount(target); return; }
+      var t0 = performance.now();
+      (function tick(t){
+        if(document.hidden){ requestAnimationFrame(tick); return; }
+        var p = Math.min((t-t0)/dur, 1);
+        var ease = 1 - Math.pow(1-p, 4);
+        renderCount(target*ease);
+        if(p<1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }, {threshold:.4});
+  cio.observe(counter);
+
+  /* sparkle cursor trail */
+  if(!reduced && matchMedia('(pointer:fine)').matches){
+    var glyphs = ['✦','✧','★','·'];
+    var colors = ['#ffffff','#ff69d8','#a8d8ff','#d4b8ff'];
+    var last = 0;
+    addEventListener('pointermove', function(e){
+      var now = performance.now();
+      if(now - last < 55) return;
+      last = now;
+      var s = document.createElement('span');
+      s.className = 'spark';
+      s.textContent = glyphs[Math.random()*glyphs.length|0];
+      s.style.color = colors[Math.random()*colors.length|0];
+      s.style.left = (e.clientX + (Math.random()*14-7)) + 'px';
+      s.style.top  = (e.clientY + (Math.random()*14-7)) + 'px';
+      s.style.fontSize = (9 + Math.random()*9) + 'px';
+      s.style.textShadow = '0 0 6px currentColor';
+      document.body.appendChild(s);
+      var anim = s.animate([
+        {transform:'translate(-50%,-50%) scale(1) rotate(0deg)', opacity:1},
+        {transform:'translate(-50%, 10px) scale(.1) rotate(90deg)', opacity:0}
+      ], {duration:650, easing:'cubic-bezier(.22,1,.36,1)'});
+      anim.onfinish = function(){ s.remove(); };
+    }, {passive:true});
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HELIOPAUSE — a scroll to the edge of the sun's influence</title>
+<meta name="description" content="A scroll-driven particle journey through five chapters of the solar system — from the roiling corona of the Sun to the heliopause, 121 AU out, where the solar wind ends and interstellar space begins.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="HELIOPAUSE — a scroll to the edge of the sun's influence">
+<meta property="og:description" content="A scroll-driven particle journey through five chapters of the solar system — from the roiling corona of the Sun to the heliopause, 121 AU out, where the solar wind ends and interstellar space begins.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/03-cosmos/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/03-cosmos/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HELIOPAUSE — a scroll to the edge of the sun's influence">
+<meta name="twitter:description" content="A scroll-driven particle journey through five chapters of the solar system — from the roiling corona of the Sun to the heliopause, 121 AU out, where the solar wind ends and interstellar space begins.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/03-cosmos/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000005;
+    --gold:#ffb347;
+    --ice:#9fd8ff;
+    --violet:#b39dff;
+    --ink:rgba(235,238,250,.92);
+    --dim:rgba(200,206,228,.58);
+    --faint:rgba(180,188,215,.34);
+    --hair:rgba(159,216,255,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Space Mono",ui-monospace,monospace;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold);color:#000005}
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:#000005}
+  ::-webkit-scrollbar-thumb{background:rgba(255,179,71,.28);border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(255,179,71,.55)}
+  a{color:inherit;text-decoration:none}
+  :focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:2px}
+
+  /* ---------- fixed canvas ---------- */
+  #stage{position:fixed;inset:0;z-index:0;pointer-events:none}
+  #stage canvas{display:block}
+
+  /* grain + vignette */
+  .veil{position:fixed;inset:0;pointer-events:none}
+  .vignette{z-index:3;background:radial-gradient(ellipse at 50% 42%,transparent 52%,rgba(0,0,5,.62) 100%)}
+  .grain{z-index:4;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- chrome ---------- */
+  .backlink{
+    position:fixed;top:26px;left:28px;z-index:20;
+    font:700 10px/1 "Space Mono",monospace;letter-spacing:.34em;
+    color:var(--dim);padding:8px 2px;transition:color .35s ease;
+  }
+  .backlink em{font-style:normal;color:var(--gold)}
+  .backlink:hover{color:var(--ink)}
+  .backlink::after{content:"";display:block;margin-top:6px;height:1px;width:0;
+    background:var(--gold);transition:width .45s cubic-bezier(.16,1,.3,1)}
+  .backlink:hover::after{width:100%}
+
+  .mission{
+    position:fixed;top:26px;right:28px;z-index:20;text-align:right;
+    font:400 9px/1.8 "Space Mono",monospace;letter-spacing:.28em;color:var(--faint);
+  }
+  .mission b{font-weight:700;color:var(--dim)}
+
+  /* AU odometer */
+  .odometer{
+    position:fixed;left:28px;bottom:26px;z-index:20;
+    font:400 10px/1.7 "Space Mono",monospace;letter-spacing:.22em;color:var(--dim);
+  }
+  .odometer .au{font:700 20px/1.1 "Space Mono",monospace;letter-spacing:.06em;color:var(--gold);
+    display:block;font-variant-numeric:tabular-nums;transition:color 1.2s ease}
+  .odometer .lbl{color:var(--faint)}
+
+  /* ---------- progress rail ---------- */
+  .rail{
+    position:fixed;right:34px;top:50%;transform:translateY(-50%);z-index:20;
+    height:56vh;width:1px;background:var(--hair);
+  }
+  .rail .fill{position:absolute;top:0;left:0;width:1px;height:0%;
+    background:linear-gradient(to bottom,var(--gold),var(--violet));}
+  .rail .dot{position:absolute;left:50%;top:0;width:7px;height:7px;border-radius:50%;
+    background:var(--gold);transform:translate(-50%,-50%);
+    box-shadow:0 0 10px 2px rgba(255,179,71,.55);transition:background 1.2s ease}
+  .rail .tick{position:absolute;right:8px;transform:translateY(-50%);
+    font:400 8px/1 "Space Mono",monospace;letter-spacing:.24em;color:var(--faint);
+    white-space:nowrap;text-align:right;transition:color .5s ease}
+  .rail .tick::after{content:"";position:absolute;right:-13px;top:50%;width:9px;height:1px;
+    background:var(--hair);transform:translateY(-50%)}
+  .rail .tick.on{color:var(--gold)}
+
+  /* ---------- flow layout ---------- */
+  main{position:relative;z-index:10}
+
+  .hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;position:relative;padding:0 20px}
+  .hero::before{content:"";position:absolute;inset:0;z-index:-1;
+    background:radial-gradient(ellipse 68% 54% at 50% 47%,rgba(0,0,6,.78),rgba(0,0,6,.38) 58%,transparent 82%)}
+  .hero .over{font:400 10px/1 "Space Mono",monospace;letter-spacing:.5em;color:var(--gold);
+    text-transform:uppercase;margin-bottom:28px;text-shadow:0 0 8px rgba(0,0,6,.95),0 1px 3px rgba(0,0,6,.9)}
+  .hero h1{
+    font:800 clamp(44px,9.2vw,132px)/0.98 "Unbounded",sans-serif;
+    letter-spacing:.02em;color:var(--ink);
+    background:linear-gradient(115deg,#fff6df 20%,var(--gold) 52%,var(--violet) 92%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .hero .sub{margin-top:30px;font:300 clamp(12px,1.4vw,16px)/1.9 "Unbounded",sans-serif;
+    letter-spacing:.14em;color:rgba(214,220,240,.78);max-width:44ch;
+    text-shadow:0 0 10px rgba(0,0,6,.95),0 0 22px rgba(0,0,6,.85),0 1px 3px rgba(0,0,6,.9)}
+  .hero .cue{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+    font:400 9px/1 "Space Mono",monospace;letter-spacing:.42em;color:var(--faint)}
+  .hero .cue::after{content:"";display:block;width:1px;height:44px;margin:14px auto 0;
+    background:linear-gradient(var(--gold),transparent);
+    animation:cueDrop 2.4s cubic-bezier(.65,0,.35,1) infinite}
+  @keyframes cueDrop{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}
+    55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  .chapter{height:185vh;position:relative}
+  .chapter .pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;
+    padding:0 clamp(24px,8vw,130px);will-change:opacity,transform}
+  .chapter .pin::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(100deg,rgba(0,0,6,.86) 0%,rgba(0,0,6,.62) 38%,transparent 66%)}
+  .chapter .inner{position:relative;max-width:1180px;width:100%;margin:0 auto}
+
+  .numeral{
+    position:absolute;top:50%;left:-2vw;transform:translateY(-56%);z-index:-1;
+    font:800 clamp(180px,34vw,480px)/1 "Unbounded",sans-serif;
+    color:transparent;-webkit-text-stroke:1px rgba(159,216,255,.10);
+    letter-spacing:-.02em;user-select:none;
+  }
+  .chapter[data-ch="1"] .numeral{-webkit-text-stroke-color:rgba(255,179,71,.10)}
+  .chapter[data-ch="2"] .numeral{-webkit-text-stroke-color:rgba(255,179,71,.07)}
+  .chapter[data-ch="5"] .numeral{-webkit-text-stroke-color:rgba(179,157,255,.13)}
+
+  .ch-meta{font:400 10px/1 "Space Mono",monospace;letter-spacing:.44em;color:var(--gold);
+    text-transform:uppercase;margin-bottom:22px;display:flex;gap:18px;align-items:center;
+    text-shadow:0 0 8px rgba(0,0,6,.95),0 1px 3px rgba(0,0,6,.9)}
+  .ch-meta::before{content:"";width:34px;height:1px;background:var(--gold);display:block}
+  .chapter[data-ch="4"] .ch-meta{color:var(--ice)}
+  .chapter[data-ch="4"] .ch-meta::before{background:var(--ice)}
+  .chapter[data-ch="5"] .ch-meta{color:var(--violet)}
+  .chapter[data-ch="5"] .ch-meta::before{background:var(--violet)}
+
+  .chapter h2{
+    font:800 clamp(34px,5.6vw,84px)/1.02 "Unbounded",sans-serif;
+    letter-spacing:.01em;color:var(--ink);margin-bottom:30px;max-width:14ch;
+    text-shadow:0 0 14px rgba(0,0,6,.9),0 2px 6px rgba(0,0,6,.8);
+  }
+  .chapter p{
+    font:400 clamp(13px,1.15vw,15.5px)/1.95 "Space Mono",monospace;
+    color:var(--dim);max-width:56ch;
+    text-shadow:0 0 8px rgba(0,0,6,.95),0 0 18px rgba(0,0,6,.85),0 1px 3px rgba(0,0,6,.9);
+  }
+  .chapter p strong{color:var(--ink);font-weight:700}
+
+  .data{margin-top:38px;display:flex;gap:clamp(22px,4vw,64px);flex-wrap:wrap}
+  .data div{border-left:1px solid var(--hair);padding-left:14px}
+  .data dt{font:400 8.5px/1 "Space Mono",monospace;letter-spacing:.3em;color:var(--faint);
+    text-transform:uppercase;margin-bottom:9px}
+  .data dd{font:700 clamp(14px,1.5vw,19px)/1.2 "Space Mono",monospace;color:var(--gold);
+    font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(0,0,6,.95),0 1px 3px rgba(0,0,6,.9)}
+  .chapter[data-ch="4"] .data dd{color:var(--ice)}
+  .chapter[data-ch="5"] .data dd{color:var(--violet)}
+
+  /* ---------- footer ---------- */
+  footer{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;position:relative;padding:12vh 24px 8vh;gap:0}
+  footer .end-line{font:300 clamp(20px,3.2vw,44px)/1.5 "Unbounded",sans-serif;
+    letter-spacing:.03em;color:var(--ink);max-width:26ch}
+  footer .end-line em{font-style:normal;color:var(--violet)}
+  footer .coda{margin-top:34px;font:400 11px/2 "Space Mono",monospace;letter-spacing:.2em;color:var(--faint);max-width:52ch}
+  footer .foot-links{margin-top:60px;display:flex;gap:44px;font:700 9px/1 "Space Mono",monospace;
+    letter-spacing:.34em;color:var(--dim)}
+  footer .foot-links a{padding:10px 2px;transition:color .3s ease}
+  footer .foot-links a:hover{color:var(--gold)}
+  footer .colophon{margin-top:56px;font:400 8.5px/2 "Space Mono",monospace;letter-spacing:.26em;color:rgba(160,168,200,.25)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:760px){
+    .mission{display:none}
+    .rail{right:16px;height:44vh}
+    .rail .tick{display:none}
+    .backlink{top:20px;left:20px}
+    .odometer{left:20px;bottom:20px}
+    .odometer .au{font-size:16px}
+    .chapter{height:165vh}
+    .chapter .pin{padding:0 22px}
+    .numeral{left:-4vw;font-size:52vw;-webkit-text-stroke-width:1px}
+    .chapter p{max-width:100%}
+    .chapter .pin::before{background:linear-gradient(rgba(0,0,6,.5),rgba(0,0,6,.8) 28%,rgba(0,0,6,.8) 80%,rgba(0,0,6,.42))}
+    .data{gap:18px 26px;margin-top:28px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero .cue::after{animation:none;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="stage" aria-hidden="true"></div>
+<div class="veil vignette" aria-hidden="true"></div>
+<div class="veil grain" aria-hidden="true"></div>
+
+<a class="backlink" href="/" aria-label="Back to the XAVIER FABLE ×30 gallery">XAVIER <em>FABLE</em> ×30</a>
+
+<div class="mission" aria-hidden="true">
+  <b>SITE 03 — COSMOS</b><br>
+  ONE PARTICLE FIELD · FIVE FORMATIONS<br>
+  SOL → INTERSTELLAR MEDIUM
+</div>
+
+<div class="odometer" role="status" aria-live="off">
+  <span class="au" id="auVal">0.00 AU</span>
+  <span class="lbl">HELIOCENTRIC DISTANCE</span>
+</div>
+
+<div class="rail" aria-hidden="true">
+  <div class="fill" id="railFill"></div>
+  <div class="dot" id="railDot"></div>
+</div>
+
+<main>
+  <section class="hero" id="hero">
+    <div class="over">A scroll to the edge of the sun's influence</div>
+    <h1>HELIO&shy;PAUSE</h1>
+    <p class="sub">Five formations. One field of light. Ride the solar wind from the corona to the boundary of interstellar space — 121 astronomical units, in a single scroll.</p>
+    <div class="cue">DESCEND</div>
+  </section>
+
+  <section class="chapter" data-ch="1" data-au="0.00">
+    <div class="pin"><div class="inner">
+      <div class="numeral">01</div>
+      <div class="ch-meta">Chapter 01 · 0.00 AU</div>
+      <h2>The Sun</h2>
+      <p>Everything begins in a furnace. The Sun holds <strong>99.86 percent</strong> of the solar system's mass, fusing six hundred million tonnes of hydrogen every second. Its light crosses the gulf to Earth in <strong>8 minutes, 20 seconds</strong> — and its wind, a breath of charged particles at a million miles per hour, inflates a bubble around everything you have ever known.</p>
+      <dl class="data">
+        <div><dt>Photosphere</dt><dd>5,772 K</dd></div>
+        <div><dt>Core</dt><dd>15,000,000 K</dd></div>
+        <div><dt>System mass</dt><dd>99.86%</dd></div>
+      </dl>
+    </div></div>
+  </section>
+
+  <section class="chapter" data-ch="2" data-au="1.00">
+    <div class="pin"><div class="inner">
+      <div class="numeral">02</div>
+      <div class="ch-meta">Chapter 02 · 0.39 – 1.52 AU</div>
+      <h2>Inner Worlds</h2>
+      <p>Four rocky survivors circle close to the fire. <strong>Mercury</strong>, a scorched iron heart. <strong>Venus</strong>, smothered under clouds at 464&nbsp;°C. <strong>Earth</strong>, improbably wet, improbably alive. <strong>Mars</strong>, rust-red and patient. Between them: hard vacuum, raw sunlight, and the thin bright arcs of their orbits.</p>
+      <dl class="data">
+        <div><dt>Mercury</dt><dd>0.39 AU</dd></div>
+        <div><dt>Earth</dt><dd>1.00 AU</dd></div>
+        <div><dt>Mars</dt><dd>1.52 AU</dd></div>
+      </dl>
+    </div></div>
+  </section>
+
+  <section class="chapter" data-ch="3" data-au="2.70">
+    <div class="pin"><div class="inner">
+      <div class="numeral">03</div>
+      <div class="ch-meta">Chapter 03 · 2.2 – 3.2 AU</div>
+      <h2>The Belt</h2>
+      <p>A ring of rubble that never became a world. More than <strong>a million asteroids</strong> larger than a kilometre drift here, yet their combined mass is barely 3 percent of the Moon's. <strong>Ceres</strong>, the largest, hides a salty brine beneath its crust. Spacecraft cross the belt without ever seeing a single stone.</p>
+      <dl class="data">
+        <div><dt>Ceres, diameter</dt><dd>940 KM</dd></div>
+        <div><dt>Bodies &gt; 1 km</dt><dd>&gt;1,000,000</dd></div>
+        <div><dt>Total mass</dt><dd>3% of Moon</dd></div>
+      </dl>
+    </div></div>
+  </section>
+
+  <section class="chapter" data-ch="4" data-au="9.58">
+    <div class="pin"><div class="inner">
+      <div class="numeral">04</div>
+      <div class="ch-meta">Chapter 04 · 5.2 – 30 AU</div>
+      <h2>Gas Giants</h2>
+      <p>Beyond the frost line, worlds swell to impossible sizes. <strong>Jupiter</strong> could swallow 1,300 Earths; its great storm has raged for centuries. <strong>Saturn's rings</strong> span 282,000 kilometres yet average just ten metres thick. Uranus and Neptune roll on through the ice-blue dark, thirty times farther from the Sun than home.</p>
+      <dl class="data">
+        <div><dt>Jupiter</dt><dd>5.20 AU</dd></div>
+        <div><dt>Saturn</dt><dd>9.58 AU</dd></div>
+        <div><dt>Neptune</dt><dd>30.07 AU</dd></div>
+      </dl>
+    </div></div>
+  </section>
+
+  <section class="chapter" data-ch="5" data-au="121.0">
+    <div class="pin"><div class="inner">
+      <div class="numeral">05</div>
+      <div class="ch-meta">Chapter 05 · ~121 AU</div>
+      <h2>The Heliopause</h2>
+      <p>Here the solar wind finally stalls against the breath of other stars. On <strong>25 August 2012</strong> — thirty-five years after launch — <strong>Voyager&nbsp;1</strong> crossed this boundary at 121&nbsp;AU, the first human-made object to leave the Sun's bubble. Its signal, travelling at light speed, now takes almost a full day to reach us. The Sun ends. The galaxy begins.</p>
+      <dl class="data">
+        <div><dt>Voyager 1, speed</dt><dd>17 KM/S</dd></div>
+        <div><dt>Crossing</dt><dd>25 AUG 2012</dd></div>
+        <div><dt>Signal delay</dt><dd>~23 HR</dd></div>
+      </dl>
+    </div></div>
+  </section>
+
+  <footer>
+    <p class="end-line">You are 121 AU from home. Everything you have ever loved lies <em>sunward</em> of this line.</p>
+    <p class="coda">The heliopause is not a wall but a pressure balance — the point where the Sun's wind can push no further. Voyager 1 still calls back from beyond it, on 470 watts and falling.</p>
+    <nav class="foot-links">
+      <a href="#hero" id="returnTop">RETURN TO SOL ↑</a>
+      <a href="/">XAVIER FABLE ×30 GALLERY</a>
+    </nav>
+    <p class="colophon">HELIOPAUSE — SITE 03 OF 25 · SET IN UNBOUNDED &amp; SPACE MONO · ONE GPU PARTICLE FIELD, FIVE FORMATIONS</p>
+  </footer>
+</main>
+
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   HELIOPAUSE — one particle field, five formations
+   Each particle owns 5 target positions (buffer attributes).
+   A scroll-driven uniform uU ∈ [0,4] blends consecutive targets
+   with cubic easing + per-particle stagger in the vertex shader.
+   ============================================================ */
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = Math.min(innerWidth, innerHeight) < 700 || /Mobi|Android/i.test(navigator.userAgent);
+const COUNT = reduced ? 24000 : (isMobile ? 34000 : 92000);
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias:false, alpha:false, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x000005, 1);
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 900);
+camera.position.set(0, 3, 26);
+
+/* ---------- helpers ---------- */
+const R = () => Math.random();
+const gauss = () => (R()+R()+R()+R()-2) * 0.75; // ~N(0, .5)
+const TAU = Math.PI * 2;
+
+/* ---------- formation generators (each fills Float32Array of COUNT*3) ---------- */
+
+function genSun(n){
+  const a = new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    const u = R();
+    let r;
+    if(u < 0.10){ r = Math.pow(R(),0.5)*3.4; }                   // white-hot kernel
+    else if(u < 0.55){ r = 5.0 + Math.pow(R(),0.6)*1.5; }        // roiling shell
+    else if(u < 0.88){ r = 6.6 + Math.pow(R(),2.2)*9.5; }        // corona haze
+    else { r = 6.6 + Math.pow(R(),1.2)*15.0; }                   // long streamers
+    // random direction, slight equatorial bias for the corona
+    const th = R()*TAU;
+    let ph = Math.acos(2*R()-1);
+    if(u >= 0.55) ph = Math.PI/2 + (ph - Math.PI/2) * 0.8;
+    a[i*3  ] = r*Math.sin(ph)*Math.cos(th);
+    a[i*3+1] = r*Math.cos(ph);
+    a[i*3+2] = r*Math.sin(ph)*Math.sin(th);
+  }
+  return a;
+}
+
+function genOrbits(n){
+  const a = new Float32Array(n*3);
+  const rings = [
+    { r: 5.0, w: 0.16, planetAt: 0.85 },   // mercury
+    { r: 7.3, w: 0.22, planetAt: 2.40 },   // venus
+    { r: 9.7, w: 0.28, planetAt: 4.30 },   // earth
+    { r:12.6, w: 0.22, planetAt: 5.60 },   // mars
+  ];
+  const cum=[]; let acc=0;
+  for(const g of rings){ acc += g.w; cum.push(acc); }
+  for(let i=0;i<n;i++){
+    const u = R();
+    if(u > acc){ // central sun glow (remaining 12%)
+      const r = Math.pow(R(),1.3)*2.4;
+      const th=R()*TAU, ph=Math.acos(2*R()-1);
+      a[i*3]=r*Math.sin(ph)*Math.cos(th); a[i*3+1]=r*Math.cos(ph)*0.8; a[i*3+2]=r*Math.sin(ph)*Math.sin(th);
+      continue;
+    }
+    let gi=0; while(u > cum[gi]) gi++;
+    const g = rings[gi];
+    if(R() < 0.17){ // planet clump on the ring
+      const th = g.planetAt;
+      const s = 0.34 + gi*0.06;
+      a[i*3  ] = Math.cos(th)*g.r + gauss()*s;
+      a[i*3+1] = gauss()*s*0.9;
+      a[i*3+2] = Math.sin(th)*g.r + gauss()*s;
+    } else { // the orbit line itself
+      const th = R()*TAU;
+      const rr = g.r + gauss()*0.10;
+      a[i*3  ] = Math.cos(th)*rr;
+      a[i*3+1] = gauss()*0.05;
+      a[i*3+2] = Math.sin(th)*rr;
+    }
+  }
+  return a;
+}
+
+function genBelt(n){
+  const a = new Float32Array(n*3);
+  for(let i=0;i<n;i++){
+    const u = R();
+    if(u < 0.03){ // distant sun kernel
+      const r = Math.pow(R(),1.2)*1.2;
+      const th=R()*TAU, ph=Math.acos(2*R()-1);
+      a[i*3]=r*Math.sin(ph)*Math.cos(th); a[i*3+1]=r*Math.cos(ph)*0.7; a[i*3+2]=r*Math.sin(ph)*Math.sin(th);
+      continue;
+    }
+    if(u < 0.075){ // Ceres clump
+      a[i*3  ] = Math.cos(2.1)*15.5 + gauss()*0.5;
+      a[i*3+1] = gauss()*0.4;
+      a[i*3+2] = Math.sin(2.1)*15.5 + gauss()*0.5;
+      continue;
+    }
+    // main annulus, uniform by area, clumpy in angle
+    const rr = Math.sqrt(THREE.MathUtils.lerp(10.5*10.5, 21.5*21.5, R()));
+    let th = R()*TAU;
+    th += Math.sin(th*3.0 + rr*0.7) * 0.16;            // density arcs
+    const spread = 0.35 + (rr-10.5)*0.09;
+    a[i*3  ] = Math.cos(th)*rr + gauss()*0.5;
+    a[i*3+1] = gauss()*spread;
+    a[i*3+2] = Math.sin(th)*rr + gauss()*0.5;
+  }
+  return a;
+}
+
+function genGiant(n){
+  const a = new Float32Array(n*3);
+  const tilt = 0.42; // ring/equator tilt (rad) about X
+  const ct=Math.cos(tilt), st=Math.sin(tilt);
+  for(let i=0;i<n;i++){
+    const u = R();
+    let x,y,z;
+    if(u < 0.60){ // banded body, r=7.6 — rejection-sample latitude bands
+      let ph, w;
+      do{
+        ph = Math.acos(2*R()-1);
+        const lat = Math.PI/2 - ph;
+        w = 0.5 + 0.5*Math.sin(lat*9.0 + 1.2*Math.sin(lat*3.0));
+      } while(R() > 0.28+0.72*w);
+      const th = R()*TAU;
+      const r = 7.6 * (1 + gauss()*0.012);
+      x=r*Math.sin(ph)*Math.cos(th); y=r*Math.cos(ph); z=r*Math.sin(ph)*Math.sin(th);
+    } else { // ring system 10.4 → 17.4, with a Cassini-like gap
+      let rr;
+      do{ rr = 10.4 + Math.pow(R(),0.8)*7.0; } while(rr>13.4 && rr<14.3 && R()<0.88);
+      const th = R()*TAU;
+      x=Math.cos(th)*rr + gauss()*0.06;
+      y=gauss()*0.045;
+      z=Math.sin(th)*rr + gauss()*0.06;
+    }
+    // tilt whole system about X
+    a[i*3  ] = x;
+    a[i*3+1] = y*ct - z*st;
+    a[i*3+2] = y*st + z*ct;
+  }
+  return a;
+}
+
+function genVeil(n){
+  const a = new Float32Array(n*3);
+  // bow-shock paraboloid, nose pointing up-right in screen space
+  const nose = new THREE.Vector3(0.88, 0.34, 0).normalize();
+  const p1 = new THREE.Vector3(-nose.y, nose.x, 0).normalize();       // perp in xy
+  const p2 = new THREE.Vector3().crossVectors(nose, p1).normalize();  // perp z
+  const R0 = 21;
+  const v = new THREE.Vector3();
+  for(let i=0;i<n;i++){
+    const u = R();
+    if(u < 0.02){ // tiny sun, impossibly far
+      const r = Math.pow(R(),1.7)*1.8;
+      const th=R()*TAU, ph=Math.acos(2*R()-1);
+      a[i*3]=r*Math.sin(ph)*Math.cos(th); a[i*3+1]=r*Math.cos(ph); a[i*3+2]=r*Math.sin(ph)*Math.sin(th);
+      continue;
+    }
+    let scale = 1.0, thick = 0.9, maxTh = 2.35;
+    if(u < 0.28){ scale = 0.62; thick = 1.5; maxTh = 2.0; }  // termination shock, inner + hazier
+    if(u < 0.90 || u < 0.28){
+      // parabolic shell r(θ) = R0·sqrt(2/(1+cosθ)), denser toward the nose
+      const th = Math.pow(R(),1.15) * maxTh;
+      const rr = scale * R0 * Math.sqrt(2/(1+Math.cos(th))) + gauss()*thick;
+      const az = R()*TAU;
+      v.copy(nose).multiplyScalar(Math.cos(th))
+       .addScaledVector(p1, Math.sin(th)*Math.cos(az))
+       .addScaledVector(p2, Math.sin(th)*Math.sin(az))
+       .multiplyScalar(rr);
+      a[i*3]=v.x; a[i*3+1]=v.y; a[i*3+2]=v.z;
+    } else {
+      // heliotail — sparse cone streaming away from the nose
+      const d = 6 + Math.pow(R(),1.5)*52;
+      const rad = (2.2 + d*0.34) * Math.sqrt(R());
+      const az = R()*TAU;
+      v.copy(nose).multiplyScalar(-d)
+       .addScaledVector(p1, Math.cos(az)*rad)
+       .addScaledVector(p2, Math.sin(az)*rad);
+      a[i*3]=v.x; a[i*3+1]=v.y; a[i*3+2]=v.z;
+    }
+  }
+  return a;
+}
+
+/* ---------- geometry ---------- */
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(genSun(COUNT), 3));
+geo.setAttribute('aT1', new THREE.BufferAttribute(genOrbits(COUNT), 3));
+geo.setAttribute('aT2', new THREE.BufferAttribute(genBelt(COUNT), 3));
+geo.setAttribute('aT3', new THREE.BufferAttribute(genGiant(COUNT), 3));
+geo.setAttribute('aT4', new THREE.BufferAttribute(genVeil(COUNT), 3));
+const rand = new Float32Array(COUNT*4);
+for(let i=0;i<COUNT*4;i++) rand[i] = Math.random();
+geo.setAttribute('aRand', new THREE.BufferAttribute(rand, 4));
+
+/* ---------- palettes (A = core, B = edge) ---------- */
+const col = h => new THREE.Color(h);
+const uniforms = {
+  uU:     { value: 0 },
+  uTime:  { value: 0 },
+  uSize:  { value: 1 },
+  uColA:  { value: [col('#fff3cf'), col('#ffe0a8'), col('#e8c298'), col('#eaf6ff'), col('#e6ddff')] },
+  uColB:  { value: [col('#ff8b2a'), col('#d97b4a'), col('#96755a'), col('#9fd8ff'), col('#b39dff')] },
+  uAlpha: { value: [0.62, 0.52, 0.55, 0.55, 0.50].map(v => isMobile ? Math.min(v*1.3,1) : v) },
+  uPS:    { value: [1.12, 0.92, 0.78, 0.88, 1.05] },
+};
+
+const mat = new THREE.ShaderMaterial({
+  uniforms,
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  vertexShader: /* glsl */`
+    attribute vec3 aT1; attribute vec3 aT2; attribute vec3 aT3; attribute vec3 aT4;
+    attribute vec4 aRand;
+    uniform float uU, uTime, uSize;
+    uniform vec3 uColA[5]; uniform vec3 uColB[5];
+    uniform float uAlpha[5]; uniform float uPS[5];
+    varying vec3 vColor; varying float vAlpha;
+
+    vec3 rotY(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x+s*p.z, p.y, -s*p.x+c*p.z); }
+    float easeC(float t){ return t<0.5 ? 4.0*t*t*t : 1.0-pow(-2.0*t+2.0,3.0)*0.5; }
+
+    void main(){
+      float seg = floor(min(uU, 3.9999));
+      float f = uU - seg;
+      // per-particle stagger, then cubic ease — high stagger keeps mid-morph
+      // reading as two coexisting structures instead of a uniform cloud
+      float S = 0.85;
+      float t = easeC(clamp(f*(1.0+S) - aRand.x*S, 0.0, 1.0));
+
+      /* live motion inside each formation */
+      vec3 p0 = rotY(position, uTime*0.04);
+      p0 *= 1.0 + 0.05*sin(uTime*1.5 + aRand.w*6.2831) * smoothstep(4.2, 6.6, length(position));
+
+      vec3 p1 = rotY(aT1, uTime*1.5/(length(aT1.xz)+1.5));
+      vec3 p2 = rotY(aT2, uTime*0.9/(length(aT2.xz)+1.0));
+      vec3 p3 = rotY(aT3, uTime*(0.06 + 0.9/(length(aT3.xz)+2.0)));
+      vec3 p4 = aT4 * (1.0 + 0.012*sin(uTime*0.5 + aRand.w*6.2831));
+
+      vec3 pa, pb;
+      if(seg < 0.5)      { pa = p0; pb = p1; }
+      else if(seg < 1.5) { pa = p1; pb = p2; }
+      else if(seg < 2.5) { pa = p2; pb = p3; }
+      else               { pa = p3; pb = p4; }
+      vec3 pos = mix(pa, pb, t);
+      // gentle outward flourish mid-morph (kept subtle so formations stay legible)
+      pos += normalize(pos + 0.001) * sin(t*3.14159) * (0.10 + aRand.y*0.38);
+
+      int ia = int(seg);
+      vec3 ca = mix(uColA[ia],   uColB[ia],   aRand.z);
+      vec3 cb = mix(uColA[ia+1], uColB[ia+1], aRand.z);
+      vColor = mix(ca, cb, t);
+      vAlpha = mix(uAlpha[ia], uAlpha[ia+1], t);
+      float ps = mix(uPS[ia], uPS[ia+1], t);
+      ps *= 0.85 + 0.3*sin(uTime*2.0 + aRand.w*19.0);
+
+      vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+      gl_Position = projectionMatrix * mv;
+      gl_PointSize = max(uSize * ps * (0.55 + aRand.y*0.9) * (95.0 / -mv.z), 0.6);
+    }`,
+  fragmentShader: /* glsl */`
+    precision highp float;
+    varying vec3 vColor; varying float vAlpha;
+    void main(){
+      vec2 uv = gl_PointCoord - 0.5;
+      float d = length(uv);
+      if(d > 0.5) discard;
+      float a = pow(1.0 - d*2.0, 2.3);
+      gl_FragColor = vec4(vColor, a * vAlpha);
+    }`
+});
+
+const points = new THREE.Points(geo, mat);
+points.frustumCulled = false;
+points.rotation.z = 0.06;
+scene.add(points);
+
+/* ---------- star backdrop (parallax) ---------- */
+const starGeo = new THREE.BufferGeometry();
+const SN = isMobile ? 700 : 1600;
+const sp = new Float32Array(SN*3), sc = new Float32Array(SN*3);
+for(let i=0;i<SN;i++){
+  const r = 180 + R()*260;
+  const th=R()*TAU, ph=Math.acos(2*R()-1);
+  sp[i*3]=r*Math.sin(ph)*Math.cos(th); sp[i*3+1]=r*Math.cos(ph); sp[i*3+2]=r*Math.sin(ph)*Math.sin(th);
+  const b = 0.25 + Math.pow(R(),2.5)*0.75;
+  const tint = R();
+  sc[i*3]=b*(tint<0.15?1.0:0.85); sc[i*3+1]=b*0.88; sc[i*3+2]=b*(tint>0.6?1.0:0.9);
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(sp,3));
+starGeo.setAttribute('color', new THREE.BufferAttribute(sc,3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+  size:1.4, sizeAttenuation:false, vertexColors:true, transparent:true, opacity:0.85,
+  blending:THREE.AdditiveBlending, depthWrite:false
+}));
+scene.add(stars);
+
+/* ---------- scroll → uU mapping ---------- */
+const chapters = [...document.querySelectorAll('.chapter')];
+const pins = chapters.map(c => c.querySelector('.pin'));
+const AU = chapters.map(c => parseFloat(c.dataset.au));
+let centers = [];
+function measure(){
+  centers = chapters.map(c => c.offsetTop + c.offsetHeight/2 - innerHeight/2);
+}
+measure();
+
+const smooth = (a,b,x) => { const t = Math.min(Math.max((x-a)/(b-a),0),1); return t*t*(3-2*t); };
+
+function scrollToU(s){
+  if(s <= centers[0]) return 0;
+  if(s >= centers[4]) return 4;
+  let i=0; while(s > centers[i+1]) i++;
+  const t = (s - centers[i]) / (centers[i+1] - centers[i]);
+  return i + smooth(0.12, 0.88, t);  // plateau: formation holds while chapter reads
+}
+
+let targetU = 0, curU = 0;
+let scrollY0 = 0;
+function onScroll(){ scrollY0 = window.scrollY; targetU = scrollToU(scrollY0); }
+addEventListener('scroll', onScroll, { passive:true });
+
+/* ?p=0.5 — jump to a scroll fraction (for screenshots / deep links) */
+const pq = new URLSearchParams(location.search).get('p');
+
+/* ---------- pointer parallax ---------- */
+let mx=0, my=0, cmx=0, cmy=0;
+addEventListener('pointermove', e => {
+  mx = (e.clientX/innerWidth - 0.5);
+  my = (e.clientY/innerHeight - 0.5);
+}, { passive:true });
+
+/* ---------- HUD ---------- */
+const auVal = document.getElementById('auVal');
+const railFill = document.getElementById('railFill');
+const railDot = document.getElementById('railDot');
+const rail = document.querySelector('.rail');
+const railTicks = [];
+const tickLabels = ['SOL · 0','1 AU','2.7 AU','9.6 AU','121 AU'];
+for(let i=0;i<5;i++){
+  const el = document.createElement('div');
+  el.className = 'tick'; el.style.top = (i/4*100)+'%';
+  el.textContent = tickLabels[i];
+  rail.appendChild(el); railTicks.push(el);
+}
+const fmtAU = v => (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + ' AU';
+let lastAUText = '';
+
+function updateHUD(u){
+  const i = Math.min(Math.floor(u), 3);
+  const t = u - i;
+  const v = AU[i] + (AU[i+1]-AU[i]) * t;
+  const txt = fmtAU(u <= 0 ? 0 : v);
+  if(txt !== lastAUText){ auVal.textContent = txt; lastAUText = txt; }
+  const pct = u/4*100;
+  railFill.style.height = pct+'%';
+  railDot.style.top = pct+'%';
+  const glow = u > 3.2 ? 'var(--violet)' : (u > 2.6 ? 'var(--ice)' : 'var(--gold)');
+  railDot.style.background = glow;
+  auVal.style.color = glow;
+  railTicks.forEach((el,k) => el.classList.toggle('on', Math.round(u) === k));
+}
+
+/* chapter text fade — driven from the same scroll value */
+function updateText(){
+  const s = scrollY0;
+  for(let i=0;i<chapters.length;i++){
+    const d = (s - centers[i]) / (innerHeight*0.92);
+    const ad = Math.abs(d);
+    const o = 1 - smooth(0.30, 0.62, ad);
+    pins[i].style.opacity = o.toFixed(3);
+    pins[i].style.transform = `translateY(${(-d*36).toFixed(1)}px)`;
+    pins[i].style.visibility = o <= 0.001 ? 'hidden' : 'visible';
+  }
+  const hero = document.getElementById('hero');
+  const ho = 1 - smooth(0.05, 0.5, s/innerHeight);
+  hero.style.opacity = ho.toFixed(3);
+}
+
+/* ---------- render loop ---------- */
+const clock = new THREE.Clock();
+let raf = null, elapsed = 0;
+
+function setSize(){
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+  uniforms.uSize.value = (h/900) * (isMobile ? 2.6 : 1.7) * Math.min(devicePixelRatio,2);
+  measure(); onScroll();
+}
+addEventListener('resize', setSize);
+setSize();
+
+function frame(){
+  raf = requestAnimationFrame(frame);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if(!reduced) elapsed += dt;
+
+  const k = reduced ? 1 : 1 - Math.pow(0.0018, dt); // exp smoothing
+  curU += (targetU - curU) * k;
+  if(Math.abs(targetU-curU) < 0.0004) curU = targetU;
+
+  cmx += (mx-cmx)*0.05; cmy += (my-cmy)*0.05;
+
+  uniforms.uU.value = curU;
+  uniforms.uTime.value = elapsed;
+
+  /* per-chapter camera keyframes: sun / orbits / belt / giant / veil */
+  const camZ = [30, 27, 46, 33, 62];
+  const camY = [1.5, 15, 24, 8, 5];
+  const lookY = [0, 0, 0, 0, 3];
+  const ci = Math.min(Math.floor(curU), 3);
+  const cf = curU - ci;
+  const ct = cf*cf*(3-2*cf);
+  /* mobile camera pull-back: portrait FOV is narrow, so retreat harder,
+     hardest at the sun (u≈0) whose corona otherwise floods the frame */
+  const zBoost = camera.aspect < 0.8 ? 1.5 + 0.25*Math.max(0, 1-curU) : 1;
+  const z = (camZ[ci] + (camZ[ci+1]-camZ[ci])*ct) * zBoost;
+  const y = camY[ci] + (camY[ci+1]-camY[ci])*ct;
+  const ly = lookY[ci] + (lookY[ci+1]-lookY[ci])*ct;
+  camera.position.set(cmx*3.0, y + cmy*1.6, z);
+  camera.lookAt(0, ly, 0);
+  stars.rotation.y = -curU*0.04 + cmx*0.03;
+  stars.rotation.x = cmy*0.02;
+
+  updateHUD(curU);
+  updateText();
+  renderer.render(scene, camera);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf = null; } }
+  else if(!raf){ clock.getDelta(); frame(); }
+});
+
+/* smooth in-page anchor for the footer link */
+document.getElementById('returnTop').addEventListener('click', e => {
+  e.preventDefault();
+  window.scrollTo({ top:0, behavior: reduced ? 'auto' : 'smooth' });
+});
+
+/* boot: apply ?p= jump after layout settles */
+requestAnimationFrame(() => {
+  measure();
+  if(pq !== null){
+    const f = Math.min(Math.max(parseFloat(pq)||0,0),1);
+    const max = document.documentElement.scrollHeight - innerHeight;
+    window.scrollTo(0, f*max);
+    onScroll();
+    curU = targetU; // snap, no travel animation for deep links
+  } else onScroll();
+  frame();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOUGH — A Bakery of Impossible Pastries</title>
+<meta name="description" content="DOUGH is a bakery of impossible pastries: cloud croissants, Möbius pretzels, Schrödinger éclairs. Hand-molded daily. Physics optional.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="DOUGH — A Bakery of Impossible Pastries">
+<meta property="og:description" content="DOUGH is a bakery of impossible pastries: cloud croissants, Möbius pretzels, Schrödinger éclairs. Hand-molded daily. Physics optional.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/24-clay/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/24-clay/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DOUGH — A Bakery of Impossible Pastries">
+<meta name="twitter:description" content="DOUGH is a bakery of impossible pastries: cloud croissants, Möbius pretzels, Schrödinger éclairs. Hand-molded daily. Physics optional.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/24-clay/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DOUGH — claymorphic bakery
+   Light source: ALWAYS top-left. Every raised surface gets
+   inset light TL + inset shade BR + soft drop shadow to BR.
+   Pressed (debossed) surfaces invert the recipe.
+   ============================================================ */
+:root{
+  --cream:      #f3e9dc;
+  --cream-hi:   #fbf4e9;
+  --cream-lo:   #e7d8c4;
+  --pink:       #e8a598;
+  --pink-hi:    #f4beb2;
+  --pink-lo:    #d78d7e;
+  --butter:     #f2c94c;
+  --butter-hi:  #fadf85;
+  --butter-lo:  #dfb02e;
+  --pistachio:  #a8c09a;
+  --pistachio-hi:#c2d6b5;
+  --pistachio-lo:#8fa981;
+  --cocoa:      #7a5c4f;
+  --cocoa-deep: #5e453a;
+  --cocoa-soft: #99796a;
+
+  /* the clay recipe */
+  --clay-raise:
+    inset 8px 8px 14px rgba(255,255,255,.55),
+    inset -9px -11px 18px rgba(122,92,79,.16),
+    10px 14px 28px rgba(122,92,79,.20),
+    3px 4px 8px rgba(122,92,79,.10);
+  --clay-raise-soft:
+    inset 6px 6px 10px rgba(255,255,255,.5),
+    inset -7px -8px 12px rgba(122,92,79,.14),
+    7px 9px 18px rgba(122,92,79,.16),
+    2px 3px 5px rgba(122,92,79,.08);
+  --clay-press:
+    inset 7px 8px 14px rgba(122,92,79,.18),
+    inset -6px -7px 12px rgba(255,255,255,.55),
+    1px 2px 3px rgba(255,255,255,.6);
+  --clay-squish:
+    inset 12px 13px 20px rgba(122,92,79,.16),
+    inset -6px -7px 12px rgba(255,255,255,.45),
+    4px 6px 14px rgba(122,92,79,.16);
+
+  --bounce: cubic-bezier(.34,1.8,.4,1);
+  --settle: cubic-bezier(.22,1,.36,1);
+  --radius-lg: 44px;
+  --radius-md: 34px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+
+body{
+  font-family:'Nunito', sans-serif;
+  font-weight:600;
+  color:var(--cocoa);
+  background:
+    radial-gradient(130% 90% at 18% -5%, var(--cream-hi) 0%, var(--cream) 48%, #eddfcb 100%);
+  background-attachment: fixed;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+::selection{ background:var(--butter); color:var(--cocoa-deep); }
+::-webkit-scrollbar{ width:14px; }
+::-webkit-scrollbar-track{ background:var(--cream-lo); }
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(135deg, var(--pink-hi), var(--pink-lo));
+  border-radius:8px; border:3px solid var(--cream-lo);
+}
+::-webkit-scrollbar-thumb:hover{ background:linear-gradient(135deg,var(--butter-hi),var(--butter-lo)); }
+:focus-visible{
+  outline:4px solid var(--butter);
+  outline-offset:3px;
+  border-radius:14px;
+}
+h1,h2,h3,.display{ font-family:'Baloo 2', cursive; line-height:1.05; color:var(--cocoa-deep); }
+
+/* ---------- scroll progress breadstick ---------- */
+.progress{
+  position:fixed; top:10px; left:50%; transform:translateX(-50%);
+  width:min(300px, 60vw); height:12px; border-radius:8px;
+  background:var(--cream-lo);
+  box-shadow:var(--clay-press);
+  z-index:90; overflow:hidden;
+}
+.progress i{
+  display:block; height:100%; width:0%;
+  border-radius:8px;
+  background:linear-gradient(135deg, var(--butter-hi), var(--butter-lo));
+  box-shadow: inset 3px 3px 5px rgba(255,255,255,.6), inset -3px -3px 5px rgba(122,92,79,.25);
+}
+
+/* ---------- back link ---------- */
+.backlink{
+  position:fixed; top:22px; left:22px; z-index:100;
+  font-family:'Baloo 2',cursive; font-weight:700; font-size:.82rem;
+  letter-spacing:.14em; text-decoration:none; color:var(--cocoa-deep);
+  background:linear-gradient(135deg, var(--cream-hi), var(--cream));
+  padding:.62em 1.15em .55em; border-radius:22px;
+  box-shadow:var(--clay-raise-soft);
+  transition:transform .45s var(--bounce), box-shadow .45s var(--bounce);
+}
+.backlink:hover{ transform:scale(.94); box-shadow:var(--clay-squish); }
+
+/* ---------- ambient crumbs ---------- */
+.crumbs{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.crumb{
+  position:absolute; border-radius:50%;
+  box-shadow: inset 2px 2px 4px rgba(255,255,255,.6), inset -2px -3px 4px rgba(122,92,79,.22), 3px 4px 8px rgba(122,92,79,.12);
+  animation:drift var(--dur,26s) ease-in-out var(--del,0s) infinite alternate;
+  opacity:.55;
+}
+.crumb.stick{ border-radius:6px; }
+@keyframes drift{
+  0%  { transform:translate(0,0) rotate(0deg); }
+  100%{ transform:translate(var(--dx,30px), var(--dy,-60px)) rotate(var(--dr,40deg)); }
+}
+
+main{ position:relative; z-index:1; }
+section{ padding:clamp(4rem,9vh,7rem) clamp(1.2rem,5vw,4rem); }
+.wrap{ max-width:1120px; margin:0 auto; }
+
+/* ---------- section headers ---------- */
+.eyebrow{
+  font-family:'Nunito',sans-serif; font-weight:800; font-size:.78rem;
+  letter-spacing:.28em; text-transform:uppercase; color:var(--cocoa-soft);
+  display:inline-block; margin-bottom:1rem;
+}
+.sec-head{ text-align:center; margin-bottom:clamp(2.5rem,6vw,4rem); }
+.sec-head h2{ font-size:clamp(2.2rem,5vw,3.4rem); font-weight:800; letter-spacing:-.01em; }
+.squiggle{
+  width:110px; height:14px; margin:1.1rem auto 0; border-radius:8px;
+  background:linear-gradient(135deg, var(--pink-hi), var(--pink-lo));
+  box-shadow: inset 3px 3px 5px rgba(255,255,255,.55), inset -3px -3px 5px rgba(122,92,79,.22), 4px 5px 10px rgba(122,92,79,.15);
+}
+.sec-head p{ max-width:56ch; margin:1.1rem auto 0; color:var(--cocoa); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  min-height:100svh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding-top:5.5rem; position:relative;
+}
+.hero .eyebrow{ margin-bottom:1.6rem; }
+.word{
+  display:flex; gap:clamp(.5rem,1.6vw,1.2rem); justify-content:center;
+  flex-wrap:wrap; margin-bottom:clamp(1.6rem,4vh,2.6rem);
+  perspective:900px;
+}
+.letter{
+  width:clamp(64px,13vw,148px); height:clamp(76px,15vw,168px);
+  display:grid; place-items:center;
+  border-radius:clamp(24px,3.4vw,40px);
+  font-family:'Baloo 2',cursive; font-weight:800;
+  font-size:clamp(2.6rem,7.8vw,6.4rem);
+  color:var(--cocoa-deep);
+  text-shadow: 2px 3px 2px rgba(122,92,79,.22), -1px -2px 1px rgba(255,255,255,.65);
+  box-shadow:var(--clay-raise);
+  animation:proof 5.2s ease-in-out var(--del,0s) infinite;
+  cursor:default; user-select:none;
+  transition:transform .5s var(--bounce);
+}
+.letter:nth-child(1){ background:linear-gradient(135deg,var(--pink-hi),var(--pink)); --tilt:-2.4deg; }
+.letter:nth-child(2){ background:linear-gradient(135deg,var(--butter-hi),var(--butter)); --tilt:1.8deg; }
+.letter:nth-child(3){ background:linear-gradient(135deg,var(--pistachio-hi),var(--pistachio)); --tilt:-1.6deg; }
+.letter:nth-child(4){ background:linear-gradient(135deg,var(--cream-hi),var(--cream-lo)); --tilt:2.2deg; }
+.letter:nth-child(5){ background:linear-gradient(135deg,var(--pink-hi),var(--pink)); --tilt:-2deg; }
+@keyframes proof{
+  0%,100%{ transform:rotate(var(--tilt)) scale(1,1) translateY(0); }
+  30%    { transform:rotate(calc(var(--tilt)*-.7)) scale(1.035,.965) translateY(2px); }
+  62%    { transform:rotate(calc(var(--tilt)*.5)) scale(.975,1.03) translateY(-3px); }
+}
+.hero-sub{
+  font-size:clamp(1.05rem,2vw,1.3rem); max-width:44ch;
+  color:var(--cocoa); font-weight:600;
+}
+.hero-sub strong{ color:var(--cocoa-deep); font-weight:800; }
+.hero-cta{ display:flex; gap:1.1rem; margin-top:2.4rem; flex-wrap:wrap; justify-content:center; }
+.btn{
+  font-family:'Baloo 2',cursive; font-weight:700; font-size:1.02rem;
+  letter-spacing:.02em; text-decoration:none; color:var(--cocoa-deep);
+  padding:.9em 1.9em .82em; border-radius:28px; border:none; cursor:pointer;
+  box-shadow:var(--clay-raise-soft);
+  transition:transform .5s var(--bounce), box-shadow .5s var(--bounce);
+}
+.btn:hover, .btn:active{ transform:scale(.94); box-shadow:var(--clay-squish); }
+.btn-butter{ background:linear-gradient(135deg,var(--butter-hi),var(--butter)); }
+.btn-pink{ background:linear-gradient(135deg,var(--pink-hi),var(--pink)); }
+.hero-note{
+  margin-top:3.2rem; font-size:.8rem; font-weight:700;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--cocoa-soft);
+  display:flex; align-items:center; gap:.9rem;
+}
+.hero-note::before,.hero-note::after{
+  content:""; width:34px; height:8px; border-radius:5px;
+  background:var(--cream-lo); box-shadow:var(--clay-press);
+}
+
+/* ============================================================
+   MENU — impossible pastries
+   ============================================================ */
+.menu-grid{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:clamp(1.4rem,3vw,2.2rem);
+}
+@media (max-width:980px){ .menu-grid{ grid-template-columns:repeat(2,1fr);} }
+@media (max-width:620px){ .menu-grid{ grid-template-columns:1fr;} }
+.card{
+  background:linear-gradient(135deg, var(--cream-hi) 0%, var(--cream) 55%, #eee0cb 100%);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--clay-raise);
+  padding:1.6rem 1.6rem 1.8rem;
+  transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));
+  transition:transform .55s var(--bounce), box-shadow .55s var(--bounce);
+  will-change:transform;
+}
+.card:hover{ --sc:.96; box-shadow:var(--clay-squish); }
+.scene{
+  height:172px; border-radius:30px; margin-bottom:1.35rem;
+  background:linear-gradient(135deg, #e9dac4 0%, var(--cream-lo) 100%);
+  box-shadow:var(--clay-press);
+  position:relative; overflow:hidden;
+  display:grid; place-items:center;
+}
+.card h3{ font-size:1.42rem; font-weight:800; margin-bottom:.35rem; letter-spacing:-.005em; }
+.card .tag{
+  display:inline-block; font-size:.68rem; font-weight:800; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--cocoa-deep);
+  padding:.42em 1em .36em; border-radius:14px; margin-bottom:.8rem;
+  box-shadow: inset 3px 3px 5px rgba(255,255,255,.5), inset -3px -3px 5px rgba(122,92,79,.18), 2px 3px 6px rgba(122,92,79,.12);
+}
+.tag-pink{ background:linear-gradient(135deg,var(--pink-hi),var(--pink)); }
+.tag-butter{ background:linear-gradient(135deg,var(--butter-hi),var(--butter)); }
+.tag-pistachio{ background:linear-gradient(135deg,var(--pistachio-hi),var(--pistachio)); }
+.card p{ font-size:.95rem; color:var(--cocoa); }
+.card .price{
+  display:block; margin-top:.9rem; font-family:'Baloo 2',cursive;
+  font-weight:700; font-size:1.05rem; color:var(--cocoa-deep);
+}
+
+/* --- shared illustration lighting: every shape lit from top-left --- */
+.scene *, .scene *::before, .scene *::after{ position:absolute; }
+.lump{
+  border-radius:50%;
+  box-shadow: inset 5px 5px 8px rgba(255,255,255,.45), inset -5px -6px 9px rgba(90,55,35,.28), 5px 7px 12px rgba(122,92,79,.22);
+}
+
+/* CLOUD CROISSANT */
+.croissant{ width:150px; height:120px; position:relative; }
+.cro-seg{ background:linear-gradient(135deg,#f4cd8a,#dfa254); }
+.cro-c { width:66px; height:52px; left:42px; top:56px; border-radius:46% 46% 50% 50%; }
+.cro-l1{ width:46px; height:40px; left:8px;  top:52px; transform:rotate(-28deg); }
+.cro-r1{ width:46px; height:40px; right:8px; top:52px; transform:rotate(28deg); }
+.cro-l2{ width:26px; height:24px; left:-4px;  top:40px; transform:rotate(-52deg); }
+.cro-r2{ width:26px; height:24px; right:-4px; top:40px; transform:rotate(52deg); }
+.cloud{ width:84px; height:34px; left:33px; top:2px; border-radius:20px; background:linear-gradient(135deg,#ffffff,#e9ddca); }
+.cloud::before{ content:""; width:34px; height:30px; border-radius:50%; background:inherit; left:10px; top:-13px;
+  box-shadow: inset 4px 4px 6px rgba(255,255,255,.7), inset -4px -4px 6px rgba(122,92,79,.12); }
+.cloud::after{ content:""; width:26px; height:22px; border-radius:50%; background:inherit; right:14px; top:-9px;
+  box-shadow: inset 4px 4px 6px rgba(255,255,255,.7), inset -4px -4px 6px rgba(122,92,79,.12); }
+.sugar{ width:5px; height:5px; border-radius:50%; background:#fff;
+  box-shadow:0 1px 2px rgba(122,92,79,.25); animation:snow 2.6s linear var(--del,0s) infinite; }
+.sugar:nth-child(7){ left:52px; } .sugar:nth-child(8){ left:72px; --del:.9s; } .sugar:nth-child(9){ left:92px; --del:1.7s; }
+@keyframes snow{
+  0%{ top:36px; opacity:0; } 15%{ opacity:.95; } 85%{ opacity:.9; }
+  100%{ top:66px; opacity:0; }
+}
+
+/* MÖBIUS PRETZEL */
+.pretzel{ width:140px; height:118px; position:relative; }
+.pz{ box-shadow: inset 4px 4px 7px rgba(255,255,255,.35), inset -4px -5px 8px rgba(90,55,35,.3), 5px 7px 12px rgba(122,92,79,.22); }
+.pz-arch{ width:124px; height:104px; left:8px; top:4px;
+  border:17px solid #c9803f; border-radius:58% 58% 46% 46%;
+  border-bottom-color:transparent; background:transparent;
+  box-shadow:none; }
+.pz-arch::before{ content:""; inset:-17px; border-radius:inherit;
+  border:17px solid transparent; border-top-color:rgba(255,255,255,.32); border-left-color:rgba(255,255,255,.18);
+  filter:blur(2px); }
+.pz-arch::after{ content:""; inset:-17px; border-radius:inherit;
+  border:17px solid transparent; border-right-color:rgba(90,55,35,.3);
+  filter:blur(2px); }
+.pz-x1,.pz-x2{ width:17px; height:74px; border-radius:12px; background:linear-gradient(135deg,#dc9a55,#b06c2f); top:44px; }
+.pz-x1{ left:36px; transform:rotate(24deg); }
+.pz-x2{ right:36px; transform:rotate(-24deg); }
+.salt{ width:6px; height:6px; border-radius:2px; background:#fff;
+  box-shadow:0 1px 2px rgba(122,92,79,.3); }
+.salt:nth-of-type(4){ left:20px; top:26px; transform:rotate(20deg); }
+.salt:nth-of-type(5){ left:66px; top:8px;  transform:rotate(-14deg); }
+.salt:nth-of-type(6){ right:22px; top:32px; transform:rotate(38deg); }
+.salt:nth-of-type(7){ left:58px; top:70px; transform:rotate(10deg); }
+
+/* SCHRÖDINGER ÉCLAIR */
+.eclair{ width:150px; height:110px; position:relative; }
+.ec{ left:14px; top:38px; width:122px; height:46px; border-radius:24px;
+  background:linear-gradient(135deg,#f2cd8d,#d9a45c); }
+.ec-ice{ left:20px; top:30px; width:110px; height:26px; border-radius:16px;
+  background:linear-gradient(135deg,#8a5a3e,#63432f); }
+.ec-drip{ width:12px; height:20px; border-radius:5px 5px 8px 8px;
+  background:linear-gradient(135deg,#7c5138,#5d3e2b); top:50px;
+  box-shadow: inset 2px 2px 3px rgba(255,255,255,.22), inset -2px -3px 4px rgba(0,0,0,.2), 2px 3px 5px rgba(122,92,79,.2); }
+.ec-drip.d1{ left:36px; height:24px; } .ec-drip.d2{ left:76px; } .ec-drip.d3{ left:108px; height:17px; }
+.ec-ghost{ left:26px; top:20px; width:122px; height:46px; border-radius:24px;
+  background:linear-gradient(135deg,#f2cd8d,#d9a45c); opacity:.28; box-shadow:none;
+  animation:superpose 4s ease-in-out infinite; }
+@keyframes superpose{ 0%,100%{ opacity:.28; transform:translate(0,0);} 50%{ opacity:.12; transform:translate(5px,-5px);} }
+
+/* GRAVITY BAGEL */
+.bagel{ width:130px; height:120px; position:relative; }
+.bg-ring{ width:96px; height:92px; left:17px; top:16px; border-radius:50%;
+  background:
+    radial-gradient(circle at 38% 32%, #f0bd7d 0%, #dfa15c 45%, #b97c3e 100%);
+  box-shadow: inset 6px 6px 10px rgba(255,255,255,.4), inset -6px -8px 12px rgba(90,55,35,.32), 6px 9px 14px rgba(122,92,79,.24); }
+.bg-hole{ width:34px; height:32px; left:48px; top:45px; border-radius:50%;
+  background:linear-gradient(135deg,#c9b393,#e2d0b2);
+  box-shadow: inset 4px 5px 7px rgba(90,55,35,.35), inset -3px -3px 5px rgba(255,255,255,.4); }
+.orbit{ width:120px; height:116px; left:5px; top:4px; border-radius:50%;
+  animation:orbit 7s linear infinite; }
+.orbit i{ position:absolute; width:9px; height:9px; border-radius:50%; left:2px; top:52px;
+  background:linear-gradient(135deg,#a9866b,#7c5a41);
+  box-shadow: inset 2px 2px 3px rgba(255,255,255,.4), 2px 3px 5px rgba(122,92,79,.25); }
+.orbit.o2{ animation-duration:11s; animation-direction:reverse; width:132px; left:-1px; }
+.orbit.o2 i{ width:6px; height:6px; top:20px; left:16px; }
+@keyframes orbit{ to{ transform:rotate(360deg); } }
+
+/* ECHO MACARON */
+.macaron{ width:130px; height:116px; position:relative; }
+.mc-top{ width:98px; height:42px; left:16px; top:22px; border-radius:50px 50px 14px 14px;
+  background:linear-gradient(135deg,var(--pink-hi),var(--pink-lo)); }
+.mc-fill{ width:106px; height:15px; left:12px; top:60px; border-radius:8px;
+  background:linear-gradient(135deg,#fdf6ec,#e8d9bf); }
+.mc-bot{ width:98px; height:34px; left:16px; top:71px; border-radius:12px 12px 44px 44px;
+  background:linear-gradient(135deg,var(--pink),var(--pink-lo)); }
+.echo{ border:3px solid var(--pink-lo); border-radius:50%; left:50%; top:56px;
+  width:110px; height:96px; margin-left:-55px; margin-top:-48px;
+  animation:echo 3.2s ease-out var(--del,0s) infinite; opacity:0; box-shadow:none; }
+@keyframes echo{ 0%{ transform:scale(.75); opacity:.5;} 80%{ opacity:0;} 100%{ transform:scale(1.25); opacity:0;} }
+
+/* INFINITE MILLE-FEUILLE */
+.mille{ width:140px; height:116px; position:relative; }
+.mf-p{ height:19px; border-radius:9px; background:linear-gradient(135deg,#efc182,#cf9a51); }
+.mf-c{ height:11px; border-radius:6px; background:linear-gradient(135deg,#fffaf0,#ead9ba); }
+.mf-p.p1{ width:114px; left:13px; top:78px; }
+.mf-c.c1{ width:106px; left:19px; top:69px; }
+.mf-p.p2{ width:112px; left:11px; top:52px; transform:rotate(-1.6deg); }
+.mf-c.c2{ width:104px; left:20px; top:43px; }
+.mf-p.p3{ width:110px; left:16px; top:26px; transform:rotate(1.4deg); }
+.mf-dust{ width:5px; height:5px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(122,92,79,.25); }
+.mf-dust.u1{ left:38px; top:14px; } .mf-dust.u2{ left:66px; top:9px; } .mf-dust.u3{ left:96px; top:16px; }
+.mf-badge{ font-family:'Baloo 2',cursive; font-weight:800; font-size:.72rem; color:var(--cocoa-deep);
+  left:88px; top:-4px; transform:rotate(8deg);
+  background:linear-gradient(135deg,var(--butter-hi),var(--butter));
+  padding:.3em .7em .22em; border-radius:12px;
+  box-shadow: inset 2px 2px 4px rgba(255,255,255,.55), inset -2px -3px 4px rgba(122,92,79,.2), 3px 4px 8px rgba(122,92,79,.18); }
+
+/* ============================================================
+   KNEAD ZONE
+   ============================================================ */
+.knead-dish{
+  border-radius:56px; padding:clamp(2.5rem,5vw,4rem);
+  background:linear-gradient(135deg,#ecdec8,#e3d2b8);
+  box-shadow:var(--clay-press);
+  display:grid; place-items:center; min-height:420px;
+  touch-action:manipulation;
+}
+.blob-wrap{ width:min(340px,64vw); height:min(300px,56vw); cursor:pointer; will-change:transform; }
+.blob{
+  width:100%; height:100%;
+  background:
+    radial-gradient(90% 90% at 32% 26%, var(--pink-hi) 0%, var(--pink) 52%, var(--pink-lo) 100%);
+  border-radius:44% 56% 58% 42% / 52% 46% 54% 48%;
+  box-shadow:
+    inset 10px 12px 22px rgba(255,255,255,.5),
+    inset -12px -16px 26px rgba(122,60,45,.24),
+    14px 20px 40px rgba(122,92,79,.28),
+    4px 6px 12px rgba(122,92,79,.14);
+  animation:blobby 9s ease-in-out infinite;
+  position:relative;
+}
+@keyframes blobby{
+  0%,100%{ border-radius:44% 56% 58% 42% / 52% 46% 54% 48%; }
+  25%    { border-radius:56% 44% 46% 54% / 46% 58% 42% 54%; }
+  50%    { border-radius:48% 52% 55% 45% / 58% 44% 56% 42%; }
+  75%    { border-radius:54% 46% 42% 58% / 44% 54% 46% 56%; }
+}
+.blob .eye{ width:13px; height:15px; border-radius:50%; position:absolute;
+  background:var(--cocoa-deep); top:41%;
+  box-shadow: inset 2px 2px 3px rgba(255,255,255,.35); }
+.blob .eye.l{ left:34%; } .blob .eye.r{ left:57%; }
+.blob .smile{ position:absolute; width:44px; height:22px; left:50%; top:52%; margin-left:-22px;
+  border:5px solid transparent; border-bottom-color:var(--cocoa-deep); border-radius:50%; }
+.knead-caption{
+  text-align:center; margin-top:2rem; font-family:'Baloo 2',cursive;
+  font-weight:700; font-size:1.1rem; color:var(--cocoa);
+}
+
+/* ============================================================
+   OUR OVEN — timeline
+   ============================================================ */
+.timeline{ position:relative; max-width:760px; margin:0 auto; padding-left:64px; }
+.timeline::before{
+  content:""; position:absolute; left:20px; top:8px; bottom:8px; width:12px;
+  border-radius:8px; background:var(--cream-lo); box-shadow:var(--clay-press);
+}
+.t-item{ position:relative; margin-bottom:2.6rem; }
+.t-item:last-child{ margin-bottom:0; }
+.t-bead{
+  position:absolute; left:-64px; top:2px; width:52px; height:52px; border-radius:50%;
+  display:grid; place-items:center;
+  font-family:'Baloo 2',cursive; font-weight:800; font-size:.95rem; color:var(--cocoa-deep);
+  box-shadow:var(--clay-raise-soft);
+}
+.t-item:nth-child(1) .t-bead{ background:linear-gradient(135deg,var(--butter-hi),var(--butter)); }
+.t-item:nth-child(2) .t-bead{ background:linear-gradient(135deg,var(--pink-hi),var(--pink)); }
+.t-item:nth-child(3) .t-bead{ background:linear-gradient(135deg,var(--pistachio-hi),var(--pistachio)); }
+.t-item:nth-child(4) .t-bead{ background:linear-gradient(135deg,var(--cream-hi),var(--cream-lo)); }
+.t-card{
+  background:linear-gradient(135deg,var(--cream-hi),var(--cream));
+  border-radius:var(--radius-md); padding:1.5rem 1.8rem;
+  box-shadow:var(--clay-raise-soft);
+}
+.t-card h3{ font-size:1.25rem; margin-bottom:.3rem; }
+.t-card .t-when{
+  font-size:.7rem; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--cocoa-soft); display:block; margin-bottom:.5rem;
+}
+.t-card p{ font-size:.95rem; }
+
+/* ============================================================
+   HOURS SIGN
+   ============================================================ */
+.hours-hang{ display:flex; flex-direction:column; align-items:center; }
+.hook{
+  width:120px; height:16px; border-radius:10px;
+  background:linear-gradient(135deg,#c8a985,#a98a66);
+  box-shadow:var(--clay-raise-soft);
+}
+.strings{ display:flex; gap:150px; }
+.strings i{
+  width:9px; height:52px; border-radius:6px;
+  background:linear-gradient(135deg,var(--pink-hi),var(--pink-lo));
+  box-shadow:var(--clay-raise-soft);
+}
+.sign{
+  width:min(480px, 92vw);
+  background:linear-gradient(135deg,var(--cream-hi) 0%,var(--cream) 60%,#eadcc6 100%);
+  border-radius:46px; padding:2.4rem 2.6rem 2.6rem;
+  box-shadow:var(--clay-raise);
+  transform-origin:50% -60px;
+  animation:sway 6.5s ease-in-out infinite;
+  position:relative; margin-top:-6px;
+}
+@keyframes sway{ 0%,100%{ transform:rotate(1.4deg);} 50%{ transform:rotate(-1.4deg);} }
+.sign .rivet{
+  position:absolute; top:18px; width:18px; height:18px; border-radius:50%;
+  background:linear-gradient(135deg,var(--pink-hi),var(--pink-lo));
+  box-shadow: inset 2px 2px 4px rgba(255,255,255,.5), inset -2px -3px 4px rgba(122,92,79,.25), 2px 3px 6px rgba(122,92,79,.2);
+}
+.sign .rivet.l{ left:22px; } .sign .rivet.r{ right:22px; }
+.sign h3{ text-align:center; font-size:1.7rem; font-weight:800; margin-bottom:1.4rem; }
+.hours-list{ list-style:none; }
+.hours-list li{
+  display:flex; justify-content:space-between; align-items:baseline; gap:1rem;
+  padding:.68rem .2rem; font-size:.98rem;
+}
+.hours-list li + li{ border-top:2px dashed rgba(122,92,79,.18); }
+.hours-list .day{ font-weight:800; color:var(--cocoa-deep); }
+.hours-list .time{ font-weight:600; text-align:right; }
+.sign .fine{
+  margin-top:1.4rem; text-align:center; font-size:.78rem; font-style:italic;
+  color:var(--cocoa-soft);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{
+  padding:4rem clamp(1.2rem,5vw,4rem) 3rem; position:relative; z-index:1;
+}
+.foot-slab{
+  max-width:1120px; margin:0 auto;
+  background:linear-gradient(135deg,var(--pink-hi),var(--pink));
+  border-radius:var(--radius-lg); box-shadow:var(--clay-raise);
+  padding:clamp(2rem,5vw,3.2rem);
+  display:flex; flex-wrap:wrap; gap:2rem; justify-content:space-between; align-items:center;
+}
+.foot-slab .fs-brand{ font-family:'Baloo 2',cursive; font-weight:800; font-size:2rem; color:var(--cocoa-deep); }
+.foot-slab p{ font-size:.92rem; color:var(--cocoa-deep); max-width:38ch; }
+.foot-links{ display:flex; gap:.8rem; flex-wrap:wrap; }
+.pill{
+  font-family:'Baloo 2',cursive; font-weight:700; font-size:.88rem; text-decoration:none;
+  color:var(--cocoa-deep); padding:.6em 1.3em .5em; border-radius:20px;
+  background:linear-gradient(135deg,var(--cream-hi),var(--cream));
+  box-shadow:var(--clay-raise-soft);
+  transition:transform .45s var(--bounce), box-shadow .45s var(--bounce);
+}
+.pill:hover{ transform:scale(.93); box-shadow:var(--clay-squish); }
+.colophon{
+  text-align:center; margin-top:2.2rem; font-size:.78rem; color:var(--cocoa-soft);
+  letter-spacing:.06em;
+}
+
+/* ---------- reveal on scroll ---------- */
+.reveal{ opacity:0; transform:translateY(34px) scale(.96); }
+.reveal.in{
+  opacity:1; transform:translateY(0) scale(1);
+  transition:opacity .7s var(--settle), transform .9s var(--bounce);
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  .reveal{ opacity:1; transform:none; }
+}
+
+@media (max-width:640px){
+  .backlink{ top:14px; left:14px; font-size:.72rem; }
+  .progress{ display:none; }
+  /* keep DOUGH on a single balanced row — no orphaned letter */
+  .word{ gap:.42rem; }
+  .letter{
+    width:clamp(52px,15.2vw,64px); height:clamp(64px,18vw,78px);
+    font-size:clamp(2.2rem,10.5vw,2.9rem); border-radius:clamp(18px,4.6vw,26px);
+  }
+  .strings{ gap:90px; }
+  .timeline{ padding-left:56px; }
+  .t-bead{ left:-56px; width:44px; height:44px; font-size:.82rem; }
+  .sign{ padding:1.8rem 1.5rem 2rem; }
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+<div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+<div class="crumbs" id="crumbs" aria-hidden="true"></div>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="top">
+    <span class="eyebrow">Petit Four Lane · Est. Whenever the Oven Says</span>
+    <h1 class="word" aria-label="DOUGH">
+      <span class="letter" style="--del:0s"    aria-hidden="true">D</span>
+      <span class="letter" style="--del:-.9s"  aria-hidden="true">O</span>
+      <span class="letter" style="--del:-1.9s" aria-hidden="true">U</span>
+      <span class="letter" style="--del:-2.7s" aria-hidden="true">G</span>
+      <span class="letter" style="--del:-3.6s" aria-hidden="true">H</span>
+    </h1>
+    <p class="hero-sub">A bakery of <strong>impossible pastries</strong>. Everything here is hand-molded, twice-proofed, and only loosely obedient to physics.</p>
+    <div class="hero-cta">
+      <a class="btn btn-butter" href="#menu">See the menu</a>
+      <a class="btn btn-pink" href="#knead">Poke the dough</a>
+    </div>
+    <p class="hero-note">Warm since this morning</p>
+  </section>
+
+  <!-- ================= MENU ================= -->
+  <section id="menu">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Today's Impossibilities</span>
+        <h2>Six pastries that shouldn't exist</h2>
+        <div class="squiggle"></div>
+        <p>Each one molded by hand before dawn, then argued with until it agrees to hold its shape. Supplies last until they don't — or never did.</p>
+      </div>
+      <div class="menu-grid">
+
+        <article class="card reveal tilt">
+          <div class="scene" aria-hidden="true">
+            <div class="croissant">
+              <i class="lump cro-seg cro-l2"></i><i class="lump cro-seg cro-r2"></i>
+              <i class="lump cro-seg cro-l1"></i><i class="lump cro-seg cro-r1"></i>
+              <i class="lump cro-seg cro-c"></i>
+              <i class="sugar"></i><i class="sugar"></i><i class="sugar"></i>
+              <i class="lump cloud"></i>
+            </div>
+          </div>
+          <span class="tag tag-butter">Weather Advisory</span>
+          <h3>Cloud Croissant</h3>
+          <p>Laminated with actual stratus. Rains powdered sugar indoors, gently, on whoever deserves it most.</p>
+          <span class="price">4.50 — umbrella included</span>
+        </article>
+
+        <article class="card reveal tilt">
+          <div class="scene" aria-hidden="true">
+            <div class="pretzel">
+              <i class="pz pz-arch"></i>
+              <i class="pz pz-x1"></i><i class="pz pz-x2"></i>
+              <i class="salt"></i><i class="salt"></i><i class="salt"></i><i class="salt"></i>
+            </div>
+          </div>
+          <span class="tag tag-pink">Topology Special</span>
+          <h3>Möbius Pretzel</h3>
+          <p>One side. One edge. Infinitely salty — lick it forever and you will never reach the other side, because there isn't one.</p>
+          <span class="price">3.75 per lap</span>
+        </article>
+
+        <article class="card reveal tilt">
+          <div class="scene" aria-hidden="true">
+            <div class="eclair">
+              <i class="lump ec-ghost"></i>
+              <i class="lump ec"></i>
+              <i class="lump ec-ice"></i>
+              <i class="ec-drip d1"></i><i class="ec-drip d2"></i><i class="ec-drip d3"></i>
+            </div>
+          </div>
+          <span class="tag tag-pistachio">Quantum Counter</span>
+          <h3>Schrödinger Éclair</h3>
+          <p>Simultaneously eaten and uneaten until you open the box. The cream observes you back. Sold in superposition of two.</p>
+          <span class="price">5.00 and/or 0.00</span>
+        </article>
+
+        <article class="card reveal tilt">
+          <div class="scene" aria-hidden="true">
+            <div class="bagel">
+              <i class="orbit"><i></i></i>
+              <i class="orbit o2"><i></i></i>
+              <i class="bg-ring"></i>
+              <i class="bg-hole"></i>
+            </div>
+          </div>
+          <span class="tag tag-butter">High Density</span>
+          <h3>Gravity Bagel</h3>
+          <p>The hole is so dense that crumbs orbit it. Schmear applied at a safe distance by our longest-armed baker.</p>
+          <span class="price">4.25 — tidal fees apply</span>
+        </article>
+
+        <article class="card reveal tilt">
+          <div class="scene" aria-hidden="true">
+            <div class="macaron">
+              <i class="echo" style="--del:0s"></i>
+              <i class="echo" style="--del:1.1s"></i>
+              <i class="lump mc-top"></i>
+              <i class="lump mc-fill"></i>
+              <i class="lump mc-bot"></i>
+            </div>
+          </div>
+          <span class="tag tag-pink">Acoustic Range</span>
+          <h3>Echo Macaron</h3>
+          <p>Every bite repeats. Every bite repeats. Pistachio today, pistachio again slightly later. Quiet neighbors: not for takeaway.</p>
+          <span class="price">2.90 (2.90… 2.90…)</span>
+        </article>
+
+        <article class="card reveal tilt">
+          <div class="scene" aria-hidden="true">
+            <div class="mille">
+              <span class="mf-badge">1,001</span>
+              <i class="mf-dust u1"></i><i class="mf-dust u2"></i><i class="mf-dust u3"></i>
+              <i class="lump mf-p p3"></i>
+              <i class="lump mf-c c2"></i>
+              <i class="lump mf-p p2"></i>
+              <i class="lump mf-c c1"></i>
+              <i class="lump mf-p p1"></i>
+            </div>
+          </div>
+          <span class="tag tag-pistachio">Nightly Recount</span>
+          <h3>Infinite Mille-Feuille</h3>
+          <p>One thousand layers, counted every night. Every morning there are one thousand and one. We've stopped asking.</p>
+          <span class="price">6.10 per thousand layers</span>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= KNEAD ZONE ================= -->
+  <section id="knead">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Interactive Proofing</span>
+        <h2>Knead the shop dough</h2>
+        <div class="squiggle"></div>
+        <p>This is Barmley, our starter. He's been alive since before the shop. Poke him — he squishes away, sulks briefly, and springs back. He always springs back.</p>
+      </div>
+      <div class="knead-dish reveal">
+        <div class="blob-wrap" id="blobWrap" role="button" tabindex="0" aria-label="Poke Barmley the dough blob">
+          <div class="blob">
+            <span class="eye l"></span><span class="eye r"></span>
+            <span class="smile"></span>
+          </div>
+        </div>
+      </div>
+      <p class="knead-caption" id="kneadCaption">Go on. Poke him.</p>
+    </div>
+  </section>
+
+  <!-- ================= OUR OVEN ================= -->
+  <section id="oven">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Our Oven</span>
+        <h2>A short history of Hilda</h2>
+        <div class="squiggle"></div>
+        <p>Every impossible pastry comes out of one impossible oven. Her name is Hilda, she runs at 180°C or 180°K depending on her mood, and this is her story.</p>
+      </div>
+      <div class="timeline">
+        <div class="t-item reveal">
+          <span class="t-bead" aria-hidden="true">01</span>
+          <div class="t-card">
+            <span class="t-when">The Finding</span>
+            <h3>We found her in a collapsed observatory</h3>
+            <p>Half telescope, half bread oven, entirely opinionated. The astronomers swore she'd been baking the constellations. We towed her home on a Tuesday that lasted nine days.</p>
+          </div>
+        </div>
+        <div class="t-item reveal">
+          <span class="t-bead" aria-hidden="true">02</span>
+          <div class="t-card">
+            <span class="t-when">First Impossibility</span>
+            <h3>The croissant that brought its own weather</h3>
+            <p>Batch one came out raining. We panicked, then charged extra. Batch two came out snowing and won a small regional award for atmosphere.</p>
+          </div>
+        </div>
+        <div class="t-item reveal">
+          <span class="t-bead" aria-hidden="true">03</span>
+          <div class="t-card">
+            <span class="t-when">The Inspection</span>
+            <h3>We passed and failed the health inspection</h3>
+            <p>The inspector opened the éclair box and became part of the paperwork. Officially we hold both a perfect score and a closure notice. We frame them side by side.</p>
+          </div>
+        </div>
+        <div class="t-item reveal">
+          <span class="t-bead" aria-hidden="true">04</span>
+          <div class="t-card">
+            <span class="t-when">Today</span>
+            <h3>Six impossibilities daily, warm at seven</h3>
+            <p>Hilda preheats herself now. We just knead, fold, and apologize to the laws of thermodynamics. Come early — the queue occasionally loops.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOURS ================= -->
+  <section id="hours">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">When To Find Us</span>
+        <h2>Opening hours</h2>
+        <div class="squiggle"></div>
+      </div>
+      <div class="hours-hang reveal">
+        <div class="hook" aria-hidden="true"></div>
+        <div class="strings" aria-hidden="true"><i></i><i></i></div>
+        <div class="sign">
+          <span class="rivet l" aria-hidden="true"></span><span class="rivet r" aria-hidden="true"></span>
+          <h3>The Sign Says</h3>
+          <ul class="hours-list">
+            <li><span class="day">Mon – Thu</span><span class="time">7:00 until the dough says so</span></li>
+            <li><span class="day">Friday</span><span class="time">7:00 – 19:00 (linear time)</span></li>
+            <li><span class="day">Saturday</span><span class="time">8:00 – 8:01, dilated to feel like all day</span></li>
+            <li><span class="day">Sunday</span><span class="time">yesterday</span></li>
+          </ul>
+          <p class="fine">Holidays: open in at least one universe. Check the box.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-slab reveal">
+    <div>
+      <div class="fs-brand">DOUGH</div>
+      <p>3½ Petit Four Lane, just past the corner that isn't there on weekends.</p>
+    </div>
+    <nav class="foot-links" aria-label="Footer">
+      <a class="pill" href="#menu">Menu</a>
+      <a class="pill" href="#knead">Knead</a>
+      <a class="pill" href="#oven">Our Oven</a>
+      <a class="pill" href="#hours">Hours</a>
+    </nav>
+  </div>
+  <p class="colophon">No pastries were harmed in the making of this bakery. Several were duplicated. — DOUGH, a fictional patisserie</p>
+</footer>
+
+<script>
+(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- ?scroll= param for screenshots ---------- */
+  const p = new URLSearchParams(location.search).get('scroll');
+  if (p) {
+    const el = document.getElementById(p);
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior:'instant', block:'start' }));
+  }
+
+  /* ---------- ambient crumbs ---------- */
+  const crumbLayer = document.getElementById('crumbs');
+  const palettes = [
+    ['#f4beb2','#d78d7e'], ['#fadf85','#dfb02e'],
+    ['#c2d6b5','#8fa981'], ['#fbf4e9','#e7d8c4']
+  ];
+  const rand = (a,b) => a + Math.random()*(b-a);
+  for (let i = 0; i < 16; i++) {
+    const c = document.createElement('i');
+    const [hi,lo] = palettes[i % palettes.length];
+    const s = rand(8,22);
+    c.className = 'crumb' + (Math.random() > .65 ? ' stick' : '');
+    c.style.cssText = `
+      left:${rand(2,96)}vw; top:${rand(2,96)}vh;
+      width:${s}px; height:${c.className.includes('stick') ? s*0.45 : s}px;
+      background:linear-gradient(135deg, ${hi}, ${lo});
+      --dx:${rand(-50,50)}px; --dy:${rand(-80,-20)}px; --dr:${rand(-70,70)}deg;
+      --dur:${rand(18,38)}s; --del:${rand(-30,0)}s;
+    `;
+    crumbLayer.appendChild(c);
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ---------- progress breadstick ---------- */
+  const bar = document.getElementById('progressBar');
+  let progTick = false;
+  const updateProg = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + '%';
+    progTick = false;
+  };
+  addEventListener('scroll', () => {
+    if (!progTick) { progTick = true; requestAnimationFrame(updateProg); }
+  }, { passive:true });
+  updateProg();
+
+  /* ---------- card tilt toward cursor ---------- */
+  if (!reduced && matchMedia('(hover:hover)').matches) {
+    document.querySelectorAll('.tilt').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const dx = (e.clientX - r.left) / r.width - .5;
+        const dy = (e.clientY - r.top) / r.height - .5;
+        card.style.setProperty('--ry', (dx * 7).toFixed(2) + 'deg');
+        card.style.setProperty('--rx', (-dy * 7).toFixed(2) + 'deg');
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--rx', '0deg');
+      });
+    });
+  }
+
+  /* ---------- knead blob: hand-rolled spring physics ---------- */
+  const wrap = document.getElementById('blobWrap');
+  const caption = document.getElementById('kneadCaption');
+  const quips = [
+    'He felt that.', 'Rude, but he forgives you.', 'Springier every time.',
+    'He’s pretending it didn’t hurt.', 'That’s the proofing spirit.',
+    'Barmley remembers.', 'Okay, one more.', 'He squishes because he cares.'
+  ];
+  let quipIdx = 0;
+
+  let x = 0, y = 0, vx = 0, vy = 0;
+  let running = false, lastT = 0;
+  const STIFF = 68, DAMP = 7.5;
+
+  function frame(t) {
+    if (!running) return;
+    const dt = Math.min((t - lastT) / 1000, 0.032);
+    lastT = t;
+    // spring toward origin
+    vx += (-STIFF * x - DAMP * vx) * dt;
+    vy += (-STIFF * y - DAMP * vy) * dt;
+    x += vx * dt;
+    y += vy * dt;
+
+    const m = Math.hypot(x, y);
+    const ang = Math.atan2(y, x);
+    const stretch = Math.min(m / 260, 0.32);
+    wrap.style.transform =
+      `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) ` +
+      `rotate(${ang}rad) scale(${(1 + stretch).toFixed(3)}, ${(1 - stretch * 0.8).toFixed(3)}) rotate(${-ang}rad)`;
+
+    if (m < 0.4 && Math.hypot(vx, vy) < 0.4) {
+      x = y = vx = vy = 0;
+      wrap.style.transform = '';
+      running = false;
+      return;
+    }
+    requestAnimationFrame(frame);
+  }
+  function start() {
+    if (!running) { running = true; lastT = performance.now(); requestAnimationFrame(frame); }
+  }
+  function poke(clientX, clientY) {
+    const r = wrap.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    let dx = cx - clientX, dy = cy - clientY;
+    const len = Math.hypot(dx, dy) || 1;
+    dx /= len; dy /= len;
+    vx += dx * 620; vy += dy * 620;
+    caption.textContent = quips[quipIdx++ % quips.length];
+    if (!reduced) start();
+  }
+  wrap.addEventListener('pointerdown', e => { e.preventDefault(); poke(e.clientX, e.clientY); });
+  wrap.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const r = wrap.getBoundingClientRect();
+      poke(r.left + Math.random() * r.width, r.bottom + 10);
+    }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) running = false;
+    else if (Math.hypot(x, y) > 0.4 || Math.hypot(vx, vy) > 0.4) start();
+  });
+})();
+</script>
+</body>
+</html>

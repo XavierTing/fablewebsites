@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How XAVIER FABLE ×30 was made — the guide</title>
+<meta name="description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued thirty websites autonomously — so you can do the same.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="How XAVIER FABLE ×30 was made — the guide">
+<meta property="og:description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued thirty websites autonomously — so you can do the same.">
+<meta property="og:url" content="https://fablex25.netlify.app/guide/">
+<meta property="og:image" content="https://fablex25.netlify.app/guide/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How XAVIER FABLE ×30 was made — the guide">
+<meta name="twitter:description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued thirty websites autonomously — so you can do the same.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/guide/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✦%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f1; --panel:#ffffff; --ink:#141318; --dim:#5f5c66; --faint:#98959e;
+  --line:rgba(20,19,24,.09); --line2:rgba(20,19,24,.2);
+  --uv:#5b48f0; --amber:#e07f1f; --code:#14131a;
+  --pad:clamp(20px,4vw,56px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:var(--uv);color:#fff}
+a{color:var(--uv);text-decoration:none;border-bottom:1px solid transparent;transition:.3s}
+a:hover{border-color:var(--uv)}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- top bar (matches homepage) ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;
+  padding:16px var(--pad);transition:background .4s,border-color .4s,backdrop-filter .4s;border-bottom:1px solid transparent}
+.topbar.scrolled{background:rgba(246,245,241,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
+.mark{font-family:"Space Mono",monospace;font-size:13px;letter-spacing:.26em;font-weight:700;color:var(--ink);border:none;white-space:nowrap}
+.mark b{color:var(--uv)}
+.mark:hover{border:none}
+.back{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--ink);border:1px solid var(--line2);
+  padding:9px 16px;border-radius:100px;background:rgba(246,245,241,.55);backdrop-filter:blur(6px);white-space:nowrap}
+.back:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+@media (max-width:520px){.mark{font-size:11px;letter-spacing:.16em}.back{font-size:10px}}
+
+.wrap{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,40px)}
+header.h{padding:clamp(120px,20vh,220px) 0 60px}
+.eyebrow{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:var(--uv);margin-bottom:26px}
+h1{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(42px,8.4vw,92px);line-height:.96;letter-spacing:-.045em;margin-bottom:28px}
+h1 em,.foot .big em{font-style:normal;font-weight:700;
+  background:linear-gradient(115deg,var(--uv) 8%,#8b7bff 46%,var(--amber) 96%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:clamp(17px,2.4vw,21px);color:#4a4752;font-weight:400;max-width:60ch}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:40px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.14em;color:#6b6873}
+.meta span{border:1px solid var(--line);padding:8px 14px;border-radius:100px}
+
+article{padding-bottom:120px}
+h2{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(27px,4vw,42px);letter-spacing:-.035em;margin:clamp(60px,9vw,96px) 0 10px;line-height:1.06}
+h2 .no{font-family:"Space Mono",monospace;font-size:12px;color:var(--uv);letter-spacing:.24em;display:block;margin-bottom:18px;font-weight:400}
+h3{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:19px;margin:38px 0 6px;letter-spacing:-.02em}
+p{color:#3c3a44;font-weight:400;margin:16px 0;font-size:16.5px}
+p b,li b{color:var(--ink);font-weight:600}
+em{font-style:italic}
+ul,ol{margin:16px 0 16px 4px;padding-left:22px;color:#3c3a44;font-weight:400}
+li{margin:9px 0}
+.lead{font-size:19px;color:var(--ink);font-weight:400}
+.lead em{color:var(--ink);font-style:italic}
+blockquote{border-left:2px solid var(--uv);padding:4px 0 4px 26px;margin:30px 0;
+  font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:clamp(20px,2.7vw,26px);
+  color:var(--ink);line-height:1.36;letter-spacing:-.015em}
+code{font-family:"Space Mono",monospace;font-size:.85em;background:rgba(91,72,240,.08);
+  border:1px solid rgba(91,72,240,.16);padding:2px 7px;border-radius:5px;color:#4b3bd6}
+pre{background:var(--code);border:1px solid rgba(20,19,24,.14);border-radius:14px;padding:22px 24px;overflow-x:auto;
+  margin:24px 0;font-family:"Space Mono",monospace;font-size:13px;line-height:1.7;color:#e4e1ee;
+  box-shadow:0 16px 38px -20px rgba(20,19,24,.35)}
+pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
+.rule{height:1px;background:var(--line);margin:70px 0}
+.stack{display:grid;gap:1px;background:var(--line);margin:28px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.stack div{background:var(--panel);padding:16px 20px;display:flex;gap:16px;align-items:baseline;font-size:15px;color:#3c3a44;font-weight:400}
+.stack .t{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.12em;color:var(--uv);min-width:120px;flex-shrink:0;text-transform:uppercase}
+.callout{background:linear-gradient(135deg,rgba(91,72,240,.07),rgba(91,72,240,.02));border:1px solid rgba(91,72,240,.2);border-radius:16px;padding:24px 26px;margin:30px 0}
+.callout .k{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--uv);margin-bottom:10px}
+.callout p{color:var(--ink)}
+
+.foot{border-top:1px solid var(--line);padding:clamp(60px,9vw,100px) 0 90px;text-align:center}
+.foot .big{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:clamp(26px,4.4vw,44px);line-height:1.1;letter-spacing:-.035em;margin-bottom:34px}
+.btn{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;padding:15px 28px;border-radius:100px;
+  background:var(--ink);color:#fff;border:1px solid var(--ink);display:inline-flex;gap:10px;transition:.3s}
+.btn:hover{background:var(--uv);border-color:var(--uv);color:#fff;transform:translateY(-2px)}
+.progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--uv),var(--amber));z-index:30;width:0}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="prog" aria-hidden="true"></div>
+<div class="topbar" id="topbar">
+  <a class="mark" href="/">XAVIER FABLE <b>×30</b></a>
+  <a class="back" href="/">← BACK TO THE GALLERY</a>
+</div>
+
+<header class="h wrap">
+  <div class="eyebrow">The Guide</div>
+  <h1>How this was <em>made</em>.</h1>
+  <p class="sub">Thirty websites, designed and built end-to-end by one model, running autonomously. Here is the whole method — the pipeline, the prompts, the asset generation, the critique loop, and the one place a human had to touch the keyboard — so you can build your own.</p>
+  <div class="meta"><span>~1 SESSION</span><span>30 SITES + THIS GUIDE</span><span>43 GENERATED ASSETS</span><span>3 CRITIQUE PASSES EACH</span></div>
+</header>
+
+<article class="wrap">
+
+  <p class="lead">The instruction was, roughly: <em>reference a showcase site, then build something like it — twenty-five fundamentally different websites, each a demonstration of design taste and technical range. Host them. Iterate three times on each. Don't ask me anything until it's done.</em></p>
+  <p>What follows is exactly how that happened — including the parts that broke and how they were routed around. Nothing here is aspirational; it's the actual build.</p>
+
+  <h2><span class="no">01 — THE SHAPE</span>One site, thirty rooms</h2>
+  <p>Rather than thirty separate deployments, everything lives under a <b>single static site</b> on Netlify: a gallery homepage, a <code>/guide</code> route, and thirty self-contained sub-sites at <code>/sites/NN-slug/</code>. One link to share, one deploy pipeline, and no build step — every page is hand-written HTML/CSS/JS so nothing can fail to compile.</p>
+  <pre><code>fable-x25/
+├── index.html          → the gallery (itself a showcase piece)
+├── guide/index.html    → you are here
+└── sites/
+    ├── 01-liquid-metal/index.html  (+ assets/)
+    ├── 02-terrain/index.html
+    └── … ×30</code></pre>
+  <p>Each sub-site is fully independent — its own fonts, palette, and libraries loaded from CDNs (Three.js, GSAP) where needed. That isolation is what let dozens of them be built <b>in parallel</b> without stepping on each other.</p>
+
+  <h2><span class="no">02 — THE CONCEPTS</span>Thirty deliberately different worlds</h2>
+  <p>The hardest constraint was <b>"fundamentally different."</b> It's easy to make thirty variations of the same dark-hero-with-gradient template. So the concepts were spread across six families, forcing different techniques in each:</p>
+  <div class="stack">
+    <div><span class="t">3D & WebGL</span>A raymarched chrome blob · a procedural mountain flyover · a 92k-particle solar system · a CSS-only paper crane.</div>
+    <div><span class="t">Typography</span>Cursor-reactive variable fonts · a brutalist magazine · a clock written in words · a 3D-to-ASCII CRT renderer.</div>
+    <div><span class="t">Motion</span>A bootable terminal OS with games · a playable glass synth · a fluid-ink simulation · an infinite Mandelbrot dive.</div>
+    <div><span class="t">Cinematic</span>A couture house · a film-noir case file · a vaporwave mall · an art-deco hotel · a glowing night-garden.</div>
+    <div><span class="t">Data</span>A Swiss-grid annual report · a weather-driven sky · a per-visitor generative gallery · a warping museum archive.</div>
+    <div><span class="t">Retro & play</span>Y2K liquid chrome · a Japanese tea house · a claymorphic bakery · a draggable architecture studio.</div>
+    <div><span class="t">Wave II</span>A living boids ocean · poems ruled by physics · an infinite painted night train · a generated oracle deck · a working Keplerian orrery.</div>
+  </div>
+  <p>The collection later grew by a <b>second wave of five</b> — each chosen to add a technique the first twenty-five didn't have: emergent simulation, a hand-rolled physics engine, procedural landscape painting, a ritual object built on generated artwork, and real astronomical computation. Same pipeline, same three-pass rule.</p>
+  <p>Each concept came with a <b>full art-direction brief</b>: a fictional brand and real copy (no lorem ipsum), an exact palette, a font pairing chosen for that world, and the specific technique it had to prove. A shared <code>BRIEF.md</code> held the non-negotiables — favicon, a back-link to the gallery, responsive at 390px and 1440px, zero console errors, motion that respects <code>prefers-reduced-motion</code>.</p>
+
+  <h2><span class="no">03 — THE ASSETS</span>Generating imagery and motion</h2>
+  <p>Five of the cinematic sites needed photography that doesn't exist. That was generated, not scraped:</p>
+  <h3>Stills — GPT Image (gpt-image-2)</h3>
+  <p>Thirty-one images were produced from a manifest of art-directed prompts — couture shot in fog, a rain-slicked 1948 street, a bioluminescent glasshouse, eight museum paintings of histories that never happened — run three at a time through a small Node script hitting the OpenAI images API, then compressed to web JPEGs.</p>
+  <pre><code>// one entry from the manifest
+{ out:"14-noir/street.png", size:"1536x1024", quality:"high",
+  prompt:"1948 Los Angeles film noir: rain-slicked empty
+  downtown street at 3am, neon smeared on wet asphalt,
+  a lone figure in a fedora under a streetlamp…" }</code></pre>
+  <h3>Motion — Kling, via fal.ai</h3>
+  <p>Three of the hero stills were then animated into seamless 5-second loops (fog drifting, a slow dolly through the mall, plants breathing with light) using the <b>Kling</b> image-to-video model on fal.ai. Each site prefers its <code>.mp4</code> if present and falls back to the still — so a slow API never blocks a build.</p>
+  <div class="callout">
+    <div class="k">An honest substitution</div>
+    <p style="margin:0">The original brief suggested Higgsfield for animation and Pinterest for reference. Neither was wired into this environment — no Higgsfield connector, no stored Pinterest login. So the pipeline used <b>fal.ai's Kling</b> for image-to-video (same job, available key) and dropped scraping entirely in favour of fully generated assets. When a tool isn't there, the move is to name the gap and route around it — not to fake it.</p>
+  </div>
+
+  <h2><span class="no">04 — THE BUILD</span>Parallel agents, one per site</h2>
+  <p>Each site was handed to its own sub-agent with the shared brief plus its concept. Agents ran in <b>parallel batches</b>, each owning one folder — writing the HTML/CSS/JS, wiring up the shaders or the WebAudio graph, copying in its assets. Because the sites are isolated, a dozen could build at once.</p>
+  <p>The interesting failures were the honest kind. The raymarched blob first rendered as <b>porcelain, not chrome</b> — the fix was rewriting the in-shader environment into a banded studio sky with a razor horizon. The particle system had a <b>"noise ball"</b> mid-morph until per-particle stagger was raised so two formations briefly coexist. A CSS-3D crane went <b>invisible in headless capture</b> because a still-animating composited layer dropped its 3D contents — fixed by settling the entrance animation on completion. None of these are visible now; all of them were real.</p>
+
+  <h2><span class="no">05 — THE CRITIQUE LOOP</span>Three hostile passes, with a camera</h2>
+  <p>This is the part that matters most, and the part most people skip. Building a site once gets you 70%. The last 30% — the spacing rhythm, the dead zones, the contrast that's <em>almost</em> right — only comes from <b>looking</b>.</p>
+  <p>So every site was screenshotted with a headless browser (Puppeteer), at desktop <b>1440×900</b> and mobile <b>390×844</b>, mid-scroll and mid-interaction. The model then <b>read its own screenshots</b> and critiqued them like an art director who wants the work to fail — then fixed what it found. Minimum three full passes each, logged in a <code>PASSES.md</code> per site.</p>
+  <blockquote>The screenshot is the ground truth. A model describing what it thinks it built is guessing; a model looking at a picture of what it actually built is editing.</blockquote>
+  <p>The same script captured the console. A black WebGL canvas or a single error wasn't a warning — it was a defect to fix before the pass could close. Several sites are measurably better for it: a magazine audited to <b>sub-pixel grid alignment</b>, a terrain flyover re-framed so each peak sits opposite its caption, museum ripples verified over real HTTP after a <code>file://</code> texture-tainting red herring.</p>
+  <pre><code>// the whole critique tool, in essence
+const page = await browser.newPage();
+page.on('console', m =&gt; m.type()==='error' &amp;&amp; errors.push(m.text()));
+await page.goto(url, {waitUntil:'networkidle2'});
+await page.screenshot({path:'pass2-desktop.png'});
+// → then: Read the image. Be merciless. Fix. Repeat.</code></pre>
+
+  <h2><span class="no">06 — THE ONE HUMAN TOUCH</span>A single login</h2>
+  <p>The entire run was autonomous with exactly one exception: <b>authorising the Netlify CLI</b> in the browser, once, at the start. After that — site creation, thirty-four asset generations, twenty-five parallel builds, seventy-plus critique passes, and every production deploy — happened without a human in the loop. Mid-run, a model-usage limit and then a credit ceiling were hit; the work simply <b>resumed</b> where it left off, picking up half-finished sites from their files and continuing the passes.</p>
+
+  <h2><span class="no">07 — DO IT YOURSELF</span>The recipe, condensed</h2>
+  <ol>
+    <li><b>One static site, many routes.</b> No build step. Each piece self-contained so it can't break its neighbours and can be built in parallel.</li>
+    <li><b>Brief hard, brief specific.</b> A real brand, real copy, an exact palette and font pairing, and one technique to prove — per site. Put the non-negotiables (responsive, a11y, zero errors) in one shared file.</li>
+    <li><b>Generate assets deliberately.</b> Art-direct the prompts as carefully as the sites. Compress. Always have a graceful fallback so a slow API never blocks a build.</li>
+    <li><b>Close the loop with screenshots.</b> Headless browser, read the images, critique adversarially, fix, repeat ≥3×. Capture the console; treat any error as a defect. This is where taste actually gets applied.</li>
+    <li><b>Deploy continuously.</b> Ship a placeholder first to prove the pipeline, then redeploy as sites land. The link exists from minute one.</li>
+  </ol>
+
+  <div class="rule"></div>
+  <p style="color:var(--faint);font-size:14px;font-family:'Space Mono',monospace;letter-spacing:.1em">STACK: hand-written HTML · CSS · vanilla JS · Three.js · GSAP · custom GLSL · WebAudio · WebGL fluid & fractal shaders · GPT Image (gpt-image-2) · Kling via fal.ai · Puppeteer · Netlify. No page builders, no templates, no component library.</p>
+
+</article>
+
+<footer class="foot wrap">
+  <div class="big">Now go <em>look</em> at the thirty.</div>
+  <a class="btn" href="/">ENTER THE GALLERY →</a>
+</footer>
+
+<script>
+const prog=document.getElementById('prog'), tb=document.getElementById('topbar');
+addEventListener('scroll',()=>{const s=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?(s/h*100):0)+'%';
+  tb.classList.toggle('scrolled',s>40);},{passive:true});
+</script>
+</body>
+</html>

@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIVARIUM — a pocket ocean</title>
+<meta name="description" content="A living ecosystem in a single tank of light. One hundred twenty fish, one hunter, a kelp forest and a full day — nothing scripted, everything behavioural.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="VIVARIUM — a pocket ocean">
+<meta property="og:description" content="A living ecosystem in a single tank of light. One hundred twenty fish, one hunter, a kelp forest and a full day — nothing scripted, everything behavioural.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/26-vivarium/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/26-vivarium/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VIVARIUM — a pocket ocean">
+<meta name="twitter:description" content="A living ecosystem in a single tank of light. One hundred twenty fish, one hunter, a kelp forest and a full day — nothing scripted, everything behavioural.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/26-vivarium/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐟</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --abyss:#01090f;
+    --deep:#03222e;
+    --moon:#e9f2f2;
+    --moon-dim:rgba(233,242,242,.62);
+    --moon-faint:rgba(233,242,242,.38);
+    --coral:#e8a583;
+    --glass:rgba(6,32,42,.42);
+    --glass-line:rgba(233,242,242,.12);
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --disp:'Outfit',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--abyss);
+    color:var(--moon);
+    font-family:var(--disp);
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:#e8a583;color:#01090f}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:#01090f}
+  ::-webkit-scrollbar-thumb{background:#0d3644;border-radius:5px;border:2px solid #01090f}
+  ::-webkit-scrollbar-thumb:hover{background:#155062}
+  :focus-visible{outline:1px solid var(--coral);outline-offset:3px;border-radius:2px}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- stage ---------- */
+  .stage{
+    position:relative;
+    height:100svh;
+    min-height:560px;
+    overflow:hidden;
+    cursor:crosshair;
+  }
+  #sea{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .stage::after{ /* vignette */
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,4,8,.55) 100%);
+  }
+  .grain{
+    position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:40;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- back link ---------- */
+  .backlink{
+    position:fixed;top:22px;left:24px;z-index:60;
+    font-family:var(--mono);font-size:11px;letter-spacing:.22em;
+    color:var(--moon-faint);
+    padding:8px 12px;border:1px solid transparent;border-radius:99px;
+    transition:color .35s ease,border-color .35s ease,background .35s ease;
+    backdrop-filter:blur(4px);
+  }
+  .backlink:hover{color:var(--moon);border-color:var(--glass-line);background:rgba(6,32,42,.35)}
+
+  /* ---------- glass panel ---------- */
+  .panel{
+    position:absolute;top:22px;right:24px;z-index:50;
+    width:min(272px, calc(100vw - 48px));
+    background:var(--glass);
+    border:1px solid var(--glass-line);
+    border-radius:16px;
+    backdrop-filter:blur(14px) saturate(1.2);
+    -webkit-backdrop-filter:blur(14px) saturate(1.2);
+    padding:18px 18px 16px;
+    box-shadow:0 12px 40px rgba(0,5,10,.45);
+    opacity:0;transform:translateY(-8px);
+    animation:panelIn 1.2s cubic-bezier(.22,1,.36,1) .5s forwards;
+  }
+  @keyframes panelIn{to{opacity:1;transform:none}}
+  .panel h1{
+    font-weight:300;font-size:20px;letter-spacing:.34em;line-height:1;
+    color:var(--moon);
+  }
+  .panel .sub{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;
+    color:var(--moon-faint);margin-top:7px;text-transform:uppercase;
+  }
+  .panel hr{border:0;border-top:1px solid var(--glass-line);margin:14px 0 12px}
+  .dialrow{display:flex;align-items:center;gap:10px}
+  .phase{
+    font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+    color:var(--coral);min-width:52px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;flex:1;height:22px;background:transparent;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:2px;border-radius:1px;
+    background:linear-gradient(90deg,#2e7d8a,#4aa3c7,#7a6bb5,#0e2431,#2e7d8a);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:11px;height:11px;border-radius:50%;
+    background:var(--moon);margin-top:-4.5px;
+    box-shadow:0 0 0 3px rgba(233,242,242,.15);
+    transition:box-shadow .3s ease;
+  }
+  input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 0 5px rgba(233,242,242,.22)}
+  input[type=range]::-moz-range-track{height:2px;background:linear-gradient(90deg,#2e7d8a,#4aa3c7,#7a6bb5,#0e2431,#2e7d8a)}
+  input[type=range]::-moz-range-thumb{width:11px;height:11px;border:0;border-radius:50%;background:var(--moon)}
+  .census{
+    font-family:var(--mono);font-size:10px;line-height:1.9;letter-spacing:.08em;
+    color:var(--moon-dim);margin-top:12px;
+  }
+  .census b{font-weight:500;color:var(--moon)}
+  .census .stat{white-space:nowrap}
+  .hint{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+    color:var(--moon-faint);margin-top:12px;text-transform:uppercase;
+  }
+  .hint span{color:var(--coral)}
+
+  /* ---------- hero titles ---------- */
+  .hero-id{
+    position:absolute;left:24px;bottom:96px;z-index:30;pointer-events:none;
+    opacity:0;animation:panelIn 1.4s cubic-bezier(.22,1,.36,1) .9s forwards;
+  }
+  .hero-id .no{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--moon-faint)}
+  .hero-id h2{
+    font-weight:200;font-size:clamp(30px,4.6vw,58px);letter-spacing:.02em;line-height:1.08;
+    margin-top:10px;color:var(--moon);
+    text-shadow:0 1px 18px rgba(1,9,15,.65),0 0 2px rgba(1,9,15,.4);
+  }
+  .hero-id p{
+    margin-top:10px;max-width:34ch;font-size:14px;line-height:1.65;color:var(--moon-dim);font-weight:300;
+  }
+  .scrollcue{
+    position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:30;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;color:var(--moon-faint);
+    text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px;
+    transition:color .35s ease;
+  }
+  .scrollcue:hover{color:var(--moon)}
+  .scrollcue .line{width:1px;height:26px;background:linear-gradient(var(--moon-faint),transparent);animation:cue 2.6s ease-in-out infinite}
+  @keyframes cue{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
+
+  /* ---------- field notes ---------- */
+  .notes{
+    position:relative;
+    background:linear-gradient(#01090f, #02141c 55%, #01090f);
+    padding:clamp(80px,12vh,140px) 24px clamp(70px,10vh,110px);
+  }
+  .notes-inner{max-width:1120px;margin:0 auto}
+  .notes-head{margin-bottom:clamp(48px,7vh,80px)}
+  .notes-head .kicker{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.34em;color:var(--coral);text-transform:uppercase;
+  }
+  .notes-head h3{
+    font-weight:200;font-size:clamp(30px,4vw,52px);letter-spacing:.01em;line-height:1.12;margin-top:18px;
+  }
+  .notes-head p{
+    margin-top:16px;max-width:52ch;color:var(--moon-dim);font-size:15px;line-height:1.7;
+  }
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{
+    border:1px solid rgba(233,242,242,.09);
+    border-radius:18px;
+    padding:26px 24px 28px;
+    background:linear-gradient(160deg, rgba(10,42,54,.35), rgba(3,14,20,.15));
+    transition:transform .5s cubic-bezier(.22,1,.36,1), border-color .5s ease, background .5s ease;
+    opacity:0;transform:translateY(26px);
+  }
+  .card.vis{opacity:1;transform:none;transition:opacity .9s ease, transform .9s cubic-bezier(.22,1,.36,1), border-color .5s ease, background .5s ease}
+  .card:hover{transform:translateY(-4px);border-color:rgba(232,165,131,.35);background:linear-gradient(160deg, rgba(12,50,64,.45), rgba(3,14,20,.2))}
+  .card .idx{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--moon-faint)}
+  .card h4{font-weight:300;font-size:23px;letter-spacing:.04em;margin:14px 0 4px}
+  .card .latin{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--coral);font-style:normal}
+  .card p{margin-top:16px;font-size:14px;line-height:1.75;color:var(--moon-dim)}
+  .card .meta{
+    margin-top:20px;padding-top:14px;border-top:1px solid rgba(233,242,242,.08);
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--moon-faint);text-transform:uppercase;
+  }
+
+  footer{
+    border-top:1px solid rgba(233,242,242,.08);
+    padding:44px 24px 52px;
+    background:#01090f;
+  }
+  .foot-inner{
+    max-width:1120px;margin:0 auto;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:baseline;
+  }
+  .foot-inner .brand{font-weight:300;letter-spacing:.34em;font-size:14px}
+  .foot-inner p{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--moon-faint);line-height:2}
+
+  @media (max-width:860px){
+    .cards{grid-template-columns:1fr;gap:16px}
+    .panel{top:auto;bottom:88px;right:16px;width:min(240px,calc(100vw - 32px));padding:15px 15px 13px}
+    .panel h1{font-size:17px}
+    .hero-id{left:16px;bottom:auto;top:20px;max-width:60vw}
+    .hero-id h2{font-size:clamp(26px,7.5vw,34px)}
+    .hero-id p{display:none}
+    .backlink{top:auto;bottom:20px;left:16px}
+    .scrollcue{left:auto;right:26px;transform:none}
+    .census .pol{display:none}
+    .census{font-size:9.2px;letter-spacing:.05em}
+    .hint{font-size:8.8px;letter-spacing:.1em}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .panel,.hero-id{animation:none;opacity:1;transform:none}
+    .scrollcue .line{animation:none}
+    .card{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+<div class="grain" aria-hidden="true"></div>
+
+<section class="stage" id="stage" aria-label="Living aquarium simulation. Click to feed, press and hold to stir a current.">
+  <canvas id="sea"></canvas>
+
+  <div class="hero-id">
+    <div class="no">TANK Nº 26 — OBSERVATION DECK</div>
+    <h2>Vivarium,<br>a pocket ocean</h2>
+    <p>Nothing in this water is scripted. Every turn of the school is a decision made by no one and all of them at once.</p>
+  </div>
+
+  <div class="panel" role="group" aria-label="Tank controls">
+    <h1>VIVARIUM</h1>
+    <div class="sub">a pocket ocean · est. tide 04:12</div>
+    <hr>
+    <div class="dialrow">
+      <span class="phase" id="phase">DAWN</span>
+      <input type="range" id="dial" min="0" max="1000" value="60" step="1" aria-label="Time of day">
+    </div>
+    <div class="census" id="census">
+      <span class="stat">SCHOOL <b id="cPop">120</b></span> · <span class="stat">HUNTER <b>1</b></span> · <span class="stat">MEDUSAE <b>3</b></span><br>
+      <span class="pol"><span class="stat">POLARISATION <b id="cPol">0.00</b></span> · </span><span class="stat">T+<b id="cClock">00:00</b></span>
+    </div>
+    <div class="hint"><span>CLICK</span> TO FEED · <span>HOLD</span> FOR CURRENT</div>
+  </div>
+
+  <a class="scrollcue" href="#notes">field notes<span class="line"></span></a>
+</section>
+
+<main class="notes" id="notes">
+  <div class="notes-inner">
+    <header class="notes-head">
+      <div class="kicker">Field Notes — Attendant's Log</div>
+      <h3>All behaviour observed,<br>none of it instructed.</h3>
+      <p>Kept by the attendant of tank nº 26. The specimens below were given three rules and a body each; everything else — the folding, the fleeing, the patience — they arrived at themselves.</p>
+    </header>
+
+    <div class="cards">
+      <article class="card">
+        <div class="idx">OBS. 01 / 120 INDIVIDUALS</div>
+        <h4>The School</h4>
+        <em class="latin">Phanera aurita</em>
+        <p>No individual decides to turn. At 09:14 the school folded around the hunter like cloth around a blade — one hundred twenty separate panics, indistinguishable from choreography. Each fish watches perhaps seven neighbours; that is the entire government. Drop a pellet and the parliament dissolves. Hunger is the only motion they perform alone.</p>
+        <div class="meta">Rules: 3 · Leader: none · Cohesion: emergent</div>
+      </article>
+
+      <article class="card">
+        <div class="idx">OBS. 02 / 1 INDIVIDUAL</div>
+        <h4>The Hunter</h4>
+        <em class="latin">Squalus umbra</em>
+        <p>She patrols the mid-water at a third of the school's speed and never once has to hurry. Where she goes, the water empties in a perfect circle — a vacancy that follows her like a name. I have watched her for six full cycles. She has caught nothing. I am no longer certain that catching is the point.</p>
+        <div class="meta">Diet: proximity · Pace: patient · Kills: 0</div>
+      </article>
+
+      <article class="card">
+        <div class="idx">OBS. 03 / 11 STALKS</div>
+        <h4>The Forest</h4>
+        <em class="latin">Macrocystis somnia</em>
+        <p>The kelp keeps the only honest time here. Every current that has passed through this water today is still written in its sway, decaying gently, the way a room remembers a conversation. At night the fronds go nearly still, and the plankton light their small lamps among the blades.</p>
+        <div class="meta">Growth: segmental · Memory: elastic</div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="brand">VIVARIUM</div>
+    <p>THE SPECIMENS ARE MATHEMATICS · THE WATER IS A GRADIENT · THE ATTENTION IS REAL<br>
+    TANK Nº 26 — A FICTIONAL INSTITUTION FOR XAVIER FABLE ×30 · NO FISH WERE INSTRUCTED</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+
+/* ============================== setup ============================== */
+const canvas = document.getElementById('sea');
+const ctx = canvas.getContext('2d');
+const stage = document.getElementById('stage');
+const params = new URLSearchParams(location.search);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || params.has('rm');
+
+let W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.min(devicePixelRatio || 1, 2);
+  W = stage.clientWidth; H = stage.clientHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  buildKelp();
+}
+addEventListener('resize', resize);
+
+const TAU = Math.PI * 2;
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const mixc = (c1, c2, t) => [lerp(c1[0],c2[0],t), lerp(c1[1],c2[1],t), lerp(c1[2],c2[2],t)];
+const rgba = (c, a) => `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`;
+
+/* ============================== day cycle ============================== */
+/* stops: dawn → noon → dusk → night → (wrap) dawn */
+const STOPS = [
+  { t:0.00, top:[10,74,84],  bot:[2,17,24],  ray:0.045, ca:0.05, night:0.10, name:'DAWN'  },
+  { t:0.25, top:[9,86,120],  bot:[2,20,31],  ray:0.10,  ca:0.075,night:0.00, name:'NOON'  },
+  { t:0.50, top:[47,37,88],  bot:[8,6,20],   ray:0.028, ca:0.035,night:0.25, name:'DUSK'  },
+  { t:0.75, top:[2,13,21],   bot:[0,4,8],    ray:0.0,   ca:0.0,  night:1.00, name:'NIGHT' },
+  { t:1.00, top:[10,74,84],  bot:[2,17,24],  ray:0.045, ca:0.05, night:0.10, name:'DAWN'  },
+];
+const CYCLE_SECONDS = 90;
+let cycleT = 0.12;                       // start just after dawn
+let cycleFrozen = false;
+if (params.has('t')) {
+  cycleT = clamp(parseFloat(params.get('t')) || 0, 0, 0.999);
+  cycleFrozen = true;
+}
+if (reduced) cycleFrozen = true;
+
+function envAt(t){
+  let i = 0;
+  while (STOPS[i+1].t < t) i++;
+  const a = STOPS[i], b = STOPS[i+1];
+  let k = (t - a.t) / (b.t - a.t);
+  k = k*k*(3-2*k); // smoothstep between stops
+  return {
+    top: mixc(a.top, b.top, k),
+    bot: mixc(a.bot, b.bot, k),
+    ray: lerp(a.ray, b.ray, k),
+    ca:  lerp(a.ca, b.ca, k),
+    night: lerp(a.night, b.night, k),
+    name: k < 0.5 ? a.name : b.name,
+  };
+}
+
+/* ============================== spatial grid ============================== */
+const CELL = 64;
+let grid = new Map();
+function gridKey(x, y){ return ((x / CELL)|0) * 4096 + ((y / CELL)|0); }
+function rebuildGrid(list){
+  grid.clear();
+  for (const f of list){
+    const k = gridKey(f.x, f.y);
+    let cell = grid.get(k);
+    if (!cell) grid.set(k, cell = []);
+    cell.push(f);
+  }
+}
+function neighbours(x, y, out){
+  out.length = 0;
+  const cx = (x / CELL)|0, cy = (y / CELL)|0;
+  for (let i = cx-1; i <= cx+1; i++)
+    for (let j = cy-1; j <= cy+1; j++){
+      const cell = grid.get(i*4096 + j);
+      if (cell) for (const f of cell) out.push(f);
+    }
+  return out;
+}
+
+/* ============================== fish (boids) ============================== */
+const isMobile = () => W < 720;
+const FISH_PALETTE = [
+  [244,234,216],   // ivory
+  [238,193,133],   // gold
+  [233,150,110],   // coral
+  [232,176,154],   // pale rose
+  [246,222,190],   // shell
+];
+const fish = [];
+function spawnFish(n){
+  fish.length = 0;
+  const cx = W * 0.42, cy = H * 0.42;
+  const baseA = rand(0, TAU);
+  for (let i = 0; i < n; i++){
+    const c = FISH_PALETTE[(Math.random()*FISH_PALETTE.length)|0];
+    const hueJit = rand(-14, 14);
+    fish.push({
+      x: cx + rand(-130, 130), y: cy + rand(-90, 90),
+      vx: Math.cos(baseA) * 60 + rand(-12,12), vy: Math.sin(baseA) * 60 + rand(-12,12),
+      len: rand(9.5, 16),
+      col: [clamp(c[0]+hueJit,0,255), clamp(c[1]+hueJit*0.6,0,255), clamp(c[2],0,255)],
+      phase: rand(0, TAU),
+      burst: 0,
+    });
+  }
+}
+
+const BOID = {
+  perception: 60, sepR: 26,
+  wSep: 1.85, wAli: 1.05, wCoh: 0.78,
+  maxSpeed: 88, minSpeed: 34, maxForce: 150,
+  fleeR: 135, wFlee: 3.4,
+  foodR: 270, wFood: 2.3,
+  wall: 90, wWall: 2.2,
+};
+const scratch = [];
+
+function steerFish(f, dt){
+  let sx=0, sy=0, ax=0, ay=0, cx=0, cy=0, nAli=0, nSep=0;
+  neighbours(f.x, f.y, scratch);
+  const pr2 = BOID.perception * BOID.perception, sr2 = BOID.sepR * BOID.sepR;
+  for (const o of scratch){
+    if (o === f) continue;
+    const dx = o.x - f.x, dy = o.y - f.y;
+    const d2 = dx*dx + dy*dy;
+    if (d2 > pr2) continue;
+    ax += o.vx; ay += o.vy; cx += o.x; cy += o.y; nAli++;
+    if (d2 < sr2 && d2 > 0.01){
+      const inv = 1 / d2;
+      sx -= dx * inv; sy -= dy * inv; nSep++;
+    }
+  }
+  let fx = 0, fy = 0;
+  const sp = Math.hypot(f.vx, f.vy) || 1;
+  if (nSep){
+    const m = Math.hypot(sx, sy) || 1;
+    fx += (sx/m * BOID.maxSpeed - f.vx) * BOID.wSep;
+    fy += (sy/m * BOID.maxSpeed - f.vy) * BOID.wSep;
+  }
+  if (nAli){
+    const m = Math.hypot(ax, ay) || 1;
+    fx += (ax/m * BOID.maxSpeed - f.vx) * BOID.wAli;
+    fy += (ay/m * BOID.maxSpeed - f.vy) * BOID.wAli;
+    const mx = cx/nAli - f.x, my = cy/nAli - f.y;
+    const mm = Math.hypot(mx, my) || 1;
+    fx += (mx/mm * BOID.maxSpeed - f.vx) * BOID.wCoh;
+    fy += (my/mm * BOID.maxSpeed - f.vy) * BOID.wCoh;
+  }
+  // soft walls (keep off surface & kelp floor a little more)
+  const w = Math.min(BOID.wall, W * 0.16);
+  if (f.x < w)          fx += (1 - f.x/w) * BOID.maxForce * BOID.wWall / 60;
+  if (f.x > W - w)      fx -= (1 - (W-f.x)/w) * BOID.maxForce * BOID.wWall / 60;
+  if (f.y < w + 20)     fy += (1 - f.y/(w+20)) * BOID.maxForce * BOID.wWall / 60;
+  if (f.y > H - w - 40) fy -= (1 - (H-f.y)/(w+40)) * BOID.maxForce * BOID.wWall / 60;
+  // flee predator
+  {
+    const dx = f.x - pred.x, dy = f.y - pred.y;
+    const d = Math.hypot(dx, dy);
+    if (d < BOID.fleeR && d > 0.01){
+      const k = (1 - d/BOID.fleeR);
+      fx += dx/d * BOID.maxForce * BOID.wFlee * k;
+      fy += dy/d * BOID.maxForce * BOID.wFlee * k;
+      f.burst = Math.min(f.burst + k*0.6, 1.2);
+    }
+  }
+  // seek food
+  if (food.length){
+    let best = null, bd = BOID.foodR * BOID.foodR;
+    for (const p of food){
+      const dx = p.x - f.x, dy = p.y - f.y, d2 = dx*dx + dy*dy;
+      if (d2 < bd){ bd = d2; best = p; }
+    }
+    if (best){
+      const d = Math.sqrt(bd) || 1;
+      fx += (best.x - f.x)/d * BOID.maxForce * BOID.wFood;
+      fy += (best.y - f.y)/d * BOID.maxForce * BOID.wFood;
+      if (d < 9){ best.amt -= dt * 2.2; f.burst = 0.8; }
+    }
+  }
+  // player current
+  applyCurrent(f, 1.0);
+
+  // clamp force
+  const fm = Math.hypot(fx, fy);
+  const maxF = BOID.maxForce * 2.6;
+  if (fm > maxF){ fx = fx/fm*maxF; fy = fy/fm*maxF; }
+  f.vx += fx * dt; f.vy += fy * dt;
+
+  // clamp speed
+  const top = BOID.maxSpeed * (1 + f.burst * 0.8);
+  const s2 = Math.hypot(f.vx, f.vy) || 1;
+  if (s2 > top){ f.vx = f.vx/s2*top; f.vy = f.vy/s2*top; }
+  if (s2 < BOID.minSpeed){ f.vx = f.vx/s2*BOID.minSpeed; f.vy = f.vy/s2*BOID.minSpeed; }
+  f.burst = Math.max(0, f.burst - dt * 0.9);
+
+  f.x += f.vx * dt * simSpeed; f.y += f.vy * dt * simSpeed;
+  f.x = clamp(f.x, 4, W-4); f.y = clamp(f.y, 4, H-4);
+  f.phase += (s2 * 0.09 + 4) * dt * simSpeed;
+}
+
+function drawFish(f, env){
+  const a = Math.atan2(f.vy, f.vx);
+  const L = f.len, Wd = L * 0.34;
+  const tail = Math.sin(f.phase) * L * 0.22;
+  ctx.save();
+  ctx.translate(f.x, f.y);
+  ctx.rotate(a);
+  const dim = 1 - env.night * 0.3;
+  ctx.fillStyle = rgba(f.col, 0.92 * dim);
+  ctx.beginPath();
+  ctx.moveTo(L*0.52, 0);                                     // nose
+  ctx.quadraticCurveTo(L*0.18,  Wd,  -L*0.34,  tail*0.5 + Wd*0.22);
+  ctx.quadraticCurveTo(-L*0.5, tail*0.8, -L*0.52, tail);     // tail root
+  ctx.quadraticCurveTo(-L*0.5, tail*0.8 - Wd*0.1, -L*0.34, tail*0.5 - Wd*0.22);
+  ctx.quadraticCurveTo(L*0.18, -Wd,  L*0.52, 0);
+  ctx.fill();
+  // tail fin
+  ctx.beginPath();
+  ctx.moveTo(-L*0.46, tail*0.9);
+  ctx.lineTo(-L*0.86, tail + L*0.16);
+  ctx.lineTo(-L*0.80, tail);
+  ctx.lineTo(-L*0.86, tail - L*0.16);
+  ctx.closePath();
+  ctx.fillStyle = rgba(f.col, 0.55 * dim);
+  ctx.fill();
+  ctx.restore();
+}
+
+/* ============================== predator ============================== */
+const pred = { x: 0, y: 0, vx: 20, vy: 0, tx: 0, ty: 0, phase: 0, retarget: 0 };
+function resetPred(){
+  pred.x = W * 0.8; pred.y = H * 0.6;
+  pred.tx = W * 0.25; pred.ty = H * 0.4;
+}
+function stepPred(dt){
+  pred.retarget -= dt;
+  const dx = pred.tx - pred.x, dy = pred.ty - pred.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 60 || pred.retarget <= 0){
+    pred.tx = rand(W*0.14, W*0.86);
+    pred.ty = rand(H*0.2, H*0.72);
+    pred.retarget = rand(6, 11);
+  }
+  const SPEED = 34, FORCE = 26;
+  pred.vx += (dx/(d||1) * SPEED - pred.vx) * clamp(FORCE*dt/SPEED, 0, 1);
+  pred.vy += (dy/(d||1) * SPEED - pred.vy) * clamp(FORCE*dt/SPEED, 0, 1);
+  applyCurrent(pred, 0.5);
+  const s = Math.hypot(pred.vx, pred.vy) || 1;
+  if (s > SPEED){ pred.vx = pred.vx/s*SPEED; pred.vy = pred.vy/s*SPEED; }
+  pred.x += pred.vx * dt * simSpeed; pred.y += pred.vy * dt * simSpeed;
+  pred.x = clamp(pred.x, 40, W-40); pred.y = clamp(pred.y, 50, H-70);
+  pred.phase += (s * 0.045 + 1.6) * dt * simSpeed;
+}
+function drawPred(env){
+  const a = Math.atan2(pred.vy, pred.vx);
+  const L = 58, Wd = 15;
+  const tail = Math.sin(pred.phase) * 9;
+  ctx.save();
+  ctx.translate(pred.x, pred.y);
+  ctx.rotate(a);
+  const body = mixc([24,54,68], [13,29,40], env.night);
+  const belly = mixc([52,88,102], [24,44,58], env.night);
+  const bodyGrad = ctx.createLinearGradient(0, -Wd, 0, Wd);
+  bodyGrad.addColorStop(0, rgba(body, 0.95));
+  bodyGrad.addColorStop(0.62, rgba(body, 0.95));
+  bodyGrad.addColorStop(1, rgba(belly, 0.9));
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.moveTo(L*0.55, 0);
+  ctx.quadraticCurveTo(L*0.15,  Wd, -L*0.35,  tail*0.5 + 3);
+  ctx.quadraticCurveTo(-L*0.52, tail*0.85, -L*0.55, tail);
+  ctx.quadraticCurveTo(-L*0.52, tail*0.85 - 2, -L*0.35, tail*0.5 - 3);
+  ctx.quadraticCurveTo(L*0.15, -Wd, L*0.55, 0);
+  ctx.fill();
+  // dorsal fin
+  ctx.beginPath();
+  ctx.moveTo(-L*0.02, -Wd*0.55);
+  ctx.quadraticCurveTo(-L*0.14, -Wd*1.75, -L*0.24, -Wd*0.5);
+  ctx.closePath();
+  ctx.fill();
+  // tail
+  ctx.beginPath();
+  ctx.moveTo(-L*0.5, tail);
+  ctx.lineTo(-L*0.85, tail + 13);
+  ctx.lineTo(-L*0.76, tail);
+  ctx.lineTo(-L*0.85, tail - 13);
+  ctx.closePath();
+  ctx.fillStyle = rgba(body, 0.8);
+  ctx.fill();
+  // eye
+  ctx.beginPath();
+  ctx.arc(L*0.36, -2.5, 1.8, 0, TAU);
+  ctx.fillStyle = 'rgba(233,242,242,0.55)';
+  ctx.fill();
+  ctx.restore();
+}
+
+/* ============================== kelp ============================== */
+let kelp = [];
+function buildKelp(){
+  kelp = [];
+  const n = isMobile() ? 8 : 11;
+  for (let i = 0; i < n; i++){
+    const x = W * (0.04 + (i + rand(-0.25, 0.25)) / (n - 0.5) * 0.92);
+    const segs = (rand(9, 14))|0;
+    const hgt = H * rand(0.22, 0.4);
+    kelp.push({
+      x, segs, segLen: hgt / segs,
+      phase: rand(0, TAU),
+      speed: rand(0.5, 0.85),
+      amp: rand(0.055, 0.1),
+      back: Math.random() < 0.45,
+      bend: 0, bendV: 0,
+      lean: rand(-0.06, 0.06),
+    });
+  }
+  kelp.sort((a,b) => (a.back?0:1) - (b.back?0:1));
+}
+function stepKelp(dt){
+  for (const k of kelp){
+    // elastic memory of currents: spring back
+    k.bendV += (-k.bend * 3.2 - k.bendV * 1.6) * dt;
+    if (current.active){
+      const dx = k.x - current.x;
+      const d = Math.abs(dx);
+      if (d < 340) k.bendV += Math.sign(dx || 1) * (1 - d/340) * dt * 5.5;
+    }
+    k.bend += k.bendV * dt;
+  }
+}
+function drawKelp(env, time){
+  for (const k of kelp){
+    const baseCol = k.back ? mixc([13,47,42], [7,26,25], env.night)
+                           : mixc([22,74,60], [10,36,32], env.night);
+    let x = k.x, y = H + 4;
+    let ang = -Math.PI/2 + k.lean;
+    ctx.lineCap = 'round';
+    for (let j = 0; j < k.segs; j++){
+      const f = j / k.segs;
+      const sway = Math.sin(time * k.speed + k.phase + j * 0.5) * k.amp * (0.25 + f)
+                 + k.bend * f * 0.9;
+      ang = -Math.PI/2 + k.lean + sway;
+      const nx = x + Math.cos(ang) * k.segLen;
+      const ny = y + Math.sin(ang) * k.segLen;
+      ctx.strokeStyle = rgba(baseCol, k.back ? 0.6 : 0.85);
+      ctx.lineWidth = lerp(k.back ? 7 : 9.5, 1.6, f);
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(nx, ny); ctx.stroke();
+      // blades — every joint past the base, alternating sides
+      if (j > 0){
+        const side = (j % 2 === 0) ? 1 : -1;
+        const bl = k.segLen * lerp(1.65, 0.7, f);
+        const ba = ang + side * (1.15 + Math.sin(k.phase + j) * 0.18);
+        ctx.beginPath();
+        ctx.ellipse(nx + Math.cos(ba) * bl*0.55,
+                    ny + Math.sin(ba) * bl*0.55,
+                    bl*0.72, bl*0.16, ba, 0, TAU);
+        ctx.fillStyle = rgba(baseCol, k.back ? 0.45 : 0.6);
+        ctx.fill();
+        if (j > 2 && j % 3 === 0){ // occasional opposite leaflet
+          const ba2 = ang - side * 1.3;
+          ctx.beginPath();
+          ctx.ellipse(nx + Math.cos(ba2) * bl*0.4,
+                      ny + Math.sin(ba2) * bl*0.4,
+                      bl*0.5, bl*0.13, ba2, 0, TAU);
+          ctx.fillStyle = rgba(baseCol, k.back ? 0.35 : 0.5);
+          ctx.fill();
+        }
+      }
+      x = nx; y = ny;
+    }
+  }
+}
+
+/* ============================== plankton ============================== */
+const LAYERS = [
+  { n: 46, par: 0.35, size: [0.6, 1.2], alpha: 0.22 },
+  { n: 34, par: 0.65, size: [0.9, 1.7], alpha: 0.3  },
+  { n: 22, par: 1.05, size: [1.2, 2.4], alpha: 0.4  },
+];
+let plankton = [];
+function spawnPlankton(){
+  plankton = [];
+  LAYERS.forEach((L, li) => {
+    const n = isMobile() ? (L.n * 0.6)|0 : L.n;
+    for (let i = 0; i < n; i++){
+      plankton.push({
+        x: rand(0, W), y: rand(0, H),
+        r: rand(L.size[0], L.size[1]),
+        li, par: L.par, alpha: L.alpha,
+        ph: rand(0, TAU), sp: rand(0.15, 0.5),
+        glow: Math.random() < 0.5,      // bioluminescent at night
+        gph: rand(0, TAU),
+      });
+    }
+  });
+}
+function stepPlankton(dt, time){
+  for (const p of plankton){
+    p.x += (Math.sin(time * 0.11 + p.ph) * 3 + 4.5) * p.par * dt * simSpeed;
+    p.y += Math.cos(time * p.sp + p.ph) * 2.4 * p.par * dt * simSpeed;
+    applyCurrent(p, p.par * 1.6, dt);
+    if (p.x > W + 6) p.x = -6;
+    if (p.x < -6) p.x = W + 6;
+    if (p.y > H + 6) p.y = -6;
+    if (p.y < -6) p.y = H + 6;
+  }
+}
+function drawPlanktonLayer(li, env, time){
+  for (const p of plankton){
+    if (p.li !== li) continue;
+    let a = p.alpha * (0.7 + 0.3 * Math.sin(time * 0.9 + p.ph));
+    if (env.night > 0.5 && p.glow){
+      const tw = 0.5 + 0.5 * Math.sin(time * 1.6 + p.gph);
+      const g = env.night * tw;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * (1.7 + tw), 0, TAU);
+      ctx.fillStyle = `rgba(127,230,255,${0.65 * g})`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 5.2, 0, TAU);
+      ctx.fillStyle = `rgba(90,210,255,${0.12 * g})`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 0.85, 0, TAU);
+      ctx.fillStyle = `rgba(215,246,255,${0.9 * g})`;
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, TAU);
+      ctx.fillStyle = `rgba(196,226,230,${a * (1 - env.night*0.55)})`;
+      ctx.fill();
+    }
+  }
+}
+
+/* ============================== jellyfish ============================== */
+let jellies = [];
+function spawnJellies(){
+  jellies = [];
+  const n = isMobile() ? 2 : 3;
+  for (let i = 0; i < n; i++){
+    jellies.push({
+      x: rand(W*0.15, W*0.85), y: rand(H*0.4, H*0.95),
+      vy: 0, vx: 0,
+      r: rand(17, 28),
+      ph: rand(0, TAU), rate: rand(1.6, 2.3),
+      drift: rand(-3, 3),
+    });
+  }
+}
+function stepJellies(dt){
+  for (const j of jellies){
+    j.ph += j.rate * dt * simSpeed;
+    const p = Math.max(0, Math.sin(j.ph));
+    j.vy += (-p * 26 * dt + 7.5 * dt) * simSpeed;   // pulse thrust vs sink
+    j.vy *= (1 - 0.7 * dt);
+    j.vx += (j.drift - j.vx) * 0.25 * dt;
+    applyCurrent(j, 0.9);
+    j.x += j.vx * dt * simSpeed;
+    j.y += j.vy * dt * simSpeed;
+    if (j.y < -j.r * 4){ j.y = H + j.r * 3; j.x = rand(W*0.15, W*0.85); }
+    j.x = clamp(j.x, 20, W-20);
+  }
+}
+function drawJellies(env, time){
+  for (const j of jellies){
+    const p = Math.max(0, Math.sin(j.ph));
+    const e = p*p*(3-2*p);
+    const bw = j.r * (1.22 - 0.26 * e);
+    const bh = j.r * (0.72 + 0.5 * e);
+    const glow = 0.5 + env.night * 0.7;
+    ctx.save();
+    ctx.translate(j.x, j.y);
+    // tentacles
+    ctx.lineWidth = 1;
+    for (let k = 0; k < 5; k++){
+      const ox = (k/4 - 0.5) * bw * 1.5;
+      const len = j.r * (2.1 + 0.5 * Math.sin(time + k));
+      const sway = Math.sin(time * 1.3 + k * 1.7 + j.ph) * j.r * 0.5;
+      ctx.strokeStyle = `rgba(168,205,235,${0.16 * glow})`;
+      ctx.beginPath();
+      ctx.moveTo(ox * 0.8, bh * 0.25);
+      ctx.quadraticCurveTo(ox + sway * 0.5, len * 0.5, ox * 0.6 + sway, len);
+      ctx.stroke();
+    }
+    // bell
+    const grad = ctx.createRadialGradient(0, -bh*0.25, 0, 0, -bh*0.2, bw*1.15);
+    grad.addColorStop(0, `rgba(190,220,245,${0.30 * glow})`);
+    grad.addColorStop(0.75, `rgba(150,190,225,${0.14 * glow})`);
+    grad.addColorStop(1, 'rgba(150,190,225,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(-bw, bh * 0.18);
+    ctx.bezierCurveTo(-bw * 1.05, -bh * 0.75, -bw * 0.45, -bh, 0, -bh);
+    ctx.bezierCurveTo(bw * 0.45, -bh, bw * 1.05, -bh * 0.75, bw, bh * 0.18);
+    ctx.quadraticCurveTo(bw * 0.5, bh * 0.02, 0, bh * 0.14);
+    ctx.quadraticCurveTo(-bw * 0.5, bh * 0.02, -bw, bh * 0.18);
+    ctx.fill();
+    ctx.strokeStyle = `rgba(200,230,255,${0.22 * glow})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ============================== food & current ============================== */
+const food = [];
+function dropFood(x, y){
+  const n = 7 + (Math.random()*4)|0;
+  for (let i = 0; i < n; i++){
+    food.push({
+      x: x + rand(-14, 14), y: y + rand(-8, 8),
+      vy: rand(9, 15), ph: rand(0, TAU),
+      amt: 1, age: 0,
+    });
+  }
+}
+function stepFood(dt, time){
+  for (let i = food.length-1; i >= 0; i--){
+    const p = food[i];
+    p.age += dt;
+    p.y += p.vy * dt * simSpeed;
+    p.x += Math.sin(time * 1.7 + p.ph) * 6 * dt * simSpeed;
+    if (p.amt <= 0 || p.age > 22 || p.y > H - 8) food.splice(i, 1);
+  }
+}
+function drawFood(){
+  for (const p of food){
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4.5, 0, TAU);
+    ctx.fillStyle = 'rgba(240,217,168,0.10)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 1.8, 0, TAU);
+    ctx.fillStyle = `rgba(240,217,168,${0.85 * clamp(p.amt,0,1)})`;
+    ctx.fill();
+  }
+}
+
+const current = { active: false, x: 0, y: 0, R: 270, F: 260 };
+const rings = [];
+function applyCurrent(o, scale, dtOverride){
+  if (!current.active) return;
+  const dx = o.x - current.x, dy = o.y - current.y;
+  const d = Math.hypot(dx, dy);
+  if (d > current.R || d < 0.01) return;
+  const k = (1 - d/current.R) * current.F * scale;
+  if ('vx' in o){
+    o.vx += dx/d * k * frameDt;
+    o.vy += dy/d * k * frameDt;
+  } else {
+    o.x += dx/d * k * (dtOverride||frameDt) * 0.4;
+    o.y += dy/d * k * (dtOverride||frameDt) * 0.4;
+  }
+}
+function stepRings(dt){
+  if (current.active && (rings.length === 0 || rings[rings.length-1].r > 46)){
+    rings.push({ x: current.x, y: current.y, r: 8, a: 0.34 });
+  }
+  for (let i = rings.length-1; i >= 0; i--){
+    const r = rings[i];
+    r.r += 130 * dt; r.a -= 0.30 * dt;
+    if (r.a <= 0) rings.splice(i, 1);
+  }
+}
+function drawRings(){
+  for (const r of rings){
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, r.r, 0, TAU);
+    ctx.strokeStyle = `rgba(190,235,240,${r.a})`;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+}
+
+/* pointer: short press = feed, hold = current */
+let pressT = 0, pressXY = null, holdTimer = null;
+stage.addEventListener('pointerdown', e => {
+  if (e.target.closest('.panel') || e.target.closest('a')) return;
+  const r = canvas.getBoundingClientRect();
+  pressXY = [e.clientX - r.left, e.clientY - r.top];
+  pressT = performance.now();
+  holdTimer = setTimeout(() => {
+    current.active = true;
+    current.x = pressXY[0]; current.y = pressXY[1];
+  }, 280);
+});
+stage.addEventListener('pointermove', e => {
+  if (!pressXY) return;
+  const r = canvas.getBoundingClientRect();
+  pressXY = [e.clientX - r.left, e.clientY - r.top];
+  if (current.active){ current.x = pressXY[0]; current.y = pressXY[1]; }
+});
+function endPress(e){
+  clearTimeout(holdTimer);
+  if (!pressXY) return;
+  if (!current.active && performance.now() - pressT < 280){
+    dropFood(pressXY[0], pressXY[1]);
+  }
+  current.active = false;
+  pressXY = null;
+}
+stage.addEventListener('pointerup', endPress);
+stage.addEventListener('pointercancel', endPress);
+stage.addEventListener('pointerleave', endPress);
+
+/* ============================== caustics & rays ============================== */
+function drawCaustics(env, time){
+  if (env.ca <= 0.004) return;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let b = 0; b < 5; b++){
+    const yBase = 14 + b * 19 + Math.sin(time * 0.3 + b) * 4;
+    const amp = 5 + b * 3;
+    ctx.beginPath();
+    for (let x = -20; x <= W + 20; x += 22){
+      const y = yBase
+        + Math.sin(x * 0.011 + time * (0.7 + b*0.22) + b*2.1) * amp
+        + Math.sin(x * 0.031 - time * (0.5 + b*0.13) + b*0.7) * amp * 0.55;
+      x === -20 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = `rgba(180,235,235,${env.ca * 0.55 * (1 - b*0.16)})`;
+    ctx.lineWidth = 6.5 - b * 1.05;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawRays(env, time){
+  if (env.ray <= 0.004) return;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 5; i++){
+    const cx = W * (0.12 + i * 0.19) + Math.sin(time * 0.07 + i * 1.9) * W * 0.05;
+    const wTop = 26 + i * 9;
+    const slant = W * 0.09 + Math.sin(time * 0.05 + i) * W * 0.02;
+    const alpha = env.ray * (0.5 + 0.5 * Math.sin(time * 0.16 + i * 2.4));
+    const g = ctx.createLinearGradient(cx, 0, cx + slant * 0.7, H * 0.85);
+    g.addColorStop(0, `rgba(170,225,235,${alpha})`);
+    g.addColorStop(1, 'rgba(170,225,235,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx - wTop, -4);
+    ctx.lineTo(cx + wTop, -4);
+    ctx.lineTo(cx + slant + wTop * 2.6, H * 0.85);
+    ctx.lineTo(cx + slant - wTop * 2.6, H * 0.85);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* ============================== UI ============================== */
+const elPhase = document.getElementById('phase');
+const elPol = document.getElementById('cPol');
+const elClock = document.getElementById('cClock');
+const elPop = document.getElementById('cPop');
+const dial = document.getElementById('dial');
+let dialHeld = false;
+dial.addEventListener('pointerdown', () => dialHeld = true);
+addEventListener('pointerup', () => dialHeld = false);
+dial.addEventListener('input', () => { cycleT = dial.value / 1000; });
+
+let uiTimer = 0;
+function updateUI(dt, env){
+  uiTimer -= dt;
+  if (uiTimer > 0) return;
+  uiTimer = 0.25;
+  elPhase.textContent = env.name;
+  if (!dialHeld) dial.value = Math.round(cycleT * 1000);
+  // polarisation = |mean unit heading|
+  let ux = 0, uy = 0;
+  for (const f of fish){
+    const m = Math.hypot(f.vx, f.vy) || 1;
+    ux += f.vx/m; uy += f.vy/m;
+  }
+  elPol.textContent = (Math.hypot(ux, uy) / (fish.length||1)).toFixed(2);
+  const secs = (cycleT * CYCLE_SECONDS)|0;
+  elClock.textContent = String((secs/60)|0).padStart(2,'0') + ':' + String(secs%60).padStart(2,'0');
+  elPop.textContent = fish.length;
+}
+
+/* ============================== main loop ============================== */
+let simSpeed = reduced ? 0.16 : 1;
+let last = performance.now();
+let frameDt = 1/60;
+let running = true;
+let rafId = 0;
+
+function frame(now){
+  rafId = requestAnimationFrame(frame);
+  let dt = (now - last) / 1000;
+  last = now;
+  if (dt > 0.1) dt = 0.1;
+  frameDt = dt * simSpeed;
+  const time = now / 1000;
+
+  if (!cycleFrozen) cycleT = (cycleT + dt / CYCLE_SECONDS) % 1;
+  const env = envAt(cycleT);
+
+  /* --- sim --- */
+  rebuildGrid(fish);
+  const sdt = dt * simSpeed;
+  for (const f of fish) steerFish(f, sdt);
+  stepPred(sdt);
+  stepKelp(sdt || dt*0.16);
+  stepPlankton(dt, time);
+  stepJellies(dt);
+  stepFood(dt, time);
+  stepRings(dt);
+
+  /* --- draw --- */
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, rgba(env.top, 1));
+  bg.addColorStop(1, rgba(env.bot, 1));
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // moonlight sheen at deep night so the surface still reads
+  if (env.night > 0.45){
+    const m = (env.night - 0.45) / 0.55;
+    const mg = ctx.createRadialGradient(W*0.68, -H*0.15, 0, W*0.68, -H*0.15, H*0.75);
+    mg.addColorStop(0, `rgba(120,160,190,${0.10*m})`);
+    mg.addColorStop(1, 'rgba(120,160,190,0)');
+    ctx.fillStyle = mg;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  drawRays(env, time);
+  drawPlanktonLayer(0, env, time);
+  drawKelp(env, reduced ? time * 0.25 : time);
+  drawPlanktonLayer(1, env, time);
+  drawJellies(env, time);
+  drawFood();
+  for (const f of fish) drawFish(f, env);
+  drawPred(env);
+  drawPlanktonLayer(2, env, time);
+  drawCaustics(env, time);
+  drawRings();
+
+  updateUI(dt, env);
+}
+
+function start(){ if (!running){ running = true; last = performance.now(); rafId = requestAnimationFrame(frame); } }
+function stop(){ if (running){ running = false; cancelAnimationFrame(rafId); } }
+
+document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+const io = new IntersectionObserver(es => es[0].isIntersecting ? start() : stop(), { threshold: 0.02 });
+io.observe(stage);
+
+/* card reveal */
+if (!reduced && 'IntersectionObserver' in window){
+  const co = new IntersectionObserver(es => es.forEach((e, ) => {
+    if (e.isIntersecting){
+      const i = [...document.querySelectorAll('.card')].indexOf(e.target);
+      setTimeout(() => e.target.classList.add('vis'), i * 130);
+      co.unobserve(e.target);
+    }
+  }), { threshold: 0.2 });
+  document.querySelectorAll('.card').forEach(c => co.observe(c));
+} else {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('vis'));
+}
+
+/* ?scroll=1 jumps to field notes (screenshot aid) */
+if (params.has('scroll')){
+  requestAnimationFrame(() => document.getElementById('notes').scrollIntoView({ behavior: 'instant' }));
+}
+
+/* boot */
+resize();
+spawnFish(isMobile() ? 80 : 120);
+resetPred();
+spawnPlankton();
+spawnJellies();
+running = false; start();
+})();
+</script>
+</body>
+</html>

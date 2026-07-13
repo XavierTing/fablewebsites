@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAW MATTER — Issue 07: CONCRETE</title>
+<meta name="description" content="RAW MATTER is a magazine about material honesty. Issue 07 is about concrete: what it records, what it costs, and why demolition is the laziest form of criticism.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="RAW MATTER — Issue 07: CONCRETE">
+<meta property="og:description" content="RAW MATTER is a magazine about material honesty. Issue 07 is about concrete: what it records, what it costs, and why demolition is the laziest form of criticism.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/06-brutalist-mag/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/06-brutalist-mag/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RAW MATTER — Issue 07: CONCRETE">
+<meta name="twitter:description" content="RAW MATTER is a magazine about material honesty. Issue 07 is about concrete: what it records, what it costs, and why demolition is the laziest form of criticism.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/06-brutalist-mag/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23111%22/><rect x=%2214%22 y=%2214%22 width=%2272%22 height=%2272%22 fill=%22%23ff2a00%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RAW MATTER — ISSUE 07: CONCRETE
+   ink #111111 on paper #E8E8E3 / alarm #FF2A00
+   rules: 2px solid, always. radius: 0. shadows: none.
+   ============================================================ */
+:root{
+  --ink:#111111;
+  --paper:#e8e8e3;
+  --alarm:#ff2a00;
+  --aggregate:#b3b3ab;
+  --aggregate-deep:#8f8f88;
+  --rule:2px solid var(--ink);
+  --margin:clamp(16px, 3.2vw, 48px);
+  --gutter:clamp(10px, 1.4vw, 20px);
+  --mono:"Space Mono", ui-monospace, monospace;
+  --sans:"Archivo", Helvetica, Arial, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0 !important;}
+html{scroll-behavior:auto;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--alarm);color:var(--paper);}
+::-webkit-scrollbar{width:14px;background:var(--paper);}
+::-webkit-scrollbar-thumb{background:var(--ink);border:3px solid var(--paper);}
+::-webkit-scrollbar-thumb:hover{background:var(--alarm);}
+:focus-visible{outline:3px solid var(--alarm);outline-offset:2px;}
+a,button,.row,label{cursor:crosshair;}
+a{color:var(--ink);text-decoration:none;}
+
+/* ---- layout primitives -------------------------------------- */
+.wrap{padding-inline:var(--margin);}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gutter);}
+.mono{font-family:var(--mono);}
+
+/* ---- exposed grid overlay ----------------------------------- */
+#gridlay{
+  position:fixed;inset:0;z-index:900;pointer-events:none;
+  padding-inline:var(--margin);
+  display:none;
+}
+body.gridon #gridlay{display:block;}
+#gridlay .cols{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gutter);height:100%;}
+#gridlay .c{background:rgba(255,42,0,.06);border-inline:1px solid rgba(255,42,0,.55);position:relative;}
+#gridlay .c::after{
+  content:attr(data-n);position:absolute;top:4px;left:4px;
+  font-family:var(--mono);font-size:10px;color:var(--alarm);
+}
+
+/* ---- topbar --------------------------------------------------- */
+header.topbar{
+  border-bottom:var(--rule);
+  position:sticky;top:0;z-index:800;background:var(--paper);
+}
+.topbar .grid{align-items:stretch;}
+.topbar a.fable{
+  grid-column:1 / span 3;
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;
+  display:flex;align-items:center;gap:10px;padding-block:12px;
+}
+.topbar a.fable .sq{width:10px;height:10px;background:var(--alarm);display:inline-block;flex:none;}
+.topbar a.fable:hover{background:var(--ink);color:var(--paper);}
+.topbar .tagline{
+  grid-column:4 / span 6;
+  font-family:var(--mono);font-size:12px;letter-spacing:.08em;
+  display:flex;align-items:center;justify-content:center;text-transform:uppercase;
+  padding-block:12px;white-space:nowrap;overflow:hidden;
+}
+.topbar .tools{grid-column:10 / span 3;display:flex;align-items:stretch;justify-content:flex-end;gap:0;}
+.topbar button{
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;
+  background:var(--paper);color:var(--ink);
+  border:none;border-left:var(--rule);padding:0 18px;text-transform:uppercase;
+}
+.topbar button:hover,.topbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper);}
+.topbar button[aria-pressed="true"]{background:var(--alarm);color:var(--ink);}
+
+/* ---- masthead ------------------------------------------------- */
+.masthead{padding-top:clamp(18px,3vh,40px);}
+.mastrow1{align-items:end;border-bottom:var(--rule);}
+.mast{
+  font-family:var(--sans);
+  font-weight:900;font-stretch:125%;
+  font-size:16vw;line-height:.8;letter-spacing:-.035em;
+  text-transform:uppercase;user-select:auto;
+  display:block;white-space:nowrap;
+}
+.mast .fitspan{display:inline-block;white-space:nowrap;}
+.mastrow1 .mast{grid-column:1 / span 6;}
+.mastmeta{
+  grid-column:7 / span 6;
+  /* subgrid: 6 equal tracks reproduce parent cols 7–12 exactly,
+     so the issue box ends flush on col 10 and the stamp owns 11–12 */
+  display:grid;grid-template-columns:repeat(6,1fr);column-gap:var(--gutter);
+  align-items:end;
+  padding-bottom:1.2vw;
+}
+.issuebox{
+  grid-column:1 / span 4;
+  border:var(--rule);
+  font-family:var(--mono);font-size:clamp(10px,.9vw,13px);line-height:1.35;
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.issuebox .cell{padding:8px 12px;border-bottom:var(--rule);display:flex;justify-content:space-between;gap:12px;}
+.issuebox .cell:last-child{border-bottom:none;}
+.issuebox .cell b{font-weight:700;}
+.issuebox .cell .val{text-align:right;}
+.stamp{
+  grid-column:5 / span 2;justify-self:end;align-self:center;
+  border:3px solid var(--alarm);color:var(--alarm);
+  font-family:var(--mono);font-weight:700;font-size:clamp(10px,1vw,14px);
+  letter-spacing:.18em;text-transform:uppercase;
+  padding:10px 14px;
+  /* translate BEFORE rotate: pulls the rotated corner back inside the margin */
+  transform:translateX(-5px) rotate(-8deg);
+  white-space:nowrap;
+}
+.mastrow2{border-bottom:var(--rule);}
+.mastrow2 .mast{grid-column:1 / -1;font-size:17vw;letter-spacing:-.038em;}
+.mastrow3{border-bottom:var(--rule);}
+.mastrow3 .k{
+  font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.1em;
+  padding-block:10px;white-space:nowrap;
+}
+.mastrow3 .k1{grid-column:1 / span 3;}
+.mastrow3 .k2{grid-column:4 / span 6;text-align:center;}
+.mastrow3 .k3{grid-column:10 / span 3;text-align:right;}
+.blink{display:inline-block;width:.6em;height:1em;background:var(--alarm);vertical-align:-.15em;}
+@keyframes blink{50%{opacity:0;}}
+.blink{animation:blink 1s steps(1) infinite;}
+
+/* ---- ticker --------------------------------------------------- */
+.ticker{
+  background:var(--alarm);color:var(--ink);
+  border-bottom:var(--rule);
+  overflow:hidden;white-space:nowrap;cursor:crosshair;
+  user-select:none;
+}
+.ticker .lane{display:inline-flex;animation:tick 38s linear infinite;will-change:transform;}
+.ticker:hover .lane{animation-play-state:paused;}
+.ticker .set{display:inline-flex;flex:none;}
+.ticker span{
+  font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.1em;
+  text-transform:uppercase;padding:10px 0;
+}
+.ticker .sep{padding:10px 18px;}
+@keyframes tick{to{transform:translateX(-50%);}}
+
+/* ---- section headers ------------------------------------------ */
+.sechead{border-bottom:var(--rule);align-items:baseline;}
+.sechead h2{
+  grid-column:1 / span 8;
+  font-weight:900;font-stretch:125%;text-transform:uppercase;
+  font-size:clamp(28px,3.6vw,52px);letter-spacing:-.02em;line-height:1;
+  padding-block:18px 14px;
+}
+.sechead .note{
+  grid-column:9 / span 4;text-align:right;
+  font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.1em;
+  padding-block:18px 14px;
+}
+
+/* ---- index table ---------------------------------------------- */
+.index{list-style:none;}
+.row{display:block;border-bottom:var(--rule);}
+.row a{
+  display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gutter);
+  align-items:baseline;
+  padding-block:20px;
+  background:var(--paper);color:var(--ink);
+  text-decoration:none;
+}
+.row .no{grid-column:1 / span 1;font-family:var(--mono);font-size:14px;font-weight:700;}
+.row .no::before{content:"№";margin-right:.5em;font-weight:400;opacity:.55;}
+.row h3{
+  grid-column:2 / span 6;
+  font-weight:900;font-stretch:118%;text-transform:uppercase;
+  font-size:clamp(20px,2.4vw,36px);line-height:1;letter-spacing:-.015em;
+}
+.row h3 .tag{
+  font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.14em;
+  color:var(--alarm);vertical-align:.9em;margin-left:10px;
+}
+.row .deck{
+  grid-column:8 / span 3;
+  font-family:var(--mono);font-size:13px;line-height:1.45;
+  visibility:hidden;
+}
+.row .by{grid-column:11 / span 1;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.row .time{grid-column:12 / span 1;font-family:var(--mono);font-size:12px;text-align:right;white-space:nowrap;}
+/* THE HARD CUT — no transition, ever */
+.row a:hover,.row a:focus-visible{
+  background:var(--ink);color:var(--paper);
+}
+.row a:hover .deck,.row a:focus-visible .deck{visibility:visible;}
+.row a:hover .tag,.row a:focus-visible .tag{color:var(--alarm);}
+.row a:hover .no::before,.row a:focus-visible .no::before{opacity:.55;}
+
+/* ---- feature article ------------------------------------------ */
+.feature{border-bottom:var(--rule);}
+.feat-kicker{border-bottom:var(--rule);}
+.feat-kicker .k{
+  grid-column:1 / -1;
+  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--alarm);
+  text-transform:uppercase;letter-spacing:.22em;padding-block:12px;
+}
+.feat-title{border-bottom:var(--rule);}
+.feat-title h2{
+  grid-column:1 / span 10;
+  font-weight:900;font-stretch:125%;text-transform:uppercase;
+  font-size:clamp(40px,7.2vw,104px);line-height:.86;letter-spacing:-.03em;
+  padding-block:26px 20px;transform:translateX(-.04em);
+}
+.feat-title .fno{
+  grid-column:11 / span 2;align-self:start;justify-self:end;
+  font-family:var(--mono);font-size:clamp(40px,6vw,88px);font-weight:700;line-height:.86;
+  color:var(--paper);-webkit-text-stroke:2px var(--ink);
+  padding-block:26px 20px;
+}
+.feat-body{padding-block:clamp(28px,4vh,56px) clamp(32px,5vh,64px);position:relative;}
+.marginalia{
+  grid-column:1 / span 3;
+  font-family:var(--mono);font-size:12px;line-height:1.6;
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.marginalia .m{border-top:var(--rule);padding:10px 0 22px;}
+.marginalia .m b{display:block;color:var(--alarm);font-size:11px;letter-spacing:.18em;margin-bottom:4px;}
+.prose{grid-column:4 / span 6;font-size:clamp(16px,1.25vw,19px);line-height:1.62;}
+.prose p{margin-bottom:1.4em;}
+.prose p.lede::first-letter{
+  float:left;
+  font-family:var(--sans);font-weight:900;font-stretch:125%;
+  font-size:5.2em;line-height:.78;
+  padding:.06em .12em 0 0;
+  color:var(--alarm);
+}
+.prose a{
+  color:var(--alarm);font-weight:700;
+  text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:3px;
+  text-decoration-color:var(--alarm);
+}
+.prose a:hover{background:var(--alarm);color:var(--paper);text-decoration-color:var(--paper);}
+.pullcol{
+  grid-column:10 / span 3;position:relative;
+}
+.pull{
+  writing-mode:vertical-rl;
+  font-weight:900;font-stretch:110%;text-transform:uppercase;
+  font-size:clamp(20px,1.9vw,30px);line-height:1.05;letter-spacing:-.01em;
+  border-right:6px solid var(--alarm);
+  padding-right:16px;
+  max-height:30em;
+  margin-left:auto;
+}
+.pull small{
+  display:block;font-family:var(--mono);font-weight:400;font-size:11px;
+  letter-spacing:.14em;margin-top:0;padding-top:14px;text-transform:uppercase;
+}
+.pull.p2{margin-top:clamp(40px,8vh,120px);}
+/* image withheld */
+.withheld{
+  border:var(--rule);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 10px, rgba(17,17,17,.05) 10px 11px),
+    linear-gradient(var(--aggregate), var(--aggregate));
+  aspect-ratio:16/9;
+  display:flex;align-items:center;justify-content:center;
+  margin:.4em 0 0;
+  position:relative;
+}
+.withheld::before,.withheld::after{
+  content:"";position:absolute;background:var(--ink);
+}
+.withheld::before{left:0;top:0;width:100%;height:100%;
+  background:linear-gradient(to bottom right,transparent calc(50% - 1px),var(--ink) calc(50% - 1px),var(--ink) calc(50% + 1px),transparent calc(50% + 1px));
+  opacity:.35;
+}
+.withheld::after{left:0;top:0;width:100%;height:100%;
+  background:linear-gradient(to bottom left,transparent calc(50% - 1px),var(--ink) calc(50% - 1px),var(--ink) calc(50% + 1px),transparent calc(50% + 1px));
+  opacity:.35;
+}
+.withheld .lbl{
+  position:relative;background:var(--paper);border:var(--rule);
+  font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;padding:10px 16px;
+}
+figure.fig{margin:2.2em 0;}
+figure.fig figcaption{
+  font-family:var(--mono);font-size:12px;line-height:1.55;
+  border-bottom:var(--rule);
+  padding:10px 0 12px;
+}
+figure.fig figcaption b{color:var(--alarm);letter-spacing:.14em;}
+.cutoff{
+  margin-top:3em;
+  background:var(--ink);color:var(--paper);
+  font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:16px 18px;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.cutoff .rd{color:var(--alarm);}
+
+/* ---- subscribe strip ------------------------------------------ */
+.subscribe{border-bottom:var(--rule);background:var(--ink);color:var(--paper);}
+.subscribe .grid{align-items:center;}
+.subscribe h2{
+  grid-column:1 / span 7;
+  font-weight:900;font-stretch:125%;text-transform:uppercase;
+  font-size:clamp(26px,3.4vw,48px);line-height:.95;letter-spacing:-.02em;
+  padding-block:34px;
+}
+.subscribe .sm{
+  grid-column:8 / span 3;font-family:var(--mono);font-size:12px;line-height:1.6;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.subscribe .cta{
+  grid-column:11 / span 2;justify-self:end;
+  background:var(--alarm);color:var(--ink);
+  font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;border:2px solid var(--alarm);
+  padding:16px 22px;white-space:nowrap;
+}
+.subscribe .cta:hover{background:var(--ink);color:var(--alarm);}
+
+/* ---- colophon -------------------------------------------------- */
+footer.colophon{padding-block:0 0;}
+.colophon .cohead{border-bottom:var(--rule);}
+.colophon .cohead h2{
+  grid-column:1 / span 6;
+  font-weight:900;font-stretch:125%;text-transform:uppercase;
+  font-size:clamp(24px,3vw,44px);line-height:1;padding-block:16px 12px;letter-spacing:-.02em;
+}
+.colophon .cohead .note{
+  grid-column:7 / span 6;text-align:right;font-family:var(--mono);font-size:12px;
+  text-transform:uppercase;letter-spacing:.1em;padding-block:16px 12px;align-self:end;
+}
+.spec{border-bottom:var(--rule);}
+.spec .col{
+  padding:16px 0 26px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.7;
+}
+.spec .col b{
+  display:block;font-weight:700;letter-spacing:.2em;color:var(--alarm);
+  font-size:11px;text-transform:uppercase;margin-bottom:10px;
+}
+.spec .c1{grid-column:1 / span 3;}
+.spec .c2{grid-column:4 / span 3;}
+.spec .c3{grid-column:7 / span 3;}
+.spec .c4{grid-column:10 / span 3;}
+.swatch{display:flex;align-items:center;gap:8px;}
+.swatch i{width:14px;height:14px;border:2px solid var(--ink);display:inline-block;flex:none;}
+.baseline{padding-block:14px;}
+.baseline .l{grid-column:1 / span 6;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+.baseline .r{grid-column:7 / span 6;text-align:right;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* ---- hard-cut entrance ----------------------------------------- */
+@media (prefers-reduced-motion: no-preference){
+  .cut{opacity:0;animation:hardcut 1ms steps(1,end) both;}
+  @keyframes hardcut{to{opacity:1;}}
+  .cut.d1{animation-delay:.08s;} .cut.d2{animation-delay:.18s;}
+  .cut.d3{animation-delay:.28s;} .cut.d4{animation-delay:.40s;}
+  .cut.d5{animation-delay:.52s;} .cut.d6{animation-delay:.66s;}
+}
+@media (prefers-reduced-motion: reduce){
+  .ticker .lane{animation:none;}
+  .blink{animation:none;}
+}
+
+/* ---- responsive: 390 ------------------------------------------- */
+@media (max-width: 860px){
+  .topbar .tagline{display:none;}
+  .topbar a.fable{grid-column:1 / span 6;}
+  .topbar .tools{grid-column:7 / span 6;}
+  .mast{font-size:24.5vw;letter-spacing:-.03em;}
+  .mastrow1 .mast{grid-column:1 / -1;}
+  .mastmeta{grid-column:1 / -1;padding-block:14px;align-items:center;border-top:var(--rule);}
+  .stamp{transform:translateX(-4px) rotate(-6deg);}
+  .mastrow3 .k2{display:none;}
+  .mastrow3 .k{white-space:normal;}
+  .mastrow3 .k1{grid-column:1 / -1;padding-bottom:0;}
+  .mastrow3 .k3{grid-column:1 / -1;text-align:left;padding-top:2px;}
+  .sechead h2{grid-column:1 / -1;}
+  .sechead .note{grid-column:1 / -1;text-align:left;padding-top:0;}
+  .row a{padding-block:16px;row-gap:8px;}
+  .row .no{grid-column:1 / span 4;}
+  .row .time{grid-column:9 / span 4;grid-row:1;}
+  .row h3{grid-column:1 / -1;font-size:clamp(24px,7vw,34px);}
+  .row .deck{grid-column:1 / -1;visibility:visible;}
+  .row .by{grid-column:1 / -1;}
+  .feat-title h2{grid-column:1 / -1;}
+  .feat-title .fno{display:none;}
+  .marginalia{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:0 24px;margin-bottom:18px;}
+  .marginalia .m{padding:8px 0 14px;flex:1 1 40%;}
+  .prose{grid-column:1 / -1;}
+  .pullcol{grid-column:1 / -1;margin-top:8px;}
+  .pull{writing-mode:horizontal-tb;border-right:none;border-left:6px solid var(--alarm);
+        padding:0 0 0 14px;max-height:none;font-size:22px;}
+  .pull.p2{margin-top:28px;}
+  .subscribe h2{grid-column:1 / -1;padding-block:26px 8px;}
+  .subscribe .sm{grid-column:1 / -1;padding-bottom:16px;}
+  .subscribe .cta{grid-column:1 / -1;justify-self:start;margin-bottom:26px;}
+  .spec .c1,.spec .c2,.spec .c3,.spec .c4{grid-column:1 / -1;padding:12px 0 14px;}
+  .spec .c2,.spec .c3,.spec .c4{border-top:var(--rule);}
+  .baseline .l,.baseline .r{grid-column:1 / -1;text-align:left;}
+}
+</style>
+</head>
+<body>
+
+<!-- exposed grid overlay -->
+<div id="gridlay" aria-hidden="true"><div class="cols">
+  <div class="c" data-n="01"></div><div class="c" data-n="02"></div><div class="c" data-n="03"></div>
+  <div class="c" data-n="04"></div><div class="c" data-n="05"></div><div class="c" data-n="06"></div>
+  <div class="c" data-n="07"></div><div class="c" data-n="08"></div><div class="c" data-n="09"></div>
+  <div class="c" data-n="10"></div><div class="c" data-n="11"></div><div class="c" data-n="12"></div>
+</div></div>
+
+<!-- topbar -->
+<header class="topbar wrap">
+  <div class="grid">
+    <a class="fable" href="/"><span class="sq"></span>XAVIER FABLE ×30</a>
+    <div class="tagline">RAW MATTER — INDEPENDENT PRINT &amp; WEB — MATERIAL HONESTY SINCE 2019</div>
+    <div class="tools">
+      <button id="gridbtn" aria-pressed="false" title="Toggle 12-column grid (G)">[GRID]</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- masthead -->
+  <section class="masthead wrap" aria-label="Masthead">
+    <div class="grid mastrow1 cut d1">
+      <h1 class="mast fit"><span class="fitspan">RAW</span></h1>
+      <div class="mastmeta">
+        <div class="issuebox" role="group" aria-label="Issue metadata">
+          <div class="cell"><b>ISSUE</b><span class="val">07 / CONCRETE</span></div>
+          <div class="cell"><b>DATE</b><span class="val">SUMMER 2026</span></div>
+          <div class="cell"><b>EDITION</b><span class="val">3,000 COPIES</span></div>
+          <div class="cell"><b>PRICE</b><span class="val">£14 / €16 / $18</span></div>
+        </div>
+        <div class="stamp">POURED<br>QUARTERLY</div>
+      </div>
+    </div>
+    <div class="grid mastrow2 cut d2">
+      <div class="mast fit"><span class="fitspan">MATTER</span></div>
+    </div>
+    <div class="grid mastrow3 cut d3">
+      <div class="k k1">A MAGAZINE ABOUT MATERIAL HONESTY <span class="blink"></span></div>
+      <div class="k k2">PRINTED IN LEIPZIG ON 120GSM MUNKEN — NO COATING, NO APOLOGY</div>
+      <div class="k k3">EST. 2019 / ISSN 2634-0071</div>
+    </div>
+  </section>
+
+  <!-- ticker -->
+  <div class="ticker cut d4" aria-label="Headlines ticker">
+    <div class="lane" id="lane">
+      <div class="set">
+        <span>CEMENT FUTURES UP 4.1%</span><span class="sep">///</span>
+        <span>BARBICAN WAITLIST NOW ELEVEN YEARS</span><span class="sep">///</span>
+        <span>TRELLICK TOWER LISTED, AGAIN</span><span class="sep">///</span>
+        <span>ISSUE 07 SHIPS 12 AUG</span><span class="sep">///</span>
+        <span>BÉTON BRUT IS NOT A CRIME</span><span class="sep">///</span>
+        <span>DEMOLITION IS THE LAZIEST FORM OF CRITICISM</span><span class="sep">///</span>
+        <span>ROBIN HOOD GARDENS: WE TOLD YOU SO</span><span class="sep">///</span>
+        <span>SUBSCRIBE OR THE ARCHIVE STAYS SHUT</span><span class="sep">///</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- index -->
+  <section class="wrap cut d5" aria-label="Article index" id="index">
+    <div class="grid sechead">
+      <h2>Index — Issue 07</h2>
+      <div class="note">Six pieces / hover to read the deck</div>
+    </div>
+    <ul class="index">
+      <li class="row"><a href="#feature">
+        <span class="no">01</span>
+        <h3>The City That Poured Itself<span class="tag">FEATURE</span></h3>
+        <span class="deck">São Paulo shut a highway and forgot to reopen it. Nobody minded.</span>
+        <span class="by">L. Okafor</span>
+        <span class="time">14 MIN</span>
+      </a></li>
+      <li class="row"><a href="#feature">
+        <span class="no">02</span>
+        <h3>In Defense of the Ugly Building</h3>
+        <span class="deck">Demolition is the laziest form of criticism ever devised.</span>
+        <span class="by">D. Krenz</span>
+        <span class="time">09 MIN</span>
+      </a></li>
+      <li class="row"><a href="#feature">
+        <span class="no">03</span>
+        <h3>Béton Brut, Taken Literally</h3>
+        <span class="deck">A field guide to reading formwork like a fingerprint.</span>
+        <span class="by">I. Vuković</span>
+        <span class="time">11 MIN</span>
+      </a></li>
+      <li class="row"><a href="#feature">
+        <span class="no">04</span>
+        <h3>Trellick Is Watching</h3>
+        <span class="deck">Fifty years of being wrong about Goldfinger&rsquo;s tower.</span>
+        <span class="by">M. Adeyemi</span>
+        <span class="time">08 MIN</span>
+      </a></li>
+      <li class="row"><a href="#feature">
+        <span class="no">05</span>
+        <h3>Aggregate Futures</h3>
+        <span class="deck">Concrete is eight percent of global CO₂. The material must answer.</span>
+        <span class="by">P. Lindqvist</span>
+        <span class="time">16 MIN</span>
+      </a></li>
+      <li class="row"><a href="#feature">
+        <span class="no">06</span>
+        <h3>Ghost Floors</h3>
+        <span class="deck">Spain&rsquo;s unfinished skeletons, and the people who moved in anyway.</span>
+        <span class="by">R. Etxeberria</span>
+        <span class="time">12 MIN</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <!-- feature -->
+  <article class="feature wrap cut d6" id="feature" aria-label="Feature article">
+    <div class="grid feat-kicker"><div class="k">Feature / №01 / Infrastructure as Accident</div></div>
+    <div class="grid feat-title">
+      <h2>The City That Poured Itself</h2>
+      <div class="fno">01</div>
+    </div>
+    <div class="grid feat-body">
+      <aside class="marginalia">
+        <div class="m"><b>Words</b>Lena Okafor</div>
+        <div class="m"><b>Filed from</b>São Paulo, SP — Elevado Presidente João Goulart, km 2.3</div>
+        <div class="m"><b>Read time</b>14 minutes on paper. Less here. The rest is withheld.</div>
+        <div class="m"><b>Materials</b>Reinforced concrete, 3.4 km. Asphalt, abandoned. One million weekend feet.</div>
+      </aside>
+
+      <div class="prose">
+        <p class="lede">Nobody decided to build a park. That is the first thing you must understand about the Minhocão, the elevated expressway that crawls three and a half kilometres through the centre of São Paulo at bedroom height. In 1971 the city poured a highway through its own living room, close enough to the windows that you could pass a cafezinho from a kitchen to a moving car. It was loathed immediately, and correctly. Then, decades later, someone closed it on Sundays — a traffic measure, nothing noble — and the city walked up the on-ramps and refused to leave.</p>
+
+        <p>The concrete did not change. This is the part the renderings always get wrong. No planners arrived with timber decking and ornamental grasses. The expressway today is exactly what it was: a brutal slab, expansion joints ticking underfoot, rebar showing at the spalled edges like bone. What changed was permission. On a closed highway a person can walk down the middle of the lane, and a person walking down the middle of a lane owns the city in a way no plaza has ever offered them.</p>
+
+        <figure class="fig">
+          <div class="withheld"><span class="lbl">IMAGE WITHHELD</span></div>
+          <figcaption><b>FIG. 01 —</b> The expressway at 07:12 on a Sunday, seen from a fourth-floor kitchen window. Photograph withheld at the photographer&rsquo;s request; she says the light does not survive compression, and we believe her.</figcaption>
+        </figure>
+
+        <p>Every city has a structure it is ashamed of, and the shame is usually a misfiled receipt. The Minhocão records exactly what São Paulo believed in 1971 — that the car was the citizen and the citizen was in the way — and it records it in a material that <a href="#feature">does not lie</a>. You can read the pour lines. You can count the strikes where the formwork was reused past its life. Concrete is the only building material that doubles as a confession.</p>
+
+        <p>The engineers who fought to demolish it in the nineties argued from embarrassment; the ones who fought to keep it argued from arithmetic. Three and a half kilometres of standing structure is an inheritance, whatever your feelings about the relative who left it to you. To tear it down and pour its replacement would cost the carbon budget of a small nation and the memory of a large one. The laziest possible reading of an ugly building is that it should stop existing.</p>
+
+        <figure class="fig">
+          <div class="withheld"><span class="lbl">IMAGE WITHHELD</span></div>
+          <figcaption><b>FIG. 02 —</b> Formwork detail, north pier, km 1.8. The grain of the plywood is still legible after fifty-one years. Image withheld: print subscribers receive it at 175 lpi, which is the only resolution it deserves.</figcaption>
+        </figure>
+
+        <p>Stand on the deck at seven on a Sunday morning and the argument settles itself. Runners surface from the side streets. A man sells juice from a cooler lashed to a bicycle. The buildings that spent fifty years pressed against a traffic jam now open their windows onto the quietest street in the city, and the street is thirty feet in the air, and it is made of the exact same concrete everyone wanted gone. The city did not fix the Minhocão. The city finally agreed to look at it — </p>
+
+        <div class="cutoff">
+          <span>CONTINUED ON PAPER — ISSUE 07, PP. 34–51</span>
+          <span class="rd">THIS IS WHERE THE WEBSITE STOPS.</span>
+        </div>
+      </div>
+
+      <div class="pullcol" aria-hidden="true">
+        <div class="pull">&ldquo;Concrete is the only material that doubles as a confession.&rdquo;<small>— OKAFOR, P.38</small></div>
+        <div class="pull p2">&ldquo;The city walked up the on-ramps and refused to leave.&rdquo;<small>— OKAFOR, P.41</small></div>
+      </div>
+    </div>
+  </article>
+
+  <!-- subscribe -->
+  <section class="subscribe wrap" aria-label="Subscribe">
+    <div class="grid">
+      <h2>Four issues a year. Zero coated paper.</h2>
+      <div class="sm">Print + full web archive. Cancel whenever. The magazine weighs 640 grams and we will not apologise for the postage.</div>
+      <a class="cta" href="#index">SUBSCRIBE — £48/YR</a>
+    </div>
+  </section>
+
+  <!-- colophon -->
+  <footer class="colophon wrap" aria-label="Colophon">
+    <div class="grid cohead">
+      <h2>Colophon</h2>
+      <div class="note">Everything on this page, disclosed</div>
+    </div>
+    <div class="grid spec">
+      <div class="col c1">
+        <b>Type</b>
+        Archivo Variable — wght 100–900, wdth 62–125<br>
+        Space Mono — 400 / 700<br>
+        Masthead: 20vw / lh 0.80 / ls −0.035em<br>
+        Body: 17–19px / lh 1.62<br>
+        Mono meta: 12–13px / ls 0.1em
+      </div>
+      <div class="col c2">
+        <b>Ink</b>
+        <span class="swatch"><i style="background:#111111"></i>#111111 — ink</span>
+        <span class="swatch"><i style="background:#e8e8e3"></i>#E8E8E3 — paper</span>
+        <span class="swatch"><i style="background:#ff2a00"></i>#FF2A00 — alarm</span>
+        <span class="swatch"><i style="background:#b3b3ab"></i>#B3B3AB — aggregate</span>
+      </div>
+      <div class="col c3">
+        <b>Rules</b>
+        Borders: 2px solid, always<br>
+        Underlines: 4px, no exceptions<br>
+        border-radius: 0 — checked twice<br>
+        box-shadow: none — soft is a lie<br>
+        Hover transitions: 0ms. The cut is the point.
+      </div>
+      <div class="col c4">
+        <b>Grid</b>
+        12 columns / gutter clamp(10, 1.4vw, 20)<br>
+        Margin: clamp(16, 3.2vw, 48)<br>
+        Press <a href="#" id="gridlink" style="color:var(--alarm);font-weight:700;text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:3px;">[GRID]</a> or the G key to inspect our homework.
+      </div>
+    </div>
+    <div class="grid baseline">
+      <div class="l">© 2026 RAW MATTER GMBH — LEIPZIG / LONDON. ALL WRONGS RESERVED.</div>
+      <div class="r">SET LIVE 08 JUL 2026 — BUILT BY HAND, ALIGNED BY GRID</div>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // duplicate ticker set for seamless -50% loop
+  var lane=document.getElementById("lane");
+  var clone=lane.querySelector(".set").cloneNode(true);
+  clone.setAttribute("aria-hidden","true");
+  lane.appendChild(clone);
+
+  // grid overlay toggle
+  var btn=document.getElementById("gridbtn");
+  function setGrid(on){
+    document.body.classList.toggle("gridon",on);
+    btn.setAttribute("aria-pressed",String(on));
+  }
+  btn.addEventListener("click",function(){setGrid(!document.body.classList.contains("gridon"));});
+  var gl=document.getElementById("gridlink");
+  if(gl){gl.addEventListener("click",function(e){e.preventDefault();setGrid(!document.body.classList.contains("gridon"));});}
+  document.addEventListener("keydown",function(e){
+    if((e.key==="g"||e.key==="G")&&!e.metaKey&&!e.ctrlKey&&!e.altKey){
+      var t=document.activeElement&&document.activeElement.tagName;
+      if(t!=="INPUT"&&t!=="TEXTAREA"){setGrid(!document.body.classList.contains("gridon"));}
+    }
+  });
+
+  // fit masthead lines to their grid tracks, to the pixel
+  function fitLine(el){
+    var span=el.querySelector(".fitspan");
+    if(!span)return;
+    el.style.fontSize="";
+    var target=el.clientWidth;
+    if(target<=0)return;
+    var w=span.getBoundingClientRect().width;
+    if(w<=0)return;
+    /* everything (incl. tracking) is em-based, so width scales linearly
+       with font-size — scale once, then one refinement for rounding */
+    var fs=parseFloat(getComputedStyle(el).fontSize)*(target/w);
+    el.style.fontSize=fs+"px";
+    var w2=span.getBoundingClientRect().width;
+    if(w2>0){el.style.fontSize=(fs*(target/w2))+"px";}
+  }
+  function fitAll(){
+    var els=document.querySelectorAll(".mast.fit");
+    for(var i=0;i<els.length;i++){fitLine(els[i]);}
+  }
+  function fitWhenReady(){
+    if(document.fonts&&document.fonts.load){
+      Promise.all([
+        document.fonts.load('900 100px "Archivo"'),
+        document.fonts.load('700 16px "Space Mono"')
+      ]).then(fitAll).catch(fitAll);
+      document.fonts.ready.then(fitAll);
+      document.fonts.addEventListener("loadingdone",fitAll);
+    }
+    fitAll();
+    /* belt and braces against late font swaps */
+    setTimeout(fitAll,400);setTimeout(fitAll,1200);setTimeout(fitAll,2600);
+  }
+  fitWhenReady();
+  window.addEventListener("load",fitAll);
+  var rsz;
+  window.addEventListener("resize",function(){clearTimeout(rsz);rsz=setTimeout(fitAll,100);});
+
+  // ?grid=1 / ?scroll=<px|selector> for screenshot passes
+  try{
+    var params=new URLSearchParams(location.search);
+    if(params.get("grid")==="1"){setGrid(true);}
+    var q=params.get("scroll");
+    if(q){
+      var jump=function(){
+        if(/^\d+$/.test(q)){window.scrollTo(0,parseInt(q,10));}
+        else{var el=document.querySelector(q);if(el){el.scrollIntoView();}}
+      };
+      /* independent of window load — fonts CDN stalls must not block it */
+      jump();setTimeout(jump,600);setTimeout(jump,1800);setTimeout(jump,3200);
+    }
+  }catch(err){}
+})();
+</script>
+</body>
+</html>

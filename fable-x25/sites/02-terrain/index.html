@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALTIVA — An Atlas of High Places</title>
+<meta name="description" content="A cinematic expedition journal across the Seren Range — four peaks, one long light, flown at ridge height from golden hour into the dark.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="ALTIVA — An Atlas of High Places">
+<meta property="og:description" content="A cinematic expedition journal across the Seren Range — four peaks, one long light, flown at ridge height from golden hour into the dark.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/02-terrain/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/02-terrain/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ALTIVA — An Atlas of High Places">
+<meta name="twitter:description" content="A cinematic expedition journal across the Seren Range — four peaks, one long light, flown at ridge height from golden hour into the dark.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/02-terrain/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --ink:#ece9f4;
+    --muted:#a19dbb;
+    --faint:#6c6887;
+    --amber:#e8a04c;
+    --amber-dim:rgba(232,160,76,.55);
+    --indigo:#1a1f3a;
+    --bg:#0b0e20;
+    --card-bg:rgba(11,13,29,.58);
+    --hairline:rgba(232,160,76,.28);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--amber);color:#141021}
+  ::-webkit-scrollbar{width:10px}
+  ::-webkit-scrollbar-track{background:#0a0c1c}
+  ::-webkit-scrollbar-thumb{background:#2c2f4d;border-radius:5px;border:2px solid #0a0c1c}
+  ::-webkit-scrollbar-thumb:hover{background:#4a4470}
+  :focus-visible{outline:1.5px solid var(--amber);outline-offset:3px;border-radius:2px}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- fixed layers ---------- */
+  #scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+  .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(ellipse 120% 90% at 50% 42%,transparent 55%,rgba(5,6,16,.42) 100%)}
+  .grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:3;pointer-events:none;opacity:.055;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+  @media (prefers-reduced-motion: no-preference){
+    .grain{animation:grain 9s steps(6) infinite}
+  }
+  @keyframes grain{
+    0%,100%{transform:translate(0,0)}16%{transform:translate(-2.5%,1.5%)}33%{transform:translate(1.5%,-2%)}
+    50%{transform:translate(-1%,2.5%)}66%{transform:translate(2.5%,.5%)}83%{transform:translate(-1.5%,-1.5%)}
+  }
+
+  /* ---------- chrome / HUD ---------- */
+  .caps{font-family:"Inter";font-weight:500;letter-spacing:.22em;text-transform:uppercase}
+  .backlink{
+    position:fixed;top:26px;left:28px;z-index:20;
+    font-size:11px;letter-spacing:.26em;font-weight:500;color:var(--muted);
+    padding:6px 2px;border-bottom:1px solid transparent;
+    text-shadow:0 1px 10px rgba(5,6,16,.9),0 0 3px rgba(5,6,16,.7);
+    transition:color .4s cubic-bezier(.25,.6,.3,1),border-color .4s cubic-bezier(.25,.6,.3,1);
+  }
+  .backlink:hover{color:var(--amber);border-color:var(--amber-dim)}
+  .backlink em{font-style:normal;color:var(--amber)}
+  .hud-coords{
+    position:fixed;top:26px;right:28px;z-index:20;text-align:right;
+    font-size:10.5px;letter-spacing:.18em;color:var(--muted);
+    font-variant-numeric:tabular-nums;line-height:1.9;user-select:none;
+    text-shadow:0 1px 10px rgba(5,6,16,.9),0 0 3px rgba(5,6,16,.7);
+  }
+  .hud-coords .rangename{color:var(--faint);letter-spacing:.26em;font-size:9.5px}
+
+  /* altimeter */
+  .altimeter{
+    position:fixed;right:30px;top:50%;transform:translateY(-50%);z-index:20;
+    height:52vh;width:70px;user-select:none;pointer-events:none;
+  }
+  .alt-rail{position:absolute;right:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(236,233,244,.28) 12%,rgba(236,233,244,.28) 88%,transparent)}
+  .alt-tick{position:absolute;right:0;height:1px;background:rgba(236,233,244,.24);width:7px}
+  .alt-tick.major{width:14px;background:rgba(236,233,244,.42)}
+  .alt-label{
+    position:absolute;right:20px;transform:translateY(-50%);
+    font-size:9px;letter-spacing:.14em;color:var(--faint);font-variant-numeric:tabular-nums;
+    transition:opacity .35s ease;
+  }
+  .alt-marker{
+    position:absolute;right:-4px;width:100%;transform:translateY(-50%);
+    display:flex;align-items:center;justify-content:flex-end;gap:9px;
+    transition:none;
+  }
+  .alt-marker .alt-read{
+    font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--amber);
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+    padding:2px 7px;background:rgba(7,9,20,.5);border-radius:2px;
+    -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+    text-shadow:0 0 4px rgba(5,6,16,.95),0 1px 10px rgba(5,6,16,.9);
+  }
+  .alt-marker .alt-diamond{
+    width:9px;height:9px;background:var(--amber);flex:none;
+    transform:rotate(45deg);box-shadow:0 0 10px rgba(232,160,76,.6);
+  }
+
+  /* ---------- content flow ---------- */
+  main{position:relative;z-index:10}
+  section,header.hero,footer.epilogue{position:relative}
+
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:0 6vw;
+  }
+  .hero-eyebrow{
+    font-size:11px;letter-spacing:.34em;color:var(--amber);font-weight:500;text-transform:uppercase;
+    margin-bottom:2.6rem;
+  }
+  .hero-eyebrow .rule{display:inline-block;width:36px;height:1px;background:var(--amber-dim);vertical-align:middle;margin:0 14px 2px}
+  h1.wordmark{
+    font-family:"Fraunces",serif;font-optical-sizing:auto;font-weight:340;
+    font-size:clamp(4.6rem,14.5vw,12.5rem);
+    line-height:.92;letter-spacing:.045em;
+    color:var(--ink);
+    text-shadow:0 2px 60px rgba(10,10,30,.55);
+  }
+  .hero-sub{
+    font-family:"Fraunces",serif;font-style:italic;font-weight:340;font-optical-sizing:auto;
+    font-size:clamp(1.25rem,2.4vw,1.9rem);color:#d8cdbd;letter-spacing:.01em;
+    margin-top:1.4rem;
+  }
+  .hero-meta{
+    margin-top:3.2rem;font-size:10.5px;letter-spacing:.26em;color:#b9b5d0;
+    text-transform:uppercase;font-weight:500;
+    display:flex;gap:2.2rem;flex-wrap:wrap;justify-content:center;
+    text-shadow:0 1px 12px rgba(5,6,16,.95),0 0 4px rgba(5,6,16,.8);
+  }
+  .hero-meta span{white-space:nowrap}
+  .scrollcue{
+    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    font-size:9.5px;letter-spacing:.32em;color:var(--muted);text-transform:uppercase;font-weight:500;
+    text-shadow:0 1px 10px rgba(5,6,16,.9);
+  }
+  .scrollcue .line{width:1px;height:52px;background:rgba(236,233,244,.22);overflow:hidden;position:relative}
+  @media (prefers-reduced-motion: no-preference){
+    .scrollcue .line::after{
+      content:"";position:absolute;left:0;top:-100%;width:100%;height:100%;
+      background:var(--amber);animation:cuedrop 2.4s cubic-bezier(.65,0,.35,1) infinite;
+    }
+  }
+  @keyframes cuedrop{0%{top:-100%}55%{top:100%}100%{top:100%}}
+
+  /* waypoint sections — card stays sticky-centered while its waypoint is active */
+  .wp{min-height:150vh}
+  .wp-sticky{
+    position:sticky;top:0;height:100vh;
+    display:flex;align-items:center;padding:0 8vw;
+  }
+  .wp.right .wp-sticky{justify-content:flex-end}
+  .wp.left .wp-sticky{justify-content:flex-start}
+  .wp-card{
+    width:min(30rem,88vw);
+    background:var(--card-bg);
+    -webkit-backdrop-filter:blur(16px) saturate(1.1);backdrop-filter:blur(16px) saturate(1.1);
+    border:1px solid rgba(236,233,244,.09);
+    border-top:1px solid var(--hairline);
+    padding:2.4rem 2.5rem 2.1rem;
+    box-shadow:0 30px 80px -20px rgba(4,5,14,.7);
+  }
+  .wp-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}
+  .wp-num{font-size:10px;letter-spacing:.3em;color:var(--amber);font-weight:600;text-transform:uppercase}
+  .wp-elev{
+    font-family:"Fraunces",serif;font-optical-sizing:auto;font-weight:400;font-size:1.05rem;color:var(--muted);
+    font-variant-numeric:tabular-nums;letter-spacing:.06em;
+  }
+  .wp-name{
+    font-family:"Fraunces",serif;font-optical-sizing:auto;font-weight:340;
+    font-size:clamp(2.3rem,4.4vw,3.3rem);line-height:1.02;letter-spacing:.005em;color:var(--ink);
+    margin-bottom:.9rem;
+  }
+  .wp-coords{
+    font-size:10px;letter-spacing:.2em;color:var(--faint);font-weight:500;
+    font-variant-numeric:tabular-nums;margin-bottom:1.5rem;text-transform:uppercase;
+  }
+  .wp-rule{height:1px;background:linear-gradient(to right,var(--hairline),transparent);margin-bottom:1.5rem}
+  .wp-body{font-size:.94rem;line-height:1.75;color:#cfccdf;font-weight:400}
+  .wp-meta{
+    margin-top:1.7rem;display:flex;gap:1.6rem;flex-wrap:wrap;
+    font-size:9.5px;letter-spacing:.22em;color:var(--faint);font-weight:500;text-transform:uppercase;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* epilogue */
+  .epilogue{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:14vh 6vw 8vh;gap:0;
+  }
+  .epi-line{
+    font-family:"Fraunces",serif;font-optical-sizing:auto;font-weight:340;
+    font-size:clamp(2.2rem,5.4vw,4.6rem);line-height:1.12;letter-spacing:.005em;
+    max-width:18ch;color:var(--ink);
+  }
+  .epi-line em{font-style:italic;color:#cbd4f4}
+  .epi-meta{
+    margin-top:3.4rem;font-size:10.5px;letter-spacing:.26em;color:var(--muted);text-transform:uppercase;
+    font-weight:500;line-height:2.4;
+  }
+  .epi-foot{
+    margin-top:auto;padding-top:9vh;width:100%;max-width:1100px;
+    display:flex;justify-content:space-between;align-items:center;gap:1.5rem;flex-wrap:wrap;
+    font-size:9.5px;letter-spacing:.24em;color:var(--faint);text-transform:uppercase;font-weight:500;
+  }
+  .epi-foot a{border-bottom:1px solid transparent;padding-bottom:2px;transition:color .35s ease,border-color .35s ease}
+  .epi-foot a:hover{color:var(--amber);border-color:var(--amber-dim)}
+
+  /* ---------- responsive ---------- */
+  .hud-alt{display:none}
+  @media (max-width:760px){
+    .wp{min-height:135vh}
+    .wp-sticky{padding:0 6vw}
+    .wp.right .wp-sticky,.wp.left .wp-sticky{justify-content:center}
+    .wp-card{padding:1.9rem 1.6rem 1.7rem;width:min(30rem,86vw)}
+    .altimeter{right:10px;height:38vh;width:20px}
+    .alt-label{display:none}
+    .alt-marker .alt-read{display:none}
+    .hud-coords{top:22px;right:16px;font-size:9px}
+    .hud-coords .lon{display:none}
+    .hud-alt{display:block;color:var(--amber);letter-spacing:.18em;font-weight:600}
+    .backlink{top:22px;left:16px}
+    .hero-meta{gap:.9rem 1.1rem;font-size:9.5px;max-width:72vw}
+    .epi-foot{justify-content:center;text-align:center}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wp-card,.hero-inner{opacity:1 !important;transform:none !important}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<a class="backlink" href="/">XAVIER FABLE <em>×30</em></a>
+
+<div class="hud-coords" aria-hidden="true">
+  <div class="rangename">SEREN RANGE · EXP IV</div>
+  <div><span id="lat">61°07′ N</span>&ensp;<span class="lon" id="lon">143°22′ W</span></div>
+  <div class="hud-alt" id="hudAlt">3 940 M</div>
+</div>
+
+<div class="altimeter" aria-hidden="true">
+  <div class="alt-rail"></div>
+  <div id="altTicks"></div>
+  <div class="alt-marker" id="altMarker" style="top:100%">
+    <span class="alt-read" id="altRead">3 940 M</span>
+    <span class="alt-diamond"></span>
+  </div>
+</div>
+
+<main>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow"><span class="rule"></span>Expedition Journal · Vol. IV<span class="rule"></span></p>
+      <h1 class="wordmark">ALTIVA</h1>
+      <p class="hero-sub">An Atlas of High Places</p>
+      <div class="hero-meta">
+        <span>Seren Range — 61° N</span>
+        <span>Four Peaks · One Long Light</span>
+        <span>Flown at Ridge Height</span>
+      </div>
+    </div>
+    <div class="scrollcue"><span>Begin the Traverse</span><span class="line"></span></div>
+  </header>
+
+  <section class="wp right">
+    <div class="wp-sticky">
+    <article class="wp-card">
+      <div class="wp-head"><span class="wp-num">Waypoint 01 — 17:48</span><span class="wp-elev">4 212 M</span></div>
+      <h2 class="wp-name">Mount Sereva</h2>
+      <p class="wp-coords">61°09′14″ N · 143°18′40″ W</p>
+      <div class="wp-rule"></div>
+      <p class="wp-body">The traverse began where the glacier loses its patience — a shoulder of blue ice tilting into gold. Sereva does not announce itself; it simply continues upward until the eye gives out. The rope ran quiet between us, and far below, the icefall breathed its slow white breath.</p>
+      <div class="wp-meta"><span>Day 12</span><span>Wind 12 kn</span><span>−9° C</span><span>Clear</span></div>
+    </article>
+    </div>
+  </section>
+
+  <section class="wp left">
+    <div class="wp-sticky">
+    <article class="wp-card">
+      <div class="wp-head"><span class="wp-num">Waypoint 02 — 19:06</span><span class="wp-elev">4 871 M</span></div>
+      <h2 class="wp-name">The Candra Spires</h2>
+      <p class="wp-coords">61°14′52″ N · 143°06′05″ W</p>
+      <div class="wp-rule"></div>
+      <p class="wp-body">Granite teeth, sixty million years in the cutting. The wind here has a grammar of its own — it speaks in gusts and half-sentences, and we learned to answer with our weight. For three hours we moved along the crest, and the light never once stopped being gold.</p>
+      <div class="wp-meta"><span>Day 12</span><span>Wind 27 kn</span><span>−14° C</span><span>Spindrift</span></div>
+    </article>
+    </div>
+  </section>
+
+  <section class="wp right">
+    <div class="wp-sticky">
+    <article class="wp-card">
+      <div class="wp-head"><span class="wp-num">Waypoint 03 — 20:31</span><span class="wp-elev">5 034 M</span></div>
+      <h2 class="wp-name">Col of Whispers</h2>
+      <p class="wp-coords">61°19′33″ N · 142°57′48″ W</p>
+      <div class="wp-rule"></div>
+      <p class="wp-body">At the saddle the sun touched the horizon and the whole range turned to embers. Every shadow ran a kilometre long. We stopped — not from tiredness, but because certain views levy a toll, and the only currency they accept is stillness.</p>
+      <div class="wp-meta"><span>Day 12</span><span>Wind 8 kn</span><span>−17° C</span><span>Alpenglow</span></div>
+    </article>
+    </div>
+  </section>
+
+  <section class="wp left">
+    <div class="wp-sticky">
+    <article class="wp-card">
+      <div class="wp-head"><span class="wp-num">Waypoint 04 — 22:47</span><span class="wp-elev">5 486 M</span></div>
+      <h2 class="wp-name">Nyx Crown</h2>
+      <p class="wp-coords">61°24′07″ N · 142°49′12″ W</p>
+      <div class="wp-rule"></div>
+      <p class="wp-body">The last blue drained from the ridgeline and the stars arrived all at once, the way they only do above five thousand metres. Nyx Crown stood black against the field of them. We made camp on the wind-scoured shelf and did not speak. There was nothing the sky had left unsaid.</p>
+      <div class="wp-meta"><span>Day 12</span><span>Wind 4 kn</span><span>−23° C</span><span>Starfield</span></div>
+    </article>
+    </div>
+  </section>
+
+  <footer class="epilogue">
+    <p class="epi-line">The atlas closes. <em>The mountains do not.</em></p>
+    <div class="epi-meta">
+      Recorded by the Altiva Field Unit<br>
+      Seren Range · 61° N · MMXXVI
+    </div>
+    <div class="epi-foot">
+      <span>Altiva — An Atlas of High Places</span>
+      <a href="/">Return to Xavier Fable ×30</a>
+      <span>Terrain computed · Light borrowed</span>
+    </div>
+  </footer>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ============================================================
+   ALTIVA — procedural golden-hour terrain flight
+   ============================================================ */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = innerWidth < 760;
+
+/* ---------- utils ---------- */
+const clamp = (x,a,b)=>Math.min(b,Math.max(a,x));
+const lerp = (a,b,t)=>a+(b-a)*t;
+const sstep = (a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);};
+
+/* ---------- simplex noise (Gustavson-style, seeded) ---------- */
+const F2=0.5*(Math.sqrt(3)-1), G2=(3-Math.sqrt(3))/6;
+const GRAD=new Float32Array([1,1,-1,1,1,-1,-1,-1,1,0,-1,0,0,1,0,-1]);
+const perm=new Uint8Array(512);
+(()=>{
+  const p=new Uint8Array(256); for(let i=0;i<256;i++)p[i]=i;
+  let s=41317>>>0;
+  const rnd=()=> (s=(s*1664525+1013904223)>>>0)/4294967296;
+  for(let i=255;i>0;i--){const j=(rnd()*(i+1))|0;const t=p[i];p[i]=p[j];p[j]=t;}
+  for(let i=0;i<512;i++)perm[i]=p[i&255];
+})();
+function snoise(x,y){
+  const s=(x+y)*F2, i=Math.floor(x+s), j=Math.floor(y+s);
+  const t=(i+j)*G2, x0=x-(i-t), y0=y-(j-t);
+  const i1=x0>y0?1:0, j1=1-i1;
+  const x1=x0-i1+G2, y1=y0-j1+G2, x2=x0-1+2*G2, y2=y0-1+2*G2;
+  const ii=i&255, jj=j&255;
+  let n=0;
+  let t0=0.5-x0*x0-y0*y0;
+  if(t0>0){t0*=t0;const g=(perm[ii+perm[jj]]&7)<<1;n+=t0*t0*(GRAD[g]*x0+GRAD[g+1]*y0);}
+  let t1=0.5-x1*x1-y1*y1;
+  if(t1>0){t1*=t1;const g=(perm[ii+i1+perm[jj+j1]]&7)<<1;n+=t1*t1*(GRAD[g]*x1+GRAD[g+1]*y1);}
+  let t2=0.5-x2*x2-y2*y2;
+  if(t2>0){t2*=t2;const g=(perm[ii+1+perm[jj+1]]&7)<<1;n+=t2*t2*(GRAD[g]*x2+GRAD[g+1]*y2);}
+  return 70*n;
+}
+function fbm(x,y,oct){
+  let s=0,a=0.5,f=1,n=0;
+  for(let i=0;i<oct;i++){s+=snoise(x*f,y*f)*a;n+=a;f*=2.01;a*=0.5;}
+  return s/n;
+}
+/* ridged multifractal — sharp ridgelines via 1-|noise| */
+function ridged(x,y,oct){
+  let sum=0,amp=0.5,freq=1,prev=1,norm=0;
+  for(let i=0;i<oct;i++){
+    let n=1-Math.abs(snoise(x*freq,y*freq));
+    n*=n;
+    sum+=n*amp*prev;
+    norm+=amp;
+    prev=n;
+    freq*=2.06;
+    amp*=0.52;
+  }
+  return sum/norm;
+}
+
+/* ---------- flight path (XZ first, so peaks can anchor to it) ---------- */
+const ctrlXZ=[
+  [1500,2150],[900,1300],[1050,600],[420,-60],
+  [-260,-450],[-880,-1020],[-1180,-1720],[-920,-2420]
+].map(p=>new THREE.Vector3(p[0],0,p[1]));
+const xzCurve=new THREE.CatmullRomCurve3(ctrlXZ,false,'centripetal');
+
+/* fractions where each card is sticky-centered (midpoint of its stuck range) */
+const WP_T=[0.18,0.39,0.61,0.82];
+/* peaks anchored on the OPPOSITE screen side from each card so the card never occludes its subject */
+const WP_SIDE=[-1,1,-1,1];
+const peaks=[];
+for(let k=0;k<4;k++){
+  const t=Math.min(WP_T[k]+0.055,0.99);
+  const p=xzCurve.getPointAt(t), tan=xzCurve.getTangentAt(t);
+  const px=p.x + (-tan.z)*WP_SIDE[k]*660;
+  const pz=p.z + ( tan.x)*WP_SIDE[k]*660;
+  peaks.push({x:px,z:pz,amp:[260,340,300,430][k],r:[430,470,450,520][k]});
+}
+
+/* ---------- height field ---------- */
+function heightAt(x,z){
+  const wx=x+300*fbm(x*0.00062+11.7,z*0.00062-4.2,3);
+  const wz=z+300*fbm(x*0.00062-7.3,z*0.00062+9.1,3);
+  const r=ridged(wx*0.00088,wz*0.00088,5);            // 0..~1, sharp ridges
+  const mass=0.5+0.5*fbm(x*0.00021+3.1,z*0.00021-6.4,3);
+  let h=r*(130+600*mass*mass);
+  h+=18*fbm(x*0.0042,z*0.0042,3);                     // fine scree detail
+  for(const pk of peaks){                              // hero peaks near waypoints
+    const dx=x-pk.x,dz=z-pk.z;
+    const g=Math.exp(-(dx*dx+dz*dz)/(pk.r*pk.r));
+    h+=pk.amp*g*(0.45+0.55*r);
+  }
+  return h;
+}
+
+/* ---------- renderer / scene ---------- */
+const canvas=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,isMobile?1.75:2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.12;
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,2,22000);
+
+/* ---------- terrain meshes ---------- */
+function buildTerrain(size,seg,yOffset){
+  const geo=new THREE.PlaneGeometry(size,size,seg,seg);
+  geo.rotateX(-Math.PI/2);
+  const pos=geo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    pos.setY(i,heightAt(pos.getX(i),pos.getZ(i))+yOffset);
+  }
+  geo.computeVertexNormals();
+
+  const nrm=geo.attributes.normal;
+  const colors=new Float32Array(pos.count*3);
+  const cSnow=new THREE.Color(0xf4efe4);
+  const cRock=new THREE.Color(0x8a7360);
+  const cScree=new THREE.Color(0x574a3e);
+  const cValley=new THREE.Color(0x453f60);
+  const c=new THREE.Color(), rockMix=new THREE.Color();
+  for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i),z=pos.getZ(i),h=pos.getY(i)-yOffset;
+    const ny=nrm.getY(i);
+    const snowline=340+130*fbm(x*0.0009+1.7,z*0.0009-2.3,2)+55*fbm(x*0.006,z*0.006,2);
+    let snow=sstep(snowline-75,snowline+75,h);
+    snow*=sstep(0.42,0.72,ny);                          // steep faces shed snow
+    rockMix.copy(cValley).lerp(cRock,sstep(30,270,h));
+    rockMix.lerp(cScree,sstep(0.78,0.5,ny)*0.55);       // cliffs darker
+    c.copy(rockMix).lerp(cSnow,snow);
+    const ao=0.8+0.2*sstep(0,230,h);                    // valley occlusion (gentle)
+    colors[i*3]=c.r*ao;colors[i*3+1]=c.g*ao;colors[i*3+2]=c.b*ao;
+  }
+  geo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  const mat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.96,metalness:0});
+  return new THREE.Mesh(geo,mat);
+}
+scene.add(buildTerrain(5400,isMobile?160:256,0));       // hero terrain
+scene.add(buildTerrain(16000,isMobile?96:128,-10));     // horizon skirt
+
+/* ---------- lighting (day <-> night lerped) ---------- */
+const sun=new THREE.DirectionalLight(0xffb36b,3.1);
+scene.add(sun);scene.add(sun.target);
+const hemi=new THREE.HemisphereLight(0x7d8fc9,0x4a3a52,0.55);
+scene.add(hemi);
+/* cool fill from opposite the sun so shadow faces keep form (never crush to black) */
+const fill=new THREE.DirectionalLight(0x8fa3d8,0.85);
+fill.position.set(0.72,0.38,0.55);
+scene.add(fill);
+
+const DAY={
+  sun:new THREE.Color(0xffb36b), sunI:3.1,
+  hemiSky:new THREE.Color(0x7d8fc9), hemiGnd:new THREE.Color(0x584a5e), hemiI:0.8,
+  fill:new THREE.Color(0x8fa3d8), fillI:0.85,
+  fog:new THREE.Color(0xd99b5e),
+  zenith:new THREE.Color(0x3c4a80), horizon:new THREE.Color(0xe9a45c), ground:new THREE.Color(0x7a5a44),
+  glowCol:new THREE.Color(0xffd9a0), glow:1.0, sunY:0.16, exposure:1.12
+};
+const NIGHT={
+  sun:new THREE.Color(0xa9bcf5), sunI:1.4,
+  hemiSky:new THREE.Color(0x38477f), hemiGnd:new THREE.Color(0x161a34), hemiI:0.7,
+  fill:new THREE.Color(0x5d70b4), fillI:0.52,
+  fog:new THREE.Color(0x141c3e),
+  zenith:new THREE.Color(0x060a20), horizon:new THREE.Color(0x1a2450), ground:new THREE.Color(0x0d1128),
+  glowCol:new THREE.Color(0x9db2f0), glow:0.3, sunY:0.14, exposure:1.0
+};
+scene.fog=new THREE.Fog(DAY.fog.clone(),520,4600);
+scene.background=DAY.zenith.clone();
+
+/* ---------- sky dome ---------- */
+const sunDirBase=new THREE.Vector3(-0.78,DAY.sunY,-0.45).normalize();
+const skyUniforms={
+  uZenith:{value:DAY.zenith.clone()},
+  uHorizon:{value:DAY.horizon.clone()},
+  uGround:{value:DAY.ground.clone()},
+  uSunDir:{value:sunDirBase.clone()},
+  uSunCol:{value:DAY.glowCol.clone()},
+  uGlow:{value:DAY.glow}
+};
+const sky=new THREE.Mesh(
+  new THREE.SphereGeometry(9000,48,24),
+  new THREE.ShaderMaterial({
+    side:THREE.BackSide,depthWrite:false,fog:false,
+    uniforms:skyUniforms,
+    vertexShader:`
+      varying vec3 vDir;
+      void main(){
+        vDir=normalize(position);
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+      }`,
+    fragmentShader:`
+      varying vec3 vDir;
+      uniform vec3 uZenith,uHorizon,uGround,uSunDir,uSunCol;
+      uniform float uGlow;
+      void main(){
+        vec3 d=normalize(vDir);
+        float h=d.y;
+        vec3 col=mix(uHorizon,uZenith,smoothstep(0.015,0.42,h));
+        col=mix(uGround,col,smoothstep(-0.12,0.01,h));
+        float s=clamp(dot(d,normalize(uSunDir)),0.0,1.0);
+        col+=uSunCol*(pow(s,1600.0)*1.4+pow(s,48.0)*0.4+pow(s,6.0)*0.22)*uGlow;
+        gl_FragColor=vec4(col,1.0);
+      }`
+  })
+);
+sky.renderOrder=-1;
+scene.add(sky);
+
+/* ---------- stars ---------- */
+const starCount=isMobile?900:1700;
+const starPos=new Float32Array(starCount*3);
+const starCol=new Float32Array(starCount*3);
+{
+  let s=777>>>0;const rnd=()=> (s=(s*1664525+1013904223)>>>0)/4294967296;
+  for(let i=0;i<starCount;i++){
+    const az=rnd()*Math.PI*2, el=Math.asin(0.06+rnd()*0.93);
+    const r=8300;
+    starPos[i*3]=Math.cos(az)*Math.cos(el)*r;
+    starPos[i*3+1]=Math.sin(el)*r;
+    starPos[i*3+2]=Math.sin(az)*Math.cos(el)*r;
+    const b=0.35+rnd()*0.65, tint=rnd();
+    starCol[i*3]=b*(0.82+0.18*tint);
+    starCol[i*3+1]=b*(0.85+0.1*tint);
+    starCol[i*3+2]=b;
+  }
+}
+const starGeo=new THREE.BufferGeometry();
+starGeo.setAttribute('position',new THREE.BufferAttribute(starPos,3));
+starGeo.setAttribute('color',new THREE.BufferAttribute(starCol,3));
+const starMat=new THREE.PointsMaterial({
+  size:2.1,sizeAttenuation:false,vertexColors:true,
+  transparent:true,opacity:0,depthWrite:false,fog:false
+});
+const stars=new THREE.Points(starGeo,starMat);
+scene.add(stars);
+
+/* ---------- flight path with smoothed terrain-following height ---------- */
+const PATH_N=220;
+const pathPts=[];
+{
+  const raw=[];
+  for(let i=0;i<=PATH_N;i++){
+    const p=xzCurve.getPointAt(i/PATH_N);
+    raw.push({x:p.x,z:p.z,h:heightAt(p.x,p.z)+175});
+  }
+  const smooth=(arr,rad)=>arr.map((v,i)=>{
+    let s=0,n=0;
+    for(let j=-rad;j<=rad;j++){const k=clamp(i+j,0,arr.length-1);s+=arr[k].h;n++;}
+    return s/n;
+  });
+  let hs=smooth(raw,7);
+  for(let pass=0;pass<3;pass++){
+    hs=hs.map((h,i)=>Math.max(h,raw[i].h-45));
+    const tmp=raw.map((r,i)=>({h:hs[i]}));
+    hs=smooth(tmp,4);
+  }
+  hs=hs.map((h,i)=>Math.max(h,heightAt(raw[i].x,raw[i].z)+95));
+  /* final climb — the epilogue lifts above the range so the closing line sits against open sky */
+  hs=hs.map((h,i)=>h+430*sstep(0.82,1,i/PATH_N));
+  for(let i=0;i<=PATH_N;i++)pathPts.push(new THREE.Vector3(raw[i].x,hs[i],raw[i].z));
+}
+const flight=new THREE.CatmullRomCurve3(pathPts,false,'centripetal');
+
+/* waypoint peak world positions (for camera gaze bias) */
+const wpPos=peaks.map(pk=>new THREE.Vector3(pk.x,heightAt(pk.x,pk.z)*0.9,pk.z));
+
+/* ---------- scroll state ---------- */
+let pTarget=0,pSmooth=0;
+function maxScroll(){return Math.max(1,document.documentElement.scrollHeight-innerHeight);}
+addEventListener('scroll',()=>{pTarget=clamp(scrollY/maxScroll(),0,1);requestRender();},{passive:true});
+
+/* altitude readout mapping (fictional metres) */
+const ALT_STOPS=[[0,3940],[0.14,4212],[0.24,4212],[0.34,4871],[0.44,4871],[0.56,5034],[0.66,5034],[0.78,5486],[1,5486]];
+function altitudeAt(p){
+  for(let i=1;i<ALT_STOPS.length;i++){
+    if(p<=ALT_STOPS[i][0]){
+      const [t0,a0]=ALT_STOPS[i-1],[t1,a1]=ALT_STOPS[i];
+      return lerp(a0,a1,(p-t0)/Math.max(1e-5,t1-t0));
+    }
+  }
+  return ALT_STOPS[ALT_STOPS.length-1][1];
+}
+const fmtAlt=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+const fmtDMS=(deg)=>{
+  const d=Math.floor(deg),mFloat=(deg-d)*60,m=Math.floor(mFloat),s=Math.floor((mFloat-m)*60);
+  return `${d}°${String(m).padStart(2,'0')}′${String(s).padStart(2,'0')}″`;
+};
+
+/* altimeter ticks: 3600..5600, minor 100, major 400 */
+{
+  const wrap=document.getElementById('altTicks');
+  let html='';
+  for(let a=3600;a<=5600;a+=100){
+    const f=(a-3600)/2000, top=(1-f)*100;
+    const major=a%400===0;
+    html+=`<div class="alt-tick${major?' major':''}" style="top:${top}%"></div>`;
+    if(major)html+=`<div class="alt-label" data-f="${top}" style="top:${top}%">${fmtAlt(a)}</div>`;
+  }
+  wrap.innerHTML=html;
+}
+const altLabels=[...document.querySelectorAll('.alt-label')].map(el=>({el,f:parseFloat(el.dataset.f)}));
+const altMarker=document.getElementById('altMarker');
+const altRead=document.getElementById('altRead');
+const hudAlt=document.getElementById('hudAlt');
+const latEl=document.getElementById('lat'),lonEl=document.getElementById('lon');
+
+/* ---------- day/night grading ---------- */
+const tmpC1=new THREE.Color(),tmpC2=new THREE.Color();
+function grade(p){
+  const n=sstep(0.56,0.88,p);          // nightfall held back so WP3 keeps its alpenglow
+  sun.color.lerpColors(DAY.sun,NIGHT.sun,n);
+  sun.intensity=lerp(DAY.sunI,NIGHT.sunI,n);
+  hemi.color.lerpColors(DAY.hemiSky,NIGHT.hemiSky,n);
+  hemi.groundColor.lerpColors(DAY.hemiGnd,NIGHT.hemiGnd,n);
+  hemi.intensity=lerp(DAY.hemiI,NIGHT.hemiI,n);
+  fill.color.lerpColors(DAY.fill,NIGHT.fill,n);
+  fill.intensity=lerp(DAY.fillI,NIGHT.fillI,n);
+  scene.fog.color.lerpColors(DAY.fog,NIGHT.fog,n);
+  scene.background.lerpColors(DAY.zenith,NIGHT.zenith,n);
+  skyUniforms.uZenith.value.lerpColors(DAY.zenith,NIGHT.zenith,n);
+  skyUniforms.uHorizon.value.lerpColors(DAY.horizon,NIGHT.horizon,n);
+  skyUniforms.uGround.value.lerpColors(DAY.ground,NIGHT.ground,n);
+  skyUniforms.uSunCol.value.lerpColors(DAY.glowCol,NIGHT.glowCol,n);
+  skyUniforms.uGlow.value=lerp(DAY.glow,NIGHT.glow,n);
+  renderer.toneMappingExposure=lerp(DAY.exposure,NIGHT.exposure,n);
+  const sd=skyUniforms.uSunDir.value;
+  sd.set(-0.78,lerp(DAY.sunY,NIGHT.sunY,n),-0.45).normalize();
+  sun.position.copy(sd).multiplyScalar(4000);
+  starMat.opacity=sstep(0.62,0.86,p)*0.95;
+}
+
+/* ---------- camera drive ---------- */
+const camPos=new THREE.Vector3(),lookP=new THREE.Vector3(),wpTarget=new THREE.Vector3();
+function driveCamera(p,time){
+  const tp=clamp(p,0,1)*0.985;
+  flight.getPointAt(tp,camPos);
+  const ahead=flight.getPointAt(Math.min(tp+0.045,0.999),lookP);
+  ahead.y-=48;
+  ahead.y+=255*sstep(0.86,1,p);        // tilt toward the starfield as the traverse ends (horizon kept in frame)
+
+  // gaze bias toward the active waypoint peak
+  for(let i=0;i<4;i++){
+    const prox=1-sstep(0.03,0.115,Math.abs(p-WP_T[i]));
+    if(prox>0.001){
+      wpTarget.copy(wpPos[i]);
+      ahead.lerp(wpTarget,prox*0.42);
+    }
+  }
+  if(!reduceMotion){
+    camPos.x+=Math.sin(time*0.00021)*16;
+    camPos.y+=Math.sin(time*0.00017+2.0)*7;
+    ahead.y+=Math.sin(time*0.00013+1.0)*10;
+  }
+  camera.position.copy(camPos);
+  camera.lookAt(ahead);
+  if(!reduceMotion)camera.rotation.z+=Math.sin(time*0.00011+3.0)*0.006;
+
+  sky.position.set(camPos.x,0,camPos.z);
+  stars.position.copy(sky.position);
+  sun.position.add(camPos);
+  sun.target.position.copy(camPos);
+}
+
+/* ---------- HUD ---------- */
+let hudFrame=0;
+function updateHUD(p){
+  if((hudFrame++%3)!==0)return;
+  const alt=altitudeAt(p);
+  const f=clamp((alt-3600)/2000,0,1);
+  const markerTop=(1-f)*100;
+  altMarker.style.top=markerTop.toFixed(2)+'%';
+  for(const l of altLabels)l.el.style.opacity=Math.abs(l.f-markerTop)<5?'0':'1';
+  altRead.textContent=fmtAlt(alt)+' M';
+  hudAlt.textContent=fmtAlt(alt)+' M';
+  latEl.textContent=fmtDMS(lerp(61.129,61.402,p))+' N';
+  lonEl.textContent=fmtDMS(lerp(143.32,142.815,p))+' W';
+}
+
+/* ---------- render loop ---------- */
+let needsRender=true,running=true,rafId=0;
+function requestRender(){needsRender=true;}
+function frame(time){
+  rafId=requestAnimationFrame(frame);
+  const eased=reduceMotion?1:0.075;
+  pSmooth+=(pTarget-pSmooth)*eased;
+  if(Math.abs(pTarget-pSmooth)<0.0004)pSmooth=pTarget;
+  if(reduceMotion&&!needsRender)return;
+  needsRender=false;
+  grade(pSmooth);
+  driveCamera(pSmooth,time);
+  updateHUD(pSmooth);
+  renderer.render(scene,camera);
+}
+function start(){if(!running){running=true;rafId=requestAnimationFrame(frame);}}
+function stop(){running=false;cancelAnimationFrame(rafId);}
+document.addEventListener('visibilitychange',()=>{document.hidden?stop():start();});
+rafId=requestAnimationFrame(frame);
+
+addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+  requestRender();
+});
+
+/* ---------- scroll choreography (GSAP) ---------- */
+if(window.gsap&&window.ScrollTrigger){
+  gsap.registerPlugin(ScrollTrigger);
+  if(!reduceMotion){
+    gsap.to('.hero-inner',{
+      opacity:0,y:-70,ease:'none',
+      scrollTrigger:{trigger:'.hero',start:'top top',end:'85% top',scrub:true}
+    });
+    gsap.to('.scrollcue',{
+      opacity:0,ease:'none',
+      scrollTrigger:{trigger:'.hero',start:'top top',end:'30% top',scrub:true}
+    });
+    gsap.utils.toArray('.wp').forEach(sec=>{
+      const card=sec.querySelector('.wp-card');
+      gsap.from(card,{
+        opacity:0,y:56,duration:1.1,ease:'power3.out',
+        scrollTrigger:{trigger:sec,start:'top 55%',toggleActions:'play none none reverse'}
+      });
+      gsap.to(card,{
+        opacity:0,y:-40,ease:'power2.in',duration:0.7,immediateRender:false,
+        scrollTrigger:{trigger:sec,start:'bottom 78%',toggleActions:'play none none reverse'}
+      });
+    });
+    gsap.from('.epi-line',{
+      opacity:0,y:40,duration:1.2,ease:'power3.out',
+      scrollTrigger:{trigger:'.epilogue',start:'top 60%',toggleActions:'play none none reverse'}
+    });
+    gsap.from('.hero-inner > *',{opacity:0,y:26,duration:1.3,stagger:0.12,ease:'power3.out',delay:0.15});
+  }
+}
+
+/* ---------- ?p= deep-scroll (for screenshot passes) ---------- */
+{
+  const q=new URLSearchParams(location.search);
+  if(q.has('p')){
+    const f=clamp(parseFloat(q.get('p'))||0,0,1);
+    setTimeout(()=>{
+      scrollTo({top:maxScroll()*f,behavior:'instant'});
+      pTarget=f;pSmooth=f;requestRender();
+    },400);
+  }
+}
+</script>
+</body>
+</html>

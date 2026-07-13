@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gravity Well — poems with mass</title>
+<meta name="description" content="Five original poems governed by five physical laws. Words as rigid bodies — grab them, throw them, watch them fall, stream, orbit, rise, and decay. Hand-rolled verlet physics.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×30">
+<meta property="og:title" content="Gravity Well — poems with mass">
+<meta property="og:description" content="Five original poems governed by five physical laws. Words as rigid bodies — grab them, throw them, watch them fall, stream, orbit, rise, and decay. Hand-rolled verlet physics.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/27-gravity-poems/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/27-gravity-poems/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gravity Well — poems with mass">
+<meta name="twitter:description" content="Five original poems governed by five physical laws. Words as rigid bodies — grab them, throw them, watch them fall, stream, orbit, rise, and decay. Hand-rolled verlet physics.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/27-gravity-poems/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f4f1e9'/%3E%3Ccircle cx='32' cy='40' r='14' fill='%23d8351f'/%3E%3Crect x='14' y='12' width='36' height='5' fill='%2316151a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#f4f1e9;
+  --ink:#16151a;
+  --red:#d8351f;
+  --faint:rgba(22,21,26,.38);
+  --hair:rgba(22,21,26,.16);
+  --mono:'Space Mono',ui-monospace,monospace;
+  --grot:'Space Grotesk',system-ui,sans-serif;
+  --word:clamp(19px,2.35vw,30px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+html.no-snap{scroll-snap-type:none;scroll-behavior:auto}
+body{
+  background:var(--bone);color:var(--ink);
+  font-family:var(--grot);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--red);color:var(--bone)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bone)}
+::-webkit-scrollbar-thumb{background:var(--hair);border:3px solid var(--bone);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--red)}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:2px}
+
+/* paper grain */
+body::after{
+  content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- fixed chrome ---------- */
+.backlink{
+  position:fixed;left:22px;bottom:20px;z-index:50;
+  font-family:var(--mono);font-size:10px;letter-spacing:.24em;
+  color:var(--ink);text-decoration:none;padding:6px 0;
+  border-bottom:1px solid var(--hair);
+  transition:color .25s cubic-bezier(.2,.7,.2,1),border-color .25s;
+}
+.backlink:hover{color:var(--red);border-color:var(--red)}
+
+nav.dots{
+  position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:50;
+  display:flex;flex-direction:column;gap:14px;align-items:flex-end;
+}
+nav.dots a{
+  display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--faint);
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:lowercase;
+  transition:color .3s cubic-bezier(.2,.7,.2,1);
+}
+nav.dots a .lbl{opacity:0;transform:translateX(6px);transition:opacity .3s,transform .3s cubic-bezier(.2,.7,.2,1)}
+nav.dots a:hover .lbl,nav.dots a.on .lbl{opacity:1;transform:none}
+nav.dots a .dot{
+  width:7px;height:7px;border-radius:50%;border:1px solid var(--ink);background:transparent;
+  transition:background .3s,border-color .3s,transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+nav.dots a:hover .dot{transform:scale(1.35)}
+nav.dots a.on .dot{background:var(--red);border-color:var(--red);transform:scale(1.35)}
+nav.dots a.on{color:var(--ink)}
+
+/* ---------- sections ---------- */
+section{
+  position:relative;height:100vh;height:100svh;overflow:hidden;
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.ch-tag{
+  position:absolute;top:24px;left:24px;z-index:10;
+  font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--ink);
+  display:flex;gap:14px;align-items:baseline;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .8s cubic-bezier(.2,.7,.2,1) .1s,transform .8s cubic-bezier(.2,.7,.2,1) .1s;
+}
+.ch-tag .no{color:var(--red)}
+.anno{
+  position:absolute;left:24px;bottom:72px;z-index:10;max-width:300px;
+  font-family:var(--mono);font-size:10px;line-height:1.8;letter-spacing:.06em;color:var(--faint);
+  opacity:0;transform:translateY(10px);
+  transition:opacity .9s cubic-bezier(.2,.7,.2,1) .25s,transform .9s cubic-bezier(.2,.7,.2,1) .25s;
+}
+.anno .formula{display:block;color:var(--ink);font-size:12px;letter-spacing:.1em;margin-bottom:6px}
+.hint{
+  position:absolute;top:24px;right:60px;z-index:10;
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--faint);text-transform:lowercase;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .9s cubic-bezier(.2,.7,.2,1) .4s,transform .9s cubic-bezier(.2,.7,.2,1) .4s;
+}
+section.inview .ch-tag,section.inview .anno,section.inview .hint{opacity:1;transform:none}
+.rm-note{display:none}
+body.reduced .rm-note{display:block;margin-top:6px;color:var(--red)}
+body.reduced .hint{display:none}
+
+/* ---------- verse / words ---------- */
+.verse{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+.verse-block{max-width:min(760px,86%);text-align:center}
+.ln{display:block;line-height:1.5;margin:.4em 0}
+.w,.lt{
+  display:inline-block;font-weight:600;font-size:var(--word);line-height:1.15;
+  white-space:pre;color:var(--ink);
+  pointer-events:auto;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;
+  transition:color .2s;
+}
+.wd{display:inline-block;white-space:pre}
+.ghost{position:absolute;left:0;top:0;display:inline-block;font-weight:600;font-size:var(--word);line-height:1.15;white-space:pre;color:rgba(22,21,26,.075);pointer-events:none;user-select:none}
+.physical .w,.physical .lt{position:absolute;left:0;top:0;will-change:transform;margin:0}
+.w.grabbed,.lt.grabbed{color:var(--red);cursor:grabbing;z-index:6;position:relative}
+.physical .w.grabbed,.physical .lt.grabbed{position:absolute}
+body.reduced .w,body.reduced .lt{cursor:default}
+
+/* chapter-specific verse placement */
+#ch3 .verse{align-items:flex-start;padding-top:13svh}
+#ch4 .verse{align-items:flex-start;padding-top:20svh}
+.surface{
+  position:absolute;left:8%;right:8%;top:15svh;border-top:1px dashed var(--hair);z-index:1;
+}
+.surface::after{
+  content:"surface";position:absolute;right:0;top:-16px;
+  font-family:var(--mono);font-size:8px;letter-spacing:.3em;color:var(--faint);
+}
+.orbit-ring{
+  position:absolute;left:50%;top:58%;width:0;height:0;z-index:1;pointer-events:none;
+}
+.orbit-ring::before{
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(58vh,58vw);height:min(58vh,58vw);border-radius:50%;
+  border:1px dashed var(--hair);
+}
+.orbit-ring::after{
+  content:"";position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;
+  background:var(--ink);opacity:.3;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink);background:transparent;border:1px solid var(--ink);
+  padding:12px 26px;cursor:pointer;border-radius:0;
+  transition:color .25s,border-color .25s,transform .25s cubic-bezier(.34,1.56,.64,1),background .25s;
+}
+.btn:hover{color:var(--red);border-color:var(--red);transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.ch-btn{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);z-index:10;background:var(--bone)}
+.ch-btn:hover{transform:translateX(-50%) translateY(-2px)}
+.ch-btn:active{transform:translateX(-50%)}
+body.reduced .ch-btn{display:none}
+
+/* ---------- intro ---------- */
+#intro{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#intro .overtitle{
+  font-family:var(--mono);font-size:10px;letter-spacing:.42em;color:var(--red);
+  margin-bottom:26px;text-transform:uppercase;
+  animation:rise .9s cubic-bezier(.2,.7,.2,1) .15s both;
+}
+#intro h1{
+  font-weight:700;font-size:clamp(2.9rem,9.5vw,7.6rem);line-height:.94;letter-spacing:-.035em;
+  animation:rise 1s cubic-bezier(.2,.7,.2,1) .3s both;
+}
+#intro h1 em{font-style:normal;color:var(--red)}
+#intro .manifesto{
+  font-family:var(--mono);font-size:clamp(11px,1.3vw,13px);letter-spacing:.12em;color:var(--faint);
+  margin-top:30px;
+  animation:rise 1s cubic-bezier(.2,.7,.2,1) .5s both;
+}
+#intro .laws{
+  display:flex;gap:clamp(10px,2.4vw,28px);margin-top:44px;flex-wrap:wrap;justify-content:center;
+  padding:0 36px;max-width:100%;
+  font-family:var(--mono);font-size:9px;letter-spacing:.24em;color:var(--faint);text-transform:lowercase;
+  animation:rise 1s cubic-bezier(.2,.7,.2,1) .65s both;
+}
+#intro .laws span i{font-style:normal;color:var(--red);margin-right:6px}
+#intro .btn{margin-top:48px;animation:rise 1s cubic-bezier(.2,.7,.2,1) .8s both}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+body.reduced #intro *{animation:none}
+
+/* ---------- colophon ---------- */
+#end{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0}
+#end h2{font-weight:700;font-size:clamp(1.9rem,4.6vw,3.4rem);letter-spacing:-.02em;line-height:1}
+#end .col-body{
+  font-family:var(--mono);font-size:11px;line-height:2.1;letter-spacing:.07em;color:var(--faint);
+  max-width:520px;margin-top:30px;padding:0 24px;
+}
+#end .col-body b{color:var(--ink);font-weight:400}
+#end .btn{margin-top:44px}
+#end .fin{
+  font-family:var(--mono);font-size:9px;letter-spacing:.4em;color:var(--red);margin-bottom:26px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:640px){
+  :root{--word:clamp(16px,4.6vw,20px)}
+  .verse-block{max-width:92%}
+  nav.dots{right:12px;gap:12px}
+  nav.dots a .lbl{display:none}
+  .ch-tag{top:18px;left:18px}
+  .hint{right:34px;top:19px;max-width:150px;text-align:right}
+  .anno{left:18px;bottom:auto;top:56px;max-width:230px;font-size:9px}
+  .anno .formula{font-size:11px}
+  .backlink{left:18px;bottom:16px}
+  .ch-btn{bottom:64px}
+  #ch4 .verse{padding-top:23svh}
+  .surface{top:17svh}
+  #ch3 .verse{padding-top:11svh}
+  .orbit-ring::before{width:72vw;height:72vw}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER FABLE ×30</a>
+
+<nav class="dots" aria-label="chapters">
+  <a href="#ch1" data-nav="1"><span class="lbl">gravity</span><span class="dot"></span></a>
+  <a href="#ch2" data-nav="2"><span class="lbl">wind</span><span class="dot"></span></a>
+  <a href="#ch3" data-nav="3"><span class="lbl">orbit</span><span class="dot"></span></a>
+  <a href="#ch4" data-nav="4"><span class="lbl">buoyancy</span><span class="dot"></span></a>
+  <a href="#ch5" data-nav="5"><span class="lbl">entropy</span><span class="dot"></span></a>
+</nav>
+
+<section id="intro">
+  <p class="overtitle">Five poems under law</p>
+  <h1>GRAVITY<br>WE<em>LL</em></h1>
+  <p class="manifesto">poems are objects; objects obey.</p>
+  <p class="laws">
+    <span><i>i</i>gravity</span><span><i>ii</i>wind</span><span><i>iii</i>orbit</span><span><i>iv</i>buoyancy</span><span><i>v</i>entropy</span>
+  </p>
+  <button class="btn" id="begin">begin ↓</button>
+</section>
+
+<section id="ch1" data-ch="1">
+  <div class="ch-tag"><span class="no">I</span><span>GRAVITY</span></div>
+  <p class="hint">every word has weight — drag one, throw it</p>
+  <div class="anno">
+    <span class="formula">F = m·g</span>
+    all words fall at the same rate.<br>mass decides nothing but the landing.
+    <span class="rm-note">motion reduced — the poem holds still.</span>
+  </div>
+  <button class="btn ch-btn" id="restack">restack</button>
+</section>
+
+<section id="ch2" data-ch="2">
+  <div class="ch-tag"><span class="no">II</span><span>WIND</span></div>
+  <p class="hint">hold a word against the weather</p>
+  <div class="anno">
+    <span class="formula">F<sub>d</sub> = ½·ρ·v²·c·A</span>
+    the field is invisible.<br>the flutter is not.
+    <span class="rm-note">motion reduced — the poem holds still.</span>
+  </div>
+</section>
+
+<section id="ch3" data-ch="3">
+  <div class="orbit-ring" aria-hidden="true"></div>
+  <div class="ch-tag"><span class="no">III</span><span>ORBIT</span></div>
+  <p class="hint">throw a word into a new orbit</p>
+  <div class="anno">
+    <span class="formula">F = G·m₁m₂ / r²</span>
+    orbit is falling,<br>endlessly postponed.
+    <span class="rm-note">motion reduced — the poem holds still.</span>
+  </div>
+</section>
+
+<section id="ch4" data-ch="4">
+  <div class="surface" aria-hidden="true"></div>
+  <div class="ch-tag"><span class="no">IV</span><span>BUOYANCY</span></div>
+  <p class="hint">drown a word — it rises</p>
+  <div class="anno">
+    <span class="formula">F<sub>b</sub> = ρ·V·g</span>
+    what is lighter than its grief<br>comes back up.
+    <span class="rm-note">motion reduced — the poem holds still.</span>
+  </div>
+</section>
+
+<section id="ch5" data-ch="5">
+  <div class="ch-tag"><span class="no">V</span><span>ENTROPY</span></div>
+  <p class="hint">click to breathe on it</p>
+  <div class="anno">
+    <span class="formula">ΔS ≥ 0</span>
+    order is borrowed.<br>the debt is always collected.
+    <span class="rm-note">motion reduced — the poem holds still.</span>
+  </div>
+  <button class="btn ch-btn" id="remember">remember</button>
+</section>
+
+<section id="end">
+  <p class="fin">· FIN ·</p>
+  <h2>the well closes.</h2>
+  <div class="col-body">
+    five poems, five laws, one mass.<br>
+    written, set, and simulated by hand — <b>verlet integration</b>,
+    <b>box collisions</b>, <b>spring constraints</b>. no engines were borrowed.<br>
+    <b>Space Grotesk</b> carries the weight; <b>Space Mono</b> keeps the records.<br>
+    what you threw always came back. that was the point.
+  </div>
+  <button class="btn" id="again">begin again ↑</button>
+</section>
+
+<script>
+(() => {
+'use strict';
+
+/* ============================================================
+   GRAVITY WELL — hand-rolled physics: verlet + AABB + springs
+   ============================================================ */
+
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DT = 1/60;
+const TAU = Math.PI*2;
+
+const POEMS = [
+  { // I — GRAVITY
+    lines: ['Everything I carried','I called mine —','until my arms learned','the difference between','holding and being held down.']
+  },
+  { // II — WIND
+    lines: ['The wind keeps no appointments.','It arrives mid-sentence,','rearranges everything I meant to say,','and leaves me speaking in weather.']
+  },
+  { // III — ORBIT
+    lines: ['We never touch.','We only fall toward each other','forever, and forever miss —','which is one way of saying stay.']
+  },
+  { // IV — BUOYANCY
+    lines: ['Whatever you drown','comes back lighter.','Grief loosens its grip at depth,','and what rises, wobbling,','is almost a kind of laughter.']
+  },
+  { // V — ENTROPY
+    lines: ['Every poem is already ash rehearsing.','Read it quickly —','the letters remember being dust,','and one by one they go home.']
+  }
+];
+
+/* ---------- tiny value-noise ---------- */
+function hash(n){ const s = Math.sin(n)*43758.5453123; return s - Math.floor(s); }
+function noise2(x,y){
+  const xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi;
+  const u=xf*xf*(3-2*xf), v=yf*yf*(3-2*yf);
+  const a=hash(xi*127.1+yi*311.7), b=hash((xi+1)*127.1+yi*311.7);
+  const c=hash(xi*127.1+(yi+1)*311.7), d=hash((xi+1)*127.1+(yi+1)*311.7);
+  return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;
+}
+const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
+
+/* ---------- body ---------- */
+let BID=0;
+function makeBody(el){
+  return {
+    id:BID++, el,
+    x:0,y:0,px:0,py:0, a:0,pa:0,
+    fx:0,fy:0,ta:0,
+    w:0,h:0,hw:0,hh:0, m:1,
+    home:{x:0,y:0},
+    mode:'held', grab:null, delay:0, t:0,
+    phase:Math.random()*TAU, seed:Math.random()*100,
+    seq:0, age:0, op:1,
+    lastTf:'', lastOp:''
+  };
+}
+function vset(b,vx,vy){ b.px=b.x-vx*DT; b.py=b.y-vy*DT; }
+function vel(b){ return {x:(b.x-b.px)/DT, y:(b.y-b.py)/DT}; }
+
+function integrate(b,dt,damp,adamp){
+  if(b.grab){
+    const g=b.grab;
+    b.px=b.x; b.py=b.y;
+    b.x+=(g.x-b.x)*0.55; b.y+=(g.y-b.y)*0.55;
+    b.pa=b.a; b.a*=0.82;
+    b.fx=b.fy=b.ta=0; return;
+  }
+  if(b.mode==='held'||b.mode==='still'||b.mode==='waiting'){
+    b.px=b.x; b.py=b.y; b.pa=b.a; b.fx=b.fy=b.ta=0; return;
+  }
+  const vx=(b.x-b.px)*damp, vy=(b.y-b.py)*damp;
+  b.px=b.x; b.py=b.y;
+  b.x+=vx+b.fx*dt*dt; b.y+=vy+b.fy*dt*dt;
+  const va=(b.a-b.pa)*adamp;
+  b.pa=b.a; b.a+=va+b.ta*dt*dt;
+  b.a=clamp(b.a,-0.75,0.75);
+  b.fx=b.fy=b.ta=0;
+}
+
+/* AABB collision, positional resolution */
+function collide(list,strength){
+  const K=strength===undefined?0.8:strength;
+  const soft=K<0.5; // soft separation: no friction/torque side-effects
+  for(let i=0;i<list.length;i++){
+    const A=list[i];
+    for(let j=i+1;j<list.length;j++){
+      const B=list[j];
+      const dx=B.x-A.x, ox=A.hw+B.hw-Math.abs(dx);
+      if(ox<=0) continue;
+      const dy=B.y-A.y, oy=A.hh+B.hh-Math.abs(dy);
+      if(oy<=0) continue;
+      const wA=1/A.m, wB=1/B.m, tw=wA+wB;
+      if(ox<oy){
+        const s=(dx<0?-1:1)*ox*K;
+        A.x-=s*wA/tw; B.x+=s*wB/tw;
+      }else{
+        const s=(dy<0?-1:1)*oy*K;
+        A.y-=s*wA/tw; B.y+=s*wB/tw;
+        if(soft) continue;
+        // friction: bleed horizontal velocity on vertical contact
+        A.px+= (A.x-A.px)*0.10; B.px+=(B.x-B.px)*0.10;
+        // settle rotation
+        A.a*=0.97; B.a*=0.97;
+        A.ta+=dx*0.10; B.ta-=dx*0.10;
+      }
+    }
+  }
+}
+function bounds(b,W,H,rest,fr,pad,padX){
+  const p=pad||0, px=padX===undefined?p:padX;
+  if(b.y>H-p-b.hh){ const vy=b.y-b.py; b.y=H-p-b.hh; b.py=b.y+vy*rest;
+    const vx=b.x-b.px; b.px=b.x-vx*fr;
+    b.a+=(0-b.a)*0.10; b.pa=b.a-(b.a-b.pa)*0.6;
+  }
+  if(b.y<p+b.hh){ const vy=b.y-b.py; b.y=p+b.hh; b.py=b.y+vy*rest; }
+  if(b.x<px+b.hw){ const vx=b.x-b.px; b.x=px+b.hw; b.px=b.x+vx*rest; }
+  if(b.x>W-px-b.hw){ const vx=b.x-b.px; b.x=W-px-b.hw; b.px=b.x+vx*rest; }
+}
+
+/* ---------- chapters ---------- */
+const chapters=[];
+let active=null;
+
+function buildVerse(ch){
+  const verse=document.createElement('div');
+  verse.className='verse';
+  const block=document.createElement('div');
+  block.className='verse-block';
+  verse.appendChild(block);
+  const poem=POEMS[ch.n-1];
+  poem.lines.forEach(line=>{
+    const ln=document.createElement('span');
+    ln.className='ln';
+    line.split(' ').forEach((word,wi)=>{
+      if(wi>0) ln.appendChild(document.createTextNode(' '));
+      if(ch.n===5){
+        const wd=document.createElement('span');
+        wd.className='wd';
+        for(const chr of word){
+          const lt=document.createElement('span');
+          lt.className='lt'; lt.textContent=chr;
+          wd.appendChild(lt);
+          ch.spans.push(lt);
+        }
+        ln.appendChild(wd);
+      }else{
+        const w=document.createElement('span');
+        w.className='w'; w.textContent=word;
+        ln.appendChild(w);
+        ch.spans.push(w);
+      }
+    });
+    block.appendChild(ln);
+  });
+  ch.el.appendChild(verse);
+  ch.verse=verse;
+}
+
+function measure(ch){
+  const sr=ch.el.getBoundingClientRect();
+  ch.W=sr.width; ch.H=sr.height;
+  ch.bodies=[];
+  ch.spans.forEach((el,idx)=>{
+    const r=el.getBoundingClientRect();
+    const b=makeBody(el);
+    b.home.x=r.left-sr.left+r.width/2;
+    b.home.y=r.top-sr.top+r.height/2;
+    b.w=r.width; b.h=r.height;
+    b.hw=r.width/2+1.5; b.hh=r.height/2+1.5;
+    b.m=Math.max(1,(r.width*r.height)/900);
+    b.x=b.px=b.home.x; b.y=b.py=b.home.y;
+    b.seq=idx;
+    ch.bodies.push(b);
+    el._body=b;
+  });
+  ch.verse.classList.add('physical');
+  // ch1: faint ghost of the composed verse — the shape the words fell from
+  if(ch.n===1){
+    if(ch.ghostLayer) ch.ghostLayer.remove();
+    ch.ghostLayer=document.createElement('div');
+    ch.ghostLayer.setAttribute('aria-hidden','true');
+    ch.ghostLayer.style.cssText='position:absolute;inset:0;pointer-events:none;';
+    ch.bodies.forEach(b=>{
+      const g=document.createElement('span');
+      g.className='ghost'; g.textContent=b.el.textContent;
+      g.style.transform=`translate3d(${(b.home.x-b.w/2).toFixed(1)}px,${(b.home.y-b.h/2).toFixed(1)}px,0)`;
+      ch.ghostLayer.appendChild(g);
+    });
+    ch.verse.insertBefore(ch.ghostLayer,ch.verse.firstChild);
+  }
+  // chapter-specific init
+  initChapter(ch);
+  ch.bodies.forEach(b=>render(b));
+}
+
+function render(b){
+  const tf=`translate3d(${(b.x-b.w/2).toFixed(2)}px,${(b.y-b.h/2).toFixed(2)}px,0) rotate(${b.a.toFixed(3)}rad)`;
+  if(tf!==b.lastTf){ b.el.style.transform=tf; b.lastTf=tf; }
+  const op=b.op.toFixed(2);
+  if(op!==b.lastOp){ b.el.style.opacity=op; b.lastOp=op; }
+}
+
+/* ---------- chapter init / enter / step ---------- */
+function initChapter(ch){
+  ch.t=0; ch.entered=false;
+  const bs=ch.bodies;
+  if(ch.n===1){
+    bs.forEach(b=>{ b.mode='held'; });
+  }
+  if(ch.n===2){
+    bs.forEach(b=>{ b.mode='free'; });
+  }
+  if(ch.n===3){
+    ch.cx=ch.W/2; ch.cy=ch.H*0.58;
+    const rRef=Math.min(ch.W,ch.H)*0.30;
+    const om=TAU/9;
+    ch.GM=om*om*rRef*rRef*rRef;
+    ch.maxR=Math.min(ch.W*0.46,ch.H*0.42);
+    bs.forEach(b=>{
+      b.mode='free';
+      const dx=b.x-ch.cx, dy=b.y-ch.cy;
+      const r=Math.max(90,Math.hypot(dx,dy));
+      const vc=Math.sqrt(ch.GM/r)*0.74;
+      vset(b,-dy/r*vc,dx/r*vc);
+    });
+  }
+  if(ch.n===4){
+    ch.surfaceY=ch.H*0.15;
+    let avg=0; bs.forEach(b=>avg+=b.m); avg/=bs.length;
+    ch.avgM=avg;
+    // release order: last line first (poem assembles upside-down-becoming-right)
+    const n=bs.length;
+    bs.forEach((b,i)=>{
+      b.mode='waiting';
+      b.delay=0.3+(n-1-i)*0.22;
+      b.x=b.px=clamp(b.home.x+(hash(b.seed)*2-1)*80, 40, ch.W-40);
+      b.y=b.py=ch.H+30+hash(b.seed*7)*180;
+      render(b);
+    });
+  }
+  if(ch.n===5){
+    ch.decay=0; ch.dur=40;
+    ch.order=bs.map((_,i)=>i);
+    // deterministic-ish shuffle
+    for(let i=ch.order.length-1;i>0;i--){
+      const j=Math.floor(hash(i*13.7)* (i+1));
+      [ch.order[i],ch.order[j]]=[ch.order[j],ch.order[i]];
+    }
+    ch.rank=new Array(bs.length);
+    ch.order.forEach((bi,rank)=>{ ch.rank[bi]=rank; });
+    bs.forEach(b=>{ b.mode='still'; b.op=1; b.age=0; });
+  }
+}
+
+function enter(ch){
+  if(ch.entered) return;
+  ch.entered=true; ch.t=0;
+  if(ch.n===1){
+    ch.bodies.forEach((b,i)=>{ b.mode='pending'; b.delay=0.5+i*0.085; });
+  }
+}
+
+function stepChapter(ch,dt){
+  ch.t+=dt;
+  const bs=ch.bodies;
+  switch(ch.n){
+  case 1:{ // GRAVITY
+    const free=[];
+    for(const b of bs){
+      if(b.mode==='pending' && ch.t>=b.delay){
+        b.mode='free';
+        vset(b,(hash(b.seed*3)-0.5)*60,20);
+      }
+      if(b.mode==='returning'){
+        b.t+=dt;
+        if(b.t>=b.delay){
+          const k=Math.min(1,7.5*dt);
+          b.x+=(b.home.x-b.x)*k; b.y+=(b.home.y-b.y)*k; b.a*=(1-Math.min(1,9*dt));
+          b.px=b.x; b.py=b.y; b.pa=b.a;
+          if(Math.abs(b.x-b.home.x)<0.5&&Math.abs(b.y-b.home.y)<0.5){
+            b.x=b.px=b.home.x; b.y=b.py=b.home.y; b.a=b.pa=0; b.mode='held';
+          }
+        }
+        continue;
+      }
+      if(b.mode==='free'&&!b.grab){
+        b.fy+=2400;
+        b.ta+=(b.x-b.px)*1.6*(34/b.w);
+      }
+      integrate(b,dt,0.995,0.96);
+      if(b.mode==='free') free.push(b);
+    }
+    for(let it=0;it<3;it++) collide(free);
+    const padX=Math.max(24,ch.W*0.12);
+    for(const b of free) bounds(b,ch.W,ch.H,0.24,0.90,6,padX);
+    break;
+  }
+  case 2:{ // WIND
+    for(const b of bs){
+      if(!b.grab){
+        const wind=noise2(b.home.y*0.012+b.home.x*0.0015, ch.t*0.5+b.seed*0.01);
+        const gust=noise2(b.home.x*0.008+50, ch.t*0.85);
+        b.fx+=(wind-0.32)*4300;
+        b.fy+=(gust-0.5)*1100;
+        b.fx+=(b.home.x-b.x)*32;
+        b.fy+=(b.home.y-b.y)*44;
+        const targ=(wind-0.5)*0.34+(b.x-b.px)*0.010;
+        b.ta+=(targ-b.a)*90;
+        // soft screen-edge springs — the gale never blows a word off the page
+        const mL=16+b.hw, mR=ch.W-16-b.hw;
+        if(b.x<mL) b.fx+=(mL-b.x)*90;
+        if(b.x>mR) b.fx-=(b.x-mR)*90;
+      }
+      integrate(b,dt,0.935,0.90);
+    }
+    collide(bs,0.18); // gentle separation — words shoulder past, never stack
+    break;
+  }
+  case 3:{ // ORBIT
+    for(const b of bs){
+      if(!b.grab){
+        const dx=ch.cx-b.x, dy=ch.cy-b.y;
+        const r2=dx*dx+dy*dy+3600, r=Math.sqrt(r2);
+        const g=ch.GM/r2;
+        b.fx+=g*dx/r; b.fy+=g*dy/r;
+        b.ta+=(0-b.a)*40;
+      }
+      integrate(b,dt,1.0,0.9);
+      // comet drag beyond bounds — always returns
+      const dx=b.x-ch.cx, dy=b.y-ch.cy;
+      if(dx*dx+dy*dy>ch.maxR*ch.maxR){
+        b.px+=(b.x-b.px)*0.03; b.py+=(b.y-b.py)*0.03;
+      }
+      // global speed cap
+      const vx=b.x-b.px, vy=b.y-b.py, sp=Math.hypot(vx,vy), mx=1500*DT;
+      if(sp>mx){ b.px=b.x-vx/sp*mx; b.py=b.y-vy/sp*mx; }
+    }
+    break;
+  }
+  case 4:{ // BUOYANCY
+    const risers=[];
+    for(const b of bs){
+      if(b.mode==='waiting'&&ch.t>=b.delay){ b.mode='rising'; vset(b,0,-40); }
+      if(!b.grab){
+        if(b.mode==='rising'){
+          const buoy=clamp(560*(ch.avgM/b.m),330,1050);
+          b.fy-=buoy;
+          b.fx+=Math.sin(ch.t*2.3+b.phase)*300;
+          b.fx+=(b.home.x-b.x)*7; // drift home while rising
+          b.ta+=(Math.sin(ch.t*2.0+b.phase)*0.16-b.a)*40;
+          if(b.y<=b.home.y+56) b.mode='settling'; // reached the verse band
+        }
+        if(b.mode==='settling'){
+          b.fx+=(b.home.x-b.x)*34; b.fy+=(b.home.y-b.y)*34;
+          b.ta+=(0-b.a)*60;
+          const vx=b.x-b.px, vy=b.y-b.py;
+          if(Math.abs(b.x-b.home.x)<1&&Math.abs(b.y-b.home.y)<1&&Math.hypot(vx,vy)<0.3){
+            b.x=b.px=b.home.x; b.y=b.py=b.home.y; b.a=b.pa=0; b.mode='held';
+          }
+        }
+      }
+      integrate(b,dt,b.mode==='settling'?0.86:0.975,0.92);
+      if(b.mode==='rising') risers.push(b);
+    }
+    collide(risers);
+    for(const b of risers){
+      // surface is a ceiling
+      if(b.y<ch.surfaceY+b.hh){ const vy=b.y-b.py; b.y=ch.surfaceY+b.hh; b.py=b.y+vy*0.3; }
+      if(b.x<b.hw){ b.x=b.hw; } if(b.x>ch.W-b.hw){ b.x=ch.W-b.hw; }
+    }
+    break;
+  }
+  case 5:{ // ENTROPY
+    ch.decay+=dt;
+    const p=clamp(ch.decay/ch.dur,0,1);
+    const nRel=Math.floor(p*bs.length);
+    for(let r=0;r<nRel;r++){
+      const b=bs[ch.order[r]];
+      if(b.mode==='still'){
+        b.mode='dust'; b.age=0;
+        vset(b,(hash(b.seed*5)-0.5)*50,(hash(b.seed*9)-0.6)*40);
+      }
+    }
+    for(const b of bs){
+      if(b.mode==='dust'&&!b.grab){
+        b.age+=dt;
+        const n1=noise2(b.x*0.008+b.seed, ch.t*0.5);
+        const n2=noise2(b.y*0.008+b.seed*2, ch.t*0.4+30);
+        b.fx+=(n1-0.5)*1000;
+        b.fy+=90+(n2-0.5)*750;
+        b.ta+=(n1-0.5)*14;
+        b.op=Math.max(0.12,1-b.age*0.30);
+      }
+      if(b.mode==='returning'){
+        b.t+=dt;
+        if(b.t>=b.delay){
+          const k=Math.min(1,8*dt);
+          b.x+=(b.home.x-b.x)*k; b.y+=(b.home.y-b.y)*k;
+          b.a*=(1-Math.min(1,10*dt)); b.op+= (1-b.op)*k;
+          b.px=b.x; b.py=b.y; b.pa=b.a;
+          if(Math.abs(b.x-b.home.x)<0.5&&Math.abs(b.y-b.home.y)<0.5){
+            b.x=b.px=b.home.x; b.y=b.py=b.home.y; b.a=b.pa=0; b.op=1; b.mode='still';
+          }
+        }
+        continue;
+      }
+      integrate(b,dt,0.988,0.97);
+      if(b.mode==='dust') bounds(b,ch.W,ch.H,0.4,0.98,4);
+    }
+    break;
+  }
+  }
+}
+
+/* ---------- pointer interaction ---------- */
+let grabbed=null;
+function stagePos(ch,e){
+  const r=ch.el.getBoundingClientRect();
+  return {x:e.clientX-r.left, y:e.clientY-r.top};
+}
+function attachPointer(ch){
+  ch.el.addEventListener('pointerdown',e=>{
+    const el=e.target;
+    if(!el._body) {
+      if(ch.n===5&&ch.entered&&!e.target.closest('.btn')) breath(ch,e);
+      return;
+    }
+    const b=el._body;
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    const p=stagePos(ch,e);
+    b.grab={x:p.x,y:p.y,vx:0,vy:0,lx:p.x,ly:p.y,lt:performance.now()};
+    // grabbing wakes bodies
+    if(ch.n===1&&(b.mode==='held'||b.mode==='pending'||b.mode==='returning')) b.mode='free';
+    if(ch.n===4&&(b.mode==='held'||b.mode==='waiting')) b.mode='rising';
+    if(ch.n===5&&b.mode==='still'){ b.mode='dust'; b.age=0; }
+    el.classList.add('grabbed');
+    grabbed=b;
+  });
+  ch.el.addEventListener('pointermove',e=>{
+    if(!grabbed||!grabbed.grab) return;
+    const g=grabbed.grab, p=stagePos(ch,e);
+    const now=performance.now(), dtm=Math.max(8,now-g.lt)/1000;
+    g.vx=g.vx*0.5+((p.x-g.lx)/dtm)*0.5;
+    g.vy=g.vy*0.5+((p.y-g.ly)/dtm)*0.5;
+    g.lx=p.x; g.ly=p.y; g.lt=now;
+    g.x=p.x; g.y=p.y;
+  });
+  const drop=e=>{
+    if(!grabbed||!grabbed.grab) return;
+    const b=grabbed, g=b.grab;
+    const sp=Math.hypot(g.vx,g.vy), mx=2200;
+    const s=sp>mx?mx/sp:1;
+    vset(b,g.vx*s,g.vy*s);
+    b.grab=null;
+    b.el.classList.remove('grabbed');
+    if(ch.n===4&&b.mode!=='rising'&&b.mode!=='settling') b.mode='rising';
+    grabbed=null;
+  };
+  ch.el.addEventListener('pointerup',drop);
+  ch.el.addEventListener('pointercancel',drop);
+}
+
+function breath(ch,e){
+  ch.decay+=5;
+  const p=stagePos(ch,e);
+  for(const b of ch.bodies){
+    if(b.mode!=='dust') continue;
+    const dx=b.x-p.x, dy=b.y-p.y, d2=dx*dx+dy*dy+2500, d=Math.sqrt(d2);
+    const imp=140000/d2;
+    b.px-=dx/d*imp*DT*60; b.py-=dy/d*imp*DT*60;
+  }
+}
+
+/* ---------- main loop ---------- */
+let raf=0, last=0, acc=0;
+function frame(now){
+  raf=requestAnimationFrame(frame);
+  const d=Math.min(0.05,(now-last)/1000); last=now; acc+=d;
+  let n=0;
+  while(acc>=DT&&n<4){ if(active) stepChapter(active,DT); acc-=DT; n++; }
+  if(acc>=DT) acc=0;
+  if(active) for(const b of active.bodies) render(b);
+}
+function startLoop(){ if(!raf){ last=performance.now(); acc=0; raf=requestAnimationFrame(frame); } }
+function stopLoop(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
+document.addEventListener('visibilitychange',()=>{
+  if(REDUCED) return;
+  document.hidden?stopLoop():startLoop();
+});
+
+/* ---------- setup ---------- */
+const sections=[...document.querySelectorAll('section[data-ch]')];
+sections.forEach(el=>{
+  const ch={n:+el.dataset.ch, el, spans:[], bodies:[], verse:null, entered:false, t:0, W:0, H:0};
+  chapters.push(ch);
+  buildVerse(ch);
+});
+
+// intersection: inview styling for all sections + physics activation
+const allSections=[...document.querySelectorAll('section')];
+const io=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(en.isIntersecting){
+      en.target.classList.add('inview');
+      const ch=chapters.find(c=>c.el===en.target);
+      const navA=document.querySelectorAll('nav.dots a');
+      navA.forEach(a=>a.classList.remove('on'));
+      if(ch){
+        if(!REDUCED){ active=ch; enter(ch); }
+        const a=document.querySelector(`nav.dots a[data-nav="${ch.n}"]`);
+        if(a) a.classList.add('on');
+      } else if(!REDUCED){
+        active=null;
+      }
+    }
+  });
+},{threshold:0.55});
+allSections.forEach(s=>io.observe(s));
+
+// buttons
+document.getElementById('begin').addEventListener('click',()=>document.getElementById('ch1').scrollIntoView({behavior:REDUCED?'auto':'smooth'}));
+document.getElementById('again').addEventListener('click',()=>document.getElementById('intro').scrollIntoView({behavior:REDUCED?'auto':'smooth'}));
+const restackBtn=document.getElementById('restack');
+restackBtn.addEventListener('click',()=>{
+  const ch=chapters[0];
+  const anyLoose=ch.bodies.some(b=>b.mode!=='held');
+  if(anyLoose){
+    ch.bodies.forEach((b,i)=>{ if(!b.grab){ b.mode='returning'; b.t=0; b.delay=i*0.04; } });
+    restackBtn.textContent='release';
+  }else{
+    ch.t=0;
+    ch.bodies.forEach((b,i)=>{ b.mode='pending'; b.delay=0.15+i*0.07; });
+    restackBtn.textContent='restack';
+  }
+});
+document.getElementById('remember').addEventListener('click',()=>{
+  const ch=chapters[4];
+  ch.bodies.forEach(b=>{
+    if(b.mode==='dust'&&!b.grab){
+      b.mode='returning'; b.t=0;
+      b.delay=(ch.bodies.length-1-ch.rank[b.seq])*0.018;
+    }
+  });
+  ch.decay=-6; // breather before entropy resumes
+});
+
+// nav smooth-scroll (anchor default is fine, but keep snap happy)
+document.querySelectorAll('nav.dots a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:REDUCED?'auto':'smooth'});
+  });
+});
+
+/* ---------- resize ---------- */
+let rw=innerWidth, rh=innerHeight, rt=0;
+addEventListener('resize',()=>{
+  if(REDUCED) return;
+  clearTimeout(rt);
+  rt=setTimeout(()=>{
+    if(Math.abs(innerWidth-rw)<2&&Math.abs(innerHeight-rh)<130) return;
+    rw=innerWidth; rh=innerHeight;
+    chapters.forEach(ch=>{
+      const wasActive=active===ch;
+      ch.verse.classList.remove('physical');
+      ch.spans.forEach(s=>{ s.style.transform=''; s.style.opacity=''; s.classList.remove('grabbed'); });
+      ch.bodies.forEach(b=>{ b.grab=null; b.lastTf=''; b.lastOp=''; });
+      grabbed=null;
+      measure(ch);
+      if(wasActive) enter(ch);
+    });
+  },220);
+});
+
+/* ---------- boot ---------- */
+function fastForward(ch,seconds){
+  enter(ch);
+  const steps=Math.round(seconds/DT);
+  for(let i=0;i<steps;i++) stepChapter(ch,DT);
+  for(const b of ch.bodies) render(b);
+}
+
+function boot(){
+  if(REDUCED){
+    document.body.classList.add('reduced');
+    return; // verses stay as composed static verse; physics off
+  }
+  chapters.forEach(ch=>{ measure(ch); attachPointer(ch); });
+
+  // screenshot / deep-link params: ?ch=N&settle=1
+  const q=new URLSearchParams(location.search);
+  const chN=parseInt(q.get('ch')||'0',10);
+  if(chN>=1&&chN<=5){
+    document.documentElement.classList.add('no-snap');
+    const ch=chapters[chN-1];
+    if(q.get('settle')==='1'){
+      active=ch;
+      const secs={1:14,2:6,3:22,4:16,5:0}[chN];
+      if(chN===5){ enter(ch); ch.decay=19; fastForwardSteps(ch,6); }
+      else fastForward(ch,secs);
+    }
+    ch.el.scrollIntoView({behavior:'auto'});
+    setTimeout(()=>{ document.documentElement.classList.remove('no-snap'); ch.el.scrollIntoView({behavior:'auto'}); },80);
+  }
+  startLoop();
+}
+function fastForwardSteps(ch,seconds){
+  const steps=Math.round(seconds/DT);
+  for(let i=0;i<steps;i++) stepChapter(ch,DT);
+  for(const b of ch.bodies) render(b);
+}
+
+if(document.fonts&&document.fonts.ready){
+  document.fonts.ready.then(()=>requestAnimationFrame(()=>boot()));
+}else{
+  addEventListener('load',()=>boot());
+}
+})();
+</script>
+</body>
+</html>
