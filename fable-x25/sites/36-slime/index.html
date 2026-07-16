@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHYSARUM — the intelligence of slime</title>
+<meta name="description" content="A live GPU simulation of Physarum polycephalum — the brainless slime mould. Half a million synthetic filaments sense a trail map, steer toward scent and deposit their own, self-organising into living, pulsing transport networks. Feed it with your cursor.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="PHYSARUM — the intelligence of slime">
+<meta property="og:description" content="A brainless cell that solves mazes and redraws the Tokyo rail map — rendered live as an agent-based Physarum simulation on your GPU. Move to feed it.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PHYSARUM — the intelligence of slime">
+<meta name="twitter:description" content="A brainless cell that computes, rendered live on your GPU. Move to feed it, click to drop food.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🟡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#05060a;
+  --void2:#080a11;
+  --ink:#f0ecdf;
+  --gold:#ffcf6b;
+  --gold2:#ffb43a;
+  --amber:#ff8a3c;
+  --cyan:#5ff0e0;
+  --violet:#b98cff;
+  --mut:rgba(240,236,223,.62);
+  --mut2:rgba(240,236,223,.36);
+  --mut3:rgba(240,236,223,.16);
+  --line:rgba(240,236,223,.12);
+  --line2:rgba(240,236,223,.07);
+  --glass:rgba(9,11,18,.62);
+  --glass-edge:rgba(255,207,107,.16);
+  --accent:var(--gold);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{background:var(--void);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;line-height:1.5;
+}
+::selection{background:rgba(255,207,107,.26);color:#fff6e2}
+:focus-visible{outline:1px solid var(--accent);outline-offset:3px;border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+input{font:inherit}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#06070c}
+::-webkit-scrollbar-thumb{background:rgba(255,207,107,.18);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,207,107,.34)}
+
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.24em}
+
+/* ---------------- WebGL canvas (fixed hero background) ---------------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:#05060a;
+  touch-action:none;cursor:crosshair}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 50% 42%, transparent 52%, rgba(5,6,10,.34) 78%, rgba(5,6,10,.72) 100%),
+    linear-gradient(180deg, rgba(5,6,10,.42) 0%, transparent 22%, transparent 68%, rgba(5,6,10,.66) 100%);}
+/* hero legibility scrim — darkens behind the left-aligned copy, keeps the network glowing on the right */
+#heroscrim{position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:
+    linear-gradient(102deg, rgba(5,6,10,.9) 0%, rgba(5,6,10,.72) 26%, rgba(5,6,10,.36) 46%, transparent 63%),
+    linear-gradient(0deg, rgba(5,6,10,.7) 0%, transparent 32%);}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");}
+#cursor{position:fixed;top:0;left:0;z-index:55;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(255,207,107,.55);box-shadow:0 0 18px rgba(255,150,50,.4),inset 0 0 10px rgba(255,207,107,.25);opacity:0;
+  transition:opacity .4s ease,width .18s ease,height .18s ease,margin .18s ease;mix-blend-mode:screen}
+#cursor.on{opacity:1}
+#cursor.press{width:52px;height:52px;margin:-26px 0 0 -26px;border-color:rgba(255,180,80,.9)}
+
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;
+  background:linear-gradient(90deg,var(--amber),var(--gold));box-shadow:0 0 12px rgba(255,180,80,.6)}
+
+/* ---------------- back link ---------------- */
+#backlink{position:fixed;top:22px;left:26px;z-index:44;font-size:10px;color:var(--mut);
+  transition:color .4s ease;text-shadow:0 1px 18px rgba(5,6,10,.95)}
+#backlink b{font-weight:600;color:var(--ink)}
+#backlink:hover{color:var(--gold)}
+#backlink .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);
+  margin-right:8px;vertical-align:middle;box-shadow:0 0 8px var(--gold);animation:pulse 3.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.35)}}
+
+/* ---------------- HUD readout ---------------- */
+#hud{position:fixed;top:20px;right:22px;z-index:44;display:flex;flex-direction:column;gap:2px;align-items:flex-end;
+  font-size:10px;color:var(--mut2);text-align:right;text-shadow:0 1px 14px rgba(5,6,10,.9);
+  transition:opacity .5s ease}
+#hud .row{display:flex;gap:9px;align-items:baseline}
+#hud .k{letter-spacing:.16em}
+#hud .v{color:var(--gold);font-weight:500;min-width:52px;text-align:right}
+
+/* ---------------- control dock ---------------- */
+#dock{position:fixed;right:26px;bottom:24px;z-index:46;width:294px;max-width:calc(100vw - 40px);
+  padding:16px 16px 15px;border-radius:16px;background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+  transition:opacity .5s ease,transform .5s ease}
+#dock.hidden{opacity:0;transform:translateY(24px);pointer-events:none}
+#dock .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+#dock .head .ttl{font-size:10px;letter-spacing:.22em;color:var(--mut)}
+#dock .head .ttl b{color:var(--ink);font-weight:600}
+#dock .head .live{font-size:9px;color:var(--gold);display:flex;align-items:center;gap:6px}
+#dock .head .live i{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 7px var(--gold);animation:pulse 2.6s infinite}
+
+.ctrl{margin-bottom:11px}
+.ctrl .lab{display:flex;justify-content:space-between;font-size:9.5px;letter-spacing:.13em;color:var(--mut);margin-bottom:6px}
+.ctrl .lab .num{color:var(--gold);font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) 0%,var(--gold) var(--fill,40%),rgba(240,236,223,.13) var(--fill,40%));
+  outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--gold2);box-shadow:0 0 10px rgba(255,180,80,.6);cursor:grab;
+  transition:transform .15s ease}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(.94)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--ink);
+  border:2px solid var(--gold2);box-shadow:0 0 10px rgba(255,180,80,.6);cursor:grab}
+
+.dock-row{display:flex;gap:8px;margin-top:13px}
+.pal{flex:1}
+.pal .lab{font-size:9.5px;letter-spacing:.13em;color:var(--mut);margin-bottom:6px}
+.seg{display:flex;gap:5px}
+.seg button{flex:1;padding:7px 0;font-size:9px;letter-spacing:.1em;border-radius:8px;
+  border:1px solid var(--line);color:var(--mut);transition:all .25s ease}
+.seg button:hover{border-color:var(--glass-edge);color:var(--ink)}
+.seg button.act{background:linear-gradient(180deg,rgba(255,207,107,.2),rgba(255,140,60,.1));
+  border-color:rgba(255,180,80,.55);color:#fff3d8;box-shadow:0 0 16px rgba(255,150,60,.2)}
+
+.act-row{display:flex;gap:8px;margin-top:13px}
+.btn{flex:1;padding:9px 0;font-size:10px;letter-spacing:.13em;border-radius:9px;border:1px solid var(--line);
+  color:var(--ink);transition:all .25s ease;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{border-color:var(--glass-edge);background:rgba(255,207,107,.06)}
+.btn.primary{background:linear-gradient(180deg,rgba(255,180,80,.22),rgba(255,120,50,.12));
+  border-color:rgba(255,170,70,.5);color:#fff3d8}
+.btn.primary:hover{background:linear-gradient(180deg,rgba(255,180,80,.32),rgba(255,120,50,.18))}
+.btn .ic{font-size:12px}
+
+#dockToggle{position:fixed;left:26px;bottom:24px;z-index:45;display:none;
+  padding:11px 15px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:10px;letter-spacing:.16em;color:var(--ink)}
+
+/* ---------------- hero copy ---------------- */
+#hero{position:relative;z-index:5;min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:0 clamp(22px,6vw,90px);pointer-events:none}
+#hero .inner{max-width:760px;pointer-events:none}
+.eyebrow{display:inline-flex;align-items:center;gap:11px;font-size:10.5px;color:var(--mut);margin-bottom:22px;
+  opacity:0;transform:translateY(14px);animation:rise .9s .15s cubic-bezier(.2,.7,.2,1) forwards}
+.eyebrow .ln{width:34px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+h1.title{font-weight:700;font-size:clamp(58px,15vw,190px);line-height:.86;letter-spacing:-.03em;
+  margin-bottom:.12em;color:#fff8ea;
+  text-shadow:0 6px 60px rgba(255,140,50,.25);
+  opacity:0;transform:translateY(26px);animation:rise 1s .28s cubic-bezier(.2,.7,.2,1) forwards}
+h1.title em{font-style:normal;
+  background:linear-gradient(105deg,var(--gold) 0%,var(--amber) 55%,var(--gold2) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:clamp(17px,2.6vw,27px);font-weight:300;color:var(--ink);letter-spacing:.01em;margin-bottom:20px;
+  opacity:0;transform:translateY(20px);animation:rise 1s .42s cubic-bezier(.2,.7,.2,1) forwards}
+.subtitle b{font-weight:500;color:var(--gold)}
+.lede{max-width:520px;font-size:clamp(13.5px,1.5vw,15.5px);color:var(--mut);line-height:1.62;margin-bottom:30px;
+  opacity:0;transform:translateY(18px);animation:rise 1s .55s cubic-bezier(.2,.7,.2,1) forwards}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px 26px;font-size:10px;color:var(--mut2);
+  opacity:0;transform:translateY(16px);animation:rise 1s .68s cubic-bezier(.2,.7,.2,1) forwards}
+.hero-meta span b{color:var(--gold);font-weight:500}
+.feedhint{display:inline-flex;align-items:center;gap:9px;margin-top:26px;font-size:11px;color:var(--mut);
+  pointer-events:none;opacity:0;transform:translateY(16px);animation:rise 1s .82s cubic-bezier(.2,.7,.2,1) forwards}
+.feedhint .k{border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--ink);
+  background:rgba(255,255,255,.03);font-family:"IBM Plex Mono",monospace;font-size:10px}
+@keyframes rise{to{opacity:1;transform:none}}
+
+#scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:6;
+  display:flex;flex-direction:column;align-items:center;gap:9px;font-size:9px;color:var(--mut2);pointer-events:none;
+  opacity:0;animation:fadein 1.4s 1.3s forwards}
+#scrollcue .ln{width:1px;height:36px;background:linear-gradient(var(--mut3),transparent);position:relative;overflow:hidden}
+#scrollcue .ln::after{content:"";position:absolute;top:-40%;left:0;width:100%;height:40%;
+  background:linear-gradient(var(--gold),transparent);animation:drop 2.1s ease-in-out infinite}
+@keyframes drop{0%{top:-40%}60%,100%{top:120%}}
+@keyframes fadein{to{opacity:1}}
+
+/* ---------------- scroll content ---------------- */
+main{position:relative;z-index:10;background:var(--void)}
+section.slab{position:relative;background:var(--void);border-top:1px solid var(--line2);
+  padding:clamp(80px,12vh,150px) clamp(22px,6vw,90px)}
+.wrap{max-width:1120px;margin:0 auto}
+.sect-tag{display:flex;align-items:center;gap:12px;font-size:10px;color:var(--mut2);margin-bottom:26px}
+.sect-tag .n{color:var(--gold);font-family:"IBM Plex Mono",monospace}
+.sect-tag .ln{flex:1;height:1px;background:var(--line2);max-width:120px}
+h2{font-weight:600;font-size:clamp(30px,5.2vw,62px);line-height:1.02;letter-spacing:-.02em;color:#fff8ea;max-width:14ch}
+h2 em{font-style:normal;color:var(--gold)}
+.two{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(34px,6vw,84px);align-items:center;margin-top:40px}
+.body p{font-size:clamp(14px,1.55vw,16.5px);color:var(--mut);line-height:1.72;margin-bottom:18px;max-width:52ch}
+.body p b{color:var(--ink);font-weight:500}
+.pullstat{display:flex;gap:30px;flex-wrap:wrap;margin-top:34px}
+.pullstat .s .big{font-size:clamp(30px,4.4vw,46px);font-weight:600;color:var(--gold);letter-spacing:-.02em;line-height:1}
+.pullstat .s .cap{font-size:9.5px;color:var(--mut2);margin-top:8px;display:block}
+
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}
+
+/* tokyo diagram */
+.figure{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  background:radial-gradient(120% 120% at 30% 20%,rgba(255,150,60,.05),transparent 60%),#07080d;
+  box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.figure svg{display:block;width:100%;height:auto}
+.figure .cap-strip{display:flex;justify-content:space-between;padding:12px 16px;font-size:9.5px;color:var(--mut2);
+  border-top:1px solid var(--line2)}
+.figure .cap-strip b{color:var(--gold)}
+.node{fill:#08090e;stroke:var(--gold);stroke-width:1.4}
+.nodecore{fill:var(--gold)}
+.edge{fill:none;stroke:rgba(255,180,80,.5);stroke-width:2;stroke-linecap:round}
+.edge.dim{stroke:rgba(255,180,80,.16);stroke-width:1.2}
+.veinflow{stroke-dasharray:5 9;animation:flow 3.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-56}}
+
+/* rule cards */
+.rulegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+.rule{padding:24px 22px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
+  transition:border-color .4s ease,transform .4s ease}
+.rule:hover{border-color:var(--glass-edge);transform:translateY(-4px)}
+.rule .idx{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--gold);margin-bottom:16px}
+.rule h3{font-size:17px;font-weight:600;color:#fff8ea;margin-bottom:9px;letter-spacing:-.01em}
+.rule p{font-size:13px;color:var(--mut);line-height:1.6}
+.sensor-fig{margin-top:18px}
+
+.specrow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-top:52px;
+  background:var(--line2);border:1px solid var(--line2);border-radius:14px;overflow:hidden}
+.specrow .cell{background:var(--void2);padding:22px 20px}
+.specrow .cell .v{font-size:clamp(20px,2.8vw,28px);font-weight:600;color:var(--gold);letter-spacing:-.01em;
+  font-family:"IBM Plex Mono",monospace}
+.specrow .cell .k{font-size:9.5px;color:var(--mut2);margin-top:9px;letter-spacing:.14em}
+
+/* footer */
+footer{position:relative;z-index:10;background:linear-gradient(180deg,var(--void),#04050a);
+  border-top:1px solid var(--line);padding:clamp(64px,9vh,110px) clamp(22px,6vw,90px) 46px}
+.foot-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:40px}
+.foot-brand .big{font-size:clamp(30px,5vw,54px);font-weight:700;letter-spacing:-.02em;color:#fff8ea;line-height:1}
+.foot-brand .big em{font-style:normal;color:var(--gold)}
+.foot-brand .sub{font-size:12.5px;color:var(--mut);margin-top:14px;max-width:38ch;line-height:1.6}
+.foot-cols{display:flex;gap:clamp(36px,6vw,80px);flex-wrap:wrap}
+.foot-col h4{font-size:9.5px;letter-spacing:.2em;color:var(--mut2);margin-bottom:14px}
+.foot-col a,.foot-col p{display:block;font-size:12.5px;color:var(--mut);margin-bottom:9px;transition:color .3s ease}
+.foot-col a:hover{color:var(--gold)}
+.foot-bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:56px;padding-top:22px;
+  border-top:1px solid var(--line2);font-size:10px;color:var(--mut2)}
+.foot-bot a{color:var(--mut)}.foot-bot a:hover{color:var(--gold)}
+
+/* nogl fallback */
+#nogl{position:fixed;inset:0;z-index:3;display:none;align-items:center;justify-content:center;padding:40px;
+  background:radial-gradient(120% 90% at 50% 40%,rgba(255,150,60,.08),transparent 60%),#05060a}
+#nogl p{max-width:440px;text-align:center;font-size:14px;color:var(--mut);line-height:1.7}
+
+@media (max-width:860px){
+  .two{grid-template-columns:1fr;gap:34px}
+  .rulegrid{grid-template-columns:1fr}
+  .specrow{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  #backlink{top:16px;left:16px}
+  #hud{top:14px;right:14px}
+  #dock{left:14px;right:14px;bottom:14px;width:auto;max-width:none}
+  #dock.collapsed{opacity:0;transform:translateY(24px);pointer-events:none}
+  #dockToggle{display:block;left:14px;bottom:14px}
+  #dockToggle.hide{display:none}
+  #hero{justify-content:flex-end;padding-bottom:150px}
+  .specrow{grid-template-columns:1fr 1fr}
+  #cursor{display:none}
+  /* stronger scrim on mobile: hero copy is bottom-aligned over the network */
+  #heroscrim{background:
+    linear-gradient(0deg, rgba(5,6,10,.94) 0%, rgba(5,6,10,.86) 30%, rgba(5,6,10,.5) 56%, rgba(5,6,10,.12) 76%, transparent 88%);}
+}
+@media (max-width:390px){
+  .specrow{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;
+    scroll-behavior:auto !important}
+  .eyebrow,h1.title,.subtitle,.lede,.hero-meta,.feedhint,#scrollcue{opacity:1;transform:none}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="gl"></canvas>
+<div id="veil"></div>
+<div id="heroscrim"></div>
+<div id="grain"></div>
+<div id="cursor"></div>
+<div id="prog"></div>
+<div id="nogl"><p>This organism is grown in real time and needs <b>WebGL2</b> with float render targets — which this browser did not offer. Try a current desktop browser to watch the network form.</p></div>
+
+<a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery"><span class="cap"><span class="dot"></span>XAVIER <b>FABLE</b> ×50</span></a>
+
+<div id="hud" aria-hidden="true">
+  <div class="row"><span class="k mono cap">agents</span><span class="v mono" id="hAgents">—</span></div>
+  <div class="row"><span class="k mono cap">step</span><span class="v mono" id="hStep">0</span></div>
+  <div class="row"><span class="k mono cap">fps</span><span class="v mono" id="hFps">—</span></div>
+  <div class="row"><span class="k mono cap">palette</span><span class="v mono" id="hPal">AURUM</span></div>
+</div>
+
+<!-- hero copy -->
+<header id="hero">
+  <div class="inner">
+    <span class="eyebrow mono cap"><span class="ln"></span>Physarum polycephalum · many-headed · no neurons</span>
+    <h1 class="title">PHYSA<em>RUM</em></h1>
+    <p class="subtitle">the intelligence of <b>slime</b></p>
+    <p class="lede">A single cell, no brain, no plan. Below, half a million synthetic filaments sense a chemical trail, steer toward the strongest scent and lay down a little of their own — and out of that one rule, living transport networks braid themselves into being.</p>
+    <div class="hero-meta mono cap">
+      <span><b>agent-based</b> model</span>
+      <span><b>webgl2</b> · ping-pong fbo</span>
+      <span>self-organising <b>networks</b></span>
+    </div>
+    <div class="feedhint mono"><span class="k">MOVE</span> to feed it &nbsp;·&nbsp; <span class="k">CLICK</span> to drop food</div>
+  </div>
+  <div id="scrollcue" class="mono cap"><span>scroll</span><span class="ln"></span></div>
+</header>
+
+<!-- control dock -->
+<button id="dockToggle" class="mono cap">⣿ controls</button>
+<aside id="dock" aria-label="Simulation controls">
+  <div class="head">
+    <span class="ttl mono cap">PHYSARUM <b>·</b> control</span>
+    <span class="live mono cap"><i></i>live</span>
+  </div>
+
+  <div class="ctrl">
+    <div class="lab mono cap"><span>sensor angle</span><span class="num" id="vAngle">22°</span></div>
+    <input type="range" id="sAngle" min="6" max="55" step="1" value="22">
+  </div>
+  <div class="ctrl">
+    <div class="lab mono cap"><span>sensor distance</span><span class="num" id="vDist">9.0</span></div>
+    <input type="range" id="sDist" min="3" max="26" step="0.5" value="9">
+  </div>
+  <div class="ctrl">
+    <div class="lab mono cap"><span>deposit</span><span class="num" id="vDep">0.26</span></div>
+    <input type="range" id="sDep" min="0.06" max="0.6" step="0.01" value="0.26">
+  </div>
+  <div class="ctrl">
+    <div class="lab mono cap"><span>decay</span><span class="num" id="vDec">0.090</span></div>
+    <input type="range" id="sDec" min="0.02" max="0.22" step="0.005" value="0.09">
+  </div>
+  <div class="ctrl">
+    <div class="lab mono cap"><span>agents</span><span class="num" id="vCnt">160k</span></div>
+    <input type="range" id="sCnt" min="20" max="100" step="1" value="60">
+  </div>
+
+  <div class="dock-row">
+    <div class="pal">
+      <div class="lab mono cap">palette</div>
+      <div class="seg" id="palSeg">
+        <button data-p="0" class="mono act">AURUM</button>
+        <button data-p="1" class="mono">BIOLUME</button>
+        <button data-p="2" class="mono">SPORE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="act-row">
+    <button class="btn primary mono cap" id="btnFood"><span class="ic">◉</span>drop food</button>
+    <button class="btn mono cap" id="btnReset"><span class="ic">↻</span>reseed</button>
+  </div>
+</aside>
+
+<!-- scroll content -->
+<main>
+  <section class="slab">
+    <div class="wrap">
+      <div class="sect-tag mono cap reveal"><span class="n">01</span><span>the maze</span><span class="ln"></span></div>
+      <h2 class="reveal">No brain. It still <em>solves the maze.</em></h2>
+      <div class="two">
+        <div class="body reveal d1">
+          <p>In 2000, Toshiyuki Nakagaki grew a mat of <b>Physarum polycephalum</b> across a plastic maze, then set an oat flake at each of two exits. The slime, spread thick through every corridor and dead end, began to <b>withdraw</b>.</p>
+          <p>Within hours it had abandoned the blind alleys and thinned to a single tube tracing the <b>shortest route</b> between the two foods — the same answer a shortest-path algorithm would return, computed by an organism with no nervous system, no memory cells, no idea it was in a maze at all.</p>
+          <p>It doesn't search. It <b>floods everywhere at once</b>, then lets the paths that don't pay off starve. Selection, not planning.</p>
+        </div>
+        <div class="reveal d2">
+          <div class="pullstat">
+            <div class="s"><span class="big">1</span><span class="cap mono">cell, no neurons</span></div>
+            <div class="s"><span class="big">≈4h</span><span class="cap mono">to find the path</span></div>
+            <div class="s"><span class="big">2000</span><span class="cap mono">Nakagaki, Nature</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slab">
+    <div class="wrap">
+      <div class="sect-tag mono cap reveal"><span class="n">02</span><span>the network</span><span class="ln"></span></div>
+      <h2 class="reveal">It redrew the <em>Tokyo rail map.</em></h2>
+      <div class="two">
+        <div class="body reveal d1">
+          <p>In 2010, Atsushi Tero's team laid oat flakes across a scaled map of greater Tokyo — <b>one flake for each surrounding city</b> — put the slime on the spot marked Tokyo, and waited.</p>
+          <p>In about a day it grew a web of tubes linking every flake. Statistically, the result matched the real rail network engineers spent a <b>century</b> designing: comparable total length, comparable <b>fault tolerance</b>, comparable cost. Cut a tube and the flow re-routes.</p>
+          <p>The team distilled the behaviour into a rule for <b>adaptive network design</b> — tubes carrying more flow thicken, idle tubes wither — now borrowed for road, pipe and data networks.</p>
+          <div class="pullstat">
+            <div class="s"><span class="big">36</span><span class="cap mono">cities linked</span></div>
+            <div class="s"><span class="big">~26h</span><span class="cap mono">to grow the map</span></div>
+            <div class="s"><span class="big">2010</span><span class="cap mono">Tero, Science</span></div>
+          </div>
+        </div>
+        <div class="reveal d2">
+          <figure class="figure">
+            <svg viewBox="0 0 420 300" role="img" aria-label="Stylised slime-mould network connecting city nodes, echoing a rail map">
+              <g class="edges">
+                <path class="edge dim" d="M210 150 L92 70"/>
+                <path class="edge dim" d="M210 150 L330 66"/>
+                <path class="edge veinflow" d="M210 150 C 150 120, 120 96, 92 70"/>
+                <path class="edge veinflow" d="M210 150 C 270 118, 300 92, 330 66"/>
+                <path class="edge veinflow" d="M210 150 C 176 200, 150 226, 118 244"/>
+                <path class="edge veinflow" d="M210 150 C 256 196, 290 220, 322 236"/>
+                <path class="edge" d="M92 70 C 60 120, 66 168, 118 244"/>
+                <path class="edge" d="M330 66 C 372 116, 366 182, 322 236"/>
+                <path class="edge veinflow" d="M210 150 L 210 66"/>
+                <path class="edge" d="M92 70 C 150 44, 270 44, 330 66"/>
+                <path class="edge" d="M118 244 C 190 272, 250 272, 322 236"/>
+                <path class="edge dim" d="M210 150 L 60 150"/>
+                <path class="edge dim" d="M210 150 L 360 150"/>
+              </g>
+              <g class="nodes">
+                <circle class="node" cx="210" cy="150" r="9"/><circle class="nodecore" cx="210" cy="150" r="3.4"/>
+                <circle class="node" cx="92" cy="70" r="6"/><circle class="nodecore" cx="92" cy="70" r="2.4"/>
+                <circle class="node" cx="330" cy="66" r="6"/><circle class="nodecore" cx="330" cy="66" r="2.4"/>
+                <circle class="node" cx="210" cy="66" r="5"/><circle class="nodecore" cx="210" cy="66" r="2"/>
+                <circle class="node" cx="118" cy="244" r="6"/><circle class="nodecore" cx="118" cy="244" r="2.4"/>
+                <circle class="node" cx="322" cy="236" r="6"/><circle class="nodecore" cx="322" cy="236" r="2.4"/>
+                <circle class="node" cx="60" cy="150" r="4.5"/><circle class="nodecore" cx="60" cy="150" r="1.8"/>
+                <circle class="node" cx="360" cy="150" r="4.5"/><circle class="nodecore" cx="360" cy="150" r="1.8"/>
+              </g>
+            </svg>
+            <div class="cap-strip mono cap"><span>fig.02 — <b>emergent transport net</b></span><span>flow ⇢ thicker tube</span></div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slab">
+    <div class="wrap">
+      <div class="sect-tag mono cap reveal"><span class="n">03</span><span>the model</span><span class="ln"></span></div>
+      <h2 class="reveal">Three sensors. <em>One rule.</em></h2>
+      <p class="body reveal d1" style="margin-top:22px"><p>Every filament above runs the same tiny program each frame. There is no leader and no map — only local scent and a bias to follow it. Multiply by hundreds of thousands and the networks you scrolled past appear on their own. This is that rule, running live on your GPU.</p></p>
+      <div class="rulegrid">
+        <div class="rule reveal d1">
+          <div class="idx mono">01 / SENSE</div>
+          <h3>Smell three ways</h3>
+          <p>Each agent samples the trail map ahead-left, straight-ahead and ahead-right, at a set angle and distance.</p>
+          <svg class="sensor-fig" viewBox="0 0 200 96" width="100%" height="72" aria-hidden="true">
+            <line x1="30" y1="72" x2="150" y2="30" stroke="rgba(255,180,80,.35)" stroke-width="1.2"/>
+            <line x1="30" y1="72" x2="164" y2="60" stroke="rgba(255,180,80,.6)" stroke-width="1.4"/>
+            <line x1="30" y1="72" x2="150" y2="90" stroke="rgba(255,180,80,.35)" stroke-width="1.2"/>
+            <circle cx="150" cy="30" r="5" fill="none" stroke="var(--gold)" stroke-width="1.3"/>
+            <circle cx="164" cy="60" r="5" fill="var(--gold)" opacity=".9"/>
+            <circle cx="150" cy="90" r="5" fill="none" stroke="var(--gold)" stroke-width="1.3"/>
+            <circle cx="30" cy="72" r="4.5" fill="#fff8ea"/>
+          </svg>
+        </div>
+        <div class="rule reveal d2">
+          <div class="idx mono">02 / STEER</div>
+          <h3>Turn toward scent</h3>
+          <p>If the centre reads strongest, hold course. Otherwise rotate toward whichever side smells richer — and if it's a tie, turn at random.</p>
+          <svg class="sensor-fig" viewBox="0 0 200 96" width="100%" height="72" aria-hidden="true">
+            <path d="M30 72 Q 100 72 150 44" fill="none" stroke="var(--gold)" stroke-width="1.6" stroke-dasharray="4 5" class="veinflow"/>
+            <circle cx="30" cy="72" r="4.5" fill="#fff8ea"/>
+            <path d="M150 44 l -10 -2 l 6 8 z" fill="var(--gold)"/>
+          </svg>
+        </div>
+        <div class="rule reveal d3">
+          <div class="idx mono">03 / DEPOSIT</div>
+          <h3>Leave a trail, decay</h3>
+          <p>Move forward, drop a little chemical. Each frame the whole map blurs and fades — so only paths that stay busy survive.</p>
+          <svg class="sensor-fig" viewBox="0 0 200 96" width="100%" height="72" aria-hidden="true">
+            <circle cx="60" cy="60" r="16" fill="rgba(255,180,80,.10)"/>
+            <circle cx="60" cy="60" r="10" fill="rgba(255,180,80,.20)"/>
+            <circle cx="60" cy="60" r="4.5" fill="var(--gold)"/>
+            <circle cx="120" cy="52" r="10" fill="rgba(255,180,80,.06)"/>
+            <circle cx="120" cy="52" r="4" fill="rgba(255,180,80,.4)"/>
+            <circle cx="164" cy="46" r="6" fill="rgba(255,180,80,.03)"/>
+            <circle cx="164" cy="46" r="2.5" fill="rgba(255,180,80,.2)"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="specrow reveal d1">
+        <div class="cell"><div class="v" id="specAgents">160k</div><div class="k mono cap">live agents</div></div>
+        <div class="cell"><div class="v" id="specAngle">22°</div><div class="k mono cap">sensor angle</div></div>
+        <div class="cell"><div class="v" id="specDist">9.0px</div><div class="k mono cap">sensor dist</div></div>
+        <div class="cell"><div class="v">60fps</div><div class="k mono cap">target loop</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="big">PHYSA<em>RUM</em></div>
+        <p class="sub">The intelligence of slime — an agent-based Physarum simulation running on WebGL2 ping-pong framebuffers. No brain required.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h4 class="mono cap">read</h4>
+          <p>Nakagaki · Maze-solving · 2000</p>
+          <p>Tero et al · Tokyo rail · 2010</p>
+          <p>Jones · Multi-agent transport · 2010</p>
+        </div>
+        <div class="foot-col">
+          <h4 class="mono cap">built with</h4>
+          <p>WebGL2 · GLSL ES 3.0</p>
+          <p>Space Grotesk · IBM Plex Mono</p>
+          <p>No frameworks, no CDN sim</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bot mono cap">
+      <span>© 2026 PHYSARUM — a fictional living-systems studio</span>
+      <a href="/">XAVIER FABLE ×50 — return to gallery</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+/* =====================================================================
+   PHYSARUM — GPU agent-based slime-mould simulation (WebGL2)
+   Ping-pong framebuffers: agent state (RGBA32F) + trail map (RGBA16F).
+   Passes per frame:  update agents → diffuse+decay trail →
+                      deposit agents (additive) → splat food → display.
+   ===================================================================== */
+const cv = document.getElementById('gl');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const gl = cv.getContext('webgl2', { antialias:false, depth:false, stencil:false, alpha:false, powerPreference:'high-performance', preserveDrawingBuffer:false });
+
+const noglEl = document.getElementById('nogl');
+let fatal = false;
+if (!gl) fatal = true;
+let extCBF = null;
+if (gl){
+  extCBF = gl.getExtension('EXT_color_buffer_float');
+  if (!extCBF) fatal = true;
+}
+if (fatal){
+  noglEl.style.display = 'flex';
+  cv.style.display = 'none';
+}
+
+/* ---------- shader helpers ---------- */
+function sh(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
+    console.error('shader compile:', gl.getShaderInfoLog(s), src);
+    throw new Error('shader');
+  }
+  return s;
+}
+function prog(vs, fs){
+  const p = gl.createProgram();
+  gl.attachShader(p, sh(gl.VERTEX_SHADER, vs));
+  gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)){
+    console.error('link:', gl.getProgramInfoLog(p));
+    throw new Error('link');
+  }
+  return p;
+}
+
+const QUAD_VS = `#version 300 es
+in vec2 aPos; out vec2 vUv;
+void main(){ vUv = aPos*0.5+0.5; gl_Position = vec4(aPos,0.,1.); }`;
+
+const UPDATE_FS = `#version 300 es
+precision highp float;
+uniform sampler2D uAgents;   // xy pos(px), z angle, w seed
+uniform sampler2D uTrail;
+uniform vec2 uSim;
+uniform float uSensorAngle, uSensorDist, uTurn, uStep, uTime;
+in vec2 vUv; out vec4 outAgent;
+float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
+float senseAt(vec2 pos, float a){
+  vec2 s = pos + vec2(cos(a),sin(a))*uSensorDist;
+  return texture(uTrail, fract(s/uSim)).r;
+}
+void main(){
+  vec4 ag = texture(uAgents, vUv);
+  vec2 pos = ag.xy; float ang = ag.z; float seed = ag.w;
+  float F = senseAt(pos, ang);
+  float L = senseAt(pos, ang + uSensorAngle);
+  float R = senseAt(pos, ang - uSensorAngle);
+  float rnd = hash(vUv*uSim + vec2(uTime, uTime*1.7) + seed*97.0);
+  if (F > L && F > R){ /* hold */ }
+  else if (F < L && F < R){ ang += (rnd < 0.5 ? -1.0 : 1.0) * uTurn; }
+  else if (R > L){ ang -= uTurn; }
+  else if (L > R){ ang += uTurn; }
+  else { ang += (rnd - 0.5) * 2.0 * uTurn; }
+  pos += vec2(cos(ang), sin(ang)) * uStep;
+  pos = mod(pos, uSim);
+  outAgent = vec4(pos, ang, seed);
+}`;
+
+const DEPOSIT_VS = `#version 300 es
+precision highp float;
+uniform sampler2D uAgents; uniform vec2 uSim; uniform int uTexW; uniform float uPtSize;
+void main(){
+  int id = gl_VertexID;
+  ivec2 t = ivec2(id % uTexW, id / uTexW);
+  vec4 ag = texelFetch(uAgents, t, 0);
+  vec2 clip = (ag.xy / uSim) * 2.0 - 1.0;
+  gl_Position = vec4(clip, 0.0, 1.0);
+  gl_PointSize = uPtSize;
+}`;
+const DEPOSIT_FS = `#version 300 es
+precision highp float;
+uniform float uDeposit; out vec4 o;
+void main(){ o = vec4(uDeposit, 0.0, 0.0, 1.0); }`;
+
+const DIFFUSE_FS = `#version 300 es
+precision highp float;
+uniform sampler2D uTrail; uniform vec2 uTexel; uniform float uKeep, uDiffuse;
+in vec2 vUv; out vec4 o;
+void main(){
+  float sum = 0.0;
+  sum += texture(uTrail, vUv + vec2(-1,-1)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2( 0,-1)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2( 1,-1)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2(-1, 0)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2( 0, 0)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2( 1, 0)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2(-1, 1)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2( 0, 1)*uTexel).r;
+  sum += texture(uTrail, vUv + vec2( 1, 1)*uTexel).r;
+  float blur = sum / 9.0;
+  float v = texture(uTrail, vUv).r;
+  float mixed = mix(v, blur, uDiffuse);
+  o = vec4(mixed * uKeep, 0.0, 0.0, 1.0);
+}`;
+
+const SPLAT_FS = `#version 300 es
+precision highp float;
+uniform vec2 uPos, uSim; uniform float uRadius, uStrength;
+in vec2 vUv; out vec4 o;
+void main(){
+  vec2 p = vUv * uSim;
+  float d = distance(p, uPos);
+  float f = exp(-(d*d)/(2.0*uRadius*uRadius));
+  o = vec4(uStrength*f, 0.0, 0.0, 1.0);
+}`;
+
+const DISPLAY_FS = `#version 300 es
+precision highp float;
+uniform sampler2D uTrail; uniform float uExposure;
+uniform vec3 c0,c1,c2,c3;
+in vec2 vUv; out vec4 o;
+vec3 pal(float t){
+  t = clamp(t,0.,1.);
+  if (t < 0.34) return mix(c0,c1, t/0.34);
+  if (t < 0.67) return mix(c1,c2,(t-0.34)/0.33);
+  return mix(c2,c3,(t-0.67)/0.33);
+}
+void main(){
+  float v = texture(uTrail, vUv).r;
+  float t = 1.0 - exp(-v*uExposure);
+  t = pow(t, 0.85);
+  vec3 col = pal(t);
+  // subtle vignette
+  vec2 q = vUv - 0.5;
+  col *= 1.0 - 0.22*dot(q,q)*2.4;
+  o = vec4(col, 1.0);
+}`;
+
+let P = {};   // programs
+let U = {};   // uniform locations
+let quadVAO, pointVAO;
+let agentTex = [], agentFBO = [];
+let trailTex = [], trailFBO = [];
+let cur = 0;              // agent ping index
+let tcur = 0;             // trail ping index
+let simW = 2, simH = 2;
+let AT_W = 1024, AT_H = 512;   // agent texture dims (max agents pool)
+let MAX_AGENTS = AT_W * AT_H;
+let stepCount = 0;
+
+/* palettes (0..1 rgb, 4 stops) */
+const PALETTES = {
+  0:{ name:'AURUM',   c:[[0.016,0.020,0.035],[0.34,0.11,0.02],[1.0,0.62,0.14],[1.0,0.95,0.78]] },
+  1:{ name:'BIOLUME', c:[[0.012,0.020,0.055],[0.03,0.42,0.62],[0.34,0.98,0.98],[0.78,0.66,1.0]] },
+  2:{ name:'SPORE',   c:[[0.014,0.028,0.022],[0.03,0.34,0.20],[0.42,0.98,0.50],[0.90,1.0,0.80]] }
+};
+
+/* live params */
+const params = {
+  sensorAngle: 22 * Math.PI/180,
+  sensorDist: 9.0,
+  turn: 0.42,
+  step: 1.0,
+  deposit: 0.26,
+  keep: 1 - 0.09,        // 1 - decay
+  diffuse: 0.32,
+  exposure: 1.55,
+  activeFrac: 0.60,      // -> activeCount
+  palette: 0
+};
+function activeCount(){ return Math.floor(params.activeFrac * MAX_AGENTS); }
+
+/* splat queue: {x,y,r,s,life,life0} */
+const splats = [];
+let pointer = { x:0, y:0, has:false };
+
+/* =============== init GL =============== */
+function initGL(){
+  P.update  = prog(QUAD_VS, UPDATE_FS);
+  P.deposit = prog(DEPOSIT_VS, DEPOSIT_FS);
+  P.diffuse = prog(QUAD_VS, DIFFUSE_FS);
+  P.splat   = prog(QUAD_VS, SPLAT_FS);
+  P.display = prog(QUAD_VS, DISPLAY_FS);
+
+  // full-screen quad
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  quadVAO = gl.createVertexArray();
+  gl.bindVertexArray(quadVAO);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  // (attrib 0 == aPos for all quad programs; bind location)
+  [P.update,P.diffuse,P.splat,P.display].forEach(p=>gl.bindAttribLocation(p,0,'aPos'));
+  // relink after bindAttribLocation
+  [P.update,P.diffuse,P.splat,P.display].forEach(p=>gl.linkProgram(p));
+  gl.bindVertexArray(null);
+
+  pointVAO = gl.createVertexArray(); // empty; deposit uses gl_VertexID
+
+  cacheUniforms();
+
+  // adapt pool + params to device
+  const mobile = Math.min(window.innerWidth, window.innerHeight) < 620;
+  if (mobile){ AT_W = 512; AT_H = 256; }         // 131k pool
+  else { AT_W = 1024; AT_H = 512; }              // 524k pool
+  MAX_AGENTS = AT_W * AT_H;
+
+  buildAgentTextures();
+}
+
+function cacheUniforms(){
+  U.update = {
+    uAgents: gl.getUniformLocation(P.update,'uAgents'),
+    uTrail:  gl.getUniformLocation(P.update,'uTrail'),
+    uSim:    gl.getUniformLocation(P.update,'uSim'),
+    uSensorAngle: gl.getUniformLocation(P.update,'uSensorAngle'),
+    uSensorDist:  gl.getUniformLocation(P.update,'uSensorDist'),
+    uTurn: gl.getUniformLocation(P.update,'uTurn'),
+    uStep: gl.getUniformLocation(P.update,'uStep'),
+    uTime: gl.getUniformLocation(P.update,'uTime'),
+  };
+  U.deposit = {
+    uAgents: gl.getUniformLocation(P.deposit,'uAgents'),
+    uSim: gl.getUniformLocation(P.deposit,'uSim'),
+    uTexW: gl.getUniformLocation(P.deposit,'uTexW'),
+    uPtSize: gl.getUniformLocation(P.deposit,'uPtSize'),
+    uDeposit: gl.getUniformLocation(P.deposit,'uDeposit'),
+  };
+  U.diffuse = {
+    uTrail: gl.getUniformLocation(P.diffuse,'uTrail'),
+    uTexel: gl.getUniformLocation(P.diffuse,'uTexel'),
+    uKeep: gl.getUniformLocation(P.diffuse,'uKeep'),
+    uDiffuse: gl.getUniformLocation(P.diffuse,'uDiffuse'),
+  };
+  U.splat = {
+    uPos: gl.getUniformLocation(P.splat,'uPos'),
+    uSim: gl.getUniformLocation(P.splat,'uSim'),
+    uRadius: gl.getUniformLocation(P.splat,'uRadius'),
+    uStrength: gl.getUniformLocation(P.splat,'uStrength'),
+  };
+  U.display = {
+    uTrail: gl.getUniformLocation(P.display,'uTrail'),
+    uExposure: gl.getUniformLocation(P.display,'uExposure'),
+    c0: gl.getUniformLocation(P.display,'c0'),
+    c1: gl.getUniformLocation(P.display,'c1'),
+    c2: gl.getUniformLocation(P.display,'c2'),
+    c3: gl.getUniformLocation(P.display,'c3'),
+  };
+}
+
+function makeTex(w,h,internal,format,type,filter,wrap,data){
+  const t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, internal, w, h, 0, format, type, data||null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
+  return t;
+}
+function makeFBO(tex){
+  const f = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  return f;
+}
+
+function buildAgentTextures(){
+  // seed positions/angles across sim (called after sim size known)
+  agentTex.forEach(t=>gl.deleteTexture(t));
+  agentFBO.forEach(f=>gl.deleteFramebuffer(f));
+  agentTex = []; agentFBO = [];
+  for (let i=0;i<2;i++){
+    const t = makeTex(AT_W, AT_H, gl.RGBA32F, gl.RGBA, gl.FLOAT, gl.NEAREST, gl.CLAMP_TO_EDGE, null);
+    agentTex.push(t); agentFBO.push(makeFBO(t));
+  }
+  seedAgents();
+}
+
+function seedAgents(){
+  const data = new Float32Array(MAX_AGENTS * 4);
+  const cx = simW*0.5, cy = simH*0.5;
+  const rad = Math.min(simW,simH)*0.42;
+  for (let i=0;i<MAX_AGENTS;i++){
+    // Full-field seeding weighted slightly toward centre — a screen-filling
+    // network that still reads as a soft central bloom on load.
+    let x, y;
+    if (Math.random() < 0.55){
+      const a = Math.random()*Math.PI*2;
+      const r = Math.sqrt(Math.random())*rad;
+      x = cx + Math.cos(a)*r; y = cy + Math.sin(a)*r;
+    } else {
+      x = Math.random()*simW; y = Math.random()*simH;
+    }
+    const heading = Math.random()*Math.PI*2;
+    const o = i*4;
+    data[o]   = x;
+    data[o+1] = y;
+    data[o+2] = heading;
+    data[o+3] = Math.random();
+  }
+  gl.bindTexture(gl.TEXTURE_2D, agentTex[0]);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, AT_W, AT_H, 0, gl.RGBA, gl.FLOAT, data);
+  gl.bindTexture(gl.TEXTURE_2D, agentTex[1]);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, AT_W, AT_H, 0, gl.RGBA, gl.FLOAT, data);
+  cur = 0;
+  clearTrail();
+  stepCount = 0;
+}
+
+function buildTrailTextures(){
+  trailTex.forEach(t=>gl.deleteTexture(t));
+  trailFBO.forEach(f=>gl.deleteFramebuffer(f));
+  trailTex = []; trailFBO = [];
+  for (let i=0;i<2;i++){
+    const t = makeTex(simW, simH, gl.RGBA16F, gl.RGBA, gl.HALF_FLOAT, gl.LINEAR, gl.REPEAT, null);
+    trailTex.push(t); trailFBO.push(makeFBO(t));
+  }
+  clearTrail();
+}
+function clearTrail(){
+  for (let i=0;i<2;i++){
+    gl.bindFramebuffer(gl.FRAMEBUFFER, trailFBO[i]);
+    gl.viewport(0,0,simW,simH);
+    gl.clearColor(0,0,0,1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+  }
+  tcur = 0;
+}
+
+/* =============== resize =============== */
+let DPR = Math.min(window.devicePixelRatio||1, 2);
+function resize(){
+  const cssW = window.innerWidth, cssH = window.innerHeight;
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  cv.width  = Math.round(cssW*DPR);
+  cv.height = Math.round(cssH*DPR);
+  cv.style.width = cssW+'px';
+  cv.style.height = cssH+'px';
+  // sim resolution: cap longest side for perf; upscaled at display
+  const mobile = Math.min(cssW,cssH) < 620;
+  const SIM_MAX = mobile ? 760 : 1440;
+  let w = cv.width, h = cv.height;
+  const m = Math.max(w,h);
+  if (m > SIM_MAX){ const s = SIM_MAX/m; w = Math.round(w*s); h = Math.round(h*s); }
+  simW = Math.max(2,w); simH = Math.max(2,h);
+  buildTrailTextures();
+  seedAgents();
+}
+
+/* =============== passes =============== */
+function fullQuad(){ gl.bindVertexArray(quadVAO); gl.drawArrays(gl.TRIANGLES,0,3); }
+
+function stepSim(time){
+  gl.disable(gl.BLEND);
+
+  // 1) update agents  (read agentTex[cur] + trailTex[tcur] -> agentTex[1-cur])
+  gl.useProgram(P.update);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, agentFBO[1-cur]);
+  gl.viewport(0,0,AT_W,AT_H);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, agentTex[cur]);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, trailTex[tcur]);
+  gl.uniform1i(U.update.uAgents, 0);
+  gl.uniform1i(U.update.uTrail, 1);
+  gl.uniform2f(U.update.uSim, simW, simH);
+  gl.uniform1f(U.update.uSensorAngle, params.sensorAngle);
+  gl.uniform1f(U.update.uSensorDist, params.sensorDist);
+  gl.uniform1f(U.update.uTurn, params.turn);
+  gl.uniform1f(U.update.uStep, params.step);
+  gl.uniform1f(U.update.uTime, time);
+  fullQuad();
+  cur = 1-cur;
+
+  // 2) diffuse + decay  (trailTex[tcur] -> trailTex[1-tcur])
+  gl.useProgram(P.diffuse);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, trailFBO[1-tcur]);
+  gl.viewport(0,0,simW,simH);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, trailTex[tcur]);
+  gl.uniform1i(U.diffuse.uTrail, 0);
+  gl.uniform2f(U.diffuse.uTexel, 1/simW, 1/simH);
+  gl.uniform1f(U.diffuse.uKeep, params.keep);
+  gl.uniform1f(U.diffuse.uDiffuse, params.diffuse);
+  fullQuad();
+  tcur = 1-tcur;   // trailTex[tcur] now holds diffused map
+
+  // 3) deposit agents (additive) into trailTex[tcur]
+  gl.bindFramebuffer(gl.FRAMEBUFFER, trailFBO[tcur]);
+  gl.viewport(0,0,simW,simH);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE);
+  gl.useProgram(P.deposit);
+  gl.bindVertexArray(pointVAO);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, agentTex[cur]);
+  gl.uniform1i(U.deposit.uAgents, 0);
+  gl.uniform2f(U.deposit.uSim, simW, simH);
+  gl.uniform1i(U.deposit.uTexW, AT_W);
+  gl.uniform1f(U.deposit.uPtSize, 1.0);
+  gl.uniform1f(U.deposit.uDeposit, params.deposit);
+  gl.drawArrays(gl.POINTS, 0, activeCount());
+
+  // 4) food splats (additive) into trailTex[tcur]
+  if (splats.length){
+    gl.useProgram(P.splat);
+    gl.uniform2f(U.splat.uSim, simW, simH);
+    for (let i=splats.length-1;i>=0;i--){
+      const s = splats[i];
+      const st = s.s * (s.life/s.life0);
+      gl.uniform2f(U.splat.uPos, s.x, s.y);
+      gl.uniform1f(U.splat.uRadius, s.r);
+      gl.uniform1f(U.splat.uStrength, st);
+      fullQuad();
+      s.life--;
+      if (s.life <= 0) splats.splice(i,1);
+    }
+  }
+  gl.disable(gl.BLEND);
+
+  stepCount++;
+}
+
+function draw(){
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.viewport(0,0,cv.width,cv.height);
+  gl.useProgram(P.display);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, trailTex[tcur]);
+  gl.uniform1i(U.display.uTrail, 0);
+  gl.uniform1f(U.display.uExposure, params.exposure);
+  const pc = PALETTES[params.palette].c;
+  gl.uniform3fv(U.display.c0, pc[0]);
+  gl.uniform3fv(U.display.c1, pc[1]);
+  gl.uniform3fv(U.display.c2, pc[2]);
+  gl.uniform3fv(U.display.c3, pc[3]);
+  fullQuad();
+}
+
+/* =============== loop =============== */
+let running = true, heroVisible = true;
+let last = performance.now(), fps = 60, fpsAcc = 0, fpsN = 0;
+const hFps = document.getElementById('hFps');
+const hStep = document.getElementById('hStep');
+
+function frame(now){
+  if (!running){ return; }
+  const dt = now - last; last = now;
+  fpsAcc += dt; fpsN++;
+  if (fpsN >= 20){ fps = 1000/(fpsAcc/fpsN); fpsAcc=0; fpsN=0;
+    hFps.textContent = Math.round(fps); hStep.textContent = stepCount; }
+  if (heroVisible){
+    // continuous gentle feed while pointer held/moving
+    stepSim(now*0.001);
+    draw();
+  }
+  raf = requestAnimationFrame(frame);
+}
+let raf = null;
+function startLoop(){ if (raf==null){ last = performance.now(); raf = requestAnimationFrame(frame); } }
+function stopLoop(){ if (raf!=null){ cancelAnimationFrame(raf); raf=null; } }
+
+/* =============== interaction =============== */
+const cursorEl = document.getElementById('cursor');
+function toSim(clientX, clientY){
+  const r = cv.getBoundingClientRect();
+  const nx = (clientX - r.left)/r.width;
+  const ny = (clientY - r.top)/r.height;
+  return { x: nx*simW, y: (1-ny)*simH };
+}
+function addSplat(clientX, clientY, big){
+  const p = toSim(clientX, clientY);
+  const base = Math.min(simW,simH);
+  if (big){
+    splats.push({ x:p.x, y:p.y, r:base*0.055, s:params.deposit*22, life:26, life0:26 });
+  } else {
+    splats.push({ x:p.x, y:p.y, r:base*0.028, s:params.deposit*4.0, life:6, life0:6 });
+  }
+}
+
+if (!fatal){
+  cv.addEventListener('pointermove', e=>{
+    pointer.x=e.clientX; pointer.y=e.clientY; pointer.has=true;
+    cursorEl.classList.add('on');
+    cursorEl.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+    if (!reduced) addSplat(e.clientX, e.clientY, false);
+  });
+  cv.addEventListener('pointerdown', e=>{
+    cursorEl.classList.add('press');
+    if (!reduced) addSplat(e.clientX, e.clientY, true);
+  });
+  window.addEventListener('pointerup', ()=> cursorEl.classList.remove('press'));
+  cv.addEventListener('pointerleave', ()=> cursorEl.classList.remove('on'));
+}
+
+/* =============== controls wiring =============== */
+function setFill(el){ const min=+el.min,max=+el.max,v=+el.value; el.style.setProperty('--fill',((v-min)/(max-min)*100)+'%'); }
+function bind(id, fn){ const el=document.getElementById(id); setFill(el); el.addEventListener('input',()=>{ setFill(el); fn(+el.value, el); }); return el; }
+
+const vAngle=document.getElementById('vAngle'), vDist=document.getElementById('vDist'),
+      vDep=document.getElementById('vDep'), vDec=document.getElementById('vDec'), vCnt=document.getElementById('vCnt');
+const hAgents=document.getElementById('hAgents'), hPal=document.getElementById('hPal');
+const specAgents=document.getElementById('specAgents'), specAngle=document.getElementById('specAngle'), specDist=document.getElementById('specDist');
+
+function fmtK(n){ return n>=1000 ? (n/1000).toFixed(n>=100000?0:1)+'k' : n+''; }
+function refreshCounts(){
+  const c = activeCount();
+  hAgents.textContent = fmtK(c);
+  specAgents.textContent = fmtK(c);
+  vCnt.textContent = fmtK(c);
+}
+
+bind('sAngle', v=>{ params.sensorAngle = v*Math.PI/180; vAngle.textContent = v+'°'; specAngle.textContent=v+'°'; });
+bind('sDist',  v=>{ params.sensorDist = v; vDist.textContent = v.toFixed(1); specDist.textContent=v.toFixed(1)+'px'; });
+bind('sDep',   v=>{ params.deposit = v; vDep.textContent = v.toFixed(2); });
+bind('sDec',   v=>{ params.keep = 1 - v; vDec.textContent = v.toFixed(3); });
+bind('sCnt',   v=>{ params.activeFrac = v/100; refreshCounts(); });
+
+// palette buttons
+document.querySelectorAll('#palSeg button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#palSeg button').forEach(x=>x.classList.remove('act'));
+    b.classList.add('act');
+    params.palette = +b.dataset.p;
+    hPal.textContent = PALETTES[params.palette].name;
+    document.documentElement.style.setProperty('--accent',
+      params.palette===1 ? 'var(--cyan)' : params.palette===2 ? 'var(--cyan)' : 'var(--gold)');
+    if (reduced){ draw(); }
+  });
+});
+
+document.getElementById('btnFood').addEventListener('click', ()=>{
+  // drop food at a few points around centre + pointer
+  const base = Math.min(simW,simH);
+  const cx = simW*0.5, cy = simH*0.5;
+  splats.push({ x:cx, y:cy, r:base*0.07, s:params.deposit*30, life:34, life0:34 });
+  for (let i=0;i<5;i++){
+    const a = Math.random()*Math.PI*2, r=base*(0.18+Math.random()*0.22);
+    splats.push({ x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r, r:base*0.04, s:params.deposit*18, life:26, life0:26 });
+  }
+  if (reduced){ for(let i=0;i<40;i++) stepSim(i*0.02); draw(); }
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  seedAgents();
+  if (reduced){ warmup(REDUCED_STEPS); draw(); }
+});
+
+// mobile dock toggle
+const dock=document.getElementById('dock'), dockToggle=document.getElementById('dockToggle');
+dockToggle.addEventListener('click', ()=>{ dock.classList.toggle('collapsed'); dockToggle.classList.toggle('hide', !dock.classList.contains('collapsed')); });
+if (window.innerWidth <= 640){ dock.classList.add('collapsed'); }
+
+/* =============== visibility + hero observer =============== */
+document.addEventListener('visibilitychange', ()=>{
+  if (document.hidden){ running=false; stopLoop(); }
+  else if (!reduced){ running=true; startLoop(); }
+});
+if (!reduced && 'IntersectionObserver' in window){
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ heroVisible = e.isIntersecting; });
+  }, { threshold:0.01 });
+  io.observe(document.getElementById('hero'));
+  // hide dock/hud when scrolled well past hero
+  const io2 = new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      const hide = !e.isIntersecting;
+      dock.classList.toggle('hidden', hide);
+      dockToggle.style.opacity = hide ? '0' : '';
+      dockToggle.style.pointerEvents = hide ? 'none' : '';
+      document.getElementById('hud').style.opacity = hide ? '0' : '';
+    });
+  }, { threshold:0.12 });
+  io2.observe(document.getElementById('hero'));
+}
+
+/* =============== scroll progress + reveals =============== */
+const progEl=document.getElementById('prog');
+function onScroll(){
+  const h=document.documentElement;
+  const sc=h.scrollTop||document.body.scrollTop;
+  const max=(h.scrollHeight-h.clientHeight)||1;
+  progEl.style.width=(sc/max*100)+'%';
+}
+window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+if ('IntersectionObserver' in window){
+  const rio=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); rio.unobserve(e.target); } });
+  }, { threshold:0.16 });
+  document.querySelectorAll('.reveal').forEach(el=>rio.observe(el));
+} else {
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+
+/* =============== warmup + boot =============== */
+const REDUCED_STEPS = 260;
+function warmup(n){ for(let i=0;i<n;i++) stepSim(i*0.03); }
+
+function boot(){
+  try{
+    initGL();
+    resize();
+    refreshCounts();
+    hPal.textContent = PALETTES[params.palette].name;
+    if (reduced){
+      running=false;
+      warmup(REDUCED_STEPS);   // grow a static formed network
+      draw();
+    } else {
+      warmup(28);              // jump-start so a network is visible fast
+      draw();
+      startLoop();
+    }
+  }catch(err){
+    console.error(err);
+    fatal=true; noglEl.style.display='flex'; cv.style.display='none';
+  }
+}
+
+let resizeT=null;
+window.addEventListener('resize', ()=>{
+  if (fatal) return;
+  clearTimeout(resizeT);
+  resizeT=setTimeout(()=>{ resize(); if(reduced){ warmup(REDUCED_STEPS); draw(); } refreshCounts(); }, 220);
+});
+
+if (!fatal){ boot(); }
+</script>
+</body>
+</html>

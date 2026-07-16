@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="brass">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESCAPEMENT — A Mechanism That Keeps Time</title>
+<meta name="description" content="A working mechanical watch movement rendered as live engineering: a going train of toothed wheels that mesh at true ratios, a Swiss lever escapement ticking at 28,800 vph, and hands that tell the real local time.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="ESCAPEMENT — A Mechanism That Keeps Time">
+<meta property="og:description" content="A working mechanical movement, drawn live: a going train meshing at true ratios and a Swiss lever escapement beating 28,800 vph — telling the real time.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23c99a5a' stroke-width='6'%3E%3Ccircle cx='50' cy='50' r='30'/%3E%3Cpath d='M50 20v6M50 74v6M20 50h6M74 50h6M29 29l4 4M67 67l4 4M71 29l-4 4M33 67l-4 4'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='7' fill='%23c99a5a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0d10; --bg2:#08080a; --panel:#141318;
+    --brass:#bd8f52; --brass-hi:#e9c481; --brass-mid:#cb9c5c; --brass-lo:#8a6a3c;
+    --brass-dim:rgba(189,143,82,.34); --brass-faint:rgba(189,143,82,.16);
+    --parch:#efe6d3; --parch-dim:rgba(239,230,211,.60); --parch-faint:rgba(239,230,211,.32);
+    --jewel:#c8324b; --jewel-hi:#ff6a80;
+    --sans:'Space Grotesk',sans-serif; --mono:'IBM Plex Mono',monospace;
+    --hair:1px solid rgba(189,143,82,.26);
+
+    /* SVG movement theme tokens (brass default) */
+    --plate-fill:#191319; --plate-2:#120e13; --plate-stroke:rgba(189,143,82,.30);
+    --plate-grad:url(#gPlate);
+    --engrave:rgba(233,196,129,.34);
+    --gear-body:url(#gBrass); --gear-stroke:#e6c07c; --gear-stroke-w:1;
+    --pinion-body:url(#gSteel); --pinion-stroke:#e9d3a6;
+    --spoke:#caa062; --spoke-2:rgba(202,160,98,.5);
+    --escape-body:url(#gBrassHot); --escape-stroke:#f0cd8b;
+    --fork:#c9c3b4; --fork-stroke:#efe9d8;
+    --balance-body:url(#gBrassCool); --balance-stroke:#e6c07c;
+    --hairspring:#e9c481;
+    --jewel-fill:url(#gJewel); --jewel-ring:#e9c481;
+    --screw:#b9b3a6; --screw-slot:#2a2622;
+    --hand:#f4ecda; --hand-sec:#e6613a; --hand-core:#e9c481;
+    --label:#e9c481; --label-dim:rgba(233,196,129,.6); --leader:rgba(233,196,129,.5); --leader-dot:#e9c481;
+    --tick:rgba(233,196,129,.5);
+    --bridge-fill:url(#gBridge); --bridge-stroke:rgba(233,196,129,.55);
+    --glow:rgba(233,196,129,.10);
+  }
+  :root[data-theme="blueprint"]{
+    --bg:#071018; --bg2:#040a10; --panel:#0a1a26;
+    --brass:#63b7e8; --brass-hi:#bfe6ff; --brass-mid:#7cc6f2; --brass-lo:#3d6f92;
+    --brass-dim:rgba(120,198,242,.34); --brass-faint:rgba(120,198,242,.14);
+    --parch:#dff1ff; --parch-dim:rgba(223,241,255,.60); --parch-faint:rgba(223,241,255,.34);
+    --jewel:#63b7e8; --jewel-hi:#bfe6ff;
+    --hair:1px solid rgba(120,198,242,.24);
+
+    --plate-fill:#071722; --plate-2:#05121b; --plate-stroke:rgba(120,198,242,.30);
+    --plate-grad:url(#gPlateBP);
+    --engrave:rgba(120,198,242,.30);
+    --gear-body:none; --gear-stroke:#8fd2ff; --gear-stroke-w:1.15;
+    --pinion-body:none; --pinion-stroke:#bfe6ff;
+    --spoke:#8fd2ff; --spoke-2:rgba(143,210,255,.45);
+    --escape-body:none; --escape-stroke:#bfe6ff;
+    --fork:none; --fork-stroke:#cfeeff;
+    --balance-body:none; --balance-stroke:#8fd2ff;
+    --hairspring:#8fd2ff;
+    --jewel-fill:none; --jewel-ring:#bfe6ff;
+    --screw:none; --screw-slot:#bfe6ff;
+    --hand:#eaf7ff; --hand-sec:#7fd0ff; --hand-core:#bfe6ff;
+    --label:#bfe6ff; --label-dim:rgba(191,230,255,.62); --leader:rgba(143,210,255,.55); --leader-dot:#bfe6ff;
+    --tick:rgba(143,210,255,.5);
+    --bridge-fill:rgba(120,198,242,.05); --bridge-stroke:rgba(143,210,255,.55);
+    --glow:rgba(120,198,242,.12);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--bg); color:var(--parch);
+    font-family:var(--sans); font-weight:300;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    transition:background .8s ease, color .8s ease;
+  }
+  ::selection{background:var(--brass); color:var(--bg)}
+  ::-webkit-scrollbar{width:10px;background:var(--bg2)}
+  ::-webkit-scrollbar-thumb{background:var(--brass-dim);border:3px solid var(--bg2);border-radius:6px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+  :focus{outline:none}
+  :focus-visible{outline:1px solid var(--brass-hi);outline-offset:3px}
+  a{color:inherit}
+
+  /* atmospheric layers */
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:40;
+    background:radial-gradient(ellipse 130% 100% at 50% 34%, transparent 52%, rgba(0,0,0,.55) 100%)}
+  body::after{content:'';position:fixed;inset:-50%;pointer-events:none;z-index:41;opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .backlink{
+    position:fixed;top:20px;left:22px;z-index:60;
+    font-family:var(--mono);font-size:10px;letter-spacing:.30em;font-weight:400;
+    color:var(--brass-hi);text-decoration:none;
+    border:1px solid var(--brass-dim);padding:8px 12px 7px 13px;
+    background:rgba(14,13,16,.72);backdrop-filter:blur(7px);
+    display:inline-flex;align-items:center;gap:8px;
+    transition:color .35s cubic-bezier(.22,1,.36,1),border-color .35s,background .35s;
+  }
+  .backlink .dot{width:5px;height:5px;border:1px solid var(--brass);border-radius:50%}
+  .backlink:hover{color:var(--bg);background:var(--brass);border-color:var(--brass)}
+  .backlink:hover .dot{background:var(--bg);border-color:var(--bg)}
+
+  /* ---------- masthead ---------- */
+  .masthead{padding:clamp(34px,4.4vh,58px) 24px 0;text-align:center;position:relative;z-index:6}
+  .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.42em;color:var(--brass-hi);font-weight:400;text-transform:uppercase}
+  .masthead h1{
+    font-size:clamp(38px,7.4vw,90px);font-weight:500;letter-spacing:.14em;text-indent:.14em;
+    margin:12px 0 9px;color:var(--parch);line-height:.92;
+    background:linear-gradient(178deg,var(--parch),var(--brass-mid) 118%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .masthead .sub{font-size:clamp(12px,1.5vw,15px);letter-spacing:.16em;color:var(--parch-dim);font-weight:300}
+  .masthead .sub em{font-style:normal;color:var(--parch);font-weight:400}
+  .mast-rule{width:min(420px,62vw);height:1px;margin:16px auto 0;
+    background:linear-gradient(90deg,transparent,var(--brass-dim) 22%,var(--brass) 50%,var(--brass-dim) 78%,transparent)}
+
+  /* ---------- readout ---------- */
+  .readout{display:flex;align-items:stretch;justify-content:center;gap:0;margin:16px auto 0;flex-wrap:wrap;position:relative;z-index:6}
+  .ro-cell{padding:6px 22px;text-align:center;position:relative}
+  .ro-cell + .ro-cell::before{content:'';position:absolute;left:0;top:16%;height:68%;width:1px;background:var(--brass-faint)}
+  .ro-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.30em;color:var(--brass);text-transform:uppercase;font-weight:400}
+  .ro-val{font-family:var(--mono);font-weight:400;color:var(--parch);font-variant-numeric:tabular-nums;letter-spacing:.04em;margin-top:5px;white-space:nowrap}
+  #roTime{font-size:clamp(20px,2.4vw,27px);letter-spacing:.06em}
+  #roDate{font-size:12px;color:var(--parch-dim)}
+  #roBeat{font-size:12px;color:var(--brass-hi)}
+  #roBeat .amp{color:var(--parch-dim)}
+
+  /* ---------- stage ---------- */
+  .stage{position:relative;z-index:6;max-width:1180px;margin:6px auto 0;padding:0 clamp(10px,2.4vw,26px)}
+  .movement-wrap{position:relative;border:var(--hair);max-width:1000px;margin-left:auto;margin-right:auto;
+    background:
+      radial-gradient(120% 100% at 50% 22%, var(--glow), transparent 60%),
+      linear-gradient(180deg,rgba(255,255,255,.018),rgba(0,0,0,.28));
+    padding:clamp(8px,1.6vw,18px);
+  }
+  .movement-wrap::before,.movement-wrap::after,.mw-c3,.mw-c4{content:'';position:absolute;width:12px;height:12px;border:1px solid var(--brass-dim);z-index:3;pointer-events:none}
+  .movement-wrap::before{top:7px;left:7px;border-right:0;border-bottom:0}
+  .movement-wrap::after{top:7px;right:7px;border-left:0;border-bottom:0}
+  .mw-c3{bottom:7px;left:7px;border-right:0;border-top:0}
+  .mw-c4{bottom:7px;right:7px;border-left:0;border-top:0}
+  #movement{width:100%;height:auto;display:block}
+  .caliber{position:absolute;right:clamp(14px,2vw,24px);bottom:clamp(12px,1.6vw,18px);z-index:4;text-align:right;font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--parch-faint);line-height:1.7;text-transform:uppercase}
+  .caliber b{color:var(--brass);font-weight:400}
+
+  /* ---------- controls ---------- */
+  .controls{margin:16px auto 0;display:flex;align-items:center;justify-content:center;gap:clamp(8px,1.3vw,14px);flex-wrap:wrap;position:relative;z-index:6}
+  .ctl{
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:400;
+    color:var(--parch-dim);background:rgba(255,255,255,.02);
+    border:1px solid var(--brass-dim);padding:11px 15px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:9px;
+    transition:color .3s,border-color .3s,background .3s,transform .12s;
+    -webkit-user-select:none;user-select:none;
+  }
+  .ctl:hover{color:var(--parch);border-color:var(--brass);background:rgba(189,143,82,.08)}
+  .ctl:active{transform:translateY(1px)}
+  .ctl .ico{width:13px;height:13px;flex:none;display:inline-block}
+  .ctl .ico svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.6}
+  .ctl.on{color:var(--bg);background:var(--brass);border-color:var(--brass)}
+  .ctl.on:hover{background:var(--brass-hi);border-color:var(--brass-hi)}
+  .ctl[data-role="wind"].winding{color:var(--bg);background:var(--brass-hi);border-color:var(--brass-hi)}
+  .ctl-key{color:var(--brass);font-weight:500}
+  .speed-tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--brass-hi);min-width:52px;text-align:center;font-variant-numeric:tabular-nums}
+  .speed-tag .live{color:var(--parch-faint)}
+
+  /* ---------- prose ---------- */
+  section.prose{position:relative;z-index:6;max-width:1080px;margin:0 auto;padding:clamp(74px,12vh,150px) clamp(20px,4vw,48px) 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+  .sec-num{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--brass);font-weight:400}
+  .sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--brass-dim),transparent)}
+  section.prose h2{font-size:clamp(26px,4vw,46px);font-weight:500;letter-spacing:.01em;line-height:1.04;color:var(--parch);max-width:15ch}
+  .lede{font-size:clamp(15px,1.9vw,20px);line-height:1.6;color:var(--parch-dim);max-width:60ch;margin-top:22px;font-weight:300}
+  .lede em{font-style:normal;color:var(--parch);border-bottom:1px solid var(--brass-dim)}
+
+  .steps{margin-top:clamp(40px,6vh,70px);display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--brass-faint);border:var(--hair)}
+  .step{background:var(--bg);padding:26px 22px 30px;position:relative;transition:background .4s}
+  .step:hover{background:var(--panel)}
+  .step .s-i{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--brass);font-weight:400}
+  .step .s-t{font-size:16px;font-weight:500;letter-spacing:.02em;color:var(--parch);margin:16px 0 10px}
+  .step .s-d{font-size:13px;line-height:1.62;color:var(--parch-dim);font-weight:300}
+  .step .s-spec{margin-top:16px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--brass-hi);padding-top:12px;border-top:1px solid var(--brass-faint)}
+
+  .facts{margin-top:clamp(46px,7vh,80px);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,3vw,40px)}
+  .fact{border-top:1px solid var(--brass-dim);padding-top:18px}
+  .fact .f-n{font-family:var(--mono);font-size:clamp(28px,4vw,42px);font-weight:400;color:var(--parch);letter-spacing:.01em;line-height:1;font-variant-numeric:tabular-nums}
+  .fact .f-n .u{font-size:.42em;color:var(--brass);letter-spacing:.14em;margin-left:6px}
+  .fact .f-l{margin-top:12px;font-size:12.5px;line-height:1.55;color:var(--parch-dim);font-weight:300}
+
+  .quote{margin-top:clamp(60px,9vh,110px);text-align:center}
+  .quote p{font-size:clamp(20px,3vw,34px);font-weight:300;line-height:1.32;letter-spacing:.005em;color:var(--parch);max-width:22ch;margin:0 auto}
+  .quote p b{font-weight:500;color:var(--brass-hi)}
+  .quote cite{display:block;margin-top:26px;font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--brass);font-style:normal;text-transform:uppercase}
+
+  /* ---------- footer ---------- */
+  footer{position:relative;z-index:6;margin-top:clamp(80px,12vh,150px);border-top:var(--hair);
+    padding:34px clamp(20px,4vw,48px) 40px;max-width:1080px;margin-left:auto;margin-right:auto;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  footer .f-brand{font-size:15px;letter-spacing:.32em;font-weight:500;color:var(--parch)}
+  footer .f-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--parch-faint);margin-top:8px;line-height:1.7}
+  footer .f-right{text-align:right}
+  footer .f-right a{color:var(--brass-hi);text-decoration:none;font-family:var(--mono);font-size:10px;letter-spacing:.22em;transition:color .3s}
+  footer .f-right a:hover{color:var(--parch)}
+  footer .f-time{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--parch-faint);margin-top:8px;font-variant-numeric:tabular-nums}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity 1s cubic-bezier(.22,1,.36,1),transform 1s cubic-bezier(.22,1,.36,1)}
+  .reveal.inview{opacity:1;transform:none}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .facts{grid-template-columns:1fr}
+    .fact{display:flex;align-items:baseline;justify-content:space-between;gap:20px}
+    .fact .f-l{max-width:48%;text-align:right;margin-top:0}
+  }
+  @media (max-width:600px){
+    #movement .part-label,#movement .part-sub,#movement .leader,#movement .leader-dot{display:none}
+    .caliber{display:none}
+  }
+  @media (max-width:560px){
+    .backlink{top:12px;left:12px;padding:7px 10px 6px 11px}
+    .masthead{padding-top:74px}
+    .readout{gap:0}
+    .ro-cell{padding:5px 13px}
+    .controls{gap:7px}
+    .ctl{padding:10px 12px;font-size:9px;letter-spacing:.12em}
+    .ctl .lbl-full{display:none}
+    .steps{grid-template-columns:1fr}
+    footer{flex-direction:column;align-items:flex-start}
+    footer .f-right{text-align:left}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    body::after{display:none}
+  }
+
+  /* ---- SVG movement theme wiring ---- */
+  #movement .plate-bg{fill:var(--plate-grad)}
+  :root[data-theme="blueprint"] #movement .wheel-shadow,
+  :root[data-theme="blueprint"] #movement .dial-vig,
+  :root[data-theme="blueprint"] #movement .barrel-drum{display:none}
+  :root[data-theme="blueprint"] #movement .perlage{display:none}
+  #movement text{transition:fill .6s ease}
+</style>
+</head>
+<body>
+<a class="backlink" href="/"><span class="dot"></span>XAVIER FABLE ×50</a>
+
+<header class="masthead">
+  <div class="kicker">Horology · Live Movement · Cal. XF-41</div>
+  <h1>ESCAPEMENT</h1>
+  <p class="sub">A mechanism that keeps time — <em>meshing at true ratios, beating in real seconds.</em></p>
+  <div class="mast-rule"></div>
+
+  <div class="readout" aria-label="Live movement readout">
+    <div class="ro-cell"><div class="ro-lab">Local Time</div><div class="ro-val" id="roTime">--:--:--</div></div>
+    <div class="ro-cell"><div class="ro-lab">Date</div><div class="ro-val" id="roDate">—</div></div>
+    <div class="ro-cell"><div class="ro-lab">Frequency</div><div class="ro-val" id="roBeat">28,800 vph <span class="amp">· 4 Hz</span></div></div>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="movement-wrap" id="movementWrap">
+    <span class="mw-c3"></span><span class="mw-c4"></span>
+    <svg id="movement" viewBox="0 0 920 640" role="img" aria-label="An animated mechanical watch movement: a going train of meshing wheels driving a Swiss lever escapement and an oscillating balance wheel, with hands showing the real time."></svg>
+    <div class="caliber">27 jewels · Adjusted 5 positions</div>
+  </div>
+
+  <div class="controls" role="group" aria-label="Movement controls">
+    <button class="ctl on" id="btnPlay" data-role="play" aria-pressed="true">
+      <span class="ico" id="playIco"></span><span class="lbl-full">Beat</span>
+    </button>
+    <button class="ctl" id="btnWind" data-role="wind">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 1 2.3 5.6"/><path d="M4 20v-4h4"/></svg></span>
+      <span class="lbl-full">Wind</span>
+    </button>
+    <span class="speed-tag" id="speedTag"><span class="live">LIVE</span></span>
+    <button class="ctl" id="btnExplode" data-role="explode" aria-pressed="false">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="2.4"/></svg></span>
+      <span class="lbl-full">Exploded</span>
+    </button>
+    <button class="ctl" id="btnTheme" data-role="theme" aria-pressed="false">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16" stroke-dasharray="3 3"/></svg></span>
+      <span class="lbl-full">Blueprint</span>
+    </button>
+  </div>
+</main>
+
+<section class="prose" id="how">
+  <div class="sec-head reveal">
+    <span class="sec-num">01 / How it divides time</span><span class="sec-line"></span>
+  </div>
+  <h2 class="reveal">A watch does not measure time. It <em style="font-style:italic;border:0">chops</em> it into equal pieces.</h2>
+  <p class="lede reveal">A coiled mainspring wants to unwind all at once. The whole art of the movement is to refuse it — to let the spring release its energy only in identical, countable increments. That refusal, ticking eight times a second, is the <em>escapement</em>.</p>
+
+  <div class="steps">
+    <div class="step reveal"><div class="s-i">01 · Store</div><div class="s-t">Mainspring Barrel</div><div class="s-d">A flat spring wound inside the barrel holds the day's energy. As it relaxes it turns the barrel — the single source of motion for everything downstream.</div><div class="s-spec">≈ 40 h reserve</div></div>
+    <div class="step reveal"><div class="s-i">02 · Reduce</div><div class="s-t">Going Train</div><div class="s-d">Barrel → centre → third → fourth wheel. Each mesh trades torque for speed by an exact tooth ratio, so the centre wheel turns once an hour and the fourth once a minute.</div><div class="s-spec">ratio 1 : 60 to seconds</div></div>
+    <div class="step reveal"><div class="s-i">03 · Meter</div><div class="s-t">Lever Escapement</div><div class="s-d">The escape wheel is caught and released by a pallet fork — locked, impulsed, locked — surrendering exactly one tooth per beat. This is the tick you hear.</div><div class="s-spec">2 beats / tooth</div></div>
+    <div class="step reveal"><div class="s-i">04 · Regulate</div><div class="s-t">Balance & Hairspring</div><div class="s-d">A weighted wheel swings against a fine spiral spring at its own natural rhythm. It decides the beat; the fork merely keeps it swinging. Time made pendulum.</div><div class="s-spec">4 Hz · 28,800 A/h</div></div>
+  </div>
+
+  <div class="facts">
+    <div class="fact reveal"><div class="f-n">28,800<span class="u">vph</span></div><div class="f-l">Vibrations per hour — eight balance swings every second, each one a countable slice of time.</div></div>
+    <div class="fact reveal"><div class="f-n">1 : 720<span class="u">ratio</span></div><div class="f-l">The reduction from centre wheel to escape wheel, threaded through interlocking teeth that must never slip.</div></div>
+    <div class="fact reveal"><div class="f-n">±2<span class="u">s/day</span></div><div class="f-l">What a finely regulated lever movement can hold — order coaxed from a spring that only wants to let go.</div></div>
+  </div>
+
+  <div class="quote reveal">
+    <p>Every wheel above turns because the one before it <b>refused to turn faster.</b></p>
+    <cite>— On the geometry of restraint</cite>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="f-brand">ESCAPEMENT</div>
+    <div class="f-sub">Caliber XF-41 · Swiss lever · 28,800 A/h<br>Drawn live in SVG — the hands tell your real local time.</div>
+  </div>
+  <div class="f-right">
+    <a href="/">XAVIER FABLE ×50 ↗</a>
+    <div class="f-time" id="footTime">—</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+var NS='http://www.w3.org/2000/svg';
+var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var TAU=Math.PI*2, D2R=Math.PI/180, R2D=180/Math.PI;
+
+function el(tag,attrs,parent){var n=document.createElementNS(NS,tag);if(attrs)for(var k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n;}
+function P(cx,cy,r,a){return [cx+r*Math.cos(a), cy+r*Math.sin(a)];}
+function fmt(n){return n<10?'0'+n:''+n;}
+
+/* ============================================================
+   MOVEMENT GEOMETRY  (all in the 920×640 viewBox space)
+   ============================================================ */
+var svg=document.getElementById('movement');
+var W=780, H=430;
+svg.setAttribute('viewBox','0 0 '+W+' '+H);
+var _vb=new URLSearchParams(location.search).get('vb');   // debug: zoom into a region
+
+/* ---- gear train definition ---------------------------------
+   Tooth counts chosen so the ratios are horologically real:
+     centre wheel  = 1 rev / hour   (minute hand)
+     fourth wheel  = 1 rev / minute (seconds)  -> 60x centre
+     escape wheel  = 12x fourth via 72:6  -> with 20 teeth => 8 beats/s = 28,800 vph
+   Modules differ per mesh so wheel sizes stay balanced; teeth of a
+   meshing pair always share a module, so they interleave exactly.        */
+var m1=2.22, m2=2.19, m3=2.13, m4=1.83;   // module per mesh (px per tooth *? -> R=m*Z/2)
+var TR={
+  barrel:{Zw:90, mw:m1},
+  centre:{Zw:64, mw:m2, Zp:12, mp:m1},   // pinion(12,m1) meshes barrel wheel(90,m1)
+  third :{Zw:60, mw:m3, Zp:8,  mp:m2},   // pinion(8,m2) meshes centre wheel(64,m2)
+  fourth:{Zw:72, mw:m4, Zp:8,  mp:m3},   // pinion(8,m3) meshes third wheel(60,m3)
+  escape:{Zw:20, tipR:57, Zp:6, mp:m4}   // escape pinion(6,m4) meshes fourth wheel(72,m4); wheel is club-tooth
+};
+function R(Z,m){return m*Z/2;}
+// pitch radii
+var Rw={barrel:R(TR.barrel.Zw,TR.barrel.mw), centre:R(TR.centre.Zw,TR.centre.mw), third:R(TR.third.Zw,TR.third.mw), fourth:R(TR.fourth.Zw,TR.fourth.mw)};
+var Rp={centre:R(TR.centre.Zp,TR.centre.mp), third:R(TR.third.Zp,TR.third.mp), fourth:R(TR.fourth.Zp,TR.fourth.mp), escape:R(TR.escape.Zp,TR.escape.mp)};
+
+/* ---- arbor layout: walk the chain along chosen mesh directions (screen deg) */
+var pos={};
+pos.barrel=[150,268];
+function step(from,dist,deg){var a=deg*D2R;return [from[0]+dist*Math.cos(a), from[1]+dist*Math.sin(a)];}
+var dirBC=14, dirCT=-6, dirTF=-34, dirFE=-6;
+pos.centre=step(pos.barrel, Rw.barrel+Rp.centre, dirBC);
+pos.third =step(pos.centre, Rw.centre+Rp.third, dirCT);
+pos.fourth=step(pos.third,  Rw.third +Rp.fourth,dirTF);
+pos.escape=step(pos.fourth, Rw.fourth+Rp.escape,dirFE);
+// balance up-right of escape (clearly separated)
+var dirEBal=-30, escBalDist=172;
+pos.balance=step(pos.escape, escBalDist, dirEBal);
+var balR=94;   // balance rim outer radius
+var PLATE_C=[398,232];   // visual centre of the movement plate
+
+/* mesh directions (radians) between consecutive centres */
+function dirTo(a,b){return Math.atan2(b[1]-a[1], b[0]-a[0]);}
+var dBC=dirTo(pos.barrel,pos.centre), dCT=dirTo(pos.centre,pos.third), dTF=dirTo(pos.third,pos.fourth), dFE=dirTo(pos.fourth,pos.escape);
+
+/* ---- auto mesh-phasing: given a driving wheel and the mesh direction,
+        return the pinion offset so a tooth meets a gap (frac1+frac2=0.5). */
+function meshOff(dir, Zw, offW, Zp){
+  var uW=TAU/Zw, uP=TAU/Zp;
+  var fracW=(((dir-offW)%uW)+uW)%uW/uW;
+  var fracP=(0.5-fracW); fracP=((fracP%1)+1)%1;
+  return (dir+Math.PI) - fracP*uP;
+}
+var off={};
+off.barrelW=0;
+off.centreP=meshOff(dBC, TR.barrel.Zw, off.barrelW, TR.centre.Zp);
+off.centreW=0;
+off.thirdP =meshOff(dCT, TR.centre.Zw, off.centreW, TR.third.Zp);
+off.thirdW =0;
+off.fourthP=meshOff(dTF, TR.third.Zw, off.thirdW, TR.fourth.Zp);
+off.fourthW=0;
+off.escapeP=meshOff(dFE, TR.fourth.Zw, off.fourthW, TR.escape.Zp);
+
+/* ============================================================
+   GEAR PATH BUILDERS
+   ============================================================ */
+function gearTeethPath(Rpitch, Z, offRad, opt){
+  opt=opt||{};
+  var add=(opt.add!=null?opt.add:0.92), ded=(opt.ded!=null?opt.ded:1.12);
+  var m=2*Rpitch/Z;
+  var Ra=Rpitch+add*m, Rf=Rpitch-ded*m;
+  var u=TAU/Z;                      // angular pitch
+  var pHalf=u*0.25;                 // tooth half-thickness at pitch line
+  var tHalf=pHalf*(opt.tip!=null?opt.tip:0.52);
+  var rHalf=pHalf*(opt.root!=null?opt.root:1.34);
+  var d='';
+  for(var i=0;i<Z;i++){
+    var a=offRad+i*u;
+    var p1=P(0,0,Rf,a-rHalf), p2=P(0,0,Rpitch,a-pHalf), p3=P(0,0,Ra,a-tHalf),
+        p4=P(0,0,Ra,a+tHalf), p5=P(0,0,Rpitch,a+pHalf), p6=P(0,0,Rf,a+rHalf);
+    d+=(i===0?'M':'L')+p1[0].toFixed(2)+' '+p1[1].toFixed(2)
+      +'L'+p2[0].toFixed(2)+' '+p2[1].toFixed(2)
+      +'L'+p3[0].toFixed(2)+' '+p3[1].toFixed(2)
+      +'L'+p4[0].toFixed(2)+' '+p4[1].toFixed(2)
+      +'L'+p5[0].toFixed(2)+' '+p5[1].toFixed(2)
+      +'L'+p6[0].toFixed(2)+' '+p6[1].toFixed(2);
+    // arc across root gap to next tooth
+    var n=P(0,0,Rf,a+u-rHalf);
+    d+='A'+Rf.toFixed(2)+' '+Rf.toFixed(2)+' 0 0 1 '+n[0].toFixed(2)+' '+n[1].toFixed(2);
+  }
+  return d+'Z';
+}
+/* escape wheel: club/ratchet teeth all hooked one way */
+function escapePath(tipR, Z, offRad){
+  var Rf=tipR*0.74, u=TAU/Z, d='';
+  for(var i=0;i<Z;i++){
+    var a=offRad+i*u;
+    var root=P(0,0,Rf,a);                 // valley
+    var tip=P(0,0,tipR,a+u*0.30);         // pointed tip leans forward (CCW)
+    var heel=P(0,0,tipR*0.955,a+u*0.06);  // impulse-face start
+    var backRoot=P(0,0,Rf,a+u);           // next valley
+    d+=(i===0?'M':'L')+root[0].toFixed(2)+' '+root[1].toFixed(2)
+      +'L'+heel[0].toFixed(2)+' '+heel[1].toFixed(2)
+      +'L'+tip[0].toFixed(2)+' '+tip[1].toFixed(2)
+      +'A'+Rf.toFixed(2)+' '+Rf.toFixed(2)+' 0 0 1 '+backRoot[0].toFixed(2)+' '+backRoot[1].toFixed(2);
+  }
+  return d+'Z';
+}
+
+/* crossings/spokes for a wheel (the pierced arms of a watch wheel) */
+function addCrossings(g, Rout, nArms, hubR, armW){
+  for(var i=0;i<nArms;i++){
+    var a=i*TAU/nArms;
+    var ux=Math.cos(a), uy=Math.sin(a), px=-uy, py=ux;
+    var o=armW/2;
+    var i1=P(0,0,hubR,a); // near hub
+    var x1=i1[0]+px*o, y1=i1[1]+py*o;
+    var x2=i1[0]-px*o, y2=i1[1]-py*o;
+    var oR=Rout;
+    var x3=Math.cos(a)*oR-py*0+px*o, y3=Math.sin(a)*oR+py*o; // approx; recompute cleanly
+    var e=P(0,0,oR,a);
+    var x3b=e[0]-px*o, y3b=e[1]-py*o;
+    var x4b=e[0]+px*o, y4b=e[1]+py*o;
+    var d='M'+x1.toFixed(2)+' '+y1.toFixed(2)+'L'+x3b.toFixed(2)+' '+y3b.toFixed(2)
+         +'L'+x4b.toFixed(2)+' '+y4b.toFixed(2)+'L'+x2.toFixed(2)+' '+y2.toFixed(2)+'Z';
+    el('path',{d:d,'class':'spoke-arm'},g);
+  }
+}
+
+/* ============================================================
+   DEFS (gradients / filters) — brass theme
+   ============================================================ */
+var defs=el('defs',{},svg);
+function radial(id,cx,cy,r,stops){var g=el('radialGradient',{id:id,cx:cx,cy:cy,r:r},defs);stops.forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1],'stop-opacity':(s[2]==null?1:s[2])},g);});}
+function linear(id,x1,y1,x2,y2,stops){var g=el('linearGradient',{id:id,x1:x1,y1:y1,x2:x2,y2:y2},defs);stops.forEach(function(s){el('stop',{offset:s[0],'stop-color':s[1],'stop-opacity':(s[2]==null?1:s[2])},g);});}
+radial('gBrass','38%','32%','74%',[['0%','#e8c583'],['34%','#c99a5a'],['60%','#ab8046'],['82%','#835f31'],['100%','#54401e']]);
+radial('gBrassHot','40%','34%','74%',[['0%','#f4d492'],['40%','#d5a55c'],['74%','#a97c40'],['100%','#6f501f']]);
+radial('gBrassCool','38%','32%','76%',[['0%','#e3cb98'],['44%','#b98f52'],['78%','#8a6738'],['100%','#523c1c']]);
+radial('gSteel','38%','32%','76%',[['0%','#f0ead9'],['46%','#c7bfa9'],['100%','#6f6650']]);
+radial('gJewel','36%','32%','75%',[['0%','#ff98a6'],['40%','#d63a52'],['100%','#7c1424']]);
+linear('gBridge','0%','0%','0%','100%',[['0%','#c79c5c'],['48%','#9c7740'],['100%','#6e5029']]);
+radial('gPlate','50%','36%','80%',[['0%','#221a22'],['60%','#171218'],['100%','#0e0b10']]);
+radial('gPlateBP','50%','36%','82%',[['0%','#0b2233'],['58%','#071a28'],['100%','#04121b']]);
+// soft drop shadow for exploded parts
+var f=el('filter',{id:'softShadow',x:'-40%',y:'-40%',width:'180%',height:'180%'},defs);
+el('feDropShadow',{dx:0,dy:0,stdDeviation:5,'flood-color':'#000','flood-opacity':.55},f);
+var fb=el('filter',{id:'partShadow',x:'-60%',y:'-60%',width:'220%',height:'220%'},defs);
+el('feDropShadow',{dx:'-6',dy:'8',stdDeviation:7,'flood-color':'#000','flood-opacity':.5},fb);
+// static blur for cast-shadow discs (gives wheels stacked depth)
+var fbs=el('filter',{id:'blurS',x:'-30%',y:'-30%',width:'160%',height:'160%'},defs);
+el('feGaussianBlur',{stdDeviation:5},fbs);
+
+/* ============================================================
+   BUILD STATIC LAYERS
+   ============================================================ */
+var root=el('g',{},svg);
+
+/* ---- main plate (engraved) ---- */
+var gPlate=el('g',{'class':'plate-layer'},root);
+(function(){
+  var cx=PLATE_C[0], cy=PLATE_C[1], PR=262;
+  el('ellipse',{cx:cx,cy:cy,rx:PR+22,ry:PR-8,'class':'plate-bg'},gPlate);
+  el('ellipse',{cx:cx,cy:cy,rx:PR+22,ry:PR-8,fill:'none',stroke:'var(--plate-stroke)','stroke-width':1,'class':'plate-ring'},gPlate);
+  el('ellipse',{cx:cx,cy:cy,rx:PR+14,ry:PR-16,fill:'none',stroke:'var(--plate-stroke)','stroke-width':.6,'stroke-opacity':.5,'class':'plate-ring'},gPlate);
+  // perlage: scattered overlapping circular graining across the plate (subtle)
+  var pg=el('g',{'class':'perlage','stroke':'var(--engrave)','stroke-width':.5,'stroke-opacity':.14,fill:'none'},gPlate);
+  for(var ring=1;ring<=6;ring++){
+    var rr=ring*34, n=Math.round(rr*0.32);
+    for(var k=0;k<n;k++){var a=k*TAU/n+ring*0.4;var p=P(cx,cy,rr,a);
+      if(Math.hypot(p[0]-cx,p[1]-(cy))<(PR-4)) el('circle',{cx:p[0].toFixed(1),cy:p[1].toFixed(1),r:11},pg);}
+  }
+  // engraved caliber text riding the lower plate arc
+  var ar=PR-30;
+  var tp=el('path',{id:'plateArc',fill:'none',
+    d:'M '+(cx-ar*0.86)+' '+(cy+ar*0.5)+' A '+ar+' '+(ar*0.92)+' 0 0 0 '+(cx+ar*0.86)+' '+(cy+ar*0.5)},defs);
+  var t=el('text',{'class':'plate-engrave','font-family':"'IBM Plex Mono',monospace",
+    'font-size':9,'letter-spacing':2.6,fill:'var(--engrave)'},gPlate);
+  var tpe=el('textPath',{href:'#plateArc',startOffset:'50%','text-anchor':'middle'},t);
+  tpe.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#plateArc');
+  tpe.textContent='CALIBRE  XF · FORTY-ONE';
+})();
+
+/* ---- jewel bearings under every arbor + bridges ---- */
+var gAxis=el('g',{'class':'axis-layer'},root);       // exploded assembly guides
+gAxis.style.opacity='0';
+(function(){
+  var A=pos.centre, ks={barrel:0.20,third:0.24,fourth:0.30,escape:0.34,fork:0.40,balance:0.30};
+  for(var key in ks){ var p=pos[key]; if(!p) continue;
+    var ex=p[0]+(p[0]-A[0])*ks[key], ey=p[1]+(p[1]-A[1])*ks[key]-6;
+    el('line',{x1:A[0],y1:A[1],x2:ex,y2:ey,stroke:'var(--leader)','stroke-width':.8,
+      'stroke-dasharray':'2 4','stroke-opacity':.7,'class':'axis-ray'},gAxis);
+    el('circle',{cx:ex,cy:ey,r:2,fill:'none',stroke:'var(--leader-dot)','stroke-width':.8},gAxis);
+  }
+})();
+var gBridge=el('g',{'class':'bridge-layer'},root);   // decorative bridges (explode up)
+var gTrain=el('g',{'class':'train-layer'},root);      // going-train wheels
+var gEsc=el('g',{'class':'esc-layer'},root);          // escapement
+var gJewels=el('g',{'class':'jewel-layer'},root);     // cap jewels (explode up)
+var gHands=el('g',{'class':'hands-layer'},root);
+var gLabels=el('g',{'class':'label-layer'},root);
+
+/* bridge shapes (organic watch-bridge blobs spanning arbors) */
+function bridge(pathD){el('path',{d:pathD,fill:'var(--bridge-fill)',stroke:'var(--bridge-stroke)','stroke-width':1,'class':'bridge','stroke-linejoin':'round'},gBridge);
+  // screw dots on bridge handled separately
+}
+// train bridge: soft shape over third+fourth
+(function(){
+  var a=pos.third, b=pos.fourth, c=pos.escape;
+  var d='M'+(a[0]-30)+' '+(a[1]+40)
+    +'C'+(a[0]-46)+' '+(a[1]-30)+' '+(a[0]+10)+' '+(a[1]-52)+' '+(a[0]+40)+' '+(a[1]-38)
+    +'C'+(b[0]-10)+' '+(b[1]-56)+' '+(b[0]+52)+' '+(b[1]-30)+' '+(b[0]+40)+' '+(b[1]+20)
+    +'C'+(b[0]+30)+' '+(b[1]+56)+' '+(a[0]+30)+' '+(a[1]+70)+' '+(a[0]-30)+' '+(a[1]+40)+'Z';
+  bridge(d);
+})();
+// balance cock (bridge arm reaching over balance)
+(function(){
+  var b=pos.balance;
+  var base=step(b, balR+30, 150*D2R);
+  var d='M'+base[0]+' '+base[1]
+    +'C'+(base[0]-8)+' '+(base[1]-46)+' '+(b[0]-30)+' '+(b[1]-40)+' '+b[0]+' '+(b[1]-8)
+    +'C'+(b[0]+26)+' '+(b[1]+16)+' '+(base[0]+40)+' '+(base[1]+30)+' '+base[0]+' '+base[1]+'Z';
+  el('path',{d:d,fill:'var(--bridge-fill)',stroke:'var(--bridge-stroke)','stroke-width':1,'class':'bridge balance-cock','stroke-linejoin':'round'},gBridge);
+})();
+
+/* jewel (ruby) + optional gold chaton ring, returns group */
+function jewel(cx,cy,r){
+  var g=el('g',{'class':'jewel','transform':'translate('+cx+' '+cy+')'},gJewels);
+  el('circle',{r:r+3.4,fill:'none',stroke:'var(--jewel-ring)','stroke-width':1.3,'stroke-opacity':.85,'class':'chaton'},g);
+  el('circle',{r:r,fill:'var(--jewel-fill)','class':'jewel-stone'},g);
+  el('circle',{r:r,fill:'none',stroke:'var(--jewel-ring)','stroke-width':.5,'stroke-opacity':.5,'class':'chaton'},g);
+  return g;
+}
+
+/* screw (slotted) */
+function screw(g,cx,cy,r,ang){
+  var sg=el('g',{'transform':'translate('+cx+' '+cy+') rotate('+(ang||24)+')','class':'screw'},g);
+  el('circle',{r:r,fill:'var(--screw)',stroke:'#3a2f22','stroke-width':.6,'class':'screw-body'},sg);
+  el('rect',{x:-r*0.86,y:-r*0.16,width:r*1.72,height:r*0.32,fill:'var(--screw-slot)','class':'screw-slot'},sg);
+  return sg;
+}
+
+/* ---- build a going-train wheel (teeth + crossings + hub + pinion) ---- */
+var gearNodes={}; // rotating groups keyed by arbor
+var gearOuter={}; // outer translate groups (for exploded spread)
+function buildWheel(key, cx, cy, Rpitch, Z, offW, nArms, pinionR, pinionZ, pinionOff){
+  var g=el('g',{'transform':'translate('+cx+' '+cy+')','class':'wheel wheel-'+key},gTrain);
+  gearOuter[key]=g;
+  // cast shadow onto the wheel/plate below -> stacked depth
+  el('circle',{cx:2.5,cy:6,r:Rpitch*0.96,fill:'#000','fill-opacity':.42,filter:'url(#blurS)','class':'wheel-shadow'},g);
+  var rot=el('g',{'class':'rot'},g);        // rotates
+  // wheel body disc (subtle) under teeth
+  el('circle',{r:Rpitch*0.9,fill:'var(--gear-body)','fill-opacity':.0,'class':'wheel-disc'},rot);
+  // teeth
+  el('path',{d:gearTeethPath(Rpitch,Z,offW),fill:'var(--gear-body)',stroke:'var(--gear-stroke)','stroke-width':'var(--gear-stroke-w)','stroke-linejoin':'round','class':'teeth'},rot);
+  // rim inner ring
+  el('circle',{r:Rpitch*0.80,fill:'none',stroke:'var(--gear-stroke)','stroke-width':.7,'stroke-opacity':.5,'class':'rim'},rot);
+  // crossings
+  var cg=el('g',{'class':'crossings',fill:'var(--gear-body)',stroke:'var(--gear-stroke)','stroke-width':.7},rot);
+  addCrossings(cg, Rpitch*0.80, nArms, Rpitch*0.20, Math.max(7,Rpitch*0.12));
+  // hub
+  el('circle',{r:Rpitch*0.155,fill:'var(--gear-body)',stroke:'var(--gear-stroke)','stroke-width':.9,'class':'hub'},rot);
+  el('circle',{r:Rpitch*0.062,fill:'none',stroke:'var(--gear-stroke)','stroke-width':.8,'stroke-opacity':.7},rot);
+  // pinion (small, on same arbor) drawn on top
+  if(pinionR){
+    el('path',{d:gearTeethPath(pinionR,pinionZ,pinionOff,{add:1.0,ded:1.25,tip:0.62,root:1.18}),
+      fill:'var(--pinion-body)',stroke:'var(--pinion-stroke)','stroke-width':.8,'class':'pinion'},rot);
+    el('circle',{r:pinionR*0.42,fill:'var(--pinion-body)',stroke:'var(--pinion-stroke)','stroke-width':.6},rot);
+  }
+  gearNodes[key]=rot;
+  return g;
+}
+
+/* order: draw big/slow first so faster ones sit on top nicely */
+buildWheel('barrel', pos.barrel[0],pos.barrel[1], Rw.barrel, TR.barrel.Zw, off.barrelW, 6, null,null,null);
+// barrel: add mainspring coil inside + barrel drum ring
+(function(){
+  var rot=gearNodes.barrel;
+  // mainspring spiral
+  var d='', r0=Rw.barrel*0.20, r1=Rw.barrel*0.74, turns=8, steps=turns*44;
+  for(var i=0;i<=steps;i++){var t=i/steps, ang=t*turns*TAU, rr=r0+(r1-r0)*t; var p=P(0,0,rr,ang); d+=(i===0?'M':'L')+p[0].toFixed(2)+' '+p[1].toFixed(2);}
+  el('circle',{r:Rw.barrel*0.80,fill:'var(--plate-2)','fill-opacity':.55,'class':'barrel-drum'},rot);
+  el('path',{d:d,fill:'none',stroke:'var(--gear-stroke)','stroke-width':1.1,'stroke-opacity':.72,'class':'mainspring'},rot);
+  el('circle',{r:Rw.barrel*0.20,fill:'var(--gear-body)',stroke:'var(--gear-stroke)','stroke-width':1,'class':'arbor-hub'},rot);
+})();
+buildWheel('centre', pos.centre[0],pos.centre[1], Rw.centre, TR.centre.Zw, off.centreW, 4, Rp.centre, TR.centre.Zp, off.centreP);
+buildWheel('third',  pos.third[0], pos.third[1],  Rw.third,  TR.third.Zw,  off.thirdW,  4, Rp.third,  TR.third.Zp,  off.thirdP);
+buildWheel('fourth', pos.fourth[0],pos.fourth[1], Rw.fourth, TR.fourth.Zw, off.fourthW, 3, Rp.fourth, TR.fourth.Zp, off.fourthP);
+
+/* ---- ESCAPE WHEEL ---- */
+(function(){
+  var cx=pos.escape[0], cy=pos.escape[1], tipR=TR.escape.tipR, Z=TR.escape.Zw;
+  var g=el('g',{'transform':'translate('+cx+' '+cy+')','class':'wheel escape-wheel'},gEsc);
+  gearOuter.escape=g;
+  el('circle',{cx:2.5,cy:6,r:tipR*0.94,fill:'#000','fill-opacity':.4,filter:'url(#blurS)','class':'wheel-shadow'},g);
+  var rot=el('g',{'class':'rot'},g);
+  el('path',{d:escapePath(tipR,Z,0),fill:'var(--escape-body)',stroke:'var(--escape-stroke)','stroke-width':1,'stroke-linejoin':'round','class':'teeth escape-teeth'},rot);
+  el('circle',{r:tipR*0.40,fill:'var(--escape-body)','fill-opacity':.0,'class':'escape-disc'},rot);
+  // three pierced arms
+  var cg=el('g',{'class':'crossings',fill:'var(--escape-body)',stroke:'var(--escape-stroke)','stroke-width':.7},rot);
+  addCrossings(cg, tipR*0.68, 4, tipR*0.16, tipR*0.10);
+  // pinion (meshes fourth wheel)
+  el('path',{d:gearTeethPath(Rp.escape,TR.escape.Zp,off.escapeP,{add:1.0,ded:1.25,tip:0.62,root:1.18}),
+    fill:'var(--pinion-body)',stroke:'var(--pinion-stroke)','stroke-width':.8,'class':'pinion'},rot);
+  el('circle',{r:tipR*0.13,fill:'var(--escape-body)',stroke:'var(--escape-stroke)','stroke-width':.9,'class':'hub'},rot);
+  gearNodes.escape=rot;
+})();
+
+/* ---- PALLET FORK (Swiss lever / anchor) ---- */
+var forkNode;
+(function(){
+  var esc=pos.escape, bal=pos.balance, tipR=TR.escape.tipR;
+  var dEB=dirTo(esc,bal);
+  var pivot=step(esc, tipR+30, dEB);        // fork staff pivot, just outside escape rim toward balance
+  pos.fork=pivot;
+  var g=el('g',{'transform':'translate('+pivot[0]+' '+pivot[1]+')','class':'pallet-fork'},gEsc);
+  gearOuter.fork=g;
+  var rot=el('g',{'class':'rot'},g);
+  var dEF=dirTo(esc,pivot);                  // escape centre -> pivot
+  var toBal=dirTo(pivot,bal);
+  // two pallet stones on the escape rim, flanking the pivot side
+  var spread=30*D2R;
+  var sA=[esc[0]+(tipR-1)*Math.cos(dEF-spread), esc[1]+(tipR-1)*Math.sin(dEF-spread)];
+  var sB=[esc[0]+(tipR-1)*Math.cos(dEF+spread), esc[1]+(tipR-1)*Math.sin(dEF+spread)];
+  var rA=[sA[0]-pivot[0], sA[1]-pivot[1]], rB=[sB[0]-pivot[0], sB[1]-pivot[1]];
+  var hornLen=Math.hypot(bal[0]-pivot[0],bal[1]-pivot[1])-24;
+  var hornEnd=P(0,0,hornLen,toBal);
+  // anchor body as one filled slim shape: horn tail + the two pallet arms
+  var w=3.4;
+  function perp(v){var L=Math.hypot(v[0],v[1]);return [-v[1]/L, v[0]/L];}
+  var pA=perp(rA), pB=perp(rB), pH=perp(hornEnd);
+  var d='M'+(rA[0]+pA[0]*w).toFixed(1)+' '+(rA[1]+pA[1]*w).toFixed(1)
+    +'L'+(pA[0]*w*1.3).toFixed(1)+' '+(pA[1]*w*1.3).toFixed(1)
+    +'L'+(hornEnd[0]+pH[0]*w).toFixed(1)+' '+(hornEnd[1]+pH[1]*w).toFixed(1)
+    +'L'+(hornEnd[0]-pH[0]*w).toFixed(1)+' '+(hornEnd[1]-pH[1]*w).toFixed(1)
+    +'L'+(-pB[0]*w*1.3).toFixed(1)+' '+(-pB[1]*w*1.3).toFixed(1)
+    +'L'+(rB[0]-pB[0]*w).toFixed(1)+' '+(rB[1]-pB[1]*w).toFixed(1)
+    +'L'+(rB[0]+pB[0]*w).toFixed(1)+' '+(rB[1]+pB[1]*w).toFixed(1)
+    +'L'+(pB[0]*w).toFixed(1)+' '+(pB[1]*w).toFixed(1)
+    +'L'+(pA[0]*w).toFixed(1)+' '+(pA[1]*w).toFixed(1)
+    +'L'+(rA[0]-pA[0]*w).toFixed(1)+' '+(rA[1]-pA[1]*w).toFixed(1)+'Z';
+  el('path',{d:d,fill:'var(--fork)',stroke:'var(--fork-stroke)','stroke-width':1,'stroke-linejoin':'round','class':'fork-body'},rot);
+  // clean anchor arms as strokes on top for crispness
+  el('line',{x1:0,y1:0,x2:rA[0],y2:rA[1],stroke:'var(--fork-stroke)','stroke-width':.8,'stroke-opacity':.5},rot);
+  el('line',{x1:0,y1:0,x2:rB[0],y2:rB[1],stroke:'var(--fork-stroke)','stroke-width':.8,'stroke-opacity':.5},rot);
+  // pallet stones (ruby) at escape rim contacts
+  el('rect',{x:-4.6,y:-2.4,width:9.2,height:4.8,rx:1.2,fill:'var(--jewel-fill)',stroke:'var(--jewel-ring)','stroke-width':.5,'class':'pallet-jewel',
+    transform:'translate('+rA[0].toFixed(1)+' '+rA[1].toFixed(1)+') rotate('+((dEF-spread)*R2D).toFixed(1)+')'},rot);
+  el('rect',{x:-4.6,y:-2.4,width:9.2,height:4.8,rx:1.2,fill:'var(--jewel-fill)',stroke:'var(--jewel-ring)','stroke-width':.5,'class':'pallet-jewel',
+    transform:'translate('+rB[0].toFixed(1)+' '+rB[1].toFixed(1)+') rotate('+((dEF+spread)*R2D).toFixed(1)+')'},rot);
+  // fork horn notch at the balance end
+  var pn=perp(hornEnd);
+  el('path',{d:'M'+(hornEnd[0]+pn[0]*5).toFixed(1)+' '+(hornEnd[1]+pn[1]*5).toFixed(1)
+    +'L'+(hornEnd[0]+Math.cos(toBal)*7+pn[0]*5).toFixed(1)+' '+(hornEnd[1]+Math.sin(toBal)*7+pn[1]*5).toFixed(1)
+    +'M'+(hornEnd[0]-pn[0]*5).toFixed(1)+' '+(hornEnd[1]-pn[1]*5).toFixed(1)
+    +'L'+(hornEnd[0]+Math.cos(toBal)*7-pn[0]*5).toFixed(1)+' '+(hornEnd[1]+Math.sin(toBal)*7-pn[1]*5).toFixed(1),
+    stroke:'var(--fork-stroke)','stroke-width':2,'stroke-linecap':'round',fill:'none','class':'fork-horn'},rot);
+  // pivot jewel
+  el('circle',{r:5,fill:'none',stroke:'var(--jewel-ring)','stroke-width':1,'stroke-opacity':.7},rot);
+  el('circle',{r:2.6,fill:'var(--fork-stroke)'},rot);
+  forkNode=rot;
+})();
+
+/* ---- BALANCE WHEEL + HAIRSPRING ---- */
+var balanceNode, hairNode;
+(function(){
+  var cx=pos.balance[0], cy=pos.balance[1];
+  var g=el('g',{'transform':'translate('+cx+' '+cy+')','class':'balance'},gEsc);
+  gearOuter.balance=g;
+  // hairspring (flat spiral) sits under the rim, rotates with balance
+  var hg=el('g',{'class':'rot hairspring-rot'},g);
+  var d='',r0=6,r1=balR*0.62,turns=11,steps=Math.round(turns*40);
+  for(var i=0;i<=steps;i++){var t=i/steps,ang=t*turns*TAU,rr=r0+(r1-r0)*t;var p=P(0,0,rr,ang);d+=(i===0?'M':'L')+p[0].toFixed(2)+' '+p[1].toFixed(2);}
+  // outer terminal curve
+  el('path',{d:d,fill:'none',stroke:'var(--hairspring)','stroke-width':.9,'stroke-opacity':.92,'class':'hairspring'},hg);
+  // stud fixing the outer coil
+  var st=P(0,0,r1,turns*TAU);
+  el('circle',{cx:st[0],cy:st[1],r:2.2,fill:'var(--hairspring)','class':'hs-stud'},hg);
+  hairNode=hg;
+  // balance wheel itself
+  var rot=el('g',{'class':'rot balance-rot'},g);
+  el('circle',{r:balR,fill:'none',stroke:'var(--balance-stroke)','stroke-width':9,'class':'balance-rim'},rot);
+  el('circle',{r:balR,fill:'none',stroke:'var(--balance-body)','stroke-width':6.6,'class':'balance-rim-in'},rot);
+  el('circle',{r:balR-8.4,fill:'none',stroke:'var(--balance-stroke)','stroke-width':.7,'stroke-opacity':.5},rot);
+  el('circle',{r:balR+4.4,fill:'none',stroke:'var(--balance-stroke)','stroke-width':.6,'stroke-opacity':.4},rot);
+  // spokes (2-arm balance) + hub
+  var arm=el('g',{stroke:'var(--balance-stroke)','stroke-width':4.4,'stroke-linecap':'round'},rot);
+  el('line',{x1:-balR,y1:0,x2:balR,y2:0},arm);
+  el('line',{x1:0,y1:-balR*0.5,x2:0,y2:balR*0.5,'stroke-width':3.4},arm);
+  el('circle',{r:8.5,fill:'var(--balance-body)',stroke:'var(--balance-stroke)','stroke-width':1,'class':'hub'},rot);
+  el('circle',{r:3,fill:'none',stroke:'var(--balance-stroke)','stroke-width':.8},rot);
+  // timing screws around the rim
+  for(var s=0;s<8;s++){var a=s*TAU/8;var p=P(0,0,balR,a);
+    el('circle',{cx:p[0],cy:p[1],r:3.6,fill:'var(--balance-body)',stroke:'var(--balance-stroke)','stroke-width':.9,'class':'timing-screw'},rot);}
+  // impulse roller (small disc near hub with impulse jewel) - visual link to fork
+  var roller=el('g',{'class':'rot roller-rot'},g);
+  el('circle',{r:15,fill:'none',stroke:'var(--balance-stroke)','stroke-width':1.4,'stroke-opacity':.7,'class':'roller'},roller);
+  var jp=P(0,0,15,dirTo(pos.balance,pos.fork));
+  el('circle',{cx:jp[0],cy:jp[1],r:2.8,fill:'var(--jewel-fill)',stroke:'var(--jewel-ring)','stroke-width':.5,'class':'impulse-jewel'},roller);
+  balanceNode=rot;
+  window.__rollerNode=roller;
+})();
+
+/* ---- cap jewels over each pivot (explode upward) ---- */
+jewel(pos.centre[0],pos.centre[1],4.6);
+jewel(pos.third[0], pos.third[1], 4.2);
+jewel(pos.fourth[0],pos.fourth[1],4.2);
+jewel(pos.escape[0],pos.escape[1],3.8);
+jewel(pos.fork[0],  pos.fork[1],  3.4);
+jewel(pos.barrel[0],pos.barrel[1],5.2);
+
+/* screws scattered on plate (assembled detail) */
+(function(){
+  var sg=el('g',{'class':'plate-screws'},gBridge);
+  var cx=PLATE_C[0],cy=PLATE_C[1],PR=232;
+  [[45,-70],[135,25],[-30,120],[100,-135],[-140,40]].forEach(function(o,i){
+    screw(sg,cx+o[0],cy+o[1],4.6,20+i*33);
+  });
+  screw(sg,pos.third[0]-46,pos.third[1]-52,4.2,40);
+  screw(sg,pos.fourth[0]+50,pos.fourth[1]-24,4.2,15);
+})();
+
+/* ============================================================
+   HANDS  (mounted at centre wheel arbor)
+   ============================================================ */
+var handSec, handMin, handHour;
+(function(){
+  var cx=pos.centre[0], cy=pos.centre[1];
+  var g=el('g',{'transform':'translate('+cx+' '+cy+')'},gHands);
+  var dialR=Rw.centre*1.16;
+  // faint dial vignette so polished hands read over the movement
+  var vg=el('radialGradient',{id:'gDialV',cx:'50%',cy:'50%',r:'50%'},defs);
+  el('stop',{offset:'0%','stop-color':'#000','stop-opacity':.34},vg);
+  el('stop',{offset:'62%','stop-color':'#000','stop-opacity':.14},vg);
+  el('stop',{offset:'100%','stop-color':'#000','stop-opacity':0},vg);
+  el('circle',{r:dialR*1.02,fill:'url(#gDialV)','class':'dial-vig'},g);
+  // minute track
+  el('circle',{r:dialR,fill:'none',stroke:'var(--tick)','stroke-width':.8,'stroke-opacity':.55,'class':'dial-ring'},g);
+  for(var i=0;i<60;i++){var a=i*TAU/60-Math.PI/2;var maj=i%5===0;var r1=maj?dialR-8:dialR-4.5,r2=dialR;
+    var p1=P(0,0,r1,a),p2=P(0,0,r2,a);
+    el('line',{x1:p1[0],y1:p1[1],x2:p2[0],y2:p2[1],stroke:'var(--tick)','stroke-width':maj?1.5:.7,'stroke-opacity':maj?.9:.5,'class':'dial-tick'},g);}
+  // 12 marker (small triangle) so orientation is clear
+  var tp=P(0,0,dialR-3,-Math.PI/2);
+  el('path',{d:'M'+tp[0]+' '+tp[1]+' l-4 -8 l8 0 z',fill:'var(--label)','fill-opacity':.9,'class':'dial-12'},g);
+
+  function hand(cls,len,back,wide,fill){
+    var hg=el('g',{'class':cls},g);
+    var d='M'+(-wide/2)+' '+back+' L'+(-wide*0.30)+' '+(-len*0.80)+' L0 '+(-len)
+      +' L'+(wide*0.30)+' '+(-len*0.80)+' L'+(wide/2)+' '+back+' Z';
+    el('path',{d:d,fill:fill,stroke:'rgba(0,0,0,.35)','stroke-width':.6,'class':'hand-shape'},hg);
+    // polished centre spine
+    el('line',{x1:0,y1:back*0.5,x2:0,y2:-len*0.9,stroke:'rgba(255,255,255,.28)','stroke-width':.7},hg);
+    return hg;
+  }
+  handHour=hand('hand-hour', dialR*0.54, 15, 9.5, 'var(--hand)');
+  handMin =hand('hand-min',  dialR*0.84, 19, 6.4, 'var(--hand)');
+  // seconds hand: thin lance with tail counterweight
+  handSec=el('g',{'class':'hand-sec'},g);
+  el('line',{x1:0,y1:24,x2:0,y2:-(dialR*0.94),stroke:'var(--hand-sec)','stroke-width':1.9,'stroke-linecap':'round'},handSec);
+  el('circle',{cx:0,cy:19,r:5.4,fill:'none',stroke:'var(--hand-sec)','stroke-width':2,'class':'sec-tail'},handSec);
+  // centre cap
+  el('circle',{r:7,fill:'var(--hand-core)',stroke:'rgba(0,0,0,.35)','stroke-width':.7},g);
+  el('circle',{r:2.4,fill:'var(--plate-2)'},g);
+})();
+
+/* ============================================================
+   LABELS (horology-diagram leaders)
+   ============================================================ */
+function label(tx,ty,tox,toy,text,anchor){
+  var g=el('g',{'class':'label-grp'},gLabels);
+  el('line',{x1:tx,y1:ty,x2:tox,y2:toy,stroke:'var(--leader)','stroke-width':.9,'class':'leader'},g);
+  el('circle',{cx:tox,cy:toy,r:2.4,fill:'none',stroke:'var(--leader-dot)','stroke-width':1,'class':'leader-dot'},g);
+  el('circle',{cx:tox,cy:toy,r:.9,fill:'var(--leader-dot)','class':'leader-dot'},g);
+  var t=el('text',{x:tx,y:ty,'text-anchor':anchor||'start','class':'part-label',
+    'font-family':"'IBM Plex Mono',monospace",'font-size':10.5,'letter-spacing':1.4,fill:'var(--label)'},g);
+  var parts=text.split('|');
+  t.textContent=parts[0];
+  if(parts[1]){var t2=el('text',{x:tx,y:ty+14,'text-anchor':anchor||'start','class':'part-sub',
+    'font-family':"'IBM Plex Mono',monospace",'font-size':8,'letter-spacing':1.2,fill:'var(--label-dim)'},g);t2.textContent=parts[1];}
+  return g;
+}
+label(18,28,  pos.barrel[0]-Rw.barrel*0.62,pos.barrel[1]-Rw.barrel*0.62, 'MAINSPRING BARREL|≈40 h reserve','start');
+label(238,24, pos.third[0]-4, pos.third[1]-Rw.third*0.82, 'GOING TRAIN|centre·third·fourth','start');
+label(506,20, pos.escape[0]+2, pos.escape[1]-TR.escape.tipR*0.86, 'ESCAPE WHEEL|20 teeth · 8 beats/s','middle');
+label(646,26, pos.balance[0]+balR*0.20, pos.balance[1]-balR*0.82, 'BALANCE WHEEL|4 Hz · hairspring','start');
+label(548,394, pos.fork[0]+2, pos.fork[1]+8, 'SWISS LEVER|pallet fork · locks & impulses','start');
+label(22,402, pos.centre[0]-Rw.centre*0.42, pos.centre[1]+Rw.centre*0.72, 'HOUR · MINUTE · SECOND|centre wheel · 1 rev/h','start');
+
+/* ============================================================
+   ANIMATION STATE + CLOCK
+   ============================================================ */
+var BEATS_PER_SEC=8;                 // 28,800 vph
+var AMP=142*D2R;                      // balance amplitude
+var paused=false, speed=1, targetSpeed=1, winding=false;
+var explode=0, explodeTarget=0;
+var simTime=Date.now()/1000;         // seconds, drives everything
+var lastT=null, raf=null;
+
+/* per-arbor angular speed relative to escape stepped angle (deg per unit escape deg) */
+/* escape stepped angle E(t): each beat advances 360/(2*Z)=9deg. escape rev/min=12 -> 72deg/s at 1x */
+/* wheel angle = signFactor * (E * ratio) ; ratios from train, signs alternate along chain */
+var ESC_PER_BEAT=360/(2*TR.escape.Zw);         // 9 deg
+function trainAngles(escStepped){
+  // escStepped in degrees (already includes dart easing)
+  var fourth=-escStepped/12;                    // opposite dir, 12x slower
+  var third = -fourth/ (TR.third.Zw/TR.third.Zp);   // fourth = third*(Zt/Zfp) -> third=fourth/7.5 ; opposite sign
+  // sign along chain: escape(+) fourth(-) third(+) centre(-) barrel(+)
+  third = fourth / (TR.third.Zw/TR.third.Zp) * -1;
+  var centre= third / (TR.centre.Zw/TR.centre.Zp) * -1;
+  var barrel= centre/ (TR.barrel.Zw/TR.centre.Zp) * -1;
+  return {escape:escStepped, fourth:fourth, third:third, centre:centre, barrel:barrel};
+}
+
+/* dart easing within a beat: escape stays locked then flicks forward */
+function easeDart(f){
+  // f in [0,1) fraction of the beat. Unlock near center-crossing (f~0.5)
+  if(f<0.52) return 0;
+  var x=(f-0.52)/0.20; if(x>1)x=1;
+  // easeOutBack-ish quick snap
+  return x<1 ? (1-Math.pow(1-x,3)) : 1;
+}
+
+function balanceAngle(beatFloat){
+  return AMP*Math.cos(Math.PI*beatFloat);      // full period = 2 beats
+}
+function forkAngle(beatFloat){
+  // fork rests locked on alternating banks, snapping at each balance centre-crossing
+  var cross=Math.floor(beatFloat+0.5);          // index of last crossing (at 0.5,1.5,...)
+  var cur=(cross%2===0)?1:-1, prev=-cur;
+  var d=beatFloat-(cross-0.5);                   // beats since that crossing (>=0)
+  var eased=1-Math.pow(1-Math.min(1,d/0.14),3);  // fast snap then hold
+  return -(prev+(cur-prev)*eased)*14*D2R;
+}
+
+/* ---- render one frame at simTime ---- */
+function setRot(node,cx,cy,deg){ node.setAttribute('transform','rotate('+deg.toFixed(3)+')'); }
+function render(){
+  var beatFloat=simTime*BEATS_PER_SEC;
+  var bi=Math.floor(beatFloat), fr=beatFloat-bi;
+  var escStepped=(bi+easeDart(fr))*ESC_PER_BEAT;   // degrees
+  var A=trainAngles(escStepped);
+  // gears
+  gearNodes.barrel.setAttribute('transform','rotate('+A.barrel.toFixed(3)+')');
+  gearNodes.centre.setAttribute('transform','rotate('+A.centre.toFixed(3)+')');
+  gearNodes.third.setAttribute('transform','rotate('+A.third.toFixed(3)+')');
+  gearNodes.fourth.setAttribute('transform','rotate('+A.fourth.toFixed(3)+')');
+  gearNodes.escape.setAttribute('transform','rotate('+A.escape.toFixed(3)+')');
+  // escapement
+  var ba=balanceAngle(beatFloat);
+  balanceNode.setAttribute('transform','rotate('+(ba*R2D).toFixed(3)+')');
+  hairNode.setAttribute('transform','rotate('+(ba*R2D).toFixed(3)+')');
+  if(window.__rollerNode) window.__rollerNode.setAttribute('transform','rotate('+(ba*R2D).toFixed(3)+')');
+  forkNode.setAttribute('transform','rotate('+(forkAngle(beatFloat)*R2D).toFixed(3)+')');
+  // hands from simTime (real clock reading)
+  var s=simTime%60, mm=(simTime/60)%60, hh=(simTime/3600)%12;
+  // seconds hand steps in beats for the deadbeat sweep character
+  var sStep=Math.floor(beatFloat)/BEATS_PER_SEC;
+  var secDeg=((sStep%60)/60)*360;
+  handSec.setAttribute('transform','rotate('+secDeg.toFixed(3)+')');
+  handMin.setAttribute('transform','rotate('+((mm/60)*360).toFixed(3)+')');
+  handHour.setAttribute('transform','rotate('+((hh/12)*360).toFixed(3)+')');
+}
+
+/* ---- explode transforms: radial spread from the dial + lifted top parts ---- */
+var anchor=pos.centre;              // dial / reference plane stays put
+function spread(key, k){
+  var g=gearOuter[key]; if(!g) return;
+  var p=pos[key];
+  var dx=(p[0]-anchor[0])*k*explode, dy=(p[1]-anchor[1])*k*explode;
+  // add a small upward lift so parts appear to rise off the plate
+  g.setAttribute('transform','translate('+(p[0]+dx)+' '+(p[1]+dy-6*explode)+')');
+}
+function applyExplode(){
+  var e=explode;
+  spread('barrel',0.20); spread('third',0.24); spread('fourth',0.30);
+  spread('escape',0.34); spread('fork',0.40); spread('balance',0.30);
+  // cap jewels + bridges lift up-left off the movement (z-axis illusion)
+  gJewels.setAttribute('transform','translate('+(-24*e)+' '+(-40*e)+')');
+  gJewels.style.filter=e>0.02?'url(#softShadow)':'none';
+  gBridge.setAttribute('transform-origin',PLATE_C[0]+' '+PLATE_C[1]);
+  gBridge.setAttribute('transform','translate('+(-30*e)+' '+(-52*e)+') scale('+(1+0.03*e)+')');
+  gBridge.style.filter=e>0.02?'url(#partShadow)':'none';
+  gBridge.style.opacity=String(0.10+0.90*e);
+  gLabels.style.opacity=String(0.62+0.38*e);
+  gAxis.style.opacity=String(0.55*e);
+}
+
+/* ============================================================
+   LOOP
+   ============================================================ */
+function needLoop(){ return !paused || Math.abs(speed-1)>0.01 || Math.abs(explode-explodeTarget)>0.001 || Math.abs(targetSpeed-speed)>0.01; }
+function frame(t){
+  raf=null;
+  if(lastT==null) lastT=t;
+  var dt=Math.min(0.05,(t-lastT)/1000); lastT=t;
+  // ease speed
+  speed+=(targetSpeed-speed)*Math.min(1,dt*6);
+  // ease explode
+  explode+=(explodeTarget-explode)*Math.min(1,dt*4.5);
+  applyExplode();
+  if(!paused){
+    if(Math.abs(speed-1)<0.02 && !winding){
+      simTime=Date.now()/1000;          // lock to real wall clock at 1x
+    } else {
+      simTime+=dt*speed;
+    }
+  }
+  render();
+  updateReadout();
+  if(needLoop() || !RM) raf=requestAnimationFrame(frame);
+  else lastT=null;
+}
+function ensureLoop(){ if(!raf && !document.hidden){ lastT=null; raf=requestAnimationFrame(frame); } }
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden){ if(raf){cancelAnimationFrame(raf); raf=null; lastT=null;} }
+  else ensureLoop();
+});
+
+/* ============================================================
+   READOUT
+   ============================================================ */
+var roTime=document.getElementById('roTime'), roDate=document.getElementById('roDate'),
+    footTime=document.getElementById('footTime'), speedTag=document.getElementById('speedTag');
+var MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+var DAY=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+function updateReadout(){
+  var d=new Date(simTime*1000);
+  var hh=d.getHours(), mm=d.getMinutes(), ss=d.getSeconds();
+  roTime.textContent=fmt(hh)+':'+fmt(mm)+':'+fmt(ss);
+  roDate.textContent=DAY[d.getDay()]+' '+fmt(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear();
+  footTime.textContent='Rendered live · '+fmt(hh)+':'+fmt(mm)+':'+fmt(ss);
+  if(Math.abs(speed-1)<0.08 && !winding){ speedTag.innerHTML='<span class="live">LIVE</span>'; }
+  else { speedTag.textContent='×'+(speed>=100?Math.round(speed):speed.toFixed(speed<10?1:0)); }
+}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+var btnPlay=document.getElementById('btnPlay'), btnWind=document.getElementById('btnWind'),
+    btnExplode=document.getElementById('btnExplode'), btnTheme=document.getElementById('btnTheme'),
+    playIco=document.getElementById('playIco');
+var ICO_PAUSE='<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/></svg>';
+var ICO_PLAY='<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor" stroke="none"/></svg>';
+function setPlayIco(){ playIco.innerHTML=paused?ICO_PLAY:ICO_PAUSE; }
+setPlayIco();
+btnPlay.addEventListener('click',function(){
+  paused=!paused; btnPlay.classList.toggle('on',!paused);
+  btnPlay.setAttribute('aria-pressed',String(!paused)); setPlayIco();
+  if(!paused) ensureLoop();
+});
+// wind: hold to spin fast, release to return to live
+function startWind(){ if(paused){paused=false;btnPlay.classList.add('on');setPlayIco();} winding=true; targetSpeed=2400; btnWind.classList.add('winding'); ensureLoop(); }
+function stopWind(){ winding=false; targetSpeed=1; btnWind.classList.remove('winding'); }
+btnWind.addEventListener('pointerdown',function(e){e.preventDefault();startWind();});
+btnWind.addEventListener('pointerup',stopWind);
+btnWind.addEventListener('pointerleave',stopWind);
+btnWind.addEventListener('pointercancel',stopWind);
+// keyboard for wind (space-like): use Enter down/up won't repeat cleanly; use click to pulse
+btnWind.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();if(!winding)startWind();}});
+btnWind.addEventListener('keyup',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();stopWind();}});
+
+btnExplode.addEventListener('click',function(){
+  var on=explodeTarget<0.5; explodeTarget=on?1:0;
+  btnExplode.classList.toggle('on',on); btnExplode.setAttribute('aria-pressed',String(on));
+  if(RM){ explode=explodeTarget; applyExplode(); }
+  ensureLoop();
+});
+btnTheme.addEventListener('click',function(){
+  var bp=document.documentElement.getAttribute('data-theme')==='blueprint';
+  document.documentElement.setAttribute('data-theme', bp?'brass':'blueprint');
+  btnTheme.classList.toggle('on',!bp); btnTheme.setAttribute('aria-pressed',String(!bp));
+  btnTheme.querySelector('.lbl-full').textContent = bp?'Blueprint':'Brass';
+});
+
+/* keyboard shortcuts */
+window.addEventListener('keydown',function(e){
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='b'||e.key==='B'){ btnTheme.click(); }
+  else if(e.key==='e'||e.key==='E'){ btnExplode.click(); }
+  else if(e.key==='p'||e.key==='P'){ btnPlay.click(); }
+});
+
+/* ============================================================
+   REVEAL ON SCROLL
+   ============================================================ */
+var reveals=document.querySelectorAll('.reveal');
+if('IntersectionObserver' in window && !RM){
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('inview');io.unobserve(en.target);}});},{threshold:0.14});
+  reveals.forEach(function(r){io.observe(r);});
+}else{ reveals.forEach(function(r){r.classList.add('inview');}); }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+applyExplode();
+render();
+updateReadout();
+(function(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('theme')==='blueprint'){ btnTheme.click(); }
+  if(q.get('explode')==='1'){ explodeTarget=1; explode=1; btnExplode.classList.add('on'); btnExplode.setAttribute('aria-pressed','true'); applyExplode(); }
+})();
+if(_vb){ svg.setAttribute('viewBox',_vb.replace(/,/g,' ')); }
+if(RM){
+  // static assembled movement at real time, no rAF spinning
+  simTime=Date.now()/1000; render(); updateReadout();
+}else{
+  ensureLoop();
+}
+})();
+</script>
+</body>
+</html>

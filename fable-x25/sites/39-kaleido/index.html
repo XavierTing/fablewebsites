@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KALEIDO — an engine of symmetry</title>
+<meta name="description" content="A living generative kaleidoscope. A drifting wedge of colour is caught between mirrors and answered back a thousand times — a stained-glass rose window that turns, morphs and breathes. Paint into it with your cursor; freeze a frame and keep it.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="KALEIDO — an engine of symmetry">
+<meta property="og:description" content="A living generative kaleidoscope — a stained-glass rose window that turns, morphs and breathes. Paint colour into the wedge and watch it bloom symmetrically. 6 to 24-fold, five jewel palettes, freeze &amp; save.">
+<meta property="og:url" content="https://xavierfable50.netlify.app/sites/39-kaleido/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KALEIDO — an engine of symmetry">
+<meta name="twitter:description" content="A living generative kaleidoscope. A stained-glass rose window that breathes.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f2e9d8;
+  --paper:#f6efe1;
+  --ink:#241d15;
+  --ink2:#4a3f31;
+  --mut:rgba(36,29,21,.62);
+  --mut2:rgba(36,29,21,.40);
+  --mut3:rgba(36,29,21,.16);
+  --gold:#b48327;
+  --gold-lt:#d9a94a;
+  --jewel:#8a3ea6;
+  --emer:#1f8f6e;
+  --ruby:#c0304f;
+  --glass:rgba(246,239,225,.66);
+  --glass-edge:rgba(36,29,21,.14);
+  --line:rgba(36,29,21,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--cream);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:rgba(180,131,39,.28);color:#1a140d}
+:focus-visible{outline:1.5px solid var(--gold);outline-offset:3px;border-radius:4px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#e7dcc6}
+::-webkit-scrollbar-thumb{background:rgba(180,131,39,.34);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:rgba(180,131,39,.55)}
+
+.mono{font-family:"Space Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.26em}
+
+/* ---------- canvas + overlays ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:var(--cream);touch-action:none}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+#cursor{position:fixed;top:0;left:0;z-index:60;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;pointer-events:none;
+  border:1.5px solid var(--brush,rgba(180,131,39,.7));box-shadow:0 0 18px var(--brush,rgba(180,131,39,.5));opacity:0;
+  transition:opacity .35s ease}
+#cursor::after{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--brush,var(--gold))}
+
+/* ---------- top bar ---------- */
+#top{position:fixed;top:0;left:0;right:0;z-index:40;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:clamp(16px,2.4vw,26px) clamp(18px,3vw,40px);pointer-events:none}
+#top > *{pointer-events:auto}
+#backlink{font-size:10px;color:var(--mut);transition:color .4s ease,background .4s ease,border-color .4s ease;line-height:1.5;
+  padding:7px 13px;border-radius:20px;border:1px solid transparent}
+#backlink.chip{background:rgba(246,239,225,.72);border-color:rgba(36,29,21,.10);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#backlink .cap{letter-spacing:.24em}
+#backlink b{font-weight:600;color:var(--ink)}
+#backlink:hover{color:var(--gold)}
+
+#mark,#readout{transition:opacity .5s ease,transform .5s ease}
+#mark.gone,#readout.gone{opacity:0;transform:translateY(-10px);pointer-events:none}
+#mark{text-align:center;line-height:1;user-select:none}
+#mark .wm{font-weight:500;font-size:clamp(15px,1.7vw,19px);letter-spacing:.42em;color:var(--ink);
+  text-indent:.42em}
+#mark .tl{margin-top:7px;font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.30em;
+  text-transform:uppercase;color:var(--mut2)}
+
+#readout{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.10em;color:var(--mut);
+  text-align:right;line-height:1.7;white-space:nowrap;min-width:118px}
+#readout b{color:var(--gold);font-weight:700}
+#readout .sub{color:var(--mut2);font-size:9px;letter-spacing:.14em}
+
+/* ---------- scroll cue ---------- */
+#cue{position:fixed;left:clamp(16px,2.6vw,34px);top:50%;transform:translateY(-50%);z-index:35;
+  font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none;
+  transition:opacity .5s ease}
+#cue span:first-child{writing-mode:vertical-rl;text-orientation:mixed}
+#cue .ln{width:1px;height:38px;background:linear-gradient(var(--mut3),transparent);position:relative;overflow:hidden}
+#cue .ln::after{content:"";position:absolute;top:0;left:0;width:100%;height:44%;
+  background:linear-gradient(var(--gold),transparent);animation:drip 2.6s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes drip{0%{transform:translateY(-110%)}60%,100%{transform:translateY(260%)}}
+#cue.gone{opacity:0}
+
+/* ---------- controls dock ---------- */
+#dock{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:45;
+  display:flex;align-items:stretch;gap:0;padding:11px 8px;border-radius:16px;
+  background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
+  box-shadow:0 18px 50px rgba(60,42,16,.20),inset 0 1px 0 rgba(255,255,255,.5);
+  max-width:calc(100vw - 28px);transition:opacity .5s ease,transform .5s ease}
+#dock.hidden{opacity:0;transform:translateX(-50%) translateY(24px);pointer-events:none}
+.grp{display:flex;flex-direction:column;gap:7px;padding:2px 16px;justify-content:center}
+.grp+.grp{border-left:1px solid var(--line)}
+.grp .lab{font-family:"Space Mono",monospace;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2)}
+.grp .row{display:flex;align-items:center;gap:10px}
+
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:rgba(36,29,21,.03)}
+.seg button{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.02em;
+  padding:6px 9px;color:var(--mut);transition:color .3s,background .3s;white-space:nowrap;position:relative}
+.seg button.on{color:#fff;font-weight:700}
+#symSeg button.on{background:var(--gold)}
+.seg button:not(.on):hover{color:var(--ink);background:rgba(36,29,21,.05)}
+
+/* palette swatches */
+.pal{display:flex;gap:7px}
+.pal button{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(36,29,21,.18);
+  transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .25s;position:relative;overflow:hidden}
+.pal button::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--sw)}
+.pal button:hover{transform:scale(1.14)}
+.pal button.on{transform:scale(1.14);box-shadow:0 0 0 2px var(--paper),0 0 0 3.5px var(--gold)}
+.pal button[data-p="jewel"]{--sw:conic-gradient(from 0deg,#2f4dbd,#1f8f6e,#c9a227,#c0304f,#8a3ea6,#2f4dbd)}
+.pal button[data-p="pastel"]{--sw:conic-gradient(from 0deg,#f4b8c8,#bfe3d6,#c9c8f0,#f6d9b0,#e6c6ec,#f4b8c8)}
+.pal button[data-p="neon"]{--sw:conic-gradient(from 0deg,#00e5ff,#ff2ec4,#b6ff2e,#ff5a1f,#8a2eff,#00e5ff)}
+.pal button[data-p="autumn"]{--sw:conic-gradient(from 0deg,#8a3418,#c96a1e,#d9a531,#7a6a1f,#a02730,#8a3418)}
+.pal button[data-p="gold"]{--sw:conic-gradient(from 0deg,#5a3f12,#b48327,#e6c877,#fff3d0,#c79a3a,#5a3f12)}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) var(--fill,50%),rgba(36,29,21,.14) var(--fill,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 1px rgba(180,131,39,.5),0 2px 6px rgba(60,42,16,.35);cursor:grab;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border:none;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 1px rgba(180,131,39,.5),0 2px 6px rgba(60,42,16,.35);cursor:grab}
+.val{font-family:"Space Mono",monospace;font-size:10px;color:var(--mut);min-width:34px;text-align:right}
+
+.iconbtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;
+  color:var(--ink2);transition:color .3s,border-color .3s,background .3s;background:rgba(36,29,21,.02)}
+.iconbtn:hover{color:var(--ink);border-color:var(--glass-edge);background:rgba(180,131,39,.10)}
+.iconbtn.on{color:var(--gold);border-color:rgba(180,131,39,.5)}
+.iconbtn svg{width:16px;height:16px}
+.btnrow{display:flex;gap:8px}
+
+/* ---------- hero ---------- */
+#hero{position:relative;z-index:10;height:100vh;min-height:560px;pointer-events:none}
+
+/* ---------- scrolling content ---------- */
+main{position:relative;z-index:10}
+.section{position:relative;background:var(--cream);
+  padding:clamp(84px,14vh,168px) clamp(22px,7vw,120px)}
+.section:first-child{border-top:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(242,233,216,.55) 0%,var(--cream) 16%)}
+.kick{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:13px}
+.kick::before{content:"";width:30px;height:1px;background:var(--gold);opacity:.7}
+h2{font-weight:400;font-size:clamp(30px,5vw,60px);line-height:1.04;letter-spacing:-.015em;
+  max-width:16ch;color:var(--ink)}
+h2 em{font-style:normal;color:var(--jewel)}
+.lede{margin-top:30px;max-width:60ch;font-size:clamp(17px,2vw,21px);font-weight:300;line-height:1.6;
+  color:var(--ink2)}
+.body{margin-top:52px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 58px;max-width:1000px}
+.body p{font-size:clamp(15px,1.55vw,16.5px);font-weight:300;line-height:1.72;color:var(--ink2)}
+.body p b{color:var(--ink);font-weight:500}
+.g{color:var(--emer)}.v{color:var(--jewel)}.r{color:var(--ruby)}.a{color:var(--gold)}
+
+/* fold spec strip */
+.folds{margin-top:66px;border-top:1px solid var(--line);padding-top:36px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:22px;max-width:920px}
+.fold{display:flex;flex-direction:column;align-items:flex-start;gap:11px}
+.fold svg{width:44px;height:44px;color:var(--gold)}
+.fold .n{font-family:"Space Mono",monospace;font-size:clamp(20px,2.6vw,26px);font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.fold .nm{font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2)}
+
+/* two-up feature rows */
+.feat{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(40px,7vw,110px);align-items:center;max-width:1120px}
+.feat.rev{grid-template-columns:1fr 1.1fr}
+.feat .disc{aspect-ratio:1;border-radius:50%;position:relative;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(180,131,39,.10),transparent 62%),
+    conic-gradient(from 0deg,#2f4dbd,#1f8f6e,#c9a227,#c0304f,#8a3ea6,#2f4dbd);
+  box-shadow:inset 0 0 0 1px rgba(36,29,21,.10),0 24px 60px rgba(60,42,16,.18);
+  mask:radial-gradient(circle at 50% 50%,#000 61%,transparent 62%);
+  -webkit-mask:radial-gradient(circle at 50% 50%,#000 61%,transparent 62%)}
+.feat .disc.a2{background:conic-gradient(from 30deg,#8a3418,#c96a1e,#d9a531,#7a6a1f,#a02730,#8a3418)}
+.feat .disc .ring{position:absolute;inset:-3px;border-radius:50%;border:2px solid rgba(180,131,39,.5);
+  -webkit-mask:radial-gradient(circle,transparent 61%,#000 62%);mask:radial-gradient(circle,transparent 61%,#000 62%)}
+.feat h3{font-weight:400;font-size:clamp(24px,3.4vw,38px);line-height:1.08;letter-spacing:-.01em;color:var(--ink)}
+.feat p{margin-top:22px;font-size:clamp(15px,1.7vw,17.5px);font-weight:300;line-height:1.68;color:var(--ink2);max-width:46ch}
+.feat .meta{margin-top:26px;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mut2)}
+
+/* pull quote */
+.quote{position:relative;z-index:10;background:var(--paper);text-align:center;border-block:1px solid var(--line);
+  padding:clamp(78px,13vh,150px) clamp(24px,8vw,140px)}
+.quote p{font-weight:300;font-size:clamp(23px,3.6vw,42px);line-height:1.3;letter-spacing:-.01em;
+  max-width:22ch;margin:0 auto;color:var(--ink)}
+.quote p em{font-style:italic;color:var(--jewel)}
+.quote .att{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mut2);margin-top:32px}
+
+/* footer */
+footer{position:relative;z-index:10;background:var(--cream);border-top:1px solid var(--line);
+  padding:clamp(70px,10vh,120px) clamp(22px,7vw,120px) 46px;overflow:hidden}
+footer .big{font-weight:500;font-size:clamp(58px,17vw,220px);line-height:.88;letter-spacing:.06em;text-indent:.06em;
+  color:var(--ink);position:relative}
+footer .big span{background:linear-gradient(92deg,var(--gold),var(--ruby) 40%,var(--jewel) 68%,var(--emer));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+footer .meta{margin-top:42px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;
+  border-top:1px solid var(--line);padding-top:28px;
+  font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.05em;color:var(--mut)}
+footer .meta a{color:var(--ink2);transition:color .3s}
+footer .meta a:hover{color:var(--gold)}
+footer .meta .col{display:flex;flex-direction:column;gap:8px}
+footer .meta b{color:var(--ink);font-weight:700}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s ease,transform 1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* fallback */
+#nogl{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+  text-align:center;padding:40px;background:var(--cream)}
+#nogl p{max-width:440px;font-size:20px;font-weight:300;line-height:1.6;color:var(--mut)}
+
+@media (max-width:820px){
+  #mark{display:none}
+  #top{padding:14px 16px}
+  #readout{min-width:0;font-size:9px}
+  .body{grid-template-columns:1fr;gap:30px}
+  .folds{grid-template-columns:repeat(3,1fr);gap:26px 18px}
+  .feat,.feat.rev{grid-template-columns:1fr;gap:34px}
+  .feat .disc{max-width:280px;margin:0 auto}
+  #cursor{display:none}
+  #cue{left:50%;top:auto;bottom:104px;transform:translateX(-50%)}
+  #cue span:first-child{writing-mode:horizontal-tb}
+  #dock{padding:9px 4px;bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px}
+  .grp{padding:2px 10px}
+  .grp .lab{font-size:7.5px}
+  .grp.speedGrp .val{display:none}
+  input[type=range]{width:74px}
+  .seg button{padding:6px 8px;font-size:9px}
+  .pal button{width:24px;height:24px}
+}
+@media (max-width:430px){
+  .grp.speedGrp{display:none}
+  .pal{gap:6px}
+  .pal button{width:23px;height:23px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  #cue .ln::after{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="gl" aria-label="A living generative kaleidoscope — a rose window of drifting colour"></canvas>
+<div id="grain"></div>
+<div id="cursor"></div>
+
+<div id="top">
+  <a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery"><span class="cap">XAVIER <b>FABLE</b> ×50</span></a>
+  <div id="mark"><div class="wm">KALEIDO</div><div class="tl">an engine of symmetry</div></div>
+  <div id="readout" aria-live="off"><b id="rdN">12-FOLD</b><br><span class="sub" id="rdP">jewel · turning</span></div>
+</div>
+
+<div id="cue"><span>the story, below</span><span class="ln"></span></div>
+
+<div id="dock" role="group" aria-label="Kaleidoscope controls">
+  <div class="grp">
+    <span class="lab">Symmetry</span>
+    <div class="row"><div class="seg" id="symSeg" role="group" aria-label="Symmetry order">
+      <button data-n="6">6</button>
+      <button data-n="8">8</button>
+      <button data-n="12" class="on">12</button>
+      <button data-n="16">16</button>
+      <button data-n="24">24</button>
+    </div></div>
+  </div>
+  <div class="grp speedGrp">
+    <span class="lab">Rotation</span>
+    <div class="row"><input id="speed" type="range" min="0" max="100" value="26" aria-label="Rotation speed"><span class="val mono" id="speedVal">slow</span></div>
+  </div>
+  <div class="grp">
+    <span class="lab">Palette</span>
+    <div class="row"><div class="pal" id="palRow" role="group" aria-label="Colour palette">
+      <button data-p="jewel" class="on" title="Jewel" aria-label="Jewel palette"></button>
+      <button data-p="pastel" title="Pastel" aria-label="Pastel palette"></button>
+      <button data-p="neon" title="Neon" aria-label="Neon palette"></button>
+      <button data-p="autumn" title="Autumn" aria-label="Autumn palette"></button>
+      <button data-p="gold" title="Mono-gold" aria-label="Mono-gold palette"></button>
+    </div></div>
+  </div>
+  <div class="grp">
+    <span class="lab">Capture</span>
+    <div class="row btnrow">
+      <button id="freezeBtn" class="iconbtn" aria-label="Freeze / play" aria-pressed="false" title="Freeze">
+        <svg id="freezeIco" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      </button>
+      <button id="saveBtn" class="iconbtn" aria-label="Save PNG" title="Freeze &amp; save PNG">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<header id="hero" aria-hidden="true"></header>
+
+<main>
+  <section class="section">
+    <div class="kick reveal">What you are looking at</div>
+    <h2 class="reveal">One wedge of colour, caught between <em>mirrors</em> — and answered back a thousand times.</h2>
+    <p class="lede reveal">Everything above is grown from a single drifting sliver. A ribbon of noise, morphing on its own. Fold it, mirror it, spin it, and the sliver becomes a cathedral window that never sits still.</p>
+    <div class="body">
+      <p class="reveal">A real kaleidoscope is almost nothing: two or three mirrors leaning against each other in a tube, and a pinch of coloured glass rattling at the far end. The magic is not the glass. The magic is the <b>reflections of reflections</b> — the little chaos, repeated until it becomes order.</p>
+      <p class="reveal">This one has no glass. The source wedge is <b>generated live</b> — domain-warped noise flowing like ink in water — and then folded into <span class="a">N-fold dihedral symmetry</span>: N rotations, each mirrored, so the seam where two mirrors meet never shows.</p>
+      <p class="reveal">Move your cursor across it. You are not steering a camera — you are <b>painting into the wedge</b>. A single dab of colour blooms in every petal at once, because the pattern cannot tell your dab apart from the rest of the glass.</p>
+      <p class="reveal">Then, if a frame stops your breath, <b>freeze it and keep it</b>. A sand mandala is swept away the moment it is finished; yours can be a PNG. The Tibetan monks might not approve. The Victorians certainly would.</p>
+    </div>
+    <div class="folds">
+      <div class="fold reveal"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="22" cy="22" r="18"/><path d="M22 4v36M4 22h36M9 9l26 26M35 9 9 35"/></svg><div class="n">6</div><div class="nm">hexad · snowflake</div></div>
+      <div class="fold reveal"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="22" cy="22" r="18"/><path d="M22 4v36M4 22h36M9 9l26 26M35 9 9 35M13.5 6.5l17 31M30.5 6.5l-17 31M6.5 13.5l31 17M6.5 30.5l31-17"/></svg><div class="n">8</div><div class="nm">octad · compass</div></div>
+      <div class="fold reveal"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="22" cy="22" r="18"/><g id="s12"><path d="M22 4v36"/></g><path d="M22 4v36M4 22h36M9 9l26 26M35 9 9 35M12 5l20 34M32 5 12 39M5 12l34 20M5 32 39 12"/></svg><div class="n">12</div><div class="nm">clock · rose window</div></div>
+      <div class="fold reveal"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="22" cy="22" r="18"/><g stroke-opacity=".9"><path d="M22 4v36M4 22h36M9.4 9.4l25.2 25.2M34.6 9.4 9.4 34.6M14 5l16 34M30 5 14 39M5 14l34 16M5 30 39 14M11 6l22 32M33 6 11 38M6 11l32 22M6 33 38 11"/></g></svg><div class="n">16</div><div class="nm">hexadecad · lace</div></div>
+      <div class="fold reveal"><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1"><circle cx="22" cy="22" r="18"/><g transform="translate(22 22)"><path d="M0-18V18M-9-15.6 9 15.6M-15.6-9 15.6 9M-18 0H18M-15.6 9 15.6-9M-9 15.6 9-15.6M-4.7-17.4 4.7 17.4M4.7-17.4-4.7 17.4M-13-12.5 13 12.5M13-12.5-13 12.5M-17.4-4.7 17.4 4.7M17.4-4.7-17.4 4.7"/></g></svg><div class="n">24</div><div class="nm">rosette · maximal</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="feat">
+      <div>
+        <div class="kick reveal">Sir David Brewster, 1816</div>
+        <h3 class="reveal">A physicist studying polarised light built the most successful toy of the century — almost by accident.</h3>
+        <p class="reveal">Brewster was in his laboratory in Edinburgh, watching light bounce between plates of glass, when he noticed the reflections arranging themselves into perfect symmetry. He put mirrors in a tube, dropped in some beads, and named it from the Greek: <b>kalós</b> (beautiful), <b>eîdos</b> (form), <b>skopein</b> (to look). To look at beautiful forms.</p>
+        <p class="reveal">He patented it in 1817. The patent was worthless within weeks — copies flooded London and Paris so fast that an estimated <b>two hundred thousand</b> sold in three months. Brewster earned almost nothing and spent years insisting, to anyone who would listen, that it was a serious scientific instrument. It was both.</p>
+        <div class="meta reveal">est. 200,000 units · 3 months · royalties earned: ≈ 0</div>
+      </div>
+      <div class="disc reveal" aria-hidden="true"><span class="ring"></span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="feat rev">
+      <div class="disc a2 reveal" aria-hidden="true"><span class="ring"></span></div>
+      <div>
+        <div class="kick reveal">The circle that means everything</div>
+        <h3 class="reveal">Long before the tube of mirrors, the mandala was a way of drawing the whole universe on the floor.</h3>
+        <p class="reveal">Sanskrit for <b>circle</b>. A mandala is built from the centre outward — a still point, then ring after ring of ordered symmetry, a map of cosmos and mind you can walk into with your eyes. Chartres set the same idea in stone and coloured glass: a <span class="r">rose window</span> is a mandala the size of a wall, lit from behind by the sun.</p>
+        <p class="reveal">What every tradition seems to agree on is the pull of the centre and the comfort of repetition — that a pattern which keeps its promise, petal after petal, quiets something in us. KALEIDO is only the newest, laziest way to make one: no sand, no glass, no lead came. Just a wedge of light, and a ring of mirrors that never wear out.</p>
+        <div class="meta reveal">centre → symmetry → periphery → back to centre</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote">
+    <p class="reveal">The little chaos, repeated until it becomes <em>order</em>. Then repeated again, until the order begins to breathe.</p>
+    <div class="att reveal">field note — on watching a wedge become a window</div>
+  </section>
+</main>
+
+<footer>
+  <div class="big reveal"><span>KALEIDO</span></div>
+  <div class="meta">
+    <div class="col">
+      <b>An engine of symmetry.</b>
+      <span>Live generative mandala · WebGL2</span>
+    </div>
+    <div class="col">
+      <span>6 / 8 / 12 / 16 / 24-fold dihedral</span>
+      <span>jewel · pastel · neon · autumn · mono-gold</span>
+    </div>
+    <div class="col">
+      <span>Xavier Fable ×50 — a study in beautiful forms</span>
+      <a href="/">← back to the gallery</a>
+    </div>
+  </div>
+</footer>
+
+<div id="nogl"><p>This rose window is drawn in real time and needs WebGL2 — which your browser did not offer. Try another window, and the mirrors will find their light again.</p></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================================
+   KALEIDO — an engine of symmetry
+   A single fullscreen fragment shader (WebGL2). A live domain-warped colour
+   source is folded into N-fold dihedral symmetry (N rotations, each mirrored)
+   to make a continuously turning, morphing rose window. The cursor paints
+   glowing dabs into the folded wedge, so a single touch blooms in every petal.
+   A fine engraved gold ring frames a luminous disc on a warm cream stage.
+   ========================================================================= */
+
+const cv = document.getElementById('gl');
+const gl = cv.getContext('webgl2', { antialias:false, depth:false, stencil:false, alpha:false, powerPreference:'high-performance' });
+if (!gl){ document.getElementById('nogl').style.display='flex'; return; }
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params = new URLSearchParams(location.search);
+const small = Math.min(innerWidth, innerHeight) < 640;
+const MAXSPOTS = 24;
+
+/* -------------------- shaders -------------------- */
+const VS = `#version 300 es
+void main(){
+  float x = float((gl_VertexID & 1) << 2) - 1.0;
+  float y = float((gl_VertexID & 2) << 1) - 1.0;
+  gl_Position = vec4(x, y, 0.0, 1.0);
+}`;
+
+const FS = `#version 300 es
+precision highp float;
+out vec4 O;
+
+uniform vec2  uRes;
+uniform vec2  uCenter;    // device px
+uniform float uRadius;    // device px
+uniform float uTime;
+uniform float uRot;
+uniform float uN;
+uniform int   uPalette;
+uniform int   uPaintN;
+uniform vec3  uPaintPos[${MAXSPOTS}];   // xy = folded coord, z = life 0..1
+uniform vec3  uPaintCol[${MAXSPOTS}];
+
+const float TAU = 6.28318530718;
+
+/* ---- noise ---- */
+float h21(vec2 p){ p = fract(p*vec2(123.34,345.45)); p += dot(p, p+34.345); return fract(p.x*p.y); }
+float vnoise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f*f*(3.0-2.0*f);
+  float a = h21(i), b = h21(i+vec2(1,0)), c = h21(i+vec2(0,1)), d = h21(i+vec2(1,1));
+  return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+float fbm(vec2 p){
+  float s = 0.0, a = 0.55;
+  mat2 m = mat2(1.62,1.18,-1.18,1.62);
+  for(int i=0;i<5;i++){ s += a*vnoise(p); p = m*p + 7.3; a *= 0.5; }
+  return s;
+}
+
+vec3 sat(vec3 c, float s){ float l = dot(c, vec3(0.299,0.587,0.114)); return clamp(mix(vec3(l), c, s), 0.0, 4.0); }
+
+/* iq cosine palettes, tuned per mood */
+vec3 palette(int pal, float t){
+  vec3 a,b,c,d; float s = 1.0, g = 1.0;
+  if(pal==0){        a=vec3(.33,.24,.40); b=vec3(.35,.31,.37); c=vec3(1.0,1.0,1.0); d=vec3(.00,.16,.50); s=1.30; g=1.02; } // jewel
+  else if(pal==1){   a=vec3(.84,.80,.85); b=vec3(.15,.17,.16); c=vec3(1.0,1.0,1.0); d=vec3(.00,.28,.60); s=0.92; g=1.05; } // pastel
+  else if(pal==2){   a=vec3(.50,.50,.50); b=vec3(.55,.55,.55); c=vec3(1.0,1.0,1.0); d=vec3(.15,.45,.80); s=1.55; g=1.18; } // neon
+  else if(pal==3){   a=vec3(.55,.37,.22); b=vec3(.43,.34,.19); c=vec3(1.0,1.0,1.0); d=vec3(.00,.13,.24); s=1.18; g=1.08; } // autumn
+  else {             a=vec3(.58,.45,.25); b=vec3(.40,.34,.17); c=vec3(1.0,1.0,1.0); d=vec3(.00,.07,.13); s=1.02; g=1.12; } // mono-gold
+  vec3 col = a + b*cos(TAU*(c*t + d));
+  return sat(col, s)*g;
+}
+
+void main(){
+  vec2 fc = gl_FragCoord.xy;
+  vec2 uv = (fc - uCenter)/uRadius;
+  float r = length(uv);
+  float ang = atan(uv.y, uv.x);
+  float aa = fwidth(r) + 0.0008;
+
+  /* --- N-fold dihedral fold --- */
+  float seg = TAU/uN;
+  float a = ang + uRot;
+  a = mod(a, seg);
+  a = abs(a - 0.5*seg);
+  vec2 fp = vec2(cos(a), sin(a)) * r;
+
+  float t = uTime;
+
+  /* --- generative source: domain-warped flow --- */
+  vec2 q = fp*2.1;
+  vec2 warp = vec2(fbm(q*0.85 + vec2(0.0, t*0.05)), fbm(q*0.85 + vec2(4.7, -t*0.045)));
+  float f  = fbm(q + warp*1.85 + vec2(t*0.022, -t*0.017));
+  float f2 = fbm(q*1.7 - warp*0.7 + vec2(-t*0.03, t*0.02));
+
+  /* rose-window structure: broad radial rings + ribbon bands */
+  float rings = 0.5 + 0.5*sin(r*6.4 - t*0.24 + f*2.8);
+  float rib   = 0.5 + 0.5*sin((f*2.5 + r*3.0)*TAU - t*0.14);
+
+  /* colour scalar — fewer, broader jewel cells */
+  float ct = f*0.55 + r*0.20 + rib*0.10 + 0.024*t;
+  vec3 col = palette(uPalette, ct);
+
+  /* leaded "cames" between colour cells (stained-glass) */
+  float cell = f*3.4 + f2*1.1 + r*2.6;
+  float lead = smoothstep(0.0, 0.14, abs(fract(cell)-0.5)*2.0);
+  col = mix(vec3(0.030,0.020,0.042), col, 0.10 + 0.90*lead);
+
+  /* glass luminosity from ribbon + rings */
+  float lum = 0.68 + 0.55*rib*(0.42 + 0.58*rings);
+  col *= lum;
+
+  /* central light well */
+  col += palette(uPalette, fract(0.10 + t*0.03)) * pow(max(0.0, 1.0 - r*1.25), 3.0) * 0.48;
+
+  /* cursor paint blooms — symmetric because we compare in folded space */
+  vec3 paint = vec3(0.0);
+  for(int i=0;i<${MAXSPOTS};i++){
+    if(i>=uPaintN) break;
+    vec2 dd = fp - uPaintPos[i].xy;
+    float life = uPaintPos[i].z;
+    float gsp = exp(-dot(dd,dd)*115.0)*life;
+    paint += uPaintCol[i]*gsp;
+    paint += vec3(1.0)*exp(-dot(dd,dd)*420.0)*life*0.35; // small hot core
+  }
+  paint = 1.0 - exp(-paint*1.15);   // soften so dense scribbles glow instead of blowing to white
+  col += paint*1.05;
+
+  /* disc depth vignette */
+  col *= 1.0 - 0.30*smoothstep(0.22, 1.0, r);
+
+  /* ---------------- compose disc / seat / ring / stage ---------------- */
+  const float rimIn = 0.952, ringA = 0.962, ringB = 1.018;
+  vec3 cream = vec3(0.949,0.913,0.847);
+
+  /* stage everywhere, with a soft shadow just outside the ring */
+  float shad = 1.0 - 0.14*exp(-(r-ringB)* (r>ringB?9.0:1000.0));
+  vec3 stageCol = cream * (r>ringB ? (0.86 + 0.14*smoothstep(ringB, ringB+0.42, r)) : 1.0);
+
+  /* engraved gold ring */
+  vec3 gold = vec3(0.86,0.68,0.32);
+  float groove = 0.5 + 0.5*sin(ang*uN*2.0);                       // fine engraved teeth
+  float bevel  = smoothstep(ringA, (ringA+ringB)*0.5, r) * (1.0 - smoothstep((ringA+ringB)*0.5, ringB, r));
+  float spec   = pow(0.5 + 0.5*sin(ang*2.0 - uRot*0.6 + 1.3), 6.0);
+  vec3 ringCol = gold*(0.55 + 0.45*groove) + bevel*vec3(1.0,0.92,0.7)*0.55 + spec*vec3(1.0,0.96,0.82)*0.6;
+
+  float discMask = 1.0 - smoothstep(rimIn-aa, rimIn+aa, r);
+  float ringMask = smoothstep(ringA-aa, ringA+aa, r) - smoothstep(ringB-aa, ringB+aa, r);
+  float seatMask = smoothstep(rimIn-aa, rimIn+aa, r) - smoothstep(ringA-aa, ringA+aa, r);
+
+  vec3 outc = stageCol;
+  outc = mix(outc, ringCol, ringMask);
+  outc = mix(outc, vec3(0.055,0.038,0.050), seatMask);          // dark seat between glass & metal
+  outc = mix(outc, col, discMask);
+
+  /* filmic-ish lift so jewels glow without clipping to grey */
+  outc = outc/(0.82 + 0.18*max(outc.r,max(outc.g,outc.b)));
+  outc = pow(clamp(outc,0.0,1.0), vec3(0.92));
+
+  /* dither */
+  outc += (h21(fc + fract(t)) - 0.5)/255.0;
+  O = vec4(outc, 1.0);
+}`;
+
+/* -------------------- GL setup -------------------- */
+function compile(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+let prog;
+try {
+  prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+} catch(e){ console.error('shader', e); document.getElementById('nogl').style.display='flex'; return; }
+gl.useProgram(prog);
+
+const U = {};
+['uRes','uCenter','uRadius','uTime','uRot','uN','uPalette','uPaintN','uPaintPos','uPaintCol']
+  .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+
+/* -------------------- JS palette (mirrors shader) -------------------- */
+const PAL = {
+  jewel:  { a:[.33,.24,.40], b:[.35,.31,.37], c:[1,1,1], d:[.00,.16,.50], s:1.30, g:1.02 },
+  pastel: { a:[.84,.80,.85], b:[.15,.17,.16], c:[1,1,1], d:[.00,.28,.60], s:0.92, g:1.05 },
+  neon:   { a:[.50,.50,.50], b:[.55,.55,.55], c:[1,1,1], d:[.15,.45,.80], s:1.55, g:1.18 },
+  autumn: { a:[.55,.37,.22], b:[.43,.34,.19], c:[1,1,1], d:[.00,.13,.24], s:1.18, g:1.08 },
+  gold:   { a:[.58,.45,.25], b:[.40,.34,.17], c:[1,1,1], d:[.00,.07,.13], s:1.02, g:1.12 },
+};
+const PAL_IDX = { jewel:0, pastel:1, neon:2, autumn:3, gold:4 };
+const PAL_KEYS = ['jewel','pastel','neon','autumn','gold'];
+function palColor(key, t){
+  const P = PAL[key]; const TAU = 6.28318530718; const c = [0,0,0];
+  for (let i=0;i<3;i++) c[i] = P.a[i] + P.b[i]*Math.cos(TAU*(P.c[i]*t + P.d[i]));
+  const l = 0.299*c[0] + 0.587*c[1] + 0.114*c[2];
+  for (let i=0;i<3;i++) c[i] = Math.max(0, Math.min(1.4, (l + (c[i]-l)*P.s) * P.g));
+  return c;
+}
+
+/* -------------------- state -------------------- */
+const state = {
+  N: 12,
+  paletteKey: 'jewel',
+  speed: 0.062,          // rad/s
+  playing: !reduced,
+  simTime: 7.5,
+  rot: 0.35,
+};
+
+/* query overrides */
+const symOK = [6,8,12,16,24];
+if (params.has('sym')){ const n = parseInt(params.get('sym'),10); if (symOK.includes(n)) state.N = n; }
+if (params.has('palette')){ let p = params.get('palette'); if (p==='mono-gold') p='gold'; if (PAL_IDX[p]!=null) state.paletteKey = p; }
+if (params.has('speed')){ state.speed = Math.max(0, Math.min(1, +params.get('speed')))*0.30; }
+if (params.has('t')){ state.simTime = +params.get('t'); }
+const forceStatic = params.has('static') || reduced;
+if (forceStatic) state.playing = false;
+
+/* -------------------- sizing -------------------- */
+let dprCap = 2;
+let renderScale = small ? 0.62 : 0.9;
+let centerPx = { x:0, y:0 }, radiusPx = 1, radiusCss = 1, centerCss = { x:0, y:0 };
+
+function resize(){
+  const dpr = Math.min(devicePixelRatio||1, dprCap) * renderScale;
+  const w = Math.max(2, Math.round(innerWidth*dpr));
+  const h = Math.max(2, Math.round(innerHeight*dpr));
+  if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0,0,w,h); }
+  const discFrac = (innerWidth < innerHeight) ? 0.92 : 0.86;   // fill more on portrait
+  radiusCss = 0.5 * Math.min(innerWidth, innerHeight) * discFrac;
+  centerCss = { x: innerWidth*0.5, y: innerHeight*0.5 };
+  radiusPx  = radiusCss * dpr;
+  centerPx  = { x: centerCss.x*dpr, y: (innerHeight - centerCss.y)*dpr }; // GL y is up
+  gl.uniform2f(U.uRes, w, h);
+  gl.uniform2f(U.uCenter, centerPx.x, centerPx.y);
+  gl.uniform1f(U.uRadius, radiusPx);
+}
+addEventListener('resize', resize);
+resize();
+
+/* -------------------- paint spots -------------------- */
+const spots = [];      // {x,y,life,col:[r,g,b]}
+const posBuf = new Float32Array(MAXSPOTS*3);
+const colBuf = new Float32Array(MAXSPOTS*3);
+
+function foldMouse(mx, my){
+  // CSS-space mouse -> disc uv (y up) -> folded coord matching the shader
+  const ux = (mx - centerCss.x)/radiusCss;
+  const uy = (centerCss.y - my)/radiusCss;
+  const r = Math.hypot(ux, uy);
+  let ang = Math.atan2(uy, ux) + state.rot;
+  const seg = (2*Math.PI)/state.N;
+  ang = ((ang % seg) + seg) % seg;
+  ang = Math.abs(ang - 0.5*seg);
+  return { x: Math.cos(ang)*r, y: Math.sin(ang)*r, r };
+}
+let brushHue = Math.random();
+function addSpot(mx, my){
+  const f = foldMouse(mx, my);
+  if (f.r > 1.02) return;
+  brushHue = (brushHue + 0.045) % 1;
+  const col = palColor(state.paletteKey, brushHue);
+  spots.push({ x:f.x, y:f.y, life:1, col });
+  if (spots.length > MAXSPOTS) spots.shift();
+}
+function uploadSpots(){
+  const n = Math.min(spots.length, MAXSPOTS);
+  for (let i=0;i<n;i++){
+    const s = spots[i];
+    posBuf[i*3] = s.x; posBuf[i*3+1] = s.y; posBuf[i*3+2] = s.life;
+    colBuf[i*3] = s.col[0]; colBuf[i*3+1] = s.col[1]; colBuf[i*3+2] = s.col[2];
+  }
+  gl.uniform1i(U.uPaintN, n);
+  gl.uniform3fv(U.uPaintPos, posBuf);
+  gl.uniform3fv(U.uPaintCol, colBuf);
+}
+
+/* -------------------- render -------------------- */
+function draw(){
+  gl.uniform1f(U.uTime, state.simTime);
+  gl.uniform1f(U.uRot, state.rot);
+  gl.uniform1f(U.uN, state.N);
+  gl.uniform1i(U.uPalette, PAL_IDX[state.paletteKey]);
+  uploadSpots();
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+let last = performance.now(), running = false, inView = true;
+function frame(now){
+  if (!running) return;
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now-last)/1000); last = now;
+  if (state.playing){ state.simTime += dt; state.rot += state.speed*dt; }
+  // decay paint
+  for (let i=spots.length-1;i>=0;i--){ spots[i].life -= dt*0.52; if (spots[i].life <= 0) spots.splice(i,1); }
+  draw();
+}
+function startLoop(){ if (running || forceStatic) return; running = true; last = performance.now(); requestAnimationFrame(frame); }
+function stopLoop(){ running = false; }
+
+if (forceStatic){ draw(); } else { startLoop(); }
+
+/* pause when tab hidden or hero scrolled away */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopLoop();
+  else if (inView && !forceStatic) startLoop();
+});
+
+/* -------------------- interaction: paint into the wedge -------------------- */
+const curEl = document.getElementById('cursor');
+if (!small){
+  let px = -1, py = -1;
+  cv.addEventListener('pointermove', e => {
+    if (forceStatic){
+      curEl.style.opacity = '1';
+      curEl.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+      return;
+    }
+    const dist = Math.hypot(e.clientX-px, e.clientY-py);
+    if (dist > 7 || px < 0){ addSpot(e.clientX, e.clientY); px = e.clientX; py = e.clientY; }
+    curEl.style.opacity = '1';
+    curEl.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+    const bc = palColor(state.paletteKey, brushHue);
+    curEl.style.setProperty('--brush', `rgb(${bc.map(v=>Math.round(v*255)).join(',')})`);
+  }, { passive:true });
+  cv.addEventListener('pointerdown', e => { if (!forceStatic) addSpot(e.clientX, e.clientY); });
+  cv.addEventListener('pointerleave', () => curEl.style.opacity = '0');
+} else {
+  // touch paint on mobile
+  cv.addEventListener('pointermove', e => { if (!forceStatic) addSpot(e.clientX, e.clientY); }, { passive:true });
+  cv.addEventListener('pointerdown', e => { if (!forceStatic) addSpot(e.clientX, e.clientY); }, { passive:true });
+}
+
+/* -------------------- controls -------------------- */
+const $ = id => document.getElementById(id);
+const rdN = $('rdN'), rdP = $('rdP');
+function refreshStatic(){ if (forceStatic || !running) draw(); }
+function updateReadout(){
+  rdN.textContent = state.N + '-FOLD';
+  rdP.textContent = state.paletteKey.replace('gold','mono-gold') + (state.playing ? ' · turning' : ' · frozen');
+}
+
+/* symmetry */
+const symBtns = [...document.querySelectorAll('#symSeg button')];
+function setN(n){
+  state.N = n;
+  symBtns.forEach(b => b.classList.toggle('on', +b.dataset.n === n));
+  updateReadout(); refreshStatic();
+}
+symBtns.forEach(b => b.addEventListener('click', () => setN(+b.dataset.n)));
+
+/* speed */
+const speedInput = $('speed'), speedVal = $('speedVal');
+function setFill(el){ const p = (el.value-el.min)/(el.max-el.min)*100; el.style.setProperty('--fill', p+'%'); }
+function speedLabel(v){ return v < 0.005 ? 'still' : v < 0.09 ? 'slow' : v < 0.19 ? 'drift' : 'spin'; }
+speedInput.addEventListener('input', () => {
+  state.speed = (+speedInput.value/100)*0.30;
+  speedVal.textContent = speedLabel(state.speed);
+  setFill(speedInput);
+});
+
+/* palette */
+const palBtns = [...document.querySelectorAll('#palRow button')];
+function setPalette(key){
+  state.paletteKey = key;
+  palBtns.forEach(b => b.classList.toggle('on', b.dataset.p === key));
+  updateReadout(); refreshStatic();
+}
+palBtns.forEach(b => b.addEventListener('click', () => setPalette(b.dataset.p)));
+
+/* freeze / play */
+const freezeBtn = $('freezeBtn'), freezeIco = $('freezeIco');
+const ICO_PAUSE = '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+const ICO_PLAY  = '<path d="M7 4l13 8-13 8V4z"/>';
+function setPlaying(on){
+  state.playing = on;
+  freezeBtn.classList.toggle('on', !on);
+  freezeBtn.setAttribute('aria-pressed', String(!on));
+  freezeBtn.title = on ? 'Freeze' : 'Play';
+  freezeIco.innerHTML = on ? ICO_PAUSE : ICO_PLAY;
+  updateReadout();
+  if (on && !forceStatic && inView) startLoop();
+  else refreshStatic();
+}
+freezeBtn.addEventListener('click', () => setPlaying(!state.playing));
+
+/* save PNG (draw fresh then read synchronously — no preserveDrawingBuffer needed) */
+$('saveBtn').addEventListener('click', () => {
+  setPlaying(false);
+  draw();
+  let url;
+  try { url = cv.toDataURL('image/png'); }
+  catch(err){ console.error('save', err); return; }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kaleido-${state.N}fold-${state.paletteKey}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+/* -------------------- scroll: pause off-screen + fade chrome -------------------- */
+const dockEl = $('dock'), cueEl = $('cue');
+const markEl = $('mark'), readoutEl = $('readout'), backEl = $('backlink');
+let heroGone = false;
+function onScroll(){
+  const past = scrollY > innerHeight*0.55;
+  const scrolled = scrollY > 40;
+  cueEl.classList.toggle('gone', scrolled);
+  markEl.classList.toggle('gone', scrolled);
+  readoutEl.classList.toggle('gone', scrolled);
+  backEl.classList.toggle('chip', scrolled);
+  if (past !== heroGone){
+    heroGone = past;
+    dockEl.classList.toggle('hidden', past);
+  }
+  const nowInView = scrollY < innerHeight*0.98;
+  if (nowInView !== inView){
+    inView = nowInView;
+    if (inView && state.playing && !forceStatic) startLoop();
+    else if (!inView) stopLoop();
+  }
+}
+addEventListener('scroll', onScroll, { passive:true });
+
+/* -------------------- reveals -------------------- */
+if (!reduced && 'IntersectionObserver' in window){
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach((el,i) => { el.style.transitionDelay = (i%4*70)+'ms'; io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+}
+
+/* -------------------- init UI from state -------------------- */
+setN(state.N);
+setPalette(state.paletteKey);
+speedInput.value = Math.round(state.speed/0.30*100); setFill(speedInput); speedVal.textContent = speedLabel(state.speed);
+if (forceStatic) setPlaying(false);
+updateReadout();
+onScroll();
+
+/* optional deep-scroll for screenshots */
+if (params.has('scroll')){
+  addEventListener('load', () => {
+    const f = Math.max(0, Math.min(1, +params.get('scroll')));
+    scrollTo(0, (document.body.scrollHeight - innerHeight)*f);
+  });
+}
+})();
+</script>
+</body>
+</html>

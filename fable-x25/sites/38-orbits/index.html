@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N-BODY — a little universe you can break</title>
+<meta name="description" content="A gravitational n-body sandbox. Real softened-Newtonian gravity on a canvas: slingshots, binary pairs and collisions paint luminous, fading orbit-trails. Throw a world, warp time, break it — chaos you can hold in your hand.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="N-BODY — a little universe you can break">
+<meta property="og:description" content="A gravitational n-body sandbox — real gravity, chaotic orbits, luminous trails. Drag to launch a world, warp time, watch it slingshot, merge and paint gorgeous looping curves.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/38-orbits/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="N-BODY — a little universe you can break">
+<meta name="twitter:description" content="A gravitational n-body sandbox — real gravity, chaotic orbits, luminous trails you can paint.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --space:#02030a;
+  --space2:#040612;
+  --ink:#eaf0ff;
+  --gold:#ffd280;
+  --gold-deep:#ff9d4d;
+  --blue:#6ea8ff;
+  --cyan:#8fe0ff;
+  --mut:rgba(224,232,255,.62);
+  --mut2:rgba(224,232,255,.36);
+  --mut3:rgba(224,232,255,.16);
+  --glass:rgba(9,12,26,.56);
+  --glass-edge:rgba(140,175,255,.16);
+  --line:rgba(140,175,255,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--space);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:rgba(255,210,128,.26);color:#fff6e6}
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#03040c}
+::-webkit-scrollbar-thumb{background:rgba(140,175,255,.20);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,210,128,.38)}
+
+/* ---------- canvas stack (fixed behind everything) ---------- */
+#bg,#sim,#ui{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+#bg{z-index:0;background:
+  radial-gradient(120% 90% at 68% 18%,rgba(24,20,54,.55) 0%,transparent 46%),
+  radial-gradient(120% 100% at 20% 92%,rgba(10,28,52,.5) 0%,transparent 50%),
+  var(--space)}
+#sim{z-index:1}
+#ui{z-index:2;touch-action:none}
+#ui.grav{cursor:none}
+#vign{position:fixed;inset:0;z-index:3;pointer-events:none;
+  background:radial-gradient(ellipse 118% 84% at 50% 46%,transparent 52%,rgba(2,3,10,.62) 100%)}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:4;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- shared chrome ---------- */
+.mono{font-family:"Space Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.26em}
+
+#backlink{position:fixed;top:22px;left:26px;z-index:50;font-size:10px;
+  color:var(--mut);transition:color .4s ease;text-shadow:0 1px 18px rgba(2,3,10,.95)}
+#backlink .cap{letter-spacing:.24em}
+#backlink b{font-weight:600;color:var(--ink)}
+#backlink:hover{color:var(--gold)}
+
+/* readout */
+#readout{position:fixed;top:19px;right:24px;z-index:50;
+  padding:9px 15px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);
+  font-family:"Space Mono";font-size:10.5px;letter-spacing:.02em;color:var(--mut);
+  display:flex;align-items:center;gap:14px;white-space:nowrap;
+  transition:opacity .5s ease,transform .5s ease}
+#readout.hidden{opacity:0;transform:translateY(-10px);pointer-events:none}
+#readout .r{display:flex;flex-direction:column;gap:2px;line-height:1}
+#readout .k{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2)}
+#readout .v{font-size:12.5px;color:var(--ink);font-weight:700}
+#readout .v.g{color:var(--gold)}
+#readout .sep{width:1px;height:22px;background:var(--line)}
+
+/* ---------- hero ---------- */
+#hero{position:relative;z-index:10;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 clamp(20px,6vw,84px) clamp(150px,20vh,190px);pointer-events:none}
+#hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:72%;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(2,3,10,.5) 68%,rgba(2,3,10,.82) 100%);opacity:0}
+#hero .over{font-family:"Space Mono";font-size:10.5px;color:var(--mut2);margin-bottom:22px;
+  text-shadow:0 1px 14px rgba(2,3,10,.9)}
+#hero h1{font-weight:300;font-size:clamp(76px,17vw,220px);line-height:.84;letter-spacing:-.02em;
+  color:#f4f8ff;text-shadow:0 0 90px rgba(255,210,128,.14),0 6px 60px rgba(2,3,10,.8)}
+#hero h1 .sm{font-weight:500}
+#hero .tag{margin-top:26px;max-width:520px;font-size:clamp(16px,2.2vw,22px);font-weight:300;line-height:1.5;
+  color:rgba(234,240,255,.9);text-shadow:0 2px 26px rgba(2,3,10,.9)}
+#hero .tag em{font-style:normal;color:var(--gold)}
+#hero .hint{margin-top:26px;font-family:"Space Mono";font-size:10.5px;letter-spacing:.06em;color:var(--mut2);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#hero .hint kbd{font-family:"Space Mono";font-size:9.5px;padding:2px 6px;border-radius:5px;
+  border:1px solid var(--line);color:var(--mut);background:rgba(140,175,255,.05)}
+#scrollcue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);
+  font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2);
+  display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center}
+#scrollcue .ln{width:1px;height:32px;background:linear-gradient(var(--mut3),transparent);position:relative;overflow:hidden}
+#scrollcue .ln::after{content:"";position:absolute;top:0;left:0;width:100%;height:40%;
+  background:linear-gradient(var(--gold),transparent);animation:drip 2.4s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes drip{0%{transform:translateY(-100%)}60%,100%{transform:translateY(260%)}}
+
+/* ---------- control dock ---------- */
+#dock{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:45;
+  display:flex;align-items:stretch;gap:0;padding:9px 6px;border-radius:16px;
+  background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);
+  box-shadow:0 20px 60px rgba(0,0,0,.55);max-width:calc(100vw - 24px);
+  transition:opacity .5s ease,transform .5s ease}
+#dock.hidden{opacity:0;transform:translateX(-50%) translateY(24px);pointer-events:none}
+.grp{display:flex;flex-direction:column;gap:7px;padding:2px 15px;justify-content:center}
+.grp+.grp{border-left:1px solid var(--line)}
+.grp .lab{font-family:"Space Mono";font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);white-space:nowrap}
+.grp .row{display:flex;align-items:center;gap:9px}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:112px;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold) var(--fill,50%),rgba(140,175,255,.18) var(--fill,50%));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:#fff6e6;box-shadow:0 0 10px rgba(255,210,128,.75);cursor:grab;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border:none;border-radius:50%;
+  background:#fff6e6;box-shadow:0 0 10px rgba(255,210,128,.75);cursor:grab}
+.val{font-family:"Space Mono";font-size:10px;color:var(--mut);min-width:52px;text-align:right}
+.val b{color:var(--ink)}
+
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{font-family:"Space Mono";font-size:9px;letter-spacing:.05em;text-transform:uppercase;
+  padding:7px 9px;color:var(--mut2);transition:color .25s,background .25s;white-space:nowrap}
+.seg button.on{color:#04060f;background:var(--gold);font-weight:700}
+.seg button:not(.on):hover{color:var(--ink)}
+
+.iconbtn{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;
+  color:var(--mut);transition:color .25s,border-color .25s,background .25s}
+.iconbtn:hover{color:var(--ink);border-color:var(--glass-edge);background:rgba(140,175,255,.05)}
+.iconbtn.on{color:var(--gold);border-color:rgba(255,210,128,.42);background:rgba(255,210,128,.08)}
+.iconbtn svg{width:16px;height:16px}
+.textbtn{font-family:"Space Mono";font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 12px;border-radius:9px;border:1px solid var(--line);color:var(--mut);
+  transition:color .25s,border-color .25s,background .25s}
+.textbtn:hover{color:var(--ink);border-color:var(--glass-edge);background:rgba(140,175,255,.05)}
+
+/* ---------- scrolling content ---------- */
+main{position:relative;z-index:10}
+.section{position:relative;background:var(--space);
+  padding:clamp(96px,16vh,190px) clamp(20px,7vw,120px)}
+.section.sci{border-top:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(2,3,10,.5) 0%,var(--space) 20%)}
+.kick{font-family:"Space Mono";font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:26px;display:flex;align-items:center;gap:12px}
+.kick::before{content:"";width:30px;height:1px;background:var(--gold);opacity:.6}
+.sci h2{font-weight:300;font-size:clamp(30px,5.2vw,64px);line-height:1.05;letter-spacing:-.015em;
+  max-width:16ch;color:#f4f8ff}
+.sci h2 em{font-style:normal;color:var(--gold)}
+.lede{margin-top:32px;max-width:62ch;font-size:clamp(17px,2vw,21px);font-weight:300;line-height:1.6;
+  color:rgba(234,240,255,.82)}
+.body{margin-top:56px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:44px 60px;max-width:1020px}
+.body p{font-size:clamp(15px,1.55vw,17px);font-weight:300;line-height:1.72;color:rgba(224,232,255,.72)}
+.body p b{color:var(--ink);font-weight:500}
+.g{color:var(--gold)}.b{color:var(--blue)}.c{color:var(--cyan)}
+
+.facts{margin-top:72px;border-top:1px solid var(--line);padding-top:40px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:26px;max-width:1020px}
+.fact .em{font-family:"Space Mono";font-size:clamp(20px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.fact .nm{font-family:"Space Mono";font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);margin-top:8px}
+.fact .desc{font-size:13px;font-weight:300;line-height:1.5;color:var(--mut);margin-top:10px}
+
+/* pull quote */
+.quote{position:relative;z-index:10;background:var(--space);text-align:center;
+  padding:clamp(84px,14vh,160px) clamp(24px,8vw,140px)}
+.quote p{font-weight:300;font-size:clamp(24px,3.8vw,44px);line-height:1.3;letter-spacing:-.01em;
+  max-width:22ch;margin:0 auto;color:#eef2ff}
+.quote p em{font-style:normal;color:var(--gold)}
+.quote .att{font-family:"Space Mono";font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);margin-top:32px}
+
+/* footer */
+footer{position:relative;z-index:10;background:var(--space);border-top:1px solid var(--line);
+  padding:clamp(74px,10vh,120px) clamp(20px,7vw,120px) 46px}
+footer .big{font-weight:300;font-size:clamp(54px,13vw,168px);line-height:.9;letter-spacing:-.02em;
+  color:#f4f8ff;text-shadow:0 0 70px rgba(255,210,128,.1)}
+footer .big .sm{font-weight:500}
+footer .meta{margin-top:42px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:26px;
+  border-top:1px solid var(--line);padding-top:30px;
+  font-family:"Space Mono";font-size:11px;letter-spacing:.03em;color:var(--mut2)}
+footer .meta a{color:var(--mut);transition:color .3s}
+footer .meta a:hover{color:var(--gold)}
+footer .meta .col{display:flex;flex-direction:column;gap:9px}
+footer .meta b{color:var(--ink);font-weight:500}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:860px){
+  #hero{padding:0 22px clamp(150px,24vh,190px)}
+  #hero::after{opacity:1}
+  #hero h1{font-size:clamp(66px,18vw,120px)}
+  #hero .tag{margin-top:20px;font-size:clamp(15px,4.4vw,19px)}
+  .body{grid-template-columns:1fr;gap:30px}
+  .facts{grid-template-columns:repeat(2,1fr);gap:24px}
+  #readout{top:14px;right:12px;font-size:9.5px;padding:7px 11px;gap:11px}
+  #readout .v{font-size:11px}
+  #backlink{top:16px;left:16px}
+  #scrollcue{display:none}
+  #dock{padding:8px 4px;bottom:12px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;justify-content:flex-start}
+  .grp{padding:2px 10px}
+  input[type=range]{width:86px}
+  #hero .hint{display:none}
+}
+@media (max-width:430px){
+  #dock{border-radius:14px}
+  .grp .lab{font-size:7px}
+  .seg button{padding:7px 7px;font-size:8px}
+  .val{min-width:40px;font-size:9px}
+  input[type=range]{width:74px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  #scrollcue .ln::after{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg" aria-hidden="true"></canvas>
+<canvas id="sim" aria-label="Live gravitational n-body simulation: bodies orbit, slingshot and merge, painting luminous trails"></canvas>
+<canvas id="ui" aria-hidden="true"></canvas>
+<div id="vign"></div>
+<div id="grain"></div>
+
+<a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery"><span class="cap">XAVIER <b>FABLE</b> ×50</span></a>
+
+<div id="readout" class="mono" aria-live="off">
+  <div class="r"><span class="k">Bodies</span><span class="v" id="roBodies">6</span></div>
+  <div class="sep"></div>
+  <div class="r"><span class="k">Kinetic E</span><span class="v g" id="roKE">—</span></div>
+  <div class="sep"></div>
+  <div class="r"><span class="k">Merges</span><span class="v" id="roMerge">0</span></div>
+</div>
+
+<!-- HERO -->
+<header id="hero">
+  <div class="over mono">N°38 · gravitational sandbox · real-time softened newtonian n-body</div>
+  <h1>N<span class="sm">-</span>BODY</h1>
+  <div class="tag">A little universe you can <em>break</em>. Every body pulls every other — drag to launch a world and watch it slingshot, pair off, or fall in.</div>
+  <div class="hint mono">
+    <span>drag to launch</span><span>·</span><span>scroll <kbd>while dragging</kbd> to resize</span><span>·</span><span><kbd>space</kbd> pause <kbd>R</kbd> reset <kbd>C</kbd> clear</span>
+  </div>
+  <div id="scrollcue"><span>the three-body problem, below</span><span class="ln"></span></div>
+</header>
+
+<!-- CONTROLS -->
+<div id="dock" role="group" aria-label="Simulation controls">
+  <div class="grp">
+    <span class="lab">New body · mass</span>
+    <div class="row">
+      <input id="mass" type="range" min="0" max="100" value="30" aria-label="New body mass">
+      <span class="val mono" id="massVal"><b>planet</b></span>
+    </div>
+  </div>
+  <div class="grp">
+    <span class="lab">Time warp</span>
+    <div class="row">
+      <div class="seg" id="warp" role="tablist" aria-label="Time warp">
+        <button data-w="0.25" role="tab">¼×</button>
+        <button data-w="0.5" role="tab">½×</button>
+        <button data-w="1" class="on" role="tab" aria-selected="true">1×</button>
+        <button data-w="2" role="tab">2×</button>
+        <button data-w="4" role="tab">4×</button>
+      </div>
+    </div>
+  </div>
+  <div class="grp">
+    <span class="lab">Systems</span>
+    <div class="row">
+      <div class="seg" id="preset" role="tablist" aria-label="Presets">
+        <button data-p="binary" role="tab">Binary</button>
+        <button data-p="solar" role="tab">Solar</button>
+        <button data-p="chaos" role="tab">Chaos</button>
+        <button data-p="rosette" role="tab">Rosette</button>
+      </div>
+    </div>
+  </div>
+  <div class="grp">
+    <span class="lab">Field</span>
+    <div class="row">
+      <button id="playBtn" class="iconbtn on" aria-label="Play or pause" aria-pressed="true" title="Pause">
+        <svg id="playIco" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      </button>
+      <button id="gravBtn" class="iconbtn" aria-label="Gravity from cursor" aria-pressed="false" title="Gravity from cursor (off)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 3v3.4M12 17.6V21M3 12h3.4M17.6 12H21M5.6 5.6l2.4 2.4M16 16l2.4 2.4M18.4 5.6L16 8M8 16l-2.4 2.4"/></svg>
+      </button>
+      <button id="resetBtn" class="iconbtn" aria-label="Reset system" title="Reset">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v6h-6"/></svg>
+      </button>
+      <button id="clearBtn" class="textbtn" aria-label="Clear all bodies">Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main>
+  <section class="section sci">
+    <div class="kick reveal">Why it never settles</div>
+    <h2 class="reveal">Three bodies, and the future stops being <em>writable</em>.</h2>
+    <p class="lede reveal">Two masses under gravity trace a perfect, eternal ellipse — Kepler solved that in an afternoon of the mind. Add a third, and you break something that cannot be repaired: the closed-form solution. There is no equation that hands you the positions at time <i>t</i>. There is only the next tiny step, and the next, forever.</p>
+    <div class="body">
+      <p class="reveal">In 1889 Henri Poincaré entered a prize competition to prove the solar system stable. He found the opposite. In the three-body problem, orbits could fold back on themselves in a tangle so intricate that <b>no drawing could contain it</b> — the first sighting of what we now call <b class="g">chaos</b>.</p>
+      <p class="reveal">Chaos is not randomness. Every body here obeys one clean law, run deterministically. The trouble is <b>sensitive dependence</b>: shift a starting position by a hair and the paths, identical at first, diverge without limit. The universe is exactly predictable and completely unforecastable at once.</p>
+      <p class="reveal">The rate of that divergence has a name — the <b class="c">Lyapunov time</b>. Beyond it, memory of the initial conditions is gone. For the inner solar system it is around five million years; for the toy overhead, a few seconds. Wait long enough and a system always forgets how it began.</p>
+      <p class="reveal">And yet inside the mess hide islands of grace: <b>Lagrange points</b> where a small body rides for free, tight <b class="b">binary</b> pairs that survive the storm, and rare closed <b>choreographies</b> — three equal masses chasing each other forever around a single figure-eight. Order is not the absence of chaos. It floats within it.</p>
+    </div>
+    <div class="facts">
+      <div class="fact reveal"><div class="em">1/r²</div><div class="nm">the only law here</div><div class="desc">Each pair pulls along the line between them, softened near contact so nothing divides by zero.</div></div>
+      <div class="fact reveal"><div class="em">n = 3</div><div class="nm">where it breaks</div><div class="desc">No general closed-form solution exists above two bodies. Only integration, step by step.</div></div>
+      <div class="fact reveal"><div class="em">Δx → ∞</div><div class="nm">sensitive dependence</div><div class="desc">A hair's difference at the start grows without bound. This is the signature of chaos.</div></div>
+      <div class="fact reveal"><div class="em">Σp = 0</div><div class="nm">conserved on merge</div><div class="desc">When two bodies collide they fuse into one — mass adds, momentum carries through untouched.</div></div>
+    </div>
+  </section>
+
+  <section class="quote">
+    <p class="reveal">Give it a star, a few planets, and a rogue — then <em>look away</em>. When you look back, it will have written something you could never have predicted, and can never undo.</p>
+    <div class="att reveal">field note — the sandbox, running</div>
+  </section>
+</main>
+
+<footer>
+  <div class="big reveal">N<span class="sm">-</span>BODY</div>
+  <div class="meta">
+    <div class="col">
+      <b>A little universe you can break.</b>
+      <span>Softened-Newtonian gravity · velocity-Verlet integration</span>
+    </div>
+    <div class="col">
+      <span>Real gravity, rendered live on a single canvas</span>
+      <span>trails painted in additive glow, fading to space</span>
+    </div>
+    <div class="col">
+      <span>Xavier Fable ×50 — a physics toy that is secretly a painting</span>
+      <a href="/">← back to the gallery</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================================
+   N-BODY — a little universe you can break
+   A gravitational n-body sandbox on 2D canvas.
+   - Softened Newtonian gravity, velocity-Verlet integration, substeps.
+   - Mass-based size & colour (cool planet-blues -> warm star-golds).
+   - Luminous additive trails that fade to space (destination-out).
+   - Collisions merge, conserving momentum, with a soft flash.
+   - Drag to launch a body with a velocity vector; scroll (while dragging)
+     to resize it; presets; time-warp; soft gravity-from-cursor.
+   ========================================================================= */
+
+const bgC = document.getElementById('bg');
+const simC = document.getElementById('sim');
+const uiC = document.getElementById('ui');
+const bctx = bgC.getContext('2d');
+const sctx = simC.getContext('2d', { alpha:true });
+const uctx = uiC.getContext('2d', { alpha:true });
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params = new URLSearchParams(location.search);
+const forceStatic = params.has('static') || reduced;
+
+/* -------------------- constants -------------------- */
+const G = 1.2;
+const SOFT = 8;               // softening length (world px)
+const SOFT2 = SOFT*SOFT;
+const SIM_DT = 0.14;          // fixed integration step
+const BASE_SUB = 4;           // substeps per frame at warp 1
+const MERGE_OVERLAP = 0.60;   // merge when centres closer than (r1+r2)*this
+const VEL_SCALE = 0.028;      // drag-pixels -> velocity
+const TRAIL_FADE = 0.016;     // per-frame destination-out alpha (trail persistence)
+const CURSOR_MASS = 900;
+const MAX_BODIES = 260;
+
+/* -------------------- geometry / dpr -------------------- */
+let DPR = Math.min(devicePixelRatio || 1, 2);
+let W = innerWidth, H = innerHeight, cx = W/2, cy = H/2;
+// in portrait, float the system above the hero copy for legibility
+function computeCentre(){ cx = W/2; cy = (H > W*1.08) ? Math.round(H*0.40) : Math.round(H*0.50); }
+
+/* -------------------- state -------------------- */
+const state = {
+  playing: !forceStatic,
+  warp: 1,
+  newMass: 0,      // set below
+  cursorGrav: false,
+  merges: 0,
+};
+
+let bodies = [];
+let flashes = [];
+const cursor = { x:0, y:0, inside:false, ex:0, ey:0 };   // ex,ey world coords
+const aim = { active:false, x0:0, y0:0, x1:0, y1:0, moved:false };
+
+/* -------------------- colour by mass -------------------- */
+const STOPS = [
+  { m: 2.5,   c:[86,150,255]  },   // small planet — blue
+  { m: 12,    c:[112,196,255] },   // azure
+  { m: 45,    c:[168,224,255] },   // pale blue-white
+  { m: 150,   c:[255,244,214] },   // warm white
+  { m: 600,   c:[255,212,128] },   // gold
+  { m: 2600,  c:[255,176,86]  },   // deep gold (star)
+];
+function colorForMass(m){
+  const lm = Math.log(Math.max(1e-3, m));
+  if (lm <= Math.log(STOPS[0].m)) return STOPS[0].c.slice();
+  if (lm >= Math.log(STOPS[STOPS.length-1].m)) return STOPS[STOPS.length-1].c.slice();
+  for (let i=0;i<STOPS.length-1;i++){
+    const a = STOPS[i], b = STOPS[i+1];
+    const la = Math.log(a.m), lb = Math.log(b.m);
+    if (lm >= la && lm <= lb){
+      const t = (lm-la)/(lb-la);
+      return [
+        Math.round(a.c[0]+(b.c[0]-a.c[0])*t),
+        Math.round(a.c[1]+(b.c[1]-a.c[1])*t),
+        Math.round(a.c[2]+(b.c[2]-a.c[2])*t),
+      ];
+    }
+  }
+  return STOPS[STOPS.length-1].c.slice();
+}
+function radiusForMass(m){ return Math.max(2.4, Math.min(46, 2.15*Math.cbrt(m))); }
+const rgba = (c,a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+function makeBody(x,y,vx,vy,m){
+  return { x, y, vx, vy, m, r:radiusForMass(m), c:colorForMass(m) };
+}
+function refresh(b){ b.r = radiusForMass(b.m); b.c = colorForMass(b.m); }
+
+/* -------------------- physics -------------------- */
+function computeAccel(ax, ay){
+  const n = bodies.length;
+  for (let i=0;i<n;i++){ ax[i]=0; ay[i]=0; }
+  for (let i=0;i<n;i++){
+    const bi = bodies[i];
+    for (let j=i+1;j<n;j++){
+      const bj = bodies[j];
+      const dx = bj.x-bi.x, dy = bj.y-bi.y;
+      const d2 = dx*dx + dy*dy + SOFT2;
+      const inv = 1/Math.sqrt(d2);
+      const inv3 = inv/d2;
+      const s = G*inv3;
+      ax[i] += s*bj.m*dx; ay[i] += s*bj.m*dy;
+      ax[j] -= s*bi.m*dx; ay[j] -= s*bi.m*dy;
+    }
+  }
+  if (state.cursorGrav && cursor.inside && !aim.active){
+    for (let i=0;i<n;i++){
+      const bi = bodies[i];
+      const dx = cursor.ex-bi.x, dy = cursor.ey-bi.y;
+      const d2 = dx*dx + dy*dy + SOFT2*6;
+      const inv = 1/Math.sqrt(d2);
+      const inv3 = inv/d2;
+      const s = G*CURSOR_MASS*inv3;
+      ax[i] += s*dx; ay[i] += s*dy;
+    }
+  }
+}
+
+const _a1x=[], _a1y=[], _a2x=[], _a2y=[];
+function step(dt){
+  const n = bodies.length;
+  if (n === 0) return;
+  computeAccel(_a1x, _a1y);
+  const hdt2 = 0.5*dt*dt;
+  for (let i=0;i<n;i++){
+    const b = bodies[i];
+    b.x += b.vx*dt + _a1x[i]*hdt2;
+    b.y += b.vy*dt + _a1y[i]*hdt2;
+  }
+  computeAccel(_a2x, _a2y);
+  const hdt = 0.5*dt;
+  for (let i=0;i<n;i++){
+    const b = bodies[i];
+    b.vx += (_a1x[i]+_a2x[i])*hdt;
+    b.vy += (_a1y[i]+_a2y[i])*hdt;
+  }
+  handleMerges();
+}
+
+function handleMerges(){
+  let merged = true;
+  while (merged){
+    merged = false;
+    outer:
+    for (let i=0;i<bodies.length;i++){
+      const bi = bodies[i];
+      for (let j=i+1;j<bodies.length;j++){
+        const bj = bodies[j];
+        const dx = bj.x-bi.x, dy = bj.y-bi.y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < (bi.r+bj.r)*MERGE_OVERLAP){
+          const M = bi.m+bj.m;
+          const big = bi.m>=bj.m ? bi : bj;
+          const nx = (bi.x*bi.m + bj.x*bj.m)/M;
+          const ny = (bi.y*bi.m + bj.y*bj.m)/M;
+          const nvx = (bi.vx*bi.m + bj.vx*bj.m)/M;
+          const nvy = (bi.vy*bi.m + bj.vy*bj.m)/M;
+          big.x = nx; big.y = ny; big.vx = nvx; big.vy = nvy; big.m = M;
+          refresh(big);
+          const other = big===bi ? bj : bi;
+          bodies.splice(bodies.indexOf(other), 1);
+          flashes.push({ x:nx, y:ny, r:Math.max(bi.r,bj.r), age:0, life:0.72, c:big.c.slice() });
+          state.merges++;
+          merged = true;
+          break outer;
+        }
+      }
+    }
+  }
+}
+
+/* -------------------- centre of mass helpers -------------------- */
+function zeroMomentumAndCentre(){
+  let M=0, px=0, py=0, mx=0, my=0;
+  for (const b of bodies){ M+=b.m; px+=b.m*b.vx; py+=b.m*b.vy; mx+=b.m*b.x; my+=b.m*b.y; }
+  if (M<=0) return;
+  const vcx=px/M, vcy=py/M, ccx=mx/M, ccy=my/M;
+  for (const b of bodies){ b.vx-=vcx; b.vy-=vcy; b.x-=ccx; b.y-=ccy; }
+}
+
+/* -------------------- system builders -------------------- */
+function circularV(m, r){ return Math.sqrt(G*m/r); }
+let rngState = 0x9e3779b9;
+function rand(){ rngState = (rngState*1664525 + 1013904223) >>> 0; return rngState/4294967296; }
+function rrange(a,b){ return a + (b-a)*rand(); }
+
+function seedDefault(){
+  rngState = 0x1a2b3c4d;
+  const b = [];
+  const star = makeBody(0,0,0,0,2600);
+  b.push(star);
+  const planets = [
+    { r:92,  m:7,  a:0.4 },
+    { r:150, m:11, a:2.1 },
+    { r:222, m:8,  a:3.9 },
+    { r:300, m:15, a:5.4 },
+  ];
+  for (const p of planets){
+    const x = Math.cos(p.a)*p.r, y = Math.sin(p.a)*p.r;
+    const v = circularV(star.m, p.r) * rrange(0.98, 1.03);
+    // tangent (counter-clockwise)
+    const tx = -y/p.r, ty = x/p.r;
+    b.push(makeBody(x,y, tx*v, ty*v, p.m));
+  }
+  // a rogue falling in from the lower left (comet-like ingress)
+  b.push(makeBody(-470,-250, 2.1, 1.05, 46));
+  bodies = b;
+  zeroMomentumAndCentre();
+}
+
+function seedSolar(){
+  rngState = 0x51ed270b;
+  const b = [];
+  const star = makeBody(0,0,0,0,2400); b.push(star);
+  const radii = [70,112,164,224,300];
+  const masses = [5,9,7,13,6];
+  for (let i=0;i<radii.length;i++){
+    const a = rrange(0, Math.PI*2);
+    const r = radii[i];
+    const x = Math.cos(a)*r, y = Math.sin(a)*r;
+    const v = circularV(star.m, r)*rrange(0.99,1.02);
+    b.push(makeBody(x,y, -y/r*v, x/r*v, masses[i]));
+  }
+  bodies = b; zeroMomentumAndCentre();
+}
+
+function seedBinary(){
+  rngState = 0x2f8a19c3;
+  const b = [];
+  const m = 1200, d = 244, r = d/2;
+  const v = Math.sqrt(G*m/(2*d));
+  const s1 = makeBody(-r,0, 0, -v, m);
+  const s2 = makeBody( r,0, 0,  v, m);
+  b.push(s1, s2);
+  // circumbinary planets orbiting the pair
+  const Mtot = 2*m;
+  [ {r:150, m:9, a:0.9}, {r:330, m:12, a:3.1}, {r:430, m:7, a:5.0} ].forEach(p=>{
+    const x=Math.cos(p.a)*p.r, y=Math.sin(p.a)*p.r;
+    const vv = circularV(Mtot, p.r)*0.99;
+    b.push(makeBody(x,y, -y/p.r*vv, x/p.r*vv, p.m));
+  });
+  bodies = b; zeroMomentumAndCentre();
+}
+
+function seedChaos(){
+  rngState = (Math.random()*4294967296)>>>0;
+  // three comparable masses near an equilateral triangle -> the canonical
+  // three-body problem. Set velocities near co-rotation, then perturb into chaos.
+  const R = 150;
+  const m = 320;
+  const a0 = rrange(0, Math.PI*2);
+  const b = [];
+  for (let i=0;i<3;i++){
+    const a = a0 + i*(Math.PI*2/3);
+    b.push(makeBody(Math.cos(a)*R, Math.sin(a)*R, 0, 0, m*rrange(0.9,1.12)));
+  }
+  bodies = b;
+  // net inward accel on body 0 -> circular co-rotation speed
+  computeAccel(_a1x, _a1y);
+  const a0acc = Math.hypot(_a1x[0], _a1y[0]);
+  const vc = Math.sqrt(a0acc*R);
+  for (let i=0;i<3;i++){
+    const bd = bodies[i];
+    const r = Math.hypot(bd.x, bd.y);
+    const tx = -bd.y/r, ty = bd.x/r;
+    const spd = vc*rrange(0.82, 0.98);       // sub-circular -> orbits decay & tangle
+    bd.vx = tx*spd + rrange(-0.35,0.35);      // symmetry-breaking kick -> chaos
+    bd.vy = ty*spd + rrange(-0.35,0.35);
+  }
+  zeroMomentumAndCentre();
+}
+
+function seedRosette(){
+  rngState = 0x7cd90f21;
+  const b = [];
+  // tight fast binary core -> makes outer orbits precess into rosettes
+  const cm = 820, cd = 42, cr = cd/2;
+  const cv = Math.sqrt(G*cm/(2*cd));
+  b.push(makeBody(-cr,0, 0,-cv, cm));
+  b.push(makeBody( cr,0, 0, cv, cm));
+  const Mtot = 2*cm;
+  const outers = [ {r:132, m:8, a:0.0}, {r:196, m:6, a:1.6}, {r:264, m:9, a:3.0}, {r:330, m:6, a:4.5} ];
+  for (const p of outers){
+    const x=Math.cos(p.a)*p.r, y=Math.sin(p.a)*p.r;
+    const vv = circularV(Mtot, p.r)*0.80;   // eccentric -> precessing ellipses
+    b.push(makeBody(x,y, -y/p.r*vv, x/p.r*vv, p.m));
+  }
+  bodies = b; zeroMomentumAndCentre();
+}
+
+const PRESETS = { binary:seedBinary, solar:seedSolar, chaos:seedChaos, rosette:seedRosette };
+
+/* -------------------- background (static) -------------------- */
+function drawBg(){
+  bctx.setTransform(DPR,0,0,DPR,0,0);
+  bctx.clearRect(0,0,W,H);
+  // faint nebula blooms
+  const blooms = [
+    { x:0.70, y:0.20, r:0.55, c:[70,58,140], a:0.12 },
+    { x:0.18, y:0.86, r:0.6,  c:[36,86,132], a:0.11 },
+    { x:0.50, y:0.55, r:0.7,  c:[24,30,66],  a:0.10 },
+  ];
+  bctx.globalCompositeOperation = 'lighter';
+  for (const bl of blooms){
+    const gx=bl.x*W, gy=bl.y*H, gr=bl.r*Math.max(W,H);
+    const g = bctx.createRadialGradient(gx,gy,0,gx,gy,gr);
+    g.addColorStop(0, rgba(bl.c, bl.a));
+    g.addColorStop(1, rgba(bl.c, 0));
+    bctx.fillStyle=g; bctx.fillRect(0,0,W,H);
+  }
+  // faint stars (deterministic)
+  let s = 0x1234abcd;
+  const nr = () => { s = (s*1664525+1013904223)>>>0; return s/4294967296; };
+  const N = Math.round((W*H)/9000);
+  for (let i=0;i<N;i++){
+    const x=nr()*W, y=nr()*H, br=Math.pow(nr(),3.2);
+    const rr = 0.5 + br*1.3;
+    bctx.fillStyle = `rgba(${200+nr()*55|0},${210+nr()*45|0},255,${0.10+br*0.55})`;
+    bctx.beginPath(); bctx.arc(x,y,rr,0,7); bctx.fill();
+  }
+  bctx.globalCompositeOperation = 'source-over';
+}
+
+/* -------------------- rendering -------------------- */
+// thin luminous trail stamp -> painted, fading orbit curves (drawn on #sim)
+function drawTrailStamp(ctx, b){
+  const sx = cx+b.x, sy = cy+b.y;
+  const gr = b.r*1.15 + 2.5;
+  const g = ctx.createRadialGradient(sx,sy,0,sx,sy,gr);
+  g.addColorStop(0, rgba(b.c, 0.62));
+  g.addColorStop(0.5, rgba(b.c, 0.24));
+  g.addColorStop(1, rgba(b.c, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(sx,sy,gr,0,7); ctx.fill();
+  ctx.fillStyle = rgba(b.c, 0.5);
+  ctx.beginPath(); ctx.arc(sx,sy,Math.max(1,b.r*0.42),0,7); ctx.fill();
+}
+
+// full luminous body: soft halo + crisp core + hot centre (drawn fresh on #ui)
+function drawBody(ctx, b){
+  const sx = cx+b.x, sy = cy+b.y;
+  const glowR = b.r*3.2 + 8;
+  const g = ctx.createRadialGradient(sx,sy,0,sx,sy,glowR);
+  const glow0 = 0.34 + Math.min(0.22, b.m/3000);
+  g.addColorStop(0, rgba(b.c, glow0));
+  g.addColorStop(0.32, rgba(b.c, glow0*0.34));
+  g.addColorStop(1, rgba(b.c, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(sx,sy,glowR,0,7); ctx.fill();
+  // crisp body
+  ctx.fillStyle = rgba(b.c, 0.95);
+  ctx.beginPath(); ctx.arc(sx,sy,b.r,0,7); ctx.fill();
+  // hot centre (warm-white), stronger on massive bodies
+  const hot = b.m>140 ? 0.6 : 0.28;
+  ctx.fillStyle = `rgba(255,248,232,${hot})`;
+  ctx.beginPath(); ctx.arc(sx,sy,b.r*0.42,0,7); ctx.fill();
+}
+
+function renderSim(){
+  sctx.globalCompositeOperation = 'destination-out';
+  sctx.fillStyle = `rgba(0,0,0,${TRAIL_FADE})`;
+  sctx.fillRect(0,0,W,H);
+  sctx.globalCompositeOperation = 'lighter';
+  for (const b of bodies) drawTrailStamp(sctx, b);
+  sctx.globalCompositeOperation = 'source-over';
+}
+
+function renderUI(dt){
+  uctx.clearRect(0,0,W,H);
+  // live bodies (crisp, non-accumulating)
+  uctx.globalCompositeOperation = 'lighter';
+  for (const b of bodies) drawBody(uctx, b);
+  uctx.globalCompositeOperation = 'source-over';
+  // merge flashes
+  for (let i=flashes.length-1;i>=0;i--){
+    const f = flashes[i];
+    f.age += dt;
+    const t = f.age/f.life;
+    if (t>=1){ flashes.splice(i,1); continue; }
+    const sx=cx+f.x, sy=cy+f.y;
+    const rr = f.r*(1 + t*5);
+    const a = (1-t)*(1-t)*0.9;
+    uctx.globalCompositeOperation = 'lighter';
+    const g = uctx.createRadialGradient(sx,sy,0,sx,sy,rr*1.6);
+    g.addColorStop(0, `rgba(255,250,240,${a})`);
+    g.addColorStop(0.4, rgba(f.c, a*0.7));
+    g.addColorStop(1, rgba(f.c, 0));
+    uctx.fillStyle=g; uctx.beginPath(); uctx.arc(sx,sy,rr*1.6,0,7); uctx.fill();
+    uctx.strokeStyle = `rgba(255,250,240,${a*0.9})`;
+    uctx.lineWidth = 1.4;
+    uctx.beginPath(); uctx.arc(sx,sy,rr,0,7); uctx.stroke();
+  }
+  uctx.globalCompositeOperation = 'source-over';
+
+  // cursor-gravity ring
+  if (state.cursorGrav && cursor.inside && !aim.active){
+    const sx=cursor.x, sy=cursor.y;
+    uctx.strokeStyle = 'rgba(255,210,128,.5)';
+    uctx.lineWidth = 1.2;
+    uctx.setLineDash([3,5]);
+    uctx.beginPath(); uctx.arc(sx,sy,16,0,7); uctx.stroke();
+    uctx.setLineDash([]);
+    const g = uctx.createRadialGradient(sx,sy,0,sx,sy,90);
+    g.addColorStop(0,'rgba(255,210,128,.10)');
+    g.addColorStop(1,'rgba(255,210,128,0)');
+    uctx.fillStyle=g; uctx.beginPath(); uctx.arc(sx,sy,90,0,7); uctx.fill();
+    // little cross
+    uctx.strokeStyle='rgba(255,210,128,.8)'; uctx.lineWidth=1;
+    uctx.beginPath(); uctx.moveTo(sx-6,sy); uctx.lineTo(sx+6,sy);
+    uctx.moveTo(sx,sy-6); uctx.lineTo(sx,sy+6); uctx.stroke();
+  }
+
+  // aiming ghost + velocity vector + predicted path
+  if (aim.active){
+    const col = colorForMass(state.newMass);
+    const rr = radiusForMass(state.newMass);
+    // ghost body
+    uctx.fillStyle = rgba(col, 0.85);
+    uctx.beginPath(); uctx.arc(aim.x0, aim.y0, rr, 0, 7); uctx.fill();
+    uctx.strokeStyle = rgba(col, 0.55); uctx.lineWidth=1;
+    uctx.beginPath(); uctx.arc(aim.x0, aim.y0, rr+5, 0, 7); uctx.stroke();
+
+    const dx = aim.x1-aim.x0, dy = aim.y1-aim.y0;
+    const len = Math.hypot(dx,dy);
+    if (len > 3){
+      // velocity arrow
+      uctx.strokeStyle = 'rgba(255,210,128,.85)';
+      uctx.lineWidth = 1.6;
+      uctx.beginPath(); uctx.moveTo(aim.x0, aim.y0); uctx.lineTo(aim.x1, aim.y1); uctx.stroke();
+      const ang = Math.atan2(dy,dx);
+      const ah = 8;
+      uctx.beginPath();
+      uctx.moveTo(aim.x1, aim.y1);
+      uctx.lineTo(aim.x1 - ah*Math.cos(ang-0.4), aim.y1 - ah*Math.sin(ang-0.4));
+      uctx.moveTo(aim.x1, aim.y1);
+      uctx.lineTo(aim.x1 - ah*Math.cos(ang+0.4), aim.y1 - ah*Math.sin(ang+0.4));
+      uctx.stroke();
+
+      // predicted trajectory (ghost vs current fixed bodies)
+      drawPrediction(aim.x0-cx, aim.y0-cy, dx*VEL_SCALE, dy*VEL_SCALE, state.newMass, col);
+
+      // speed readout
+      const spd = (len*VEL_SCALE).toFixed(1);
+      uctx.font = '10px "Space Mono", monospace';
+      uctx.fillStyle = 'rgba(255,210,128,.9)';
+      uctx.fillText('v ' + spd, aim.x1+8, aim.y1-6);
+    }
+  }
+}
+
+function drawPrediction(px, py, vx, vy, m, col){
+  // integrate a test body against current (frozen) bodies
+  let x=px, y=py;
+  const pts=[];
+  const dt = SIM_DT*1.4;
+  for (let s=0;s<130;s++){
+    let ax=0, ay=0;
+    for (const b of bodies){
+      const dx=b.x-x, dy=b.y-y;
+      const d2=dx*dx+dy*dy+SOFT2;
+      const inv=1/Math.sqrt(d2), inv3=inv/d2, f=G*b.m*inv3;
+      ax+=f*dx; ay+=f*dy;
+      if (d2 < (b.r*b.r*1.2)) { pts.push([x,y]); s=999; break; }
+    }
+    vx+=ax*dt; vy+=ay*dt;
+    x+=vx*dt; y+=vy*dt;
+    if (s%2===0) pts.push([x,y]);
+    if (Math.abs(x)>W*1.4 || Math.abs(y)>H*1.4) break;
+  }
+  if (pts.length<2) return;
+  uctx.strokeStyle = rgba(col, 0.42);
+  uctx.lineWidth = 1;
+  uctx.setLineDash([2,4]);
+  uctx.beginPath();
+  uctx.moveTo(cx+pts[0][0], cy+pts[0][1]);
+  for (let i=1;i<pts.length;i++) uctx.lineTo(cx+pts[i][0], cy+pts[i][1]);
+  uctx.stroke();
+  uctx.setLineDash([]);
+}
+
+/* -------------------- readouts -------------------- */
+const roBodies=document.getElementById('roBodies'), roKE=document.getElementById('roKE'), roMerge=document.getElementById('roMerge');
+const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function supStr(n){ return String(n).split('').map(ch=>SUP[ch]||ch).join(''); }
+function fmtE(x){
+  if (x<=0) return '0';
+  const e = Math.floor(Math.log10(x));
+  const mant = x/Math.pow(10,e);
+  if (e>=-1 && e<=3) return x>=100 ? Math.round(x).toLocaleString() : x.toFixed(1);
+  return mant.toFixed(2)+'×10'+supStr(e);
+}
+let roTick=0;
+function updateReadout(){
+  roBodies.textContent = String(bodies.length).padStart(2,'0');
+  let ke=0; for (const b of bodies) ke += 0.5*b.m*(b.vx*b.vx+b.vy*b.vy);
+  roKE.textContent = fmtE(ke);
+  roMerge.textContent = String(state.merges);
+}
+
+/* -------------------- warmup / static paint -------------------- */
+function stepAndPaint(n){
+  const savedWarp = state.warp;
+  for (let k=0;k<n;k++){
+    step(SIM_DT);
+    sctx.globalCompositeOperation='destination-out';
+    sctx.fillStyle=`rgba(0,0,0,${TRAIL_FADE})`;
+    sctx.fillRect(0,0,W,H);
+    sctx.globalCompositeOperation='lighter';
+    for (const b of bodies) drawTrailStamp(sctx, b);
+  }
+  sctx.globalCompositeOperation='source-over';
+  state.warp = savedWarp;
+}
+
+/* -------------------- main loop -------------------- */
+let running = false, lastT = performance.now();
+function frame(now){
+  if (!running) return;
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now-lastT)/1000); lastT = now;
+  if (state.playing){
+    const sub = Math.max(1, Math.min(40, Math.round(BASE_SUB*state.warp)));
+    for (let s=0;s<sub;s++) step(SIM_DT);
+  }
+  renderSim();
+  renderUI(dt);
+  if ((roTick++ & 7) === 0) updateReadout();
+}
+function startLoop(){
+  if (running || forceStatic) return;
+  running = true; lastT = performance.now();
+  requestAnimationFrame(frame);
+}
+function stopLoop(){ running = false; }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopLoop();
+  else if (!forceStatic && state.playing) startLoop();
+});
+
+/* -------------------- resize -------------------- */
+function applyCanvas(c, ctx){
+  c.width = Math.round(W*DPR); c.height = Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+function resize(){
+  DPR = Math.min(devicePixelRatio||1, 2);
+  W = innerWidth; H = innerHeight; computeCentre();
+  applyCanvas(bgC, bctx);
+  applyCanvas(simC, sctx);
+  applyCanvas(uiC, uctx);
+  drawBg();
+  // clear sim (trails restart cleanly)
+  sctx.clearRect(0,0,W,H);
+  if (forceStatic){ buildStatic(); }
+}
+let resizeTO=null;
+addEventListener('resize', () => { clearTimeout(resizeTO); resizeTO=setTimeout(resize, 140); });
+
+/* -------------------- interaction: pointer -------------------- */
+uiC.addEventListener('pointerdown', (e) => {
+  if (e.button !== 0) return;
+  uiC.setPointerCapture(e.pointerId);
+  aim.active = true; aim.moved = false;
+  aim.x0 = aim.x1 = e.clientX; aim.y0 = aim.y1 = e.clientY;
+  if (forceStatic) renderUI(0);
+});
+uiC.addEventListener('pointermove', (e) => {
+  cursor.x = e.clientX; cursor.y = e.clientY; cursor.inside = true;
+  cursor.ex = e.clientX-cx; cursor.ey = e.clientY-cy;
+  if (aim.active){
+    aim.x1 = e.clientX; aim.y1 = e.clientY;
+    if (Math.hypot(aim.x1-aim.x0, aim.y1-aim.y0) > 3) aim.moved = true;
+  }
+  if (forceStatic) renderUI(0);
+});
+function endAim(e){
+  if (!aim.active) return;
+  aim.active = false;
+  try { uiC.releasePointerCapture(e.pointerId); } catch(_){}
+  if (bodies.length < MAX_BODIES){
+    const dx = aim.x1-aim.x0, dy = aim.y1-aim.y0;
+    const wx = aim.x0-cx, wy = aim.y0-cy;
+    bodies.push(makeBody(wx, wy, dx*VEL_SCALE, dy*VEL_SCALE, state.newMass));
+  }
+  if (forceStatic){ // paint a little so the new body leaves a trace
+    stepAndPaint(90);
+    renderSim(); renderUI(0); updateReadout();
+  }
+}
+uiC.addEventListener('pointerup', endAim);
+uiC.addEventListener('pointercancel', endAim);
+uiC.addEventListener('pointerleave', () => { cursor.inside=false; });
+
+// wheel resizes the new body ONLY while aiming (keeps page scroll intact)
+uiC.addEventListener('wheel', (e) => {
+  if (!aim.active) return;
+  e.preventDefault();
+  const cur = +massInput.value;
+  massInput.value = Math.max(0, Math.min(100, cur + (e.deltaY<0 ? 4 : -4)));
+  onMass();
+  if (forceStatic) renderUI(0);
+}, { passive:false });
+
+/* -------------------- controls -------------------- */
+const $ = id => document.getElementById(id);
+const massInput = $('mass'), massVal = $('massVal');
+
+// mass slider maps 0..100 -> log mass 3..2600
+function massFromSlider(v){ return Math.round(Math.exp(Math.log(3) + (v/100)*(Math.log(2600)-Math.log(3)))); }
+function massLabel(m){
+  if (m < 10) return 'moon';
+  if (m < 45) return 'planet';
+  if (m < 160) return 'giant';
+  if (m < 700) return 'dwarf&nbsp;star';
+  return 'star';
+}
+function setFill(el){ const p=(el.value-el.min)/(el.max-el.min)*100; el.style.setProperty('--fill', p+'%'); }
+function onMass(){
+  state.newMass = massFromSlider(+massInput.value);
+  massVal.innerHTML = `<b>${massLabel(state.newMass)}</b> · ${state.newMass}`;
+  setFill(massInput);
+}
+massInput.addEventListener('input', onMass);
+
+// time warp
+const warpBtns=[...document.querySelectorAll('#warp button')];
+function setWarp(w, btn){
+  state.warp = +w;
+  warpBtns.forEach(b=>{ const on=b===btn; b.classList.toggle('on',on); b.setAttribute('aria-selected',on); });
+}
+warpBtns.forEach(b=>b.addEventListener('click', ()=>setWarp(b.dataset.w, b)));
+
+// presets
+const presetBtns=[...document.querySelectorAll('#preset button')];
+function loadPreset(p, btn){
+  state.merges = 0;
+  PRESETS[p]();
+  presetBtns.forEach(b=>{ const on=b===btn; b.classList.toggle('on',on); b.setAttribute('aria-selected', on?'true':'false'); });
+  sctx.clearRect(0,0,W,H);
+  flashes.length=0;
+  if (forceStatic){ buildStatic(); } else { stepAndPaint(120); }
+  updateReadout();
+}
+presetBtns.forEach(b=>b.addEventListener('click', ()=>loadPreset(b.dataset.p, b)));
+
+// play / pause
+const playBtn=$('playBtn'), playIco=$('playIco');
+const ICO_PLAY='<path d="M7 4l13 8-13 8V4z"/>';
+const ICO_PAUSE='<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+function setPlay(on){
+  state.playing = on;
+  playBtn.classList.toggle('on', on); playBtn.setAttribute('aria-pressed', on);
+  playBtn.title = on ? 'Pause' : 'Play';
+  playIco.innerHTML = on ? ICO_PAUSE : ICO_PLAY;
+  if (on) startLoop();
+}
+playBtn.addEventListener('click', ()=>setPlay(!state.playing));
+
+// gravity from cursor
+const gravBtn=$('gravBtn');
+function setGrav(on){
+  state.cursorGrav = on;
+  gravBtn.classList.toggle('on', on); gravBtn.setAttribute('aria-pressed', on);
+  gravBtn.title = 'Gravity from cursor (' + (on?'on':'off') + ')';
+  uiC.classList.toggle('grav', on);
+}
+gravBtn.addEventListener('click', ()=>setGrav(!state.cursorGrav));
+
+// reset / clear
+$('resetBtn').addEventListener('click', ()=>{
+  state.merges=0; seedDefault(); presetBtns.forEach(b=>{b.classList.remove('on');b.setAttribute('aria-selected','false');});
+  sctx.clearRect(0,0,W,H); flashes.length=0;
+  if (forceStatic){ buildStatic(); } else { stepAndPaint(120); }
+  updateReadout();
+});
+$('clearBtn').addEventListener('click', ()=>{
+  bodies=[]; state.merges=0; flashes.length=0;
+  presetBtns.forEach(b=>{b.classList.remove('on');b.setAttribute('aria-selected','false');});
+  sctx.clearRect(0,0,W,H); uctx.clearRect(0,0,W,H); updateReadout();
+});
+
+// keyboard
+addEventListener('keydown', (e)=>{
+  if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+  if (e.code==='Space'){ e.preventDefault(); setPlay(!state.playing); }
+  else if (e.key==='r'||e.key==='R'){ $('resetBtn').click(); }
+  else if (e.key==='c'||e.key==='C'){ $('clearBtn').click(); }
+  else if (e.key==='g'||e.key==='G'){ setGrav(!state.cursorGrav); }
+});
+
+/* -------------------- chrome hide on scroll -------------------- */
+const dockEl=$('dock'), roEl=$('readout');
+let hidChrome=false;
+addEventListener('scroll', ()=>{
+  const hide = scrollY > innerHeight*0.62;
+  if (hide===hidChrome) return;
+  hidChrome=hide;
+  dockEl.classList.toggle('hidden', hide);
+  roEl.classList.toggle('hidden', hide);
+}, { passive:true });
+
+/* -------------------- reveals -------------------- */
+if (!reduced && 'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.16 });
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(i%4*70)+'ms'; io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+
+/* -------------------- static build (reduced motion) -------------------- */
+function buildStatic(){
+  sctx.clearRect(0,0,W,H);
+  stepAndPaint(460);
+  renderSim(); renderUI(0); updateReadout();
+}
+
+/* -------------------- boot -------------------- */
+function boot(){
+  DPR = Math.min(devicePixelRatio||1, 2);
+  W=innerWidth; H=innerHeight; computeCentre();
+  applyCanvas(bgC,bctx); applyCanvas(simC,sctx); applyCanvas(uiC,uctx);
+  drawBg();
+
+  // initial new-body mass
+  onMass();
+
+  // choose starting system (query override for screenshots)
+  const wantPreset = params.get('preset');
+  if (wantPreset && PRESETS[wantPreset]){
+    PRESETS[wantPreset]();
+    const btn = presetBtns.find(b=>b.dataset.p===wantPreset);
+    if (btn){ btn.classList.add('on'); btn.setAttribute('aria-selected','true'); }
+  } else {
+    seedDefault();
+  }
+  if (params.has('grav')) setGrav(true);
+  if (params.has('warp')){ const w=params.get('warp'); const btn=warpBtns.find(b=>b.dataset.w===w); if(btn) setWarp(w,btn); }
+
+  if (forceStatic){
+    setPlay(false);
+    buildStatic();
+  } else {
+    stepAndPaint(140);   // warm up so the hero opens with visible orbits
+    updateReadout();
+    startLoop();
+  }
+
+  // optional deep-scroll for screenshots
+  if (params.has('scroll')){
+    addEventListener('load', ()=>{
+      const f=Math.max(0,Math.min(1,+params.get('scroll')));
+      scrollTo(0,(document.body.scrollHeight-innerHeight)*f);
+    });
+  }
+}
+boot();
+})();
+</script>
+</body>
+</html>

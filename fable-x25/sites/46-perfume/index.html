@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OLFACTA — a perfume, visualized</title>
+<meta name="description" content="OLFACTA is an avant-garde Parisian maison where scent is rendered as drifting light. Four fragrances, each a living cloud of luminous notes — top notes that spark, a heart that blooms, a base that will not leave the room.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="OLFACTA — a perfume, visualized">
+<meta property="og:description" content="An avant-garde niche-perfume house where scent becomes drifting colour and motion. Choose a fragrance and watch it breathe.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E✧%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stage:#0b0a09;
+  --stage2:#100d0b;
+  --ink:#f3ede1;
+  --gold:#d8b878;
+  --mut:rgba(243,237,225,.60);
+  --mut2:rgba(243,237,225,.40);
+  --mut3:rgba(243,237,225,.20);
+  --line:rgba(243,237,225,.11);
+  --line2:rgba(243,237,225,.20);
+  --pad:clamp(22px,5vw,84px);
+  --maxw:1240px;
+  /* accent — repainted per fragrance */
+  --accent:#f2c063;
+  --accent-soft:rgba(242,192,99,.16);
+  --accent-line:rgba(242,192,99,.42);
+  --accent-glow:rgba(242,192,99,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{background:var(--stage);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  line-height:1.6;font-weight:300;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+.serif{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300}
+::selection{background:var(--accent-soft);color:#fff}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+img,svg{display:block;max-width:100%}
+:focus-visible{outline:1px solid var(--accent);outline-offset:4px;border-radius:2px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#070605}
+::-webkit-scrollbar-thumb{background:var(--accent-line);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+.cap{text-transform:uppercase;letter-spacing:.30em}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+
+/* ---------- fixed scene layers ---------- */
+#scent{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:var(--stage)}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(135% 95% at 50% 34%,transparent 44%,rgba(9,8,7,.58) 100%),
+    linear-gradient(90deg,rgba(9,8,7,.50) 0%,rgba(9,8,7,.22) 30%,transparent 54%),
+    linear-gradient(180deg,rgba(9,8,7,.64) 0%,transparent 16%,transparent 70%,rgba(9,8,7,.74) 100%);}
+#veil.deep{background:
+    radial-gradient(140% 100% at 50% 40%,rgba(9,8,7,.30) 30%,rgba(9,8,7,.66) 100%),
+    linear-gradient(180deg,rgba(9,8,7,.55) 0%,rgba(9,8,7,.34) 50%,rgba(9,8,7,.55) 100%);}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+#cursor{position:fixed;top:0;left:0;z-index:60;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;
+  pointer-events:none;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(circle,var(--accent-glow) 0%,transparent 68%);
+  transition:opacity .5s ease,transform .16s ease-out}
+
+.content{position:relative;z-index:10}
+
+/* ---------- back-link ---------- */
+#backlink{position:fixed;top:22px;left:var(--pad);z-index:50;font-size:10px;
+  color:var(--mut);transition:color .4s ease;text-shadow:0 1px 20px rgba(0,0,0,.9)}
+#backlink::before{content:"";position:absolute;left:-26px;top:-22px;width:230px;height:80px;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 100% at 8% 30%,rgba(9,8,7,.82),transparent 72%)}
+#backlink b{font-weight:400;color:var(--ink)}
+#backlink:hover{color:var(--accent)}
+
+/* ---------- maison mark (top-right) ---------- */
+#mark{position:fixed;top:20px;right:var(--pad);z-index:50;text-align:right;
+  font-size:10px;color:var(--mut2);text-shadow:0 1px 20px rgba(0,0,0,.9);
+  transition:opacity .6s ease}
+#mark::before{content:"";position:absolute;right:-26px;top:-20px;width:260px;height:78px;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 100% at 92% 30%,rgba(9,8,7,.82),transparent 72%)}
+#mark.fade{opacity:0}
+#mark .now{color:var(--accent);transition:color .6s ease}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity 1.1s cubic-bezier(.16,.7,.2,1),transform 1.1s cubic-bezier(.16,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding-top:120px;padding-bottom:90px}
+.hero .over{font-size:11px;color:var(--mut);margin-bottom:clamp(20px,5vh,44px)}
+.hero h1{font-family:"Cormorant Garamond",serif;font-weight:300;
+  font-size:clamp(88px,20vw,280px);line-height:.86;letter-spacing:.01em;
+  text-shadow:0 6px 70px rgba(0,0,0,.5)}
+.hero h1 em{font-style:italic;font-weight:300}
+.hero .sub{margin-top:clamp(16px,3vh,30px);display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+.hero .sub .lead{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;
+  font-size:clamp(22px,3.4vw,40px);color:var(--ink)}
+.hero .sub .tag{font-size:11px;color:var(--mut2)}
+.hero p.intro{margin-top:clamp(28px,5vh,48px);max-width:52ch;font-size:clamp(14px,1.4vw,17px);
+  color:var(--mut);line-height:1.85}
+.hero p.intro b{color:var(--ink);font-weight:400}
+.scrollcue{margin-top:clamp(40px,7vh,70px);display:flex;align-items:center;gap:14px;color:var(--mut2);font-size:10px}
+.scrollcue .ln{width:52px;height:1px;background:linear-gradient(90deg,var(--accent-line),transparent);position:relative;overflow:hidden}
+.scrollcue .ln::after{content:"";position:absolute;inset:0;width:40%;background:linear-gradient(90deg,transparent,var(--accent));animation:sweep 2.8s cubic-bezier(.7,0,.3,1) infinite}
+@keyframes sweep{0%{transform:translateX(-120%)}60%,100%{transform:translateX(320%)}}
+
+/* ---------- section frame ---------- */
+.sec{position:relative;padding-top:clamp(80px,13vh,150px);padding-bottom:clamp(80px,13vh,150px)}
+.seclabel{display:flex;align-items:center;gap:16px;font-size:10px;color:var(--mut2);margin-bottom:clamp(30px,5vh,54px)}
+.seclabel .no{color:var(--accent);transition:color .6s ease}
+.seclabel .rule{flex:1;height:1px;background:var(--line)}
+.h2{font-family:"Cormorant Garamond",serif;font-weight:300;
+  font-size:clamp(34px,5.4vw,72px);line-height:1.02;letter-spacing:.005em;max-width:16ch}
+.h2 em{font-style:italic}
+
+/* ---------- collection selector ---------- */
+.collection{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.4vw,20px)}
+.frag{position:relative;text-align:left;padding:26px 22px 24px;border:1px solid var(--line);
+  border-radius:3px;background:rgba(12,10,9,.34);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  transition:border-color .5s ease,background .5s ease,transform .5s cubic-bezier(.16,.7,.2,1);
+  overflow:hidden;min-height:212px;display:flex;flex-direction:column}
+.frag::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;
+  background:var(--fa,#888);transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.16,.7,.2,1);opacity:.9}
+.frag:hover{transform:translateY(-5px);border-color:var(--line2);background:rgba(14,12,10,.5)}
+.frag:hover::before{transform:scaleX(1)}
+.frag .op{font-family:"Cormorant Garamond",serif;font-size:15px;font-style:italic;color:var(--mut2)}
+.frag .nm{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(26px,2.6vw,36px);line-height:1;margin-top:auto}
+.frag .ds{font-size:10.5px;color:var(--mut2);margin-top:12px;line-height:1.5;letter-spacing:.02em}
+.frag .swatch{margin-top:16px;height:3px;width:44px;border-radius:3px;background:var(--fa,#888);opacity:.55;transition:width .6s cubic-bezier(.16,.7,.2,1),opacity .5s}
+.frag:hover .swatch{width:72px;opacity:.9}
+.frag[aria-current="true"]{border-color:var(--accent-line);background:rgba(16,13,11,.6)}
+.frag[aria-current="true"]::before{transform:scaleX(1)}
+.frag[aria-current="true"] .nm{color:var(--ink)}
+.frag[aria-current="true"] .swatch{width:100%;opacity:1}
+
+/* ---------- fragrance detail ---------- */
+.detail{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(34px,5vw,80px);align-items:start}
+.d-op{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:16px;color:var(--accent);transition:color .6s ease;margin-bottom:14px}
+.d-name{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(48px,7vw,104px);line-height:.9;letter-spacing:.01em}
+.d-sub{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:clamp(19px,2.3vw,27px);color:var(--mut);margin-top:14px}
+.d-story{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(17px,1.7vw,22px);line-height:1.66;color:var(--ink);margin-top:clamp(22px,3.4vh,34px);max-width:40ch;opacity:.92}
+.d-meta{margin-top:clamp(26px,4vh,40px);display:flex;gap:34px;flex-wrap:wrap}
+.d-meta .mi .k{font-size:9.5px;color:var(--mut2);margin-bottom:5px}
+.d-meta .mi .v{font-family:"Cormorant Garamond",serif;font-size:18px;color:var(--ink)}
+.d-fade{transition:opacity .5s ease}
+.d-fade.swapping{opacity:0}
+
+/* pyramid */
+.pyramid{position:relative}
+.pyr-hd{font-size:10px;color:var(--mut2);margin-bottom:22px}
+.pyr-hd b{color:var(--ink);font-weight:400}
+.tier{position:relative;padding:16px 0;border-top:1px solid var(--line)}
+.tier:last-of-type{border-bottom:1px solid var(--line)}
+.tier .tl{font-size:9.5px;color:var(--mut2);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.tier .tl .dot{width:5px;height:5px;border-radius:50%;background:var(--tc,#888);box-shadow:0 0 10px var(--tc,#888)}
+.notes{display:flex;flex-wrap:wrap;gap:9px}
+.tier--top .notes{max-width:70%}
+.tier--heart .notes{max-width:88%}
+.note{position:relative;display:inline-flex;align-items:center;gap:8px;
+  padding:8px 15px 8px 12px;border:1px solid var(--line);border-radius:100px;
+  font-size:12px;letter-spacing:.02em;color:var(--mut);
+  transition:border-color .4s ease,color .4s ease,background .4s ease,transform .4s cubic-bezier(.16,.7,.2,1)}
+.note .nd{width:7px;height:7px;border-radius:50%;background:var(--nc,#888);transition:box-shadow .4s ease,transform .4s ease}
+.note:hover,.note:focus-visible{color:var(--ink);border-color:var(--nc,#888);transform:translateY(-2px)}
+.note:hover .nd,.note:focus-visible .nd{box-shadow:0 0 12px 2px var(--nc,#888);transform:scale(1.15)}
+.note[aria-pressed="true"]{color:#fff;border-color:var(--nc,#888);background:color-mix(in srgb,var(--nc) 14%,transparent)}
+.note[aria-pressed="true"] .nd{box-shadow:0 0 14px 3px var(--nc,#888);transform:scale(1.2)}
+.pyr-note{margin-top:16px;font-size:10.5px;color:var(--mut2);line-height:1.5;letter-spacing:.02em}
+
+/* meters */
+.meters{display:flex;gap:clamp(20px,3vw,42px);margin-top:clamp(30px,4.4vh,46px)}
+.gauge{text-align:center;flex:1;max-width:150px}
+.gauge svg{width:100%;height:auto;overflow:visible}
+.gauge .trk{fill:none;stroke:var(--line);stroke-width:2.4;stroke-linecap:round}
+.gauge .val{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round;
+  filter:drop-shadow(0 0 5px var(--accent-glow));transition:stroke-dashoffset 1.1s cubic-bezier(.16,.7,.2,1),stroke .6s ease}
+.gauge .ctr{font-family:"Cormorant Garamond",serif;font-size:23px;fill:var(--ink)}
+.gauge .cap2{font-size:9px;letter-spacing:.24em;fill:var(--mut2);text-transform:uppercase}
+.gauge .word{margin-top:2px;font-size:9.5px;color:var(--mut);letter-spacing:.14em;text-transform:uppercase}
+
+/* ---------- atelier ---------- */
+.atelier .lede{font-family:"Cormorant Garamond",serif;font-weight:300;font-style:italic;
+  font-size:clamp(24px,3.6vw,44px);line-height:1.3;max-width:22ch;color:var(--ink);margin-bottom:clamp(40px,6vh,72px)}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(28px,4vw,58px)}
+.col .ck{font-size:10px;color:var(--accent);transition:color .6s ease;margin-bottom:16px;
+  padding-bottom:14px;border-bottom:1px solid var(--line)}
+.col p{font-size:14px;color:var(--mut);line-height:1.85}
+.col p + p{margin-top:14px}
+
+/* ---------- footer / flacon ---------- */
+.footer{position:relative;padding-top:clamp(70px,11vh,130px);padding-bottom:46px}
+.foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,90px);align-items:center}
+.flacon-wrap{position:relative;display:flex;justify-content:center;align-items:center;min-height:420px}
+.flacon-wrap::before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,var(--accent-soft) 0%,transparent 62%);
+  filter:blur(14px);opacity:.9;transition:background .6s ease}
+.flacon-wrap::after{content:"";position:absolute;bottom:96px;width:190px;height:26px;border-radius:50%;
+  background:radial-gradient(ellipse,var(--accent-glow) 0%,transparent 70%);opacity:.5;filter:blur(6px);transition:background .6s ease}
+.flacon{position:relative;width:min(280px,68vw);height:auto;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55))}
+.flacon .liq-stop-a{stop-color:var(--accent)}
+.flacon .glint{opacity:0}
+@keyframes glint{0%{opacity:0;transform:translateX(-14px)}22%{opacity:.85}44%{opacity:0}100%{opacity:0;transform:translateX(26px)}}
+.foot-copy .fk{font-size:10px;color:var(--mut2);margin-bottom:20px}
+.foot-copy h3{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:clamp(30px,4.4vw,54px);line-height:1.02}
+.foot-copy .fl-name{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--accent);transition:color .6s ease}
+.foot-copy p{margin-top:22px;max-width:38ch;font-size:13.5px;color:var(--mut);line-height:1.8}
+.foot-meta{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:10px;color:var(--mut2)}
+.foot-meta a{color:var(--mut);border-bottom:1px solid var(--line2);padding-bottom:2px;transition:color .35s,border-color .35s}
+.foot-meta a:hover{color:var(--accent);border-color:var(--accent-line)}
+.foot-meta .dotsep{opacity:.5}
+.copyright{margin-top:clamp(50px,8vh,90px);padding-top:22px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:10px;color:var(--mut2)}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .collection{grid-template-columns:repeat(2,1fr)}
+  .detail{grid-template-columns:1fr;gap:44px}
+  .cols{grid-template-columns:1fr;gap:30px}
+  .foot-grid{grid-template-columns:1fr;gap:40px}
+  .flacon-wrap{order:-1;min-height:340px}
+}
+@media (max-width:560px){
+  .collection{grid-template-columns:1fr}
+  .frag{min-height:auto;flex-direction:row;align-items:center;justify-content:space-between;gap:18px;padding:20px}
+  .frag .nm{margin-top:0}
+  .frag .swatch{display:none}
+  .frag .ds{display:none}
+  .frag .txt{display:flex;flex-direction:column;gap:6px}
+  .meters{gap:16px}
+  .tier--top .notes,.tier--heart .notes{max-width:100%}
+  #mark{display:none}
+  .d-meta{gap:22px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .scrollcue .ln::after{animation:none}
+  .flacon .glint{animation:none!important}
+  #cursor{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="scent" aria-hidden="true"></canvas>
+<div id="veil"></div>
+<div id="grain"></div>
+<div id="cursor"></div>
+
+<a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery"><span class="cap">XAVIER <b>FABLE</b> ×50</span></a>
+<div id="mark"><span class="cap">Maison Olfacta</span><br><span class="cap">now diffusing — <span class="now" id="nowName">Héliodor</span></span></div>
+
+<main class="content">
+
+  <!-- HERO -->
+  <header class="hero wrap">
+    <div class="over cap rv">Maison Olfacta — 11<sup>e</sup> arrondissement, Paris — est. mmxix</div>
+    <h1 class="rv">Olf<em>a</em>cta</h1>
+    <div class="sub rv">
+      <span class="lead">a perfume, visualized</span>
+      <span class="tag cap">Extrait de parfum · four opuses</span>
+    </div>
+    <p class="intro rv">We do not photograph scent. We let it <b>move</b>. Each fragrance in the maison is rendered here as drifting light — top notes that spark, a heart that blooms, and a base that will not leave the room. Choose one, and watch it breathe.</p>
+    <div class="scrollcue cap rv"><span class="ln"></span> scroll to enter the collection</div>
+  </header>
+
+  <!-- COLLECTION -->
+  <section class="sec wrap" id="collection">
+    <div class="seclabel cap rv"><span class="no">01</span> The Collection — four opuses <span class="rule"></span></div>
+    <h2 class="h2 serif rv" style="margin-bottom:clamp(40px,6vh,66px)">Four ways for <em>light</em> to smell.</h2>
+    <div class="collection" id="fragList" role="tablist" aria-label="Choose a fragrance"></div>
+  </section>
+
+  <!-- DETAIL -->
+  <section class="sec wrap" id="detail-sec">
+    <div class="seclabel cap rv"><span class="no">02</span> <span id="detailLabel">The Fragrance</span> <span class="rule"></span></div>
+    <div class="detail">
+      <div class="d-left d-fade" id="dLeft">
+        <div class="d-op" id="dOp">Opus 01</div>
+        <h2 class="d-name" id="dName">Héliodor</h2>
+        <div class="d-sub" id="dSub">Noon in a cedar grove.</div>
+        <p class="d-story" id="dStory"></p>
+        <div class="d-meta" id="dMeta"></div>
+      </div>
+      <div class="d-right">
+        <div class="pyramid">
+          <div class="pyr-hd cap">The scent pyramid — <b>hover a note to smell it</b></div>
+          <div class="tier tier--top">
+            <div class="tl cap"><span class="dot" style="--tc:var(--accent)"></span> Top — the first breath</div>
+            <div class="notes" id="notesTop"></div>
+          </div>
+          <div class="tier tier--heart">
+            <div class="tl cap"><span class="dot" style="--tc:var(--accent)"></span> Heart — the bloom</div>
+            <div class="notes" id="notesHeart"></div>
+          </div>
+          <div class="tier tier--base">
+            <div class="tl cap"><span class="dot" style="--tc:var(--accent)"></span> Base — what stays</div>
+            <div class="notes" id="notesBase"></div>
+          </div>
+          <div class="pyr-note" id="pyrNote">Tap and hold a note to keep it lit in the cloud.</div>
+        </div>
+        <div class="meters">
+          <div class="gauge" id="gaugeSil"></div>
+          <div class="gauge" id="gaugeLon"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATELIER -->
+  <section class="sec wrap atelier">
+    <div class="seclabel cap rv"><span class="no">03</span> The Atelier — a philosophy <span class="rule"></span></div>
+    <p class="lede serif rv">Composed in silence, worn as weather. We build fragrances the way a painter builds light — in layers you can almost see.</p>
+    <div class="cols">
+      <div class="col rv">
+        <div class="ck cap">On method</div>
+        <p>Every accord begins as a colour before it is a smell. Our perfumer works from a palette of some four hundred raw materials — resins, absolutes, distillations, a few molecules that do not yet have common names — and composes the way a colourist mixes on glass.</p>
+        <p>Nothing is added to fill space. If a note cannot justify its presence, it is removed, and the formula grows quieter and more certain.</p>
+      </div>
+      <div class="col rv">
+        <div class="ck cap">On material</div>
+        <p>We buy small and buy slowly: Haitian vetiver cut by hand, orris butter aged six years, an ambergris tincture that took a decade of patience. Extrait concentration, never diluted for reach.</p>
+        <p>Each opus is bottled in a faceted flacon cut to catch whatever light the room can spare — a small, deliberate vanity.</p>
+      </div>
+      <div class="col rv">
+        <div class="ck cap">On the visible</div>
+        <p>Scent is the last of the senses we cannot photograph. So we translate it — into drift, into spark, into a slow field of colour that behaves the way the fragrance behaves on skin.</p>
+        <p>What you see here is not decoration. It is the fragrance, plotted honestly: bright and fast at the top, blooming through the heart, deep and reluctant at the base.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / FLACON -->
+  <footer class="footer wrap">
+    <div class="foot-grid">
+      <div class="flacon-wrap rv">
+        <svg class="flacon" viewBox="0 0 200 300" role="img" aria-label="A faceted glass flacon of the current fragrance">
+          <defs>
+            <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffffff" stop-opacity=".38"/>
+              <stop offset=".5" stop-color="#ffffff" stop-opacity=".10"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity=".22"/>
+            </linearGradient>
+            <linearGradient id="liqG" x1="0" y1="0" x2="0" y2="1">
+              <stop class="liq-stop-a" offset="0" stop-color="#f2c063" stop-opacity=".98"/>
+              <stop offset="1" stop-color="#f2c063" stop-opacity=".55"/>
+            </linearGradient>
+            <radialGradient id="liqGlow" cx=".5" cy=".28" r=".7">
+              <stop offset="0" stop-color="#ffffff" stop-opacity=".5"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="capG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f6efe0" stop-opacity=".7"/>
+              <stop offset="1" stop-color="#c9bfa8" stop-opacity=".28"/>
+            </linearGradient>
+            <clipPath id="bodyClip">
+              <path d="M46 118 L60 96 L140 96 L154 118 L154 250 Q154 272 132 272 L68 272 Q46 272 46 250 Z"/>
+            </clipPath>
+          </defs>
+          <!-- liquid -->
+          <g clip-path="url(#bodyClip)">
+            <rect x="40" y="138" width="120" height="142" fill="url(#liqG)"/>
+            <rect x="40" y="138" width="120" height="142" fill="url(#liqGlow)"/>
+            <path d="M40 140 Q100 128 160 140 L160 148 Q100 136 40 148 Z" fill="#fff" opacity=".22"/>
+          </g>
+          <!-- glass body -->
+          <path d="M46 118 L60 96 L140 96 L154 118 L154 250 Q154 272 132 272 L68 272 Q46 272 46 250 Z"
+                fill="url(#glassG)" stroke="rgba(255,255,255,.42)" stroke-width="1"/>
+          <!-- facets -->
+          <path d="M46 118 L100 130 L100 272 L68 272 Q46 272 46 250 Z" fill="#fff" opacity=".08"/>
+          <path d="M154 118 L100 130 L100 272 L132 272 Q154 272 154 250 Z" fill="#000" opacity=".10"/>
+          <path d="M60 96 L100 130 L140 96 Z" fill="#fff" opacity=".16"/>
+          <line x1="46" y1="118" x2="154" y2="118" stroke="rgba(255,255,255,.24)" stroke-width="1"/>
+          <line x1="100" y1="130" x2="100" y2="272" stroke="rgba(255,255,255,.10)" stroke-width="1"/>
+          <!-- moving glint -->
+          <g class="glint" style="mix-blend-mode:screen">
+            <path d="M70 108 L86 100 L96 262 L82 266 Z" fill="#fff" opacity=".5"/>
+          </g>
+          <!-- neck + cap (faceted stopper) -->
+          <rect x="86" y="80" width="28" height="18" fill="url(#glassG)" stroke="rgba(255,255,255,.28)" stroke-width="1"/>
+          <path d="M80 80 L92 46 L108 46 L120 80 Z" fill="url(#capG)" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+          <path d="M92 46 L100 62 L100 80 L80 80 Z" fill="#fff" opacity=".14"/>
+          <path d="M108 46 L100 62 L100 80 L120 80 Z" fill="#000" opacity=".12"/>
+          <line x1="92" y1="46" x2="108" y2="46" stroke="rgba(255,255,255,.4)" stroke-width="1.4"/>
+          <!-- engraving -->
+          <text x="100" y="204" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="15" letter-spacing="3" fill="rgba(255,255,255,.5)">OLFACTA</text>
+          <text id="flaconOp" x="100" y="222" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="7" letter-spacing="2.4" fill="rgba(255,255,255,.42)">OP. 01 · HÉLIODOR</text>
+        </svg>
+      </div>
+      <div class="foot-copy rv">
+        <div class="fk cap">The flacon</div>
+        <h3>Now in the atelier —<br><span class="fl-name" id="flaconName">Héliodor</span>.</h3>
+        <p>Cut glass, twelve facets, filled to the shoulder with <span id="flaconLine">a sunlit green extrait</span>. Available only from the maison, by appointment, in the eleventh.</p>
+        <div class="foot-meta">
+          <a href="/">Return to the gallery</a>
+          <span class="dotsep">·</span>
+          <span class="cap">Olfacta — Paris</span>
+          <span class="dotsep">·</span>
+          <span class="cap">a perfume, visualized</span>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <span class="cap">© MMXXVI Maison Olfacta — a fiction, composed in light</span>
+      <span class="cap">Built for <b style="color:var(--mut)">XAVIER FABLE ×50</b></span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+"use strict";
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]reduced=1/.test(location.search);
+const TAU = Math.PI*2;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const easeIO=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+/* ---------------- fragrance data ---------------- */
+const FRAG = [
+  {
+    id:'heliodor', op:'Opus 01', name:'Héliodor', sub:'Noon in a cedar grove.',
+    accent:'#f2c063', accentGlow:'rgba(242,192,99,.55)', accentLine:'rgba(242,192,99,.44)', accentSoft:'rgba(242,192,99,.16)',
+    tag:'Citrus · Woody', flaconLine:'a sunlit green extrait',
+    story:'Cut bergamot over hot stone; fig leaves bruised between two fingers. Héliodor is the hour the sun stands still — green, golden, and entirely without apology. It dries down to cedar and vetiver: warm wood, still remembering the afternoon.',
+    meta:[['Concentration','Extrait 24%'],['Perfumer','Maison Olfacta'],['Accords','Bergamot · Fig · Vetiver']],
+    notes:{
+      top:[['Calabrian Bergamot','#ffe39a'],['Petitgrain','#e7d46b'],['Pink Grapefruit','#ffcf72']],
+      heart:[['Fig Leaf','#a9c256'],['Neroli','#d6cf6a'],['Green Cardamom','#8fb04a']],
+      base:[['Haitian Vetiver','#3f6b34'],['Cedarwood','#5a6a2e'],['Dry Amber','#c79a52']]
+    },
+    palette:{ base:['#356032','#446e2c','#264a2a'], heart:['#a3c04e','#c8c05a','#82ae48'], top:['#f4c56b','#ffe39a','#ffd778'] },
+    motion:{ trail:0.17,
+      base:{dx:0.004,dy:-0.006,turb:0.55,spd:0.55,rmin:0.15,rmax:0.30,alpha:0.055,bloom:0.07,bspd:0.5,twk:0},
+      heart:{dx:0.006,dy:-0.013,turb:0.95,spd:0.85,rmin:0.05,rmax:0.11,alpha:0.10,bloom:0.34,bspd:1.1,twk:0.14},
+      top:{dx:0.004,dy:-0.060,turb:1.4,spd:1.55,rmin:0.006,rmax:0.017,alpha:0.30,bloom:0,bspd:0,twk:0.72} },
+    sil:{v:0.60,c:'2m',w:'Sunlit'}, lon:{v:0.55,c:'7h',w:'Persistent'}
+  },
+  {
+    id:'cendre', op:'Opus 02', name:'Cendre', sub:'The hour the candles die.',
+    accent:'#b6a8d6', accentGlow:'rgba(182,168,214,.5)', accentLine:'rgba(182,168,214,.42)', accentSoft:'rgba(182,168,214,.16)',
+    tag:'Incense · Iris', flaconLine:'a grey resinous extrait',
+    story:'Frankincense gone cool, iris like grey silk, the soft grief of a room after everyone has left. Cendre is smoke without fire — powder, resin and ambergris, drifting slowly where the light used to be. Worn low. Worn close.',
+    meta:[['Concentration','Extrait 26%'],['Perfumer','Maison Olfacta'],['Accords','Incense · Orris · Ambergris']],
+    notes:{
+      top:[['Pink Pepper','#c9bcda'],['Frozen Elemi','#b3a7c9'],['Cold Air','#d3cbe0']],
+      heart:[['Orris Butter','#8877a2'],['Frankincense','#9a8cb2'],['Grey Suede','#7d7194']],
+      base:[['Labdanum','#4a4460'],['Ambergris','#5a5270'],['Smoked Papyrus','#3a3550']]
+    },
+    palette:{ base:['#3c3652','#4a4562','#322e46'], heart:['#6d6186','#80729a','#8d7ca2'], top:['#a99fc0','#c2b9d6','#d0c9e0'] },
+    motion:{ trail:0.075,
+      base:{dx:0.002,dy:-0.010,turb:1.45,spd:0.6,rmin:0.19,rmax:0.36,alpha:0.052,bloom:0.10,bspd:0.35,twk:0},
+      heart:{dx:0.003,dy:-0.014,turb:1.6,spd:0.72,rmin:0.07,rmax:0.15,alpha:0.075,bloom:0.26,bspd:0.7,twk:0.1},
+      top:{dx:0.002,dy:-0.022,turb:1.3,spd:0.72,rmin:0.006,rmax:0.015,alpha:0.15,bloom:0,bspd:0,twk:0.4} },
+    sil:{v:0.40,c:'1m',w:'Intimate'}, lon:{v:0.86,c:'11h',w:'Tenacious'}
+  },
+  {
+    id:'sanguine', op:'Opus 03', name:'Sanguine', sub:'A rose that remembers fire.',
+    accent:'#e0576a', accentGlow:'rgba(224,87,106,.5)', accentLine:'rgba(224,87,106,.44)', accentSoft:'rgba(224,87,106,.16)',
+    tag:'Rose · Oud', flaconLine:'a deep crimson extrait',
+    story:'Saffron, then a Turkish rose opened too far, then oud beneath it like embers under ash. Sanguine blooms crimson and dries to amber and benzoin — a red so deep it turns warm. Not a flower. A temperature.',
+    meta:[['Concentration','Extrait 28%'],['Perfumer','Maison Olfacta'],['Accords','Saffron · Rose · Oud']],
+    notes:{
+      top:[['Saffron','#f2a24e'],['Raspberry','#e5556a'],['Sichuan Pepper','#f27a5a']],
+      heart:[['Turkish Rose','#e0576a'],['Oud','#a33a3a'],['Clove','#c96a3a']],
+      base:[['Amber','#d99247'],['Benzoin','#b8603a'],['Patchouli','#6e2626']]
+    },
+    palette:{ base:['#5c1626','#701c2a','#45101e'], heart:['#d24a5e','#e0576a','#c96a3a'], top:['#f2a24e','#f27a5a','#ffbf6a'] },
+    motion:{ trail:0.11,
+      base:{dx:0.001,dy:-0.004,turb:0.7,spd:0.5,rmin:0.17,rmax:0.33,alpha:0.062,bloom:0.20,bspd:0.5,twk:0},
+      heart:{dx:0.001,dy:-0.006,turb:0.85,spd:0.6,rmin:0.08,rmax:0.18,alpha:0.11,bloom:0.62,bspd:0.9,twk:0.14},
+      top:{dx:0.003,dy:-0.030,turb:1.1,spd:1.05,rmin:0.006,rmax:0.019,alpha:0.27,bloom:0,bspd:0,twk:0.5} },
+    sil:{v:0.90,c:'4m',w:'Generous'}, lon:{v:0.92,c:'12h',w:'Immense'}
+  },
+  {
+    id:'maree', op:'Opus 04', name:'Marée', sub:'Salt on cold skin.',
+    accent:'#8fd0d6', accentGlow:'rgba(143,208,214,.5)', accentLine:'rgba(143,208,214,.42)', accentSoft:'rgba(143,208,214,.16)',
+    tag:'Marine · Musk', flaconLine:'a pale silver extrait',
+    story:'Aldehydes like spray off the harbour wall, water lily, the mineral cold of wet stone. Marée is the sea at six in the morning — bright, saline, then a white musk that stays like the memory of cold. Clean, but never innocent.',
+    meta:[['Concentration','Extrait 22%'],['Perfumer','Maison Olfacta'],['Accords','Aldehyde · Lily · Musk']],
+    notes:{
+      top:[['Aldehydes','#e8fbfc'],['Sea Salt','#bfe6ea'],['Yuzu','#cfeeba']],
+      heart:[['Water Lily','#9fd6d6'],['Neroli','#c6e6d6'],['Ambrette','#a8cfe0']],
+      base:[['White Musk','#dfeef0'],['Driftwood','#7fa0a0'],['Grey Mineral','#6f9099']]
+    },
+    palette:{ base:['#26494f','#2f5860','#1f4048'], heart:['#77b4bc','#8ec6c8','#aad6d6'], top:['#cfeef0','#e8fbfc','#b6e6ea'] },
+    motion:{ trail:0.19,
+      base:{dx:0.012,dy:-0.002,turb:0.55,spd:0.72,rmin:0.15,rmax:0.29,alpha:0.05,bloom:0.06,bspd:0.4,twk:0},
+      heart:{dx:0.015,dy:-0.004,turb:0.75,spd:0.95,rmin:0.05,rmax:0.11,alpha:0.09,bloom:0.22,bspd:1.0,twk:0.1},
+      top:{dx:0.021,dy:-0.020,turb:1.65,spd:1.75,rmin:0.005,rmax:0.014,alpha:0.30,bloom:0,bspd:0,twk:0.85} },
+    sil:{v:0.72,c:'3m',w:'Carrying'}, lon:{v:0.45,c:'5h',w:'Fleeting'}
+  }
+];
+
+/* ---------------- helpers ---------------- */
+function hexRgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return{r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};}
+
+/* glow sprite cache */
+const glowCache=new Map();
+function glow(hex){
+  if(glowCache.has(hex))return glowCache.get(hex);
+  const S=128,c=document.createElement('canvas');c.width=c.height=S;
+  const g=c.getContext('2d');
+  const o=hexRgb(hex);
+  const grd=g.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2);
+  // smooth multi-stop falloff to avoid banding in large additive blobs
+  grd.addColorStop(0.00,`rgba(${o.r},${o.g},${o.b},1)`);
+  grd.addColorStop(0.07,`rgba(${o.r},${o.g},${o.b},0.92)`);
+  grd.addColorStop(0.16,`rgba(${o.r},${o.g},${o.b},0.62)`);
+  grd.addColorStop(0.28,`rgba(${o.r},${o.g},${o.b},0.34)`);
+  grd.addColorStop(0.44,`rgba(${o.r},${o.g},${o.b},0.15)`);
+  grd.addColorStop(0.64,`rgba(${o.r},${o.g},${o.b},0.05)`);
+  grd.addColorStop(0.82,`rgba(${o.r},${o.g},${o.b},0.012)`);
+  grd.addColorStop(1.00,`rgba(${o.r},${o.g},${o.b},0)`);
+  g.fillStyle=grd;g.fillRect(0,0,S,S);
+  glowCache.set(hex,c);return c;
+}
+
+/* ---------------- canvas engine ---------------- */
+const canvas=document.getElementById('scent');
+const ctx=canvas.getContext('2d',{alpha:false});
+let W=0,H=0,DPR=1,MIN=1;
+const stage=hexRgb('#0b0a09');
+let particles=[];
+let curIndex=0;
+let displayMotion=clone(FRAG[0].motion);
+let morphT=1, morphFrom=null, morphTo=null, morphStart=0;
+const MORPH_MS=1600;
+let running=false, lastT=0, elapsed=0;
+
+/* per-tier note boosts {color, str, target} */
+const boosts={top:{color:null,str:0,tgt:0},heart:{color:null,str:0,tgt:0},base:{color:null,str:0,tgt:0}};
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function lerpMotion(a,b,t){
+  const out={trail:lerp(a.trail,b.trail,t)};
+  for(const k of ['base','heart','top']){
+    out[k]={};for(const p in a[k])out[k][p]=lerp(a[k][p],b[k][p],t);
+  }
+  return out;
+}
+
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  W=window.innerWidth;H=window.innerHeight;MIN=Math.min(W,H);
+  canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  // clear
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='#0b0a09';ctx.fillRect(0,0,W,H);
+  if(REDUCED) renderStatic();
+}
+
+function initParticles(){
+  const mobile=window.innerWidth<720;
+  const counts={base:mobile?7:11, heart:mobile?24:42, top:mobile?60:118};
+  particles=[];
+  const f=FRAG[curIndex];
+  for(const tier of ['base','heart','top']){
+    for(let i=0;i<counts[tier];i++){
+      const pal=f.palette[tier];
+      const col=pal[(Math.random()*pal.length)|0];
+      particles.push({
+        tier,
+        nx:Math.random(),ny:Math.random(),
+        rr:Math.random(),                // stable size factor 0..1
+        phase:Math.random()*TAU,
+        spd:0.7+Math.random()*0.6,       // per-particle speed jitter
+        colFrom:col, colTo:col
+      });
+    }
+  }
+}
+
+function pickColors(fi){
+  const f=FRAG[fi];
+  for(const p of particles){
+    const pal=f.palette[p.tier];
+    p.colFrom=p.colTo;
+    p.colTo=pal[(Math.random()*pal.length)|0];
+  }
+}
+
+function step(dt){
+  elapsed+=dt;
+  const t=elapsed;
+  // morph progress
+  let e=1;
+  if(morphT<1){
+    morphT=clamp((performance.now()-morphStart)/MORPH_MS,0,1);
+    e=easeIO(morphT);
+    displayMotion=lerpMotion(morphFrom,morphTo,e);
+    if(morphT>=1){displayMotion=clone(morphTo);
+      for(const p of particles)p.colFrom=p.colTo;}
+  }
+  const M=displayMotion;
+  // ease boosts
+  for(const k in boosts){const b=boosts[k];b.str+=(b.tgt-b.str)*Math.min(1,dt*6);}
+  // integrate
+  const FLOW=1.0;
+  for(const p of particles){
+    const m=M[p.tier];
+    const fx=Math.sin(p.nx*TAU*1.4+t*0.13+p.phase)+Math.cos(p.ny*TAU*1.1-t*0.10);
+    const fy=Math.cos(p.nx*TAU*1.0-t*0.11)+Math.sin(p.ny*TAU*1.6+t*0.12+p.phase);
+    const vx=(m.dx+fx*m.turb*0.010)*m.spd*p.spd*FLOW;
+    const vy=(m.dy+fy*m.turb*0.010)*m.spd*p.spd*FLOW;
+    p.nx+=vx*dt; p.ny+=vy*dt;
+    // wrap
+    const mg=0.18;
+    if(p.nx<-mg)p.nx+=1+2*mg; else if(p.nx>1+mg)p.nx-=1+2*mg;
+    if(p.ny<-mg)p.ny+=1+2*mg; else if(p.ny>1+mg)p.ny-=1+2*mg;
+  }
+}
+
+function drawParticle(p,eMorph,t){
+  const m=displayMotion[p.tier];
+  const bloom=1+m.bloom*Math.sin(t*m.bspd+p.phase);
+  let R=(m.rmin+(m.rmax-m.rmin)*p.rr)*MIN*bloom;
+  if(R<0.5)return;
+  let a=m.alpha;
+  if(m.twk>0){a*= (1-m.twk) + m.twk*(0.5+0.5*Math.sin(t*(2.2+p.spd*1.6)+p.phase*3.1));}
+  const x=p.nx*W, y=p.ny*H, d=R*2;
+  ctx.globalCompositeOperation='lighter';
+  if(morphT<1){
+    ctx.globalAlpha=a*(1-eMorph);ctx.drawImage(glow(p.colFrom),x-R,y-R,d,d);
+    ctx.globalAlpha=a*eMorph;ctx.drawImage(glow(p.colTo),x-R,y-R,d,d);
+  }else{
+    ctx.globalAlpha=a;ctx.drawImage(glow(p.colTo),x-R,y-R,d,d);
+  }
+  // note boost overlay
+  const bo=boosts[p.tier];
+  if(bo.str>0.01&&bo.color){
+    ctx.globalAlpha=a*bo.str*1.7;
+    const rr=R*(1+bo.str*0.25);
+    ctx.drawImage(glow(bo.color),x-rr,y-rr,rr*2,rr*2);
+  }
+}
+
+function renderFrame(){
+  const t=elapsed;
+  const eMorph=morphT<1?easeIO(morphT):1;
+  // trail fade
+  ctx.globalCompositeOperation='source-over';
+  ctx.globalAlpha=1;
+  ctx.fillStyle=`rgba(${stage.r},${stage.g},${stage.b},${displayMotion.trail})`;
+  ctx.fillRect(0,0,W,H);
+  // draw base -> heart -> top
+  for(const p of particles)if(p.tier==='base')drawParticle(p,eMorph,t);
+  for(const p of particles)if(p.tier==='heart')drawParticle(p,eMorph,t);
+  for(const p of particles)if(p.tier==='top')drawParticle(p,eMorph,t);
+  ctx.globalAlpha=1;
+}
+
+function frame(now){
+  if(!running)return;
+  const dt=Math.min(0.05,(now-lastT)/1000||0.016);lastT=now;
+  step(dt);
+  renderFrame();
+  requestAnimationFrame(frame);
+}
+
+function renderStatic(){
+  // beautiful settled frame for reduced-motion
+  ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
+  ctx.fillStyle='#0b0a09';ctx.fillRect(0,0,W,H);
+  // settle
+  elapsed=6.5;
+  for(let s=0;s<220;s++)step(0.05);
+  morphT=1;
+  const t=elapsed;
+  for(let pass=0;pass<3;pass++){
+    for(const p of particles)if(p.tier==='base')drawStatic(p,t,1.1);
+  }
+  for(const p of particles)if(p.tier==='heart')drawStatic(p,t,1.25);
+  for(const p of particles)if(p.tier==='top')drawStatic(p,t,1.4);
+  ctx.globalAlpha=1;
+}
+function drawStatic(p,t,boost){
+  const m=displayMotion[p.tier];
+  const bloom=1+m.bloom*Math.sin(t*m.bspd+p.phase);
+  const R=(m.rmin+(m.rmax-m.rmin)*p.rr)*MIN*bloom;
+  if(R<0.5)return;
+  const a=m.alpha*boost;const x=p.nx*W,y=p.ny*H,d=R*2;
+  ctx.globalCompositeOperation='lighter';ctx.globalAlpha=a;
+  ctx.drawImage(glow(p.colTo),x-R,y-R,d,d);
+}
+
+/* ---------------- selection / DOM ---------------- */
+const root=document.documentElement;
+function applyAccent(f){
+  root.style.setProperty('--accent',f.accent);
+  root.style.setProperty('--accent-glow',f.accentGlow);
+  root.style.setProperty('--accent-line',f.accentLine);
+  root.style.setProperty('--accent-soft',f.accentSoft);
+  document.querySelector('#liqG .liq-stop-a').setAttribute('stop-color',f.accent);
+  const stops=document.querySelectorAll('#liqG stop');
+  if(stops[1])stops[1].setAttribute('stop-color',f.accent);
+}
+
+const $=s=>document.querySelector(s);
+const notesTop=$('#notesTop'),notesHeart=$('#notesHeart'),notesBase=$('#notesBase');
+const heldNotes=new Set();
+
+function buildNotes(f){
+  heldNotes.clear();
+  for(const k in boosts){boosts[k].tgt=0;boosts[k].str=REDUCED?0:boosts[k].str;boosts[k].color=null;}
+  const map={top:notesTop,heart:notesHeart,base:notesBase};
+  for(const tier of ['top','heart','base']){
+    const box=map[tier];box.innerHTML='';
+    f.notes[tier].forEach(([nm,col])=>{
+      const b=document.createElement('button');
+      b.className='note';b.type='button';b.setAttribute('aria-pressed','false');
+      b.style.setProperty('--nc',col);
+      b.innerHTML=`<span class="nd"></span>${nm}`;
+      const on=()=>{boosts[tier].color=col;boosts[tier].tgt=1;if(REDUCED)renderStatic();};
+      const off=()=>{ if(!hasHeldInTier(tier)){boosts[tier].tgt=0;} else {applyHeld(tier);} if(REDUCED)renderStatic();};
+      b.addEventListener('pointerenter',on);
+      b.addEventListener('focus',on);
+      b.addEventListener('pointerleave',off);
+      b.addEventListener('blur',off);
+      b.addEventListener('click',()=>{
+        const key=tier+'|'+nm;const pressed=heldNotes.has(key);
+        if(pressed){heldNotes.delete(key);b.setAttribute('aria-pressed','false');
+          if(!hasHeldInTier(tier)){boosts[tier].tgt=0;}else applyHeld(tier);}
+        else{heldNotes.add(key);b.setAttribute('aria-pressed','true');boosts[tier].color=col;boosts[tier].tgt=1;}
+        if(REDUCED)renderStatic();
+      });
+      box.appendChild(b);
+    });
+  }
+}
+function hasHeldInTier(tier){for(const k of heldNotes)if(k.startsWith(tier+'|'))return true;return false;}
+function applyHeld(tier){
+  // set boost color to last held note of this tier
+  let last=null;heldNotes.forEach(k=>{if(k.startsWith(tier+'|'))last=k;});
+  if(last){const nm=last.split('|')[1];const f=FRAG[curIndex];
+    const found=f.notes[tier].find(n=>n[0]===nm);if(found){boosts[tier].color=found[1];boosts[tier].tgt=1;}}
+}
+
+/* gauges */
+const ARC_LEN=2*Math.PI*40*0.75; // 270deg, r=40
+function gaugeSVG(id){
+  return `<svg viewBox="0 0 100 90" aria-hidden="true">
+    <path class="trk" d="M21.72 78.28 A40 40 0 1 1 78.28 78.28"/>
+    <path class="val" id="${id}v" d="M21.72 78.28 A40 40 0 1 1 78.28 78.28"
+      stroke-dasharray="${ARC_LEN.toFixed(1)}" stroke-dashoffset="${ARC_LEN.toFixed(1)}"/>
+    <text class="ctr" x="50" y="54" text-anchor="middle" id="${id}c">–</text>
+    <text class="cap2" x="50" y="72" text-anchor="middle" id="${id}k"></text>
+  </svg><div class="word" id="${id}w"></div>`;
+}
+$('#gaugeSil').innerHTML=gaugeSVG('gs');
+$('#gaugeLon').innerHTML=gaugeSVG('gl');
+function setGauge(pre,data,label){
+  const v=document.getElementById(pre+'v');
+  v.style.strokeDashoffset=(ARC_LEN*(1-data.v)).toFixed(1);
+  document.getElementById(pre+'c').textContent=data.c;
+  document.getElementById(pre+'k').textContent=label;
+  document.getElementById(pre+'w').textContent=data.w;
+}
+
+/* build collection cards */
+const fragList=$('#fragList');
+FRAG.forEach((f,i)=>{
+  const b=document.createElement('button');
+  b.className='frag';b.type='button';b.setAttribute('role','tab');
+  b.setAttribute('aria-current',i===0?'true':'false');
+  b.style.setProperty('--fa',f.accent);
+  b.innerHTML=`<div class="txt"><span class="op">${f.op}</span></div>
+    <span class="nm">${f.name}</span>
+    <span class="ds cap">${f.tag}</span>
+    <span class="swatch"></span>`;
+  b.addEventListener('click',()=>select(i));
+  fragList.appendChild(b);
+});
+const cards=[...fragList.children];
+
+const dLeft=$('#dLeft');
+function fillDetail(f){
+  $('#dOp').textContent=f.op;
+  $('#dName').textContent=f.name;
+  $('#dSub').textContent=f.sub;
+  $('#dStory').textContent=f.story;
+  $('#detailLabel').textContent=f.name+' — '+f.tag;
+  $('#dMeta').innerHTML=f.meta.map(([k,v])=>`<div class="mi"><div class="k cap">${k}</div><div class="v">${v}</div></div>`).join('');
+  $('#nowName').textContent=f.name;
+  $('#flaconName').textContent=f.name;
+  $('#flaconLine').textContent=f.flaconLine;
+  $('#flaconOp').textContent=(f.op.replace('Opus','OP.'))+' · '+f.name.toUpperCase();
+  buildNotes(f);
+  setGauge('gs',f.sil,'Sillage');
+  setGauge('gl',f.lon,'Longévité');
+}
+
+function select(i,instant){
+  if(i===curIndex&&!instant)return;
+  const prev=curIndex;curIndex=i;const f=FRAG[i];
+  cards.forEach((c,ci)=>c.setAttribute('aria-current',ci===i?'true':'false'));
+  applyAccent(f);
+  // detail swap with fade
+  if(!instant&&!REDUCED){
+    dLeft.classList.add('swapping');
+    setTimeout(()=>{fillDetail(f);dLeft.classList.remove('swapping');},260);
+  }else{
+    fillDetail(f);
+  }
+  // morph particles
+  morphFrom=clone(displayMotion);morphTo=clone(f.motion);
+  morphStart=performance.now();morphT=REDUCED?1:0.0001;
+  pickColors(i);
+  if(REDUCED){displayMotion=clone(f.motion);renderStatic();}
+}
+
+/* ---------------- boot ---------------- */
+function boot(){
+  resize();
+  initParticles();
+  const params=new URLSearchParams(location.search);
+  let start=0;
+  if(params.has('scent')){start=clamp((parseInt(params.get('scent'),10)||1)-1,0,FRAG.length-1);}
+  curIndex=start;
+  applyAccent(FRAG[start]);
+  fillDetail(FRAG[start]);
+  cards.forEach((c,ci)=>c.setAttribute('aria-current',ci===start?'true':'false'));
+  displayMotion=clone(FRAG[start].motion);
+  pickColors(start);morphT=1;
+  if(REDUCED){renderStatic();}
+  else{running=true;lastT=performance.now();requestAnimationFrame(frame);}
+}
+
+/* resize (debounced) */
+let rz;
+window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{
+  const oldMob=particles.length;resize();
+  const mobile=window.innerWidth<720;
+  const want=(mobile?60:118)+(mobile?24:42)+(mobile?7:11);
+  if(Math.abs(particles.length-want)>4){initParticles();pickColors(curIndex);morphT=1;}
+  if(REDUCED)renderStatic();
+},220);});
+
+/* pause when hidden */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){running=false;}
+  else if(!REDUCED&&!running){running=true;lastT=performance.now();requestAnimationFrame(frame);}
+});
+
+/* reveal on scroll */
+if(!REDUCED){
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+}else{document.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));}
+
+/* custom cursor (fine pointer only) */
+if(!REDUCED&&matchMedia('(pointer:fine)').matches){
+  const cur=document.getElementById('cursor');
+  let cx=innerWidth/2,cy=innerHeight/2,tx=cx,ty=cy;
+  window.addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;cur.style.opacity='1';},{passive:true});
+  window.addEventListener('pointerdown',()=>{cur.style.transform='translate('+tx+'px,'+ty+'px) scale(1.6)';});
+  window.addEventListener('pointerup',()=>{cur.style.transform='translate('+tx+'px,'+ty+'px) scale(1)';});
+  (function loop(){cx+=(tx-cx)*0.22;cy+=(ty-cy)*0.22;cur.style.transform='translate('+cx+'px,'+cy+'px)';requestAnimationFrame(loop);})();
+}
+
+/* start flacon glint (motion-safe) */
+if(!REDUCED){document.querySelector('.flacon .glint').style.animation='glint 6.5s cubic-bezier(.7,0,.3,1) infinite';}
+
+/* deepen veil once past hero so content stays legible over the cloud */
+const veilEl=document.getElementById('veil');
+const markEl=document.getElementById('mark');
+let ticking=false;
+function onScroll(){
+  if(ticking)return;ticking=true;
+  requestAnimationFrame(()=>{
+    const y=window.scrollY;
+    veilEl.classList.toggle('deep',y>window.innerHeight*0.62);
+    markEl.classList.toggle('fade',y>window.innerHeight*2.35);
+    ticking=false;
+  });
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+boot();
+
+/* optional scroll jump for screenshots: ?y=<px> */
+(function(){const p=new URLSearchParams(location.search);if(p.has('y')){const y=parseInt(p.get('y'),10)||0;setTimeout(()=>{window.scrollTo(0,y);onScroll();},420);}})();
+</script>
+</body>
+</html>

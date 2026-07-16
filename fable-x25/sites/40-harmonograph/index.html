@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARMONOGRAPH — a Victorian drawing machine</title>
+<meta name="description" content="A simulated pendulum harmonograph. Set four brass frequency dials, two phases and the damping, and watch a single fine ink line trace a drifting Lissajous rosette across aged paper — spiralling slowly to stillness, exactly as the real 1844 instrument did.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="HARMONOGRAPH — a Victorian drawing machine">
+<meta property="og:description" content="A simulated pendulum harmonograph. Four brass dials, two phases, one fine ink line — a drifting Lissajous rosette drawn live on aged paper, spiralling to stillness.">
+<meta property="og:url" content="https://fablex25.netlify.app/sites/40-harmonograph/">
+<meta property="og:image" content="https://fablex25.netlify.app/sites/40-harmonograph/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HARMONOGRAPH — a Victorian drawing machine">
+<meta name="twitter:description" content="Four brass dials, one fine ink line — a drifting rosette drawn live on aged paper.">
+<meta name="twitter:image" content="https://fablex25.netlify.app/sites/40-harmonograph/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#efe8d6;
+  --paper-2:#e8dfc7;
+  --paper-3:#e0d5b9;
+  --paper-edge:#d8cba9;
+  --ink:#382a19;
+  --ink-2:#5a4832;
+  --ink-soft:#6e5b41;
+  --ink-faint:rgba(56,42,25,.52);
+  --sepia:#5a3a22;
+  --indigo:#27324e;
+  --brass:#b08d57;
+  --brass-lo:#8a6a37;
+  --brass-dk:#6d5228;
+  --brass-hi:#e9d4a0;
+  --brass-mid:#c7a468;
+  --line:rgba(90,63,32,.20);
+  --line-2:rgba(90,63,32,.34);
+  --shadow:rgba(58,40,18,.28);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--paper);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;position:relative;
+}
+/* page-wide paper grain + vignette so the whole sheet feels aged */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(120% 120% at 50% 0%, rgba(255,250,235,.5) 0%, transparent 44%),
+   radial-gradient(130% 130% at 50% 108%, rgba(112,78,36,.16) 0%, transparent 52%);
+}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");}
+
+::selection{background:rgba(176,141,87,.34);color:#2c2013}
+:focus-visible{outline:1.5px solid var(--brass-lo);outline-offset:3px;border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+sub,sup{font-size:.66em;line-height:0}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#e4dabf}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--brass-mid),var(--brass-lo));border-radius:11px;border:2px solid #e4dabf}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--brass-hi),var(--brass))}
+
+.mono{font-family:"Space Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.24em}
+
+/* scroll progress (a fine brass hairline) */
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;
+  background:linear-gradient(90deg,var(--brass-lo),var(--brass-hi));box-shadow:0 0 8px rgba(176,141,87,.6)}
+
+/* backlink */
+#backlink{position:fixed;top:20px;left:22px;z-index:55;font-size:10px;color:var(--ink-2);
+  transition:color .35s ease;display:flex;align-items:center;gap:8px}
+#backlink .mk{width:16px;height:16px;flex:none;color:var(--brass-lo);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+#backlink b{font-weight:600;color:var(--ink)}
+#backlink:hover{color:var(--ink)}
+#backlink:hover .mk{transform:rotate(140deg)}
+
+/* ============================ HERO ============================ */
+#hero{position:relative;z-index:2;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(50px,6vh,72px) clamp(16px,4vw,44px) clamp(22px,3vh,40px);gap:clamp(12px,1.8vh,22px)}
+
+.masthead{width:100%;max-width:1000px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.mh-left{display:flex;flex-direction:column;gap:9px}
+.kicker{font-family:"Space Mono";font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--brass-lo);
+  display:flex;align-items:center;gap:11px}
+.kicker::before{content:"";width:26px;height:1px;background:var(--brass-lo);opacity:.7}
+h1.title{font-weight:500;font-size:clamp(34px,6vw,64px);line-height:.92;letter-spacing:.01em;color:var(--ink)}
+.subtitle{font-size:clamp(12px,1.4vw,14px);font-weight:300;color:var(--ink-soft);letter-spacing:.01em;max-width:34ch}
+.mh-right{text-align:right;flex:none}
+.ratio-lab{font-family:"Space Mono";font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:5px}
+.ratio-big{font-family:"Space Grotesk";font-weight:400;font-size:clamp(30px,4.6vw,50px);line-height:1;color:var(--ink);
+  letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ratio-big .col{color:var(--brass-lo);margin:0 .06em;font-weight:300}
+.ratio-big .approx{color:var(--ink-faint);font-size:.5em;vertical-align:.35em;margin-right:.1em}
+
+/* ---- the plate ---- */
+.plate-wrap{position:relative;display:flex;flex-direction:column;align-items:center}
+.plate{position:relative;width:min(86vw,48vh,510px);aspect-ratio:1;
+  background:var(--paper);
+  padding:clamp(12px,2.4vw,20px);
+  border:1px solid var(--paper-edge);
+  box-shadow:
+   0 1px 0 rgba(255,250,238,.7) inset,
+   0 22px 46px -26px var(--shadow),
+   0 3px 10px -6px var(--shadow);
+}
+/* engraved double platemark */
+.plate::before{content:"";position:absolute;inset:clamp(7px,1.4vw,12px);pointer-events:none;
+  border:1px solid rgba(90,63,32,.32);
+  box-shadow:0 0 0 1px rgba(255,248,232,.5), inset 0 0 26px -10px rgba(90,63,32,.3)}
+.plate::after{content:"";position:absolute;inset:clamp(11px,2vw,17px);pointer-events:none;
+  border:1px solid rgba(90,63,32,.14)}
+.plate .corner{position:absolute;width:15px;height:15px;z-index:3;pointer-events:none;color:var(--brass-lo);opacity:.72}
+.plate .corner.tl{top:6px;left:6px}
+.plate .corner.tr{top:6px;right:6px;transform:scaleX(-1)}
+.plate .corner.bl{bottom:6px;left:6px;transform:scaleY(-1)}
+.plate .corner.br{bottom:6px;right:6px;transform:scale(-1,-1)}
+.sheet{position:relative;width:100%;aspect-ratio:1}
+#plate,#pentip{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:1px}
+#plate{cursor:crosshair}
+#pentip{pointer-events:none}
+
+/* caption bar beneath the sheet */
+.caption{width:min(86vw,48vh,510px);margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:14px;
+  font-family:"Space Mono";font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint)}
+.caption b{color:var(--ink-2);font-weight:400}
+.caption .status{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.caption .dot{width:6px;height:6px;border-radius:50%;background:var(--brass-lo);opacity:.35}
+.caption .status.live .dot{opacity:1;animation:pulse 1.3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+
+/* ============================ CONSOLE ============================ */
+.console{width:100%;max-width:1000px;
+  display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px 8px;
+  padding:clamp(11px,1.6vh,16px) clamp(10px,1.4vw,16px);
+  background:linear-gradient(180deg,rgba(255,251,240,.55),rgba(216,203,169,.28));
+  border:1px solid var(--paper-edge);border-radius:4px;
+  box-shadow:inset 0 1px 0 rgba(255,252,244,.7), inset 0 -8px 22px -16px rgba(90,63,32,.4), 0 10px 30px -22px var(--shadow)}
+.cgroup{display:flex;flex-direction:column;gap:9px;padding:2px 10px;position:relative}
+.cgroup + .cgroup::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(180deg,transparent,var(--line-2),transparent)}
+.cglabel{font-family:"Space Mono";font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass-lo);text-align:center}
+.knobs{display:flex;gap:12px;align-items:flex-start}
+.penrow{display:flex;gap:14px;align-items:center}
+
+/* ---- brass knob ---- */
+.knobcell{display:flex;flex-direction:column;align-items:center;gap:5px;width:56px}
+.knob{position:relative;width:46px;height:46px;border-radius:50%;cursor:ns-resize;touch-action:none;
+  background:
+   radial-gradient(circle at 38% 30%, #f0dbac 0%, #d3af6d 22%, #b28c50 52%, #8a6a37 82%, #6d5228 100%);
+  box-shadow:0 2px 5px rgba(48,32,12,.42), inset 0 1px 2px rgba(255,244,214,.85), inset 0 -3px 6px rgba(70,48,20,.5);
+  border:1px solid #5f481f;transition:box-shadow .2s ease}
+.knob:hover{box-shadow:0 3px 8px rgba(48,32,12,.5), inset 0 1px 2px rgba(255,244,214,.9), inset 0 -3px 6px rgba(70,48,20,.5)}
+.knob:focus-visible{outline:1.5px solid var(--brass-lo);outline-offset:4px}
+.knob::before{content:"";position:absolute;inset:8px;border-radius:50%;
+  background:radial-gradient(circle at 40% 34%, #f4e2b4 0%, #cca665 62%, #9c7a3e 100%);
+  box-shadow:inset 0 1px 2px rgba(255,247,220,.85), inset 0 -2px 4px rgba(64,42,16,.5)}
+.knob::after{content:"";position:absolute;inset:-8px;border-radius:50%;pointer-events:none;opacity:.6;
+  background:repeating-conic-gradient(from -137deg, var(--brass-dk) 0deg 1.4deg, transparent 1.4deg 12.85deg);
+  -webkit-mask:radial-gradient(circle, transparent 0 63%, #000 65% 74%, transparent 76%);
+          mask:radial-gradient(circle, transparent 0 63%, #000 65% 74%, transparent 76%)}
+.knob-rot{position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;transition:transform .09s ease-out}
+.knob-notch{position:absolute;left:50%;top:5px;width:3px;height:11px;margin-left:-1.5px;border-radius:2px;
+  background:linear-gradient(#3a2a12,#1f1608);box-shadow:0 0 3px rgba(255,236,190,.7)}
+.knob-name{font-size:9px;letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase}
+.knob-val{font-size:10px;color:var(--ink);font-variant-numeric:tabular-nums;min-height:13px}
+
+/* ---- pen swatches ---- */
+.swatches{display:flex;gap:7px}
+.swatch{width:20px;height:20px;border-radius:50%;position:relative;cursor:pointer;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.28), 0 1px 3px rgba(48,32,12,.4);
+  border:1px solid rgba(30,20,8,.35);transition:transform .18s ease}
+.swatch:hover{transform:scale(1.12)}
+.swatch[aria-pressed="true"]{transform:scale(1.05)}
+.swatch[aria-pressed="true"]::after{content:"";position:absolute;inset:-4px;border-radius:50%;
+  border:1.5px solid var(--brass-lo);box-shadow:0 0 8px rgba(176,141,87,.5)}
+
+/* ---- action buttons ---- */
+.actions{justify-content:center}
+.btns{display:flex;flex-direction:column;gap:7px}
+.brassbtn{font-family:"Space Mono";font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  padding:8px 15px;border-radius:3px;white-space:nowrap;transition:all .22s ease;
+  color:#3a2a12;font-weight:700;
+  background:linear-gradient(180deg,#e6cf96 0%,#cba86a 42%,#b08d57 100%);
+  border:1px solid #7d6033;box-shadow:inset 0 1px 1px rgba(255,247,220,.8), 0 2px 5px -2px rgba(58,40,18,.5)}
+.brassbtn:hover{background:linear-gradient(180deg,#f2dda8 0%,#d6b478 42%,#bd9a62 100%);transform:translateY(-1px);
+  box-shadow:inset 0 1px 1px rgba(255,247,220,.9), 0 4px 9px -3px rgba(58,40,18,.55)}
+.brassbtn:active{transform:translateY(0);box-shadow:inset 0 1px 3px rgba(70,48,20,.5)}
+.brassbtn.ghost{background:transparent;color:var(--ink-2);font-weight:400;
+  border:1px solid var(--line-2);box-shadow:none}
+.brassbtn.ghost:hover{background:rgba(176,141,87,.12);color:var(--ink);border-color:var(--brass-lo);transform:translateY(-1px);box-shadow:none}
+
+.hint{width:100%;max-width:1000px;text-align:center;font-family:"Space Mono";font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-faint);margin-top:-2px}
+
+/* ============================ SCROLL CONTENT ============================ */
+main{position:relative;z-index:2}
+.section{position:relative;padding:clamp(72px,13vh,150px) clamp(20px,7vw,120px);max-width:1180px;margin:0 auto}
+.section.rule{border-top:1px solid var(--line)}
+.kick{font-family:"Space Mono";font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass-lo);
+  margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.kick::before{content:"";width:30px;height:1px;background:var(--brass-lo);opacity:.7}
+.section h2{font-weight:400;font-size:clamp(28px,5vw,54px);line-height:1.04;letter-spacing:-.01em;color:var(--ink);max-width:17ch}
+.section h2 em{font-style:italic;color:var(--sepia)}
+.lede{margin-top:28px;max-width:60ch;font-size:clamp(16px,2vw,20px);font-weight:300;line-height:1.6;color:var(--ink-2)}
+.body{margin-top:48px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 56px;max-width:940px}
+.body p{font-size:clamp(14px,1.5vw,16px);font-weight:300;line-height:1.72;color:var(--ink-soft)}
+.body p b{color:var(--ink);font-weight:500}
+.body p .sep{color:var(--sepia);font-weight:500}
+.body p .ind{color:var(--indigo);font-weight:500}
+
+/* equation card */
+.eqcard{margin-top:44px;max-width:820px;padding:clamp(22px,3vw,34px) clamp(20px,3vw,38px);
+  background:linear-gradient(180deg,rgba(255,251,240,.6),rgba(216,203,169,.2));
+  border:1px solid var(--paper-edge);border-radius:4px;position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,252,244,.7), 0 14px 34px -26px var(--shadow)}
+.eqcard::before{content:"";position:absolute;inset:7px;border:1px solid rgba(90,63,32,.16);pointer-events:none;border-radius:2px}
+.eq{font-family:"Space Mono";font-size:clamp(13px,1.9vw,18px);line-height:2.1;color:var(--ink);position:relative;z-index:1;
+  overflow-x:auto}
+.eq .ln{white-space:nowrap}
+.eq .fn{color:var(--sepia);font-weight:700}
+.eq .fn.y{color:var(--indigo)}
+.eq .dim{color:var(--ink-faint)}
+.eqnote{margin-top:20px;font-size:13px;font-weight:300;line-height:1.7;color:var(--ink-soft);max-width:70ch}
+.eqnote b{color:var(--ink);font-weight:500}
+
+/* mini plates */
+.minis{margin-top:56px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:940px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:11px}
+.mini .frame{width:100%;aspect-ratio:1;background:var(--paper);border:1px solid var(--paper-edge);padding:8px;
+  box-shadow:inset 0 0 0 1px rgba(90,63,32,.14), 0 10px 24px -20px var(--shadow)}
+.mini canvas{width:100%;height:100%;display:block}
+.mini .cap2{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.mini .cap2 .col{color:var(--brass-lo)}
+.mini .nm{font-size:10px;letter-spacing:.06em;color:var(--ink-faint);text-transform:uppercase}
+
+/* pull quote */
+.quote{position:relative;z-index:2;text-align:center;padding:clamp(72px,13vh,150px) clamp(24px,8vw,140px);
+  border-top:1px solid var(--line)}
+.quote p{font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,40px);line-height:1.3;max-width:22ch;margin:0 auto;color:var(--ink)}
+.quote .att{font-family:"Space Mono";font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-top:30px;font-style:normal}
+
+/* footer */
+footer{position:relative;z-index:2;border-top:1px solid var(--line-2);
+  padding:clamp(60px,9vh,110px) clamp(20px,7vw,120px) 46px;max-width:1180px;margin:0 auto}
+footer .big{font-weight:500;font-size:clamp(40px,8.4vw,116px);line-height:.92;letter-spacing:0;color:var(--ink)}
+footer .meta{margin-top:40px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;
+  border-top:1px solid var(--line);padding-top:28px;
+  font-family:"Space Mono";font-size:11px;letter-spacing:.04em;color:var(--ink-faint)}
+footer .meta .col{display:flex;flex-direction:column;gap:8px}
+footer .meta b{color:var(--ink-2);font-weight:400}
+footer .meta a{color:var(--ink-soft);transition:color .3s}
+footer .meta a:hover{color:var(--brass-lo)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 1s ease,transform 1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============================ RESPONSIVE ============================ */
+@media (max-width:860px){
+  .masthead{flex-direction:column;align-items:flex-start;gap:14px}
+  .mh-right{text-align:left}
+  .body{grid-template-columns:1fr;gap:26px}
+  .minis{grid-template-columns:repeat(2,1fr);gap:18px}
+  .console{gap:12px 8px;padding:14px 10px}
+  .cgroup{padding:2px 8px}
+  .cgroup.actions{width:100%;flex-basis:100%}
+  .cgroup.actions .btns{flex-direction:row;justify-content:center;flex-wrap:wrap}
+}
+@media (max-width:480px){
+  #hero{padding-top:52px}
+  .knobcell{width:50px}
+  .knob{width:42px;height:42px}
+  .knobs{gap:9px}
+  .cgroup + .cgroup::before{display:none}
+  .ratio-big{font-size:clamp(26px,10vw,40px)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .knob-rot{transition:none}
+  .caption .status.live .dot{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div id="prog" aria-hidden="true"></div>
+
+<a id="backlink" href="/" aria-label="Back to the XAVIER FABLE ×50 gallery">
+  <svg class="mk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c-5 4-5 14 0 18 5-4 5-14 0-18zM3 12c4 5 14 5 18 0-4-5-14-5-18 0z"/></svg>
+  <span class="cap">XAVIER <b>FABLE</b> ×50</span>
+</a>
+
+<!-- ============================ HERO ============================ -->
+<header id="hero">
+  <div class="masthead">
+    <div class="mh-left">
+      <div class="kicker">No.40 · A Victorian drawing machine · est. 1844</div>
+      <h1 class="title">Harmonograph</h1>
+      <p class="subtitle">Four swinging pendulums, one steady pen. Set the dials and watch a single ink line draw the interference of two motions coming to rest.</p>
+    </div>
+    <div class="mh-right">
+      <div class="ratio-lab">Frequency ratio</div>
+      <div class="ratio-big" id="ratioBig">3<span class="col">:</span>2</div>
+    </div>
+  </div>
+
+  <div class="plate-wrap">
+    <div class="plate">
+      <svg class="corner tl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12V4h8M3 4l7 7"/></svg>
+      <svg class="corner tr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12V4h8M3 4l7 7"/></svg>
+      <svg class="corner bl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12V4h8M3 4l7 7"/></svg>
+      <svg class="corner br" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12V4h8M3 4l7 7"/></svg>
+      <div class="sheet">
+        <canvas id="plate" aria-label="Harmonograph plate — a fine ink Lissajous figure being drawn"></canvas>
+        <canvas id="pentip" aria-hidden="true"></canvas>
+      </div>
+    </div>
+    <div class="caption mono">
+      <span>Plate No.40 — <b id="seedLabel">seed 0000</b></span>
+      <span class="status" id="status"><span class="dot"></span><span id="statusText">at rest</span></span>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="console" id="console" role="group" aria-label="Harmonograph controls">
+    <div class="cgroup">
+      <div class="cglabel">Frequencies</div>
+      <div class="knobs" id="grpFreq"></div>
+    </div>
+    <div class="cgroup">
+      <div class="cglabel">Phase</div>
+      <div class="knobs" id="grpPhase"></div>
+    </div>
+    <div class="cgroup">
+      <div class="cglabel">Decay</div>
+      <div class="knobs" id="grpDecay"></div>
+    </div>
+    <div class="cgroup">
+      <div class="cglabel">Pen</div>
+      <div class="penrow">
+        <div class="swatches" id="swatches" role="group" aria-label="Ink colour"></div>
+        <div class="knobs" id="grpPen"></div>
+      </div>
+    </div>
+    <div class="cgroup actions">
+      <div class="cglabel">Plate</div>
+      <div class="btns">
+        <button id="newBtn" class="brassbtn" type="button">New plate</button>
+        <button id="redrawBtn" class="brassbtn ghost" type="button">Redraw</button>
+        <button id="saveBtn" class="brassbtn ghost" type="button">Save PNG</button>
+      </div>
+    </div>
+  </div>
+  <div class="hint">Turn the dials — drag up or down — to change the figure · New plate finds a fresh beautiful ratio</div>
+</header>
+
+<!-- ============================ CONTENT ============================ -->
+<main>
+  <section class="section rule">
+    <div class="kick reveal">The instrument · c. 1844</div>
+    <h2 class="reveal">A machine that draws the shape of a <em>fading sound</em>.</h2>
+    <p class="lede reveal">In the drawing rooms of Victorian Britain a harmonograph was a small table of swinging weights that held a pen against a moving sheet. You set it going, stepped back, and it drew — with no hand to guide it — the quiet mathematics of two motions slowly agreeing to stop.</p>
+    <div class="body">
+      <p class="reveal">The design is usually traced to <b>1844</b> and the <b>Blackburn pendulum</b> — a bob hung so it could swing in two directions at once. Later cabinetmakers and instrument-sellers turned the idea into a parlour amusement: brass, mahogany, and a pot of india ink.</p>
+      <p class="reveal">A <span class="sep">lateral</span> pendulum rocks the paper east and west. A second, <span class="ind">rotary</span> pendulum carries the pen north and south. The nib simply records their sum. Two honest swings, added together, become a figure no one could draw by hand.</p>
+      <p class="reveal">Because friction is always at work, each swing loses a little height with every pass. The loops tighten, the rosette draws inward, and after a minute or so the pen comes to rest at the centre — the whole performance <b>spiralling quietly to stillness</b>.</p>
+      <p class="reveal">No two plates are ever the same. The figure depends on how the weights were released, the phase between them, and a frequency ratio held <b>near</b>, but never exactly on, a simple fraction. That tiny imperfection is what makes the web slowly turn.</p>
+    </div>
+  </section>
+
+  <section class="section rule">
+    <div class="kick reveal">The mathematics</div>
+    <h2 class="reveal">Two sines, gently <em>dying</em>.</h2>
+    <p class="lede reveal">Strip away the brass and a harmonograph is four decaying sinusoids — two for each axis. The pen's position at time <span class="mono">t</span> is nothing more than their sum, multiplied by an envelope that fades with friction.</p>
+
+    <div class="eqcard reveal">
+      <div class="eq">
+        <div class="ln"><span class="fn">x</span>(t) = A<sub>1</sub> sin(f<sub>1</sub>t + φ<sub>1</sub>) e<sup>−δt</sup> <span class="dim">+</span> A<sub>2</sub> sin(f<sub>2</sub>t) e<sup>−δt</sup></div>
+        <div class="ln"><span class="fn y">y</span>(t) = A<sub>3</sub> sin(f<sub>3</sub>t + φ<sub>2</sub>) e<sup>−δt</sup> <span class="dim">+</span> A<sub>4</sub> sin(f<sub>4</sub>t) e<sup>−δt</sup></div>
+      </div>
+      <p class="eqnote">The pair of frequencies on each axis sets the <b>Lissajous</b> figure; the term <b>e<sup>−δt</sup></b> is the friction that bleeds the swing away; and holding f<sub>1</sub>:f<sub>3</sub> a hair off a whole ratio — say <b>3 : 2</b> — makes the rosette slowly <b>precess</b> into its drifting web.</p>
+    </div>
+
+    <div class="minis" id="minis"></div>
+  </section>
+
+  <section class="quote">
+    <p class="reveal">The figure is finished the moment the pendulums forget they were ever moving.</p>
+    <div class="att reveal">— a note from the drawing room, 1889</div>
+  </section>
+</main>
+
+<footer>
+  <div class="big reveal">Harmonograph</div>
+  <div class="meta">
+    <div class="col">
+      <b>A brass instrument in a Victorian drawing room.</b>
+      <span>Simulated lateral &amp; rotary pendulums · one continuous line</span>
+    </div>
+    <div class="col">
+      <span>x, y — each the sum of two decaying sinusoids</span>
+      <span>drawn live on aged paper, spiralling to rest</span>
+    </div>
+    <div class="col">
+      <span>Xavier Fable ×50 — plate No.40</span>
+      <a href="/">← back to the gallery</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================================
+   HARMONOGRAPH — a simulated pendulum harmonograph.
+   x,y each = sum of two decaying sinusoids (lateral + rotary pendulums).
+   The pen path is a single continuous fine ink line, traced live over ~18s,
+   its amplitude decaying (e^-δt) so the figure spirals inward to stillness.
+   ========================================================================= */
+
+const params = new URLSearchParams(location.search);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- ink palette ---------- */
+const PENS = [
+  { id:'sepia',     name:'Sepia',     c:'#5a3a22' },
+  { id:'indigo',    name:'Indigo',    c:'#27324e' },
+  { id:'iron',      name:'Iron gall', c:'#2b2a22' },
+  { id:'oxblood',   name:'Oxblood',   c:'#6e2f28' },
+  { id:'verdigris', name:'Verdigris', c:'#264f45' },
+];
+
+/* curated ratios that always read as a handsome rosette */
+const RATIOS = [[2,3],[3,2],[3,4],[4,3],[2,5],[5,2],[3,5],[5,3],[4,5],[5,4],[5,6],[6,5],[1,2],[2,1],[1,3],[3,1],[2,7],[3,7]];
+
+/* ---------- simulation constants ---------- */
+const N = 30000;          // samples along the pen path (fine, continuous)
+const T = 150;            // total simulated time (many oscillations → dense web)
+const DT = T / N;
+const BATCH = 40;         // segments per stroke() → self-crossings build ink density
+const INK_ALPHA = 0.38;   // translucent ink so retraced lines darken like a real nib
+const DRAW_MS = 30000;    // live-draw duration (~30s — the pen spiralling to rest is the show)
+
+/* ---------- seeded RNG ---------- */
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- state ---------- */
+let P = null;                 // current plate parameters
+let currentSeed = 0;
+const xs = new Float32Array(N+1), ys = new Float32Array(N+1);
+let maxAmp = 1.7;
+let Nend = N;                 // pen is lifted once the swing decays below TAIL (avoids an over-inked centre knot)
+const TAIL = 0.075;
+
+function genPlate(rng){
+  const [p,q] = RATIOS[Math.floor(rng()*RATIOS.length)];
+  // detune of ~0.04..0.08 → over T the companion precesses ~1 turn → the drifting web
+  const det = () => (rng()<0.5?-1:1) * (0.04 + rng()*0.04);
+  const vary = () => 1 + (rng()-0.5)*0.22;       // ±11% per-pendulum friction → pen rests off-centre
+  return {
+    f1:p, f2:p+det(), f3:q, f4:q+det(),
+    p1: rng()*Math.PI*2, p2:0, p3: rng()*Math.PI*2, p4:0,
+    d: 0.02 + rng()*0.016,                        // base decay 0.020 .. 0.036
+    dm1:vary(), dm2:vary(), dm3:vary(), dm4:vary(),
+    a1:1, a2:0.74, a3:1, a4:0.74,
+    ratioP:p, ratioQ:q,
+    pen: PENS[Math.floor(rng()*PENS.length)].id,
+    weight: 0.72 + rng()*0.3,
+  };
+}
+
+function computeFigure(){
+  const {f1,f2,f3,f4,p1,p2,p3,p4,d,dm1,dm2,dm3,dm4,a1,a2,a3,a4} = P;
+  const d1=d*dm1, d2=d*dm2, d3=d*dm3, d4=d*dm4;
+  let mx = 0;
+  for (let i=0;i<=N;i++){
+    const t = i*DT;
+    const x = a1*Math.sin(f1*t+p1)*Math.exp(-d1*t) + a2*Math.sin(f2*t+p2)*Math.exp(-d2*t);
+    const y = a3*Math.sin(f3*t+p3)*Math.exp(-d3*t) + a4*Math.sin(f4*t+p4)*Math.exp(-d4*t);
+    xs[i]=x; ys[i]=y;
+    const m = Math.max(Math.abs(x),Math.abs(y));
+    if (m>mx) mx=m;
+  }
+  maxAmp = Math.max(mx, 0.001);
+  // lift the pen once the slowest-decaying envelope falls below TAIL of full swing
+  const dMin = d * Math.min(dm1,dm2,dm3,dm4);
+  const tStop = -Math.log(TAIL) / dMin;
+  Nend = Math.max(2000, Math.min(N, Math.floor(tStop / DT)));
+}
+
+/* ---------- canvas / paper ---------- */
+const cv  = document.getElementById('plate');
+const ctx = cv.getContext('2d');
+const ov  = document.getElementById('pentip');
+const octx = ov.getContext('2d');
+let W=0, H=0, cx=0, cy=0, scale=1, dpr=1, grainPat=null;
+
+function buildGrain(){
+  const g = document.createElement('canvas'); g.width=g.height=140;
+  const gc = g.getContext('2d');
+  const img = gc.createImageData(140,140), d = img.data;
+  for (let i=0;i<d.length;i+=4){
+    d[i]=90; d[i+1]=63; d[i+2]=32; d[i+3]=Math.random()*22;
+  }
+  gc.putImageData(img,0,0);
+  grainPat = ctx.createPattern(g,'repeat');
+}
+
+function sizeCanvas(){
+  const rect = cv.getBoundingClientRect();
+  const css = Math.max(2, Math.round(rect.width));
+  dpr = Math.min(window.devicePixelRatio||1, 2);
+  const px = Math.round(css*dpr);
+  if (cv.width!==px){ cv.width=px; cv.height=px; ov.width=px; ov.height=px; }
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  octx.setTransform(dpr,0,0,dpr,0,0);
+  W = css; H = css; cx = css/2; cy = css/2;
+  scale = (css*0.5*0.9)/maxAmp;
+}
+
+function paintPaper(){
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.globalAlpha=1;
+  ctx.fillStyle='#efe8d6'; ctx.fillRect(0,0,W,H);
+  if (grainPat){ ctx.fillStyle=grainPat; ctx.fillRect(0,0,W,H); }
+  const vg = ctx.createRadialGradient(cx,cy,W*0.18,cx,cy,W*0.72);
+  vg.addColorStop(0,'rgba(0,0,0,0)');
+  vg.addColorStop(1,'rgba(74,50,24,0.12)');
+  ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+}
+
+function setInk(){
+  const pen = PENS.find(p=>p.id===P.pen) || PENS[0];
+  ctx.strokeStyle = pen.c;
+  ctx.lineWidth = P.weight;
+  ctx.lineJoin='round'; ctx.lineCap='round';
+  ctx.globalAlpha = INK_ALPHA;
+}
+
+function strokeChunks(a,b){
+  const s0 = Math.max(0,a);
+  for (let s=s0; s<b; s+=BATCH){
+    const e = Math.min(b, s+BATCH);
+    ctx.beginPath();
+    ctx.moveTo(cx+xs[s]*scale, cy-ys[s]*scale);
+    for (let i=s+1;i<=e;i++) ctx.lineTo(cx+xs[i]*scale, cy-ys[i]*scale);
+    ctx.stroke();
+  }
+}
+
+/* ---------- pen-tip overlay ---------- */
+function drawTip(idx){
+  octx.clearRect(0,0,W,H);
+  if (idx<=0 || idx>=Nend) return;
+  const px = cx+xs[idx]*scale, py = cy-ys[idx]*scale;
+  const g = octx.createRadialGradient(px,py,0,px,py,6);
+  g.addColorStop(0,'rgba(233,212,160,.95)');
+  g.addColorStop(.5,'rgba(176,141,87,.7)');
+  g.addColorStop(1,'rgba(176,141,87,0)');
+  octx.globalAlpha=1; octx.fillStyle=g;
+  octx.beginPath(); octx.arc(px,py,6,0,Math.PI*2); octx.fill();
+  octx.fillStyle='#3a2a12';
+  octx.beginPath(); octx.arc(px,py,1.4,0,Math.PI*2); octx.fill();
+}
+function clearTip(){ octx.clearRect(0,0,W,H); }
+
+/* ---------- render modes ---------- */
+let drawIndex = N;
+const anim = { running:false, wasAnimating:false, elapsed:0, last:0 };
+
+function renderFull(){
+  sizeCanvas();
+  paintPaper(); setInk();
+  strokeChunks(0, Nend);
+  ctx.globalAlpha=1;
+  drawIndex = Nend; clearTip();
+  setStatus(false);
+}
+
+function startAnim(){
+  if (reduced || params.has('done')){ renderFull(); return; }
+  cancelAnim();
+  sizeCanvas();
+  paintPaper(); setInk();
+  drawIndex = 0;
+  anim.elapsed = 0; anim.last = performance.now();
+  anim.running = true; anim.wasAnimating = true;
+  setStatus(true);
+  requestAnimationFrame(frame);
+}
+
+function frame(now){
+  if (!anim.running) return;
+  requestAnimationFrame(frame);
+  const dt = Math.min(60, now - anim.last); anim.last = now;
+  anim.elapsed += dt;
+  const prog = Math.min(1, anim.elapsed / DRAW_MS);
+  const target = Math.floor(prog * Nend);
+  if (target > drawIndex){
+    setInk();
+    strokeChunks(drawIndex, target);
+    ctx.globalAlpha=1;
+    drawIndex = target;
+    drawTip(drawIndex);
+  }
+  setStatus(true, prog);
+  if (prog >= 1){
+    anim.running=false; anim.wasAnimating=false;
+    drawIndex=Nend; clearTip(); setStatus(false);
+  }
+}
+
+function cancelAnim(){ anim.running=false; anim.wasAnimating=false; }
+
+/* commit any live draw to a finished static plate (on user interaction) */
+function finalizeToFull(){
+  if (anim.wasAnimating || drawIndex<Nend){ cancelAnim(); renderFull(); }
+}
+
+/* ---------- throttled live re-render for dial changes ---------- */
+let pendingRender=false;
+function requestRender(recompute){
+  cancelAnim();
+  if (recompute) computeFigure();
+  if (pendingRender) return;
+  pendingRender=true;
+  requestAnimationFrame(()=>{ pendingRender=false; renderFull(); });
+}
+
+/* ---------- status + ratio + caption ---------- */
+const statusEl = document.getElementById('status');
+const statusText = document.getElementById('statusText');
+const ratioBig = document.getElementById('ratioBig');
+const seedLabel = document.getElementById('seedLabel');
+
+function setStatus(live, prog){
+  if (live){
+    statusEl.classList.add('live');
+    statusText.textContent = 'drawing · ' + Math.round((prog||0)*100) + '%';
+  } else {
+    statusEl.classList.remove('live');
+    statusText.textContent = 'at rest';
+  }
+}
+
+function nearestRatio(r){
+  let best={p:1,q:1,e:1e9};
+  for (let q=1;q<=9;q++) for (let p=1;p<=9;p++){
+    const e=Math.abs(p/q - r);
+    if (e < best.e-1e-9) best={p,q,e};
+  }
+  return best;
+}
+function gcd(a,b){ return b?gcd(b,a%b):a; }
+function updateRatio(){
+  const r = P.f1 / P.f3;
+  const nr = nearestRatio(r);
+  const g = gcd(nr.p,nr.q) || 1;
+  const p = nr.p/g, q = nr.q/g;
+  const approx = nr.e > 0.012 ? '<span class="approx">≈</span>' : '';
+  ratioBig.innerHTML = approx + p + '<span class="col">:</span>' + q;
+}
+function updateSeed(){ seedLabel.textContent = 'seed ' + String(currentSeed % 10000).padStart(4,'0'); }
+
+/* ============================ KNOBS ============================ */
+const knobs = {};
+function makeKnob(container, cfg){
+  const cell = document.createElement('div'); cell.className='knobcell';
+  const knob = document.createElement('div');
+  knob.className='knob'; knob.tabIndex=0;
+  knob.setAttribute('role','slider');
+  knob.setAttribute('aria-label',cfg.aria||cfg.label);
+  knob.setAttribute('aria-valuemin',cfg.min);
+  knob.setAttribute('aria-valuemax',cfg.max);
+  const rot = document.createElement('div'); rot.className='knob-rot';
+  const notch = document.createElement('span'); notch.className='knob-notch';
+  rot.appendChild(notch); knob.appendChild(rot);
+  const name = document.createElement('div'); name.className='knob-name'; name.innerHTML=cfg.label;
+  const val = document.createElement('div'); val.className='knob-val mono';
+  cell.append(knob,name,val); container.appendChild(cell);
+
+  let value = cfg.value;
+  function frac(v){ return (v-cfg.min)/(cfg.max-cfg.min); }
+  function render(){
+    const f = frac(value);
+    rot.style.transform = 'rotate(' + (-135 + f*270) + 'deg)';
+    val.textContent = cfg.fmt(value);
+    knob.setAttribute('aria-valuenow', value.toFixed(3));
+    knob.setAttribute('aria-valuetext', cfg.fmt(value));
+  }
+  function set(v){ value = Math.min(cfg.max, Math.max(cfg.min, v)); render(); }
+  function commit(v){ set(v); cfg.onInput(value); }
+  render();
+
+  // pointer drag (vertical)
+  let dragging=false, startY=0, startVal=0;
+  knob.addEventListener('pointerdown', e=>{
+    dragging=true; startY=e.clientY; startVal=value;
+    knob.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  knob.addEventListener('pointermove', e=>{
+    if (!dragging) return;
+    const dv = (startY - e.clientY)/175 * (cfg.max-cfg.min);
+    commit(startVal + dv);
+  });
+  const end = ()=>{ dragging=false; };
+  knob.addEventListener('pointerup', end);
+  knob.addEventListener('pointercancel', end);
+  // wheel
+  knob.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const step=(cfg.max-cfg.min)/60 * (e.shiftKey?0.25:1);
+    commit(value + (e.deltaY<0?step:-step));
+  }, {passive:false});
+  // keyboard
+  knob.addEventListener('keydown', e=>{
+    const step=(cfg.max-cfg.min)/60;
+    let d=0;
+    if (e.key==='ArrowUp'||e.key==='ArrowRight') d=step;
+    else if (e.key==='ArrowDown'||e.key==='ArrowLeft') d=-step;
+    else if (e.key==='PageUp') d=step*8;
+    else if (e.key==='PageDown') d=-step*8;
+    else return;
+    e.preventDefault(); commit(value+d);
+  });
+
+  return { set, get:()=>value, el:knob };
+}
+
+const fmt2 = v=>v.toFixed(2);
+const fmtDeg = v=>Math.round(v*180/Math.PI % 360)+'°';
+const fmtD = v=>v.toFixed(3);
+
+/* frequencies */
+knobs.f1 = makeKnob(document.getElementById('grpFreq'), {label:'X<tspan>₁</tspan>'.replace(/<[^>]+>/g,''), aria:'X pendulum 1 frequency', min:0.5,max:7,value:2,fmt:fmt2, onInput:v=>{P.f1=v;updateRatio();requestRender(true);}});
+knobs.f2 = makeKnob(document.getElementById('grpFreq'), {label:'X₂', aria:'X pendulum 2 frequency', min:0.5,max:7,value:2,fmt:fmt2, onInput:v=>{P.f2=v;requestRender(true);}});
+knobs.f3 = makeKnob(document.getElementById('grpFreq'), {label:'Y₁', aria:'Y pendulum 1 frequency', min:0.5,max:7,value:3,fmt:fmt2, onInput:v=>{P.f3=v;updateRatio();requestRender(true);}});
+knobs.f4 = makeKnob(document.getElementById('grpFreq'), {label:'Y₂', aria:'Y pendulum 2 frequency', min:0.5,max:7,value:3,fmt:fmt2, onInput:v=>{P.f4=v;requestRender(true);}});
+/* fix X₁ label glyph */
+knobs.f1.el.parentElement.querySelector('.knob-name').textContent='X₁';
+
+/* phases */
+knobs.p1 = makeKnob(document.getElementById('grpPhase'), {label:'φX', aria:'X phase offset', min:0,max:Math.PI*2,value:0,fmt:fmtDeg, onInput:v=>{P.p1=v;requestRender(true);}});
+knobs.p3 = makeKnob(document.getElementById('grpPhase'), {label:'φY', aria:'Y phase offset', min:0,max:Math.PI*2,value:0,fmt:fmtDeg, onInput:v=>{P.p3=v;requestRender(true);}});
+
+/* damping */
+knobs.d = makeKnob(document.getElementById('grpDecay'), {label:'δ', aria:'Damping', min:0.012,max:0.09,value:0.04,fmt:fmtD, onInput:v=>{P.d=v;requestRender(true);}});
+
+/* pen weight */
+knobs.w = makeKnob(document.getElementById('grpPen'), {label:'nib', aria:'Pen weight', min:0.4,max:1.9,value:0.9,fmt:fmt2, onInput:v=>{P.weight=v;requestRender(false);}});
+
+/* swatches */
+const swWrap = document.getElementById('swatches');
+const swatchEls = {};
+PENS.forEach(pen=>{
+  const b=document.createElement('button');
+  b.className='swatch'; b.type='button';
+  b.style.background=pen.c; b.title=pen.name;
+  b.setAttribute('aria-label','Ink: '+pen.name);
+  b.setAttribute('aria-pressed','false');
+  b.addEventListener('click',()=>selectPen(pen.id));
+  swWrap.appendChild(b); swatchEls[pen.id]=b;
+});
+function selectPen(id){
+  P.pen=id;
+  Object.entries(swatchEls).forEach(([k,el])=>el.setAttribute('aria-pressed', k===id?'true':'false'));
+  requestRender(false);
+}
+
+/* reflect P into all controls (silent) */
+function applyParamsToUI(){
+  knobs.f1.set(P.f1); knobs.f2.set(P.f2); knobs.f3.set(P.f3); knobs.f4.set(P.f4);
+  knobs.p1.set(P.p1); knobs.p3.set(P.p3);
+  knobs.d.set(P.d); knobs.w.set(P.weight);
+  Object.entries(swatchEls).forEach(([k,el])=>el.setAttribute('aria-pressed', k===P.pen?'true':'false'));
+  updateRatio();
+}
+
+/* ============================ ACTIONS ============================ */
+function loadPlate(seed, animate){
+  currentSeed = seed>>>0;
+  P = genPlate(mulberry32(currentSeed));
+  applyParamsToUI();
+  updateSeed();
+  computeFigure();
+  if (animate) startAnim(); else renderFull();
+}
+
+document.getElementById('newBtn').addEventListener('click', ()=>{
+  loadPlate((Math.random()*4294967296)>>>0, true);
+});
+document.getElementById('redrawBtn').addEventListener('click', ()=>{
+  computeFigure(); startAnim();
+});
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+  finalizeToFull();
+  const a=document.createElement('a');
+  a.download = 'harmonograph_'+P.ratioP+'-'+P.ratioQ+'_seed'+String(currentSeed%10000).padStart(4,'0')+'.png';
+  a.href = cv.toDataURL('image/png');
+  a.click();
+});
+
+/* ============================ INIT ============================ */
+buildGrain();
+
+const seedParam = params.has('seed') ? (parseInt(params.get('seed'),10)>>>0) : ((Math.random()*4294967296)>>>0);
+const staticMode = params.has('done') || reduced;
+loadPlate(seedParam, !staticMode);
+
+/* resize */
+let rt=null;
+addEventListener('resize', ()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{ cancelAnim(); renderFull(); renderMinis(); }, 160);
+});
+
+/* pause rAF when tab hidden; resume the live draw if it was running */
+document.addEventListener('visibilitychange', ()=>{
+  if (document.hidden){ anim.running=false; }
+  else if (anim.wasAnimating && drawIndex<Nend){ anim.running=true; anim.last=performance.now(); requestAnimationFrame(frame); }
+});
+
+/* ============================ MINI PLATES ============================ */
+const MINI_SPECS = [
+  {p:2,q:3,name:'the vesica'},
+  {p:3,q:4,name:'the trefoil'},
+  {p:4,q:5,name:'the star'},
+  {p:5,q:6,name:'the web'},
+];
+const miniWrap = document.getElementById('minis');
+const miniCanvases = [];
+MINI_SPECS.forEach((s,i)=>{
+  const cell=document.createElement('div'); cell.className='mini reveal';
+  const frame=document.createElement('div'); frame.className='frame';
+  const c=document.createElement('canvas'); frame.appendChild(c);
+  const cap=document.createElement('div'); cap.className='cap2 mono';
+  cap.innerHTML=s.p+'<span class="col"> : </span>'+s.q;
+  const nm=document.createElement('div'); nm.className='nm'; nm.textContent=s.name;
+  cell.append(frame,cap,nm); miniWrap.appendChild(cell);
+  miniCanvases.push({c, spec:s, seed: 1000+i*137});
+});
+
+function renderMini(item){
+  const {c, spec, seed} = item;
+  const rect=c.getBoundingClientRect();
+  const css=Math.max(2,Math.round(rect.width));
+  const d=Math.min(window.devicePixelRatio||1,2);
+  c.width=css*d; c.height=css*d;
+  const g=c.getContext('2d');
+  g.setTransform(d,0,0,d,0,0);
+  g.fillStyle='#efe8d6'; g.fillRect(0,0,css,css);
+  const vg=g.createRadialGradient(css/2,css/2,css*0.15,css/2,css/2,css*0.7);
+  vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(74,50,24,0.1)');
+  g.fillStyle=vg; g.fillRect(0,0,css,css);
+
+  const rng=mulberry32(seed);
+  const det=()=>(rng()<0.5?-1:1)*(0.045+rng()*0.03);
+  const mp={f1:spec.p,f2:spec.p+det(),f3:spec.q,f4:spec.q+det(),
+    p1:rng()*Math.PI*2,p3:rng()*Math.PI*2,d:0.028+rng()*0.014,a1:1,a2:0.74,a3:1,a4:0.74};
+  const NM=12000, dtm=T/NM;
+  let mx=0; const mxs=new Float32Array(NM+1), mys=new Float32Array(NM+1);
+  for(let i=0;i<=NM;i++){
+    const t=i*dtm, e=Math.exp(-mp.d*t);
+    const x=(mp.a1*Math.sin(mp.f1*t+mp.p1)+mp.a2*Math.sin(mp.f2*t))*e;
+    const y=(mp.a3*Math.sin(mp.f3*t+mp.p3)+mp.a4*Math.sin(mp.f4*t))*e;
+    mxs[i]=x; mys[i]=y; const m=Math.max(Math.abs(x),Math.abs(y)); if(m>mx)mx=m;
+  }
+  const sc=(css*0.5*0.88)/Math.max(mx,0.001), ccx=css/2, ccy=css/2;
+  g.strokeStyle=(spec.p+spec.q)%2? '#27324e' : '#5a3a22';
+  g.lineWidth=0.55; g.lineJoin='round'; g.lineCap='round'; g.globalAlpha=0.4;
+  const nEnd=Math.min(NM, Math.floor((-Math.log(0.07)/mp.d)/dtm));
+  for(let s=0;s<nEnd;s+=BATCH){
+    const e=Math.min(nEnd,s+BATCH);
+    g.beginPath(); g.moveTo(ccx+mxs[s]*sc, ccy-mys[s]*sc);
+    for(let i=s+1;i<=e;i++) g.lineTo(ccx+mxs[i]*sc, ccy-mys[i]*sc);
+    g.stroke();
+  }
+  g.globalAlpha=1;
+}
+let minisDone=false;
+function renderMinis(){ miniCanvases.forEach(renderMini); minisDone=true; }
+
+/* ============================ REVEALS + PROGRESS + MINIS ============================ */
+if (!reduced && 'IntersectionObserver' in window){
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.14});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(i%4*60)+'ms'; io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+
+// render minis when their section nears the viewport (and once at load as a fallback)
+if ('IntersectionObserver' in window){
+  const mio=new IntersectionObserver((es)=>{
+    if (es.some(e=>e.isIntersecting) && !minisDone){ renderMinis(); mio.disconnect(); }
+  }, {rootMargin:'200px'});
+  mio.observe(miniWrap);
+}
+addEventListener('load', ()=>{ if(!minisDone) renderMinis(); });
+
+// deep-scroll for screenshots: ?scroll=0..1
+if (params.has('scroll')){
+  addEventListener('load', ()=>{
+    const f=Math.max(0,Math.min(1,+params.get('scroll')));
+    setTimeout(()=>scrollTo(0,(document.documentElement.scrollHeight-innerHeight)*f), 60);
+  });
+}
+
+const progEl=document.getElementById('prog');
+addEventListener('scroll', ()=>{
+  const h=document.documentElement.scrollHeight - innerHeight;
+  progEl.style.width = (h>0 ? (scrollY/h*100) : 0) + '%';
+}, {passive:true});
+
+})();
+</script>
+</body>
+</html>

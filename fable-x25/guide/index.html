@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How XAVIER FABLE ×35 was made — the guide</title>
-<meta name="description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued thirty-five websites autonomously — so you can do the same.">
+<title>How XAVIER FABLE ×50 was made — the guide</title>
+<meta name="description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued fifty websites autonomously — so you can do the same.">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="XAVIER FABLE ×35">
-<meta property="og:title" content="How XAVIER FABLE ×35 was made — the guide">
-<meta property="og:description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued thirty-five websites autonomously — so you can do the same.">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="How XAVIER FABLE ×50 was made — the guide">
+<meta property="og:description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued fifty websites autonomously — so you can do the same.">
 <meta property="og:url" content="https://xavierfable30.netlify.app/guide/">
 <meta property="og:image" content="https://xavierfable30.netlify.app/guide/assets/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="How XAVIER FABLE ×35 was made — the guide">
-<meta name="twitter:description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued thirty-five websites autonomously — so you can do the same.">
+<meta name="twitter:title" content="How XAVIER FABLE ×50 was made — the guide">
+<meta name="twitter:description" content="A full, honest walkthrough of how Claude Fable 5 designed, generated assets for, built and critiqued fifty websites autonomously — so you can do the same.">
 <meta name="twitter:image" content="https://xavierfable30.netlify.app/guide/assets/og.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,15 +100,15 @@ pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" id="prog" aria-hidden="true"></div>
 <div class="topbar" id="topbar">
-  <a class="mark" href="/">XAVIER FABLE <b>×35</b></a>
+  <a class="mark" href="/">XAVIER FABLE <b>×50</b></a>
   <a class="back" href="/">← BACK TO THE GALLERY</a>
 </div>
 
 <header class="h wrap">
   <div class="eyebrow">The Guide</div>
   <h1>How this was <em>made</em>.</h1>
-  <p class="sub">Thirty-five websites, designed and built end-to-end by one model, running autonomously. Here is the whole method — the pipeline, the prompts, the asset generation, the critique loop, and the one place a human had to touch the keyboard — so you can build your own.</p>
-  <div class="meta"><span>~1 SESSION</span><span>35 SITES + THIS GUIDE</span><span>43 GENERATED ASSETS</span><span>3 CRITIQUE PASSES EACH</span></div>
+  <p class="sub">Fifty websites, designed and built end-to-end by one model, running autonomously. Here is the whole method — the pipeline, the prompts, the asset generation, the critique loop, and the one place a human had to touch the keyboard — so you can build your own.</p>
+  <div class="meta"><span>~1 SESSION</span><span>50 SITES + THIS GUIDE</span><span>43 GENERATED ASSETS</span><span>3 CRITIQUE PASSES EACH</span></div>
 </header>
 
 <article class="wrap">
@@ -116,19 +116,19 @@ pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
   <p class="lead">The instruction was, roughly: <em>reference a showcase site, then build something like it — twenty-five fundamentally different websites, each a demonstration of design taste and technical range. Host them. Iterate three times on each. Don't ask me anything until it's done.</em></p>
   <p>What follows is exactly how that happened — including the parts that broke and how they were routed around. Nothing here is aspirational; it's the actual build.</p>
 
-  <h2><span class="no">01 — THE SHAPE</span>One site, thirty-five rooms</h2>
-  <p>Rather than thirty-five separate deployments, everything lives under a <b>single static site</b> on Netlify: a gallery homepage, a <code>/guide</code> route, and thirty-five self-contained sub-sites at <code>/sites/NN-slug/</code>. One link to share, one deploy pipeline, and no build step — every page is hand-written HTML/CSS/JS so nothing can fail to compile.</p>
+  <h2><span class="no">01 — THE SHAPE</span>One site, fifty rooms</h2>
+  <p>Rather than fifty separate deployments, everything lives under a <b>single static site</b> on Netlify: a gallery homepage, a <code>/guide</code> route, and fifty self-contained sub-sites at <code>/sites/NN-slug/</code>. One link to share, one deploy pipeline, and no build step — every page is hand-written HTML/CSS/JS so nothing can fail to compile.</p>
   <pre><code>fable-x25/
 ├── index.html          → the gallery (itself a showcase piece)
 ├── guide/index.html    → you are here
 └── sites/
     ├── 01-liquid-metal/index.html  (+ assets/)
     ├── 02-terrain/index.html
-    └── … ×35</code></pre>
+    └── … ×50</code></pre>
   <p>Each sub-site is fully independent — its own fonts, palette, and libraries loaded from CDNs (Three.js, GSAP) where needed. That isolation is what let dozens of them be built <b>in parallel</b> without stepping on each other.</p>
 
-  <h2><span class="no">02 — THE CONCEPTS</span>Thirty-five deliberately different worlds</h2>
-  <p>The hardest constraint was <b>"fundamentally different."</b> It's easy to make thirty-five variations of the same dark-hero-with-gradient template. So the concepts were spread across six families, forcing different techniques in each:</p>
+  <h2><span class="no">02 — THE CONCEPTS</span>Fifty deliberately different worlds</h2>
+  <p>The hardest constraint was <b>"fundamentally different."</b> It's easy to make fifty variations of the same dark-hero-with-gradient template. So the concepts were spread across six families, forcing different techniques in each:</p>
   <div class="stack">
     <div><span class="t">3D & WebGL</span>A raymarched chrome blob · a procedural mountain flyover · a 92k-particle solar system · a CSS-only paper crane.</div>
     <div><span class="t">Typography</span>Cursor-reactive variable fonts · a brutalist magazine · a clock written in words · a 3D-to-ASCII CRT renderer.</div>
@@ -138,8 +138,9 @@ pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
     <div><span class="t">Retro & play</span>Y2K liquid chrome · a Japanese tea house · a claymorphic bakery · a draggable architecture studio.</div>
     <div><span class="t">Wave II</span>A living boids ocean · poems ruled by physics · an infinite painted night train · a generated oracle deck · a working Keplerian orrery.</div>
     <div><span class="t">Wave III</span>An infinite ink handscroll · a rakeable zen garden · a Chinese paper-cutting studio · rain refracting on night glass · an aurora over a mirrored lake.</div>
+    <div><span class="t">Wave IV</span>A slime-mould network · reaction-diffusion coral · an n-body sandbox · a kaleidoscope · a harmonograph · a working watch movement · an audio-reactive visualiser · a type foundry · a coffee roaster · a hidden bar · a perfume, visualised · a repertory cinema · a star atlas · a globe of arcs · a golden-hour sea.</div>
   </div>
-  <p>The collection later grew by a <b>second wave of five</b> — each chosen to add a technique the first twenty-five didn't have: emergent simulation, a hand-rolled physics engine, procedural landscape painting, a ritual object built on generated artwork, and real astronomical computation. A <b>third wave of five</b> followed, three of them East-Asian in spirit — a procedurally painted Chinese ink handscroll, an interactive Japanese zen garden, a generative paper-cutting studio — beside a rain-on-glass refraction shader and an aurora. Same pipeline, same three-pass rule.</p>
+  <p>The collection later grew by a <b>second wave of five</b> — each chosen to add a technique the first twenty-five didn't have: emergent simulation, a hand-rolled physics engine, procedural landscape painting, a ritual object built on generated artwork, and real astronomical computation. A <b>third wave of five</b> followed, three of them East-Asian in spirit — a procedurally painted Chinese ink handscroll, an interactive Japanese zen garden, a generative paper-cutting studio — beside a rain-on-glass refraction shader and an aurora. A <b>fourth wave of fifteen</b> pushed further still: GPU simulations (slime mould, reaction-diffusion, an n-body sandbox), instruments (a kaleidoscope, a harmonograph, a working mechanical watch movement, an audio-reactive visualiser), fully hand-built brand worlds with no photography (a type foundry, a coffee roaster, a speakeasy, a perfume house, a repertory cinema), and three more from the sky and sea (a star atlas, a globe of arcs, a golden-hour ocean). Same pipeline, same three-pass rule.</p>
   <p>Each concept came with a <b>full art-direction brief</b>: a fictional brand and real copy (no lorem ipsum), an exact palette, a font pairing chosen for that world, and the specific technique it had to prove. A shared <code>BRIEF.md</code> held the non-negotiables — favicon, a back-link to the gallery, responsive at 390px and 1440px, zero console errors, motion that respects <code>prefers-reduced-motion</code>.</p>
 
   <h2><span class="no">03 — THE ASSETS</span>Generating imagery and motion</h2>
@@ -192,7 +193,7 @@ await page.screenshot({path:'pass2-desktop.png'});
 </article>
 
 <footer class="foot wrap">
-  <div class="big">Now go <em>look</em> at the thirty-five.</div>
+  <div class="big">Now go <em>look</em> at the fifty.</div>
   <a class="btn" href="/">ENTER THE GALLERY →</a>
 </footer>
 

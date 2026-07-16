@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE LUMEN — A Repertory Cinema</title>
+<meta name="description" content="THE LUMEN — a single-screen repertory cinema, est. 1974. Restorations, retrospectives and midnight programmes on 35mm and 4K. Autumn Season № 07: Ghosts on Celluloid.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="THE LUMEN — A Repertory Cinema">
+<meta property="og:description" content="A single-screen repertory cinema, est. 1974. Restorations, retrospectives and midnight programmes. Autumn Season № 07: Ghosts on Celluloid.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎞️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --black:#0a0908;
+  --char:#121010;
+  --char2:#1a1715;
+  --ink:#080706;
+  --amber:#f0a733;
+  --amber-hi:#ffd68a;
+  --amber-lo:#b9782a;
+  --accent:#e8402a;      /* season accent — Bass scarlet */
+  --accent-hi:#ff6a4d;
+  --cream:#ede3cf;
+  --cream-dim:#b6ab93;
+  --cream-faint:#7d7360;
+  --hair:rgba(237,227,207,.14);
+  --hair-amber:rgba(240,167,51,.30);
+  --display:'Anton',sans-serif;
+  --serif:'Playfair Display',serif;
+  --cond:'Archivo',sans-serif;
+  --ui:'Space Grotesk',sans-serif;
+  --ease:cubic-bezier(.19,1,.22,1);
+  --ease2:cubic-bezier(.7,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--black);
+  color:var(--cream);
+  font-family:var(--ui);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  cursor:none;
+}
+@media (hover:none),(pointer:coarse){ body{cursor:auto} }
+::selection{background:var(--accent);color:#fff}
+img{max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:none}
+@media (hover:none){ button{cursor:pointer} }
+
+/* scrollbar */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--amber-lo),var(--amber));border-radius:20px;border:2px solid var(--ink)}
+::-webkit-scrollbar-thumb:hover{background:var(--amber)}
+
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:2px}
+
+/* ============ GLOBAL FILM OVERLAYS ============ */
+#grain{position:fixed;inset:0;z-index:9000;pointer-events:none;mix-blend-mode:overlay;opacity:.5;image-rendering:pixelated}
+.vignette{position:fixed;inset:0;z-index:8998;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 42%,transparent 52%,rgba(0,0,0,.55) 100%);}
+.projglow{position:fixed;inset:0;z-index:8997;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(80% 55% at 50% -8%,rgba(240,167,51,.14),transparent 60%);}
+.scanline{position:fixed;inset:0;z-index:8996;pointer-events:none;opacity:.35;mix-blend-mode:soft-light;
+  background:repeating-linear-gradient(180deg,rgba(0,0,0,.0) 0 2px,rgba(0,0,0,.5) 2px 3px);}
+
+/* custom cursor */
+.cur{position:fixed;top:0;left:0;z-index:9500;width:26px;height:26px;margin:-13px 0 0 -13px;border:1.5px solid var(--amber);border-radius:50%;pointer-events:none;opacity:0;transition:width .25s var(--ease),height .25s var(--ease),background .25s,border-color .25s,opacity .3s;mix-blend-mode:difference}
+.cur.dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--amber);border-color:transparent}
+.cur.hot{width:46px;height:46px;margin:-23px 0 0 -23px;border-color:var(--accent-hi);background:rgba(232,64,42,.08)}
+@media (hover:none),(pointer:coarse){ .cur{display:none} }
+
+/* ============ BACK-LINK ============ */
+.backlink{position:fixed;top:16px;left:18px;z-index:9600;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:.26em;color:var(--cream-dim);
+  padding:7px 12px 7px 10px;border:1px solid var(--hair);border-radius:2px;background:rgba(8,7,6,.5);backdrop-filter:blur(6px);
+  transition:color .3s,border-color .3s,background .3s}
+.backlink::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:blip 2.4s infinite}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.35}}
+.backlink b{color:var(--amber);font-weight:700}
+.backlink:hover{color:var(--cream);border-color:var(--hair-amber);background:rgba(20,16,14,.8)}
+
+/* ============ HERO / TITLE SEQUENCE ============ */
+.hero{position:relative;height:100svh;min-height:600px;background:var(--ink);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.searchlight{position:absolute;top:-30vh;left:50%;width:70vw;height:170vh;transform-origin:top center;pointer-events:none;z-index:2;mix-blend-mode:screen;
+  background:conic-gradient(from 180deg at 50% 0,transparent 45.5%,rgba(240,167,51,.13) 49%,rgba(255,214,138,.20) 50%,rgba(240,167,51,.13) 51%,transparent 54.5%);
+  filter:blur(14px);will-change:transform}
+.shutter{position:absolute;left:0;width:100%;background:#000;z-index:6}
+.shutter.top{top:0;height:50%;transform-origin:top;box-shadow:0 1px 0 var(--hair-amber)}
+.shutter.bot{bottom:0;height:50%;transform-origin:bottom;box-shadow:0 -1px 0 var(--hair-amber)}
+.frame{position:relative;z-index:5;width:100%;max-width:1280px;padding:0 6vw;text-align:center;overflow:hidden}
+.frame::before,.frame::after{content:"";position:absolute;left:6vw;right:6vw;height:1px;background:linear-gradient(90deg,transparent,var(--hair-amber),transparent);opacity:0;transition:opacity 1s .8s}
+.ready .frame::before{top:0;opacity:1}
+.ready .frame::after{bottom:0;opacity:1}
+
+/* saul-bass sweeping bars */
+.bass{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.bass-bar{position:absolute;left:0;height:11%;width:100%}
+.bass-bar.b1{top:15%;background:var(--accent)}
+.bass-bar.b2{top:45%;background:var(--amber)}
+.bass-bar.b3{top:74%;background:var(--cream)}
+
+.kick{font-family:var(--ui);font-weight:600;font-size:clamp(9px,1vw,12.5px);letter-spacing:.42em;color:var(--amber);text-transform:uppercase;margin-bottom:clamp(14px,3vh,30px)}
+.title-wrap{position:relative;line-height:.82}
+.title{font-family:var(--display);text-transform:uppercase;color:var(--cream);
+  font-size:clamp(56px,14vw,200px);letter-spacing:.01em;text-shadow:0 0 60px rgba(240,167,51,.12)}
+.title .the{display:block;font-size:.26em;letter-spacing:.5em;color:var(--amber);text-shadow:none;margin-bottom:.15em;margin-left:.5em}
+.title .lumen{display:inline-block}
+.title .lumen span{display:inline-block}
+.tag{font-family:var(--serif);font-style:italic;font-size:clamp(15px,2.4vw,30px);color:var(--cream-dim);margin-top:clamp(16px,3.4vh,34px);letter-spacing:.01em}
+.tag b{color:var(--amber-hi);font-style:normal;font-weight:700}
+.sub{font-family:var(--ui);font-weight:500;font-size:clamp(9px,1.05vw,13px);letter-spacing:.34em;text-transform:uppercase;color:var(--cream-faint);margin-top:clamp(14px,2.6vh,26px)}
+.badge{display:inline-flex;align-items:center;gap:10px;margin-top:clamp(18px,3.2vh,34px);padding:8px 16px;border:1px solid var(--hair-amber);border-radius:2px;
+  font-family:var(--ui);font-weight:600;font-size:clamp(8.5px,.95vw,11px);letter-spacing:.28em;text-transform:uppercase;color:var(--amber)}
+.badge i{width:5px;height:5px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);font-style:normal}
+
+.scrollcue{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 4.5vh);left:50%;transform:translateX(-50%);z-index:7;
+  font-family:var(--ui);font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--cream-faint);display:flex;flex-direction:column;align-items:center;gap:9px}
+.scrollcue .l{width:1px;height:34px;background:linear-gradient(var(--amber),transparent);animation:pull 2.2s var(--ease) infinite}
+@keyframes pull{0%{transform:scaleY(.2);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(.2);transform-origin:bottom}}
+
+/* ============ SECTION SHELL ============ */
+.section{position:relative;z-index:5;padding:clamp(70px,11vh,140px) clamp(20px,6vw,110px)}
+.eyebrow{display:flex;align-items:center;gap:16px;font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--amber);margin-bottom:22px}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--amber)}
+.eyebrow .n{color:var(--cream-faint);margin-left:auto;font-size:10px;letter-spacing:.2em}
+.sec-head{font-family:var(--display);text-transform:uppercase;font-size:clamp(38px,7vw,104px);line-height:.9;color:var(--cream);letter-spacing:.005em}
+.sec-head em{font-style:normal;color:var(--accent)}
+.lede{max-width:640px;font-family:var(--serif);font-size:clamp(16px,1.9vw,23px);line-height:1.5;color:var(--cream-dim);margin-top:26px}
+
+.reveal{opacity:0;transform:translateY(38px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ NOW SHOWING / POSTERS ============ */
+#showing{border-top:1px solid var(--hair)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,2.4vw,40px);margin-top:clamp(46px,6vh,70px)}
+.film{transition:transform .5s var(--ease)}
+.poster{position:relative;aspect-ratio:2/3;border-radius:3px;overflow:hidden;isolation:isolate;
+  box-shadow:0 24px 60px -30px rgba(0,0,0,.9),0 0 0 1px rgba(0,0,0,.5);transition:transform .6s var(--ease),box-shadow .6s var(--ease)}
+.film:hover .poster{transform:translateY(-10px) scale(1.012);box-shadow:0 40px 90px -30px rgba(0,0,0,.95),0 0 0 1px var(--hair-amber)}
+.poster *{pointer-events:none}
+.p-tag{position:absolute;top:10px;right:10px;z-index:9;font-family:var(--ui);font-size:8.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,0,0,.55);background:rgba(255,255,255,.7);padding:4px 8px;border-radius:1px;mix-blend-mode:screen;opacity:.0;transition:opacity .5s}
+.film:hover .p-tag{opacity:.85}
+.caption{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)}
+.cap-title{font-family:var(--cond);font-weight:800;font-size:clamp(15px,1.5vw,19px);letter-spacing:.01em;text-transform:uppercase;color:var(--cream);transition:color .4s}
+.film:hover .cap-title{color:var(--amber-hi)}
+.cap-meta{font-family:var(--ui);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-faint);margin-top:6px}
+.cap-meta b{color:var(--cream-dim);font-weight:500}
+.cap-log{font-family:var(--serif);font-style:italic;font-size:13.5px;line-height:1.4;color:var(--cream-dim);margin-top:9px}
+
+/* poster art common */
+.pa{position:absolute;inset:0;overflow:hidden}
+.pa .cred{position:absolute;bottom:0;left:0;right:0;padding:11px 13px;font-family:var(--ui);font-size:7px;letter-spacing:.14em;line-height:1.5;text-transform:uppercase;opacity:.72}
+
+/* 1 · BRUTALIST — CONCRETE SUN */
+.pa1{background:linear-gradient(150deg,#c3bcad,#a49d8e 60%,#8f887a);color:#1b1815}
+.pa1 .sun{position:absolute;top:-13%;right:-15%;width:62%;aspect-ratio:1;border-radius:50%;background:#e8552a;box-shadow:inset -14px -18px 0 rgba(0,0,0,.16);transition:transform .8s var(--ease)}
+.pa1 .slab{position:absolute;left:0;bottom:34%;width:100%;height:15px;background:#161310}
+.pa1 .ttl{position:absolute;left:7%;bottom:15%;font-family:var(--cond);font-weight:900;font-size:clamp(30px,4.7vw,58px);line-height:.82;text-transform:uppercase;color:#161310;letter-spacing:-.01em}
+.pa1 .ttl .o{color:transparent;-webkit-text-stroke:2px #161310}
+.pa1 .yr{position:absolute;left:7%;top:7%;font-family:var(--cond);font-weight:900;font-size:13px;letter-spacing:.05em;color:#161310}
+.pa1 .cred{color:#161310;font-family:'Space Grotesk',monospace;opacity:.6}
+.film:hover .pa1 .sun{transform:rotate(28deg) scale(1.05)}
+
+/* 2 · DECO — THE GILDED HOUR */
+.pa2{background:radial-gradient(120% 90% at 50% 108%,#241a08,#0c0a07 62%);color:var(--amber-hi)}
+.pa2 .fan{position:absolute;left:50%;bottom:-6%;width:150%;height:90%;transform:translateX(-50%);
+  background:repeating-conic-gradient(from 90deg at 50% 100%,rgba(212,175,106,.0) 0 6deg,rgba(212,175,106,.16) 6deg 6.6deg);
+  -webkit-mask:radial-gradient(60% 100% at 50% 100%,#000 55%,transparent 78%);mask:radial-gradient(60% 100% at 50% 100%,#000 55%,transparent 78%);
+  transition:transform 1s var(--ease)}
+.pa2 .frame2{position:absolute;inset:8%;border:1px solid rgba(212,175,106,.4)}
+.pa2 .frame2::before{content:"";position:absolute;inset:5px;border:1px solid rgba(212,175,106,.22)}
+.pa2 .ttl{position:absolute;top:19%;left:0;right:0;text-align:center;font-family:var(--serif);font-weight:900;font-size:clamp(23px,3.3vw,40px);line-height:.98;text-transform:uppercase;color:var(--amber-hi);letter-spacing:.02em}
+.pa2 .ttl small{display:block;font-size:.42em;letter-spacing:.55em;color:var(--amber);margin-bottom:.4em}
+.pa2 .rule{position:absolute;left:22%;right:22%;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent);top:46%}
+.pa2 .orn{position:absolute;left:0;right:0;text-align:center;top:47.6%;font-size:11px;color:var(--amber)}
+.pa2 .cred{color:var(--amber);text-align:center}
+.film:hover .pa2 .fan{transform:translateX(-50%) scale(1.06)}
+
+/* 3 · NEON-NOIR — LAST CALL */
+.pa3{background:linear-gradient(180deg,#060609 55%,#0c0810 78%,#140a14);color:#eafcff}
+.pa3 .rain{position:absolute;inset:0;background:repeating-linear-gradient(74deg,rgba(120,200,220,.0) 0 22px,rgba(120,200,220,.06) 22px 23px);opacity:.6}
+.pa3 .refl{position:absolute;left:0;right:0;bottom:0;height:26%;background:linear-gradient(#0000,rgba(255,80,180,.10));mix-blend-mode:screen}
+.pa3 .neon{position:absolute;top:14%;left:0;right:0;text-align:center;font-family:var(--cond);font-weight:800;font-size:clamp(30px,4.6vw,56px);line-height:.9;text-transform:uppercase;letter-spacing:.02em;
+  color:#eafcff;text-shadow:0 0 4px #fff,0 0 14px #26e6ff,0 0 30px #1aa6ff}
+.pa3 .neon .m{display:block;color:#ffd6f2;text-shadow:0 0 4px #fff,0 0 16px #ff3ca0,0 0 34px #ff1a86;animation:flick 5s steps(1) infinite}
+@keyframes flick{0%,92%,96%,100%{opacity:1}93%,95%{opacity:.35}}
+.pa3 .bar{position:absolute;left:24%;right:24%;top:41%;height:2px;background:linear-gradient(90deg,transparent,#26e6ff 30%,#26e6ff 70%,transparent);box-shadow:0 0 12px #26e6ff}
+.pa3 .bar::after{content:"OPEN · TILL LATE";position:absolute;left:0;right:0;top:16px;text-align:center;font-family:var(--ui);font-size:8px;letter-spacing:.4em;color:#8fe6ff;text-shadow:0 0 8px #26e6ff}
+.pa3 .cred{color:#8fb8c8}
+.film:hover .pa3 .neon{text-shadow:0 0 6px #fff,0 0 22px #26e6ff,0 0 46px #1aa6ff}
+
+/* 4 · SWISS — PARALLEL */
+.pa4{background:#e9e2d3;color:#161310}
+.pa4 .g{position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px) 0 0/33.33% 100%,
+  linear-gradient(0deg,rgba(0,0,0,.05) 1px,transparent 1px) 0 0/100% 25%;opacity:.7}
+.pa4 .r1,.pa4 .r2{position:absolute;background:var(--accent);transition:transform .6s var(--ease)}
+.pa4 .r1{left:12%;top:14%;width:9%;height:56%}
+.pa4 .r2{left:26%;top:24%;width:9%;height:56%}
+.pa4 .ttl{position:absolute;left:12%;bottom:16%;font-family:var(--cond);font-weight:800;font-size:clamp(16px,2vw,26px);letter-spacing:.02em;text-transform:uppercase;color:#161310}
+.pa4 .meta{position:absolute;right:12%;top:14%;text-align:right;font-family:var(--ui);font-size:8.5px;letter-spacing:.14em;line-height:1.7;text-transform:uppercase;color:#4a4438}
+.pa4 .cred{color:#4a4438}
+.film:hover .pa4 .r1{transform:translateY(-6%)}
+.film:hover .pa4 .r2{transform:translateY(6%)}
+
+/* 5 · GIALLO — SCARLET WAX */
+.pa5{background:radial-gradient(85% 65% at 50% 34%,#3a0606,#0b0304 74%);color:#f6e9e4}
+.pa5 .glow{position:absolute;top:24%;left:50%;transform:translateX(-50%);width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgba(232,40,30,.5),transparent);filter:blur(6px);transition:transform .7s var(--ease)}
+.pa5 .drip{position:absolute;top:0;left:50%;transform:translateX(-50%);width:3px;height:26%;background:linear-gradient(#e8281e,#8a0f0a);transition:height .7s var(--ease)}
+.pa5 .drip::after{content:"";position:absolute;bottom:-6px;left:-3px;width:9px;height:9px;border-radius:50%;background:#e8281e}
+.pa5 .ttl{position:absolute;top:30%;left:0;right:0;text-align:center;font-family:var(--cond);font-weight:900;font-style:italic;font-size:clamp(28px,4.4vw,54px);line-height:.86;text-transform:uppercase;color:#fff;letter-spacing:-.01em;text-shadow:0 2px 0 #7a0a06,0 0 26px rgba(232,40,30,.6)}
+.pa5 .ttl b{color:#e8281e;font-weight:900}
+.pa5 .cred{color:#c98a83;text-align:center}
+.film:hover .pa5 .drip{height:40%}
+.film:hover .pa5 .glow{transform:translateX(-50%) scale(1.08)}
+
+/* 6 · RETRO-FUTURE — OUTER DARK */
+.pa6{background:linear-gradient(180deg,#07071c 0%,#0a0a24 46%,#160a2a 60%,#05040c 100%);color:#dfe4ff}
+.pa6 .stars{position:absolute;inset:0 0 46% 0;background:
+  radial-gradient(1.2px 1.2px at 20% 30%,#fff,transparent),
+  radial-gradient(1px 1px at 70% 18%,#cbd4ff,transparent),
+  radial-gradient(1.3px 1.3px at 45% 60%,#fff,transparent),
+  radial-gradient(1px 1px at 85% 45%,#aab6ff,transparent),
+  radial-gradient(1px 1px at 32% 78%,#fff,transparent),
+  radial-gradient(1.4px 1.4px at 60% 82%,#fff,transparent);opacity:.9}
+.pa6 .osun{position:absolute;top:26%;left:50%;transform:translateX(-50%);width:46%;aspect-ratio:1;border-radius:50%;
+  background:linear-gradient(#ffd36a,#ff5aa0 55%,#7a2bff);box-shadow:0 0 40px rgba(255,90,160,.4);
+  -webkit-mask:linear-gradient(#000 62%,transparent 62%),repeating-linear-gradient(#000 0 5px,transparent 5px 8px);-webkit-mask-composite:source-in;mask-composite:intersect}
+.pa6 .horizon{position:absolute;left:-30%;right:-30%;bottom:0;height:46%;
+  background-image:linear-gradient(90deg,rgba(122,64,255,.55) 1px,transparent 1px),linear-gradient(0deg,rgba(122,64,255,.5) 1px,transparent 1px);
+  background-size:9% 100%,100% 16%;transform:perspective(160px) rotateX(58deg);transform-origin:bottom;opacity:.75}
+.pa6 .ttl{position:absolute;top:12%;left:0;right:0;text-align:center;font-family:var(--display);font-size:clamp(26px,4vw,48px);line-height:.86;text-transform:uppercase;letter-spacing:.03em;
+  background:linear-gradient(#fff,#cbd4ff 45%,#7a90ff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(122,120,255,.35))}
+.pa6 .cred{color:#8f96c8;text-align:center}
+.film:hover .pa6 .osun{filter:brightness(1.12)}
+
+/* ============ SCHEDULE / MARQUEE ============ */
+#schedule{background:linear-gradient(180deg,var(--ink),#0d0a08);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.marquee-plate{position:relative;border:1px solid var(--hair-amber);border-radius:4px;background:linear-gradient(180deg,rgba(240,167,51,.05),rgba(0,0,0,.2));padding:clamp(26px,3.4vw,44px) clamp(20px,3vw,44px);margin-top:clamp(40px,5vh,64px);overflow:hidden}
+.bulbs{position:absolute;top:0;left:0;right:0;height:0;display:flex;justify-content:space-between;padding:0 18px}
+.bulbs span{position:absolute;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber),0 0 2px #fff}
+.bulbs span:nth-child(odd){animation:bulb 1.4s infinite}
+.bulbs span:nth-child(even){animation:bulb 1.4s infinite .7s}
+@keyframes bulb{0%,100%{opacity:1;box-shadow:0 0 10px var(--amber),0 0 3px #fff}50%{opacity:.3;box-shadow:0 0 3px var(--amber-lo)}}
+.season-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px;padding-bottom:20px;border-bottom:1px dashed var(--hair-amber);margin-bottom:6px}
+.season-line h3{font-family:var(--display);font-size:clamp(22px,3.2vw,42px);text-transform:uppercase;color:var(--amber);letter-spacing:.01em}
+.season-line span{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--cream-dim)}
+.show{display:grid;grid-template-columns:64px 1fr auto auto;align-items:center;gap:14px;padding:15px 4px;border-bottom:1px solid var(--hair);transition:background .35s,padding .35s}
+.show:last-child{border-bottom:0}
+.show:hover{background:rgba(240,167,51,.06);padding-left:14px}
+.show .day{font-family:var(--cond);font-weight:900;font-size:14px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.show .name{font-family:var(--cond);font-weight:700;font-size:clamp(15px,1.7vw,21px);text-transform:uppercase;letter-spacing:.02em;color:var(--cream)}
+.show .name small{display:block;font-family:var(--ui);font-weight:400;font-size:10px;letter-spacing:.12em;color:var(--cream-faint);margin-top:3px;text-transform:none}
+.show .time{font-family:var(--ui);font-weight:600;font-size:15px;letter-spacing:.06em;color:var(--amber-hi);font-variant-numeric:tabular-nums}
+.show .fmt{font-family:var(--ui);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);border:1px solid var(--hair);padding:4px 8px;border-radius:2px;white-space:nowrap}
+
+/* ============ BOOKING / SEATS + TICKET ============ */
+#booking{border-top:1px solid var(--hair)}
+.book-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(30px,4vw,68px);margin-top:clamp(44px,5.5vh,68px);align-items:start}
+.screen-bar{text-align:center;margin-bottom:34px}
+.screen-bar .arc{height:64px;border-radius:100% 100% 0 0/100% 100% 0 0;border-top:2px solid var(--amber);
+  background:linear-gradient(180deg,rgba(240,167,51,.28),transparent 85%);box-shadow:0 -8px 30px -6px rgba(240,167,51,.4)}
+.screen-bar span{display:inline-block;margin-top:12px;font-family:var(--ui);font-size:10px;letter-spacing:.5em;text-transform:uppercase;color:var(--amber);padding-left:.5em}
+.house{display:flex;flex-direction:column;gap:9px;align-items:center}
+.seat-row{display:flex;align-items:center;gap:7px}
+.seat-row .rl{width:16px;font-family:var(--ui);font-size:10px;font-weight:600;color:var(--cream-faint);text-align:center}
+.gap{width:16px}
+.seat{width:clamp(15px,1.7vw,22px);height:clamp(13px,1.5vw,19px);border-radius:4px 4px 2px 2px;background:#2c2824;border:1px solid #423c36;transition:transform .2s var(--ease),background .25s,border-color .25s,box-shadow .25s;padding:0}
+.seat:hover:not(.taken){background:var(--amber-lo);border-color:var(--amber);transform:translateY(-3px)}
+.seat.taken{background:#191614;border-color:#191614;opacity:.55;cursor:not-allowed}
+.seat.sel{background:var(--accent);border-color:var(--accent-hi);box-shadow:0 0 14px rgba(232,64,42,.6);transform:translateY(-3px)}
+.legend{display:flex;gap:20px;justify-content:center;margin-top:26px;font-family:var(--ui);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-faint)}
+.legend b{display:inline-flex;align-items:center;gap:7px;font-weight:400}
+.legend i{width:13px;height:11px;border-radius:3px 3px 2px 2px;display:inline-block}
+.legend .a{background:#2c2824;border:1px solid #423c36}
+.legend .t{background:#191614;border:1px solid #191614}
+.legend .s{background:var(--accent)}
+
+/* ticket */
+.ticket{position:relative;background:linear-gradient(140deg,#f3ead6,#e5d8bd);color:#1a1512;border-radius:6px;overflow:hidden;
+  box-shadow:0 30px 70px -30px rgba(0,0,0,.85);font-family:var(--ui)}
+.ticket::before,.ticket::after{content:"";position:absolute;top:calc(66% - 11px);width:22px;height:22px;border-radius:50%;background:var(--black);z-index:3}
+.ticket::before{left:-11px}.ticket::after{right:-11px}
+.tk-main{padding:24px 24px 18px}
+.tk-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid rgba(26,21,18,.16);padding-bottom:14px}
+.tk-top .brand{font-family:var(--display);font-size:26px;text-transform:uppercase;line-height:.9;letter-spacing:.01em}
+.tk-top .brand small{display:block;font-family:var(--ui);font-size:8px;font-weight:600;letter-spacing:.34em;color:#8a7a55;margin-top:4px}
+.tk-top .adm{text-align:right;font-family:var(--cond);font-weight:900;font-size:13px;letter-spacing:.1em;color:#b0331f;line-height:1.1}
+.tk-film{font-family:var(--cond);font-weight:900;font-size:clamp(22px,3vw,34px);text-transform:uppercase;line-height:.92;margin:16px 0 4px;letter-spacing:.005em}
+.tk-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:#5a5040;margin-bottom:18px}
+.tk-rows{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}
+.tk-cell .k{font-size:8px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#9a8a63}
+.tk-cell .v{font-family:var(--cond);font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.02em;color:#1a1512;margin-top:3px}
+.tk-cell .v.hot{color:#b0331f}
+/* stub */
+.tk-stub{position:relative;border-top:2px dashed rgba(26,21,18,.28);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;
+  transition:transform .8s var(--ease2),opacity .8s var(--ease2)}
+.tk-stub .barcode{display:flex;gap:2px;align-items:flex-end;height:30px}
+.tk-stub .barcode i{width:2px;background:#1a1512}
+.tk-stub .snum{font-family:var(--cond);font-weight:900;font-size:15px;letter-spacing:.1em}
+.ticket.torn .tk-stub{transform:translate(14px,18px) rotate(4.5deg);opacity:0}
+.ticket.torn .tk-main{clip-path:polygon(0 0,100% 0,100% 92%,92% 98%,80% 90%,66% 98%,52% 90%,38% 98%,24% 90%,12% 98%,0 92%)}
+.tk-msg{position:absolute;left:0;right:0;bottom:0;padding:16px 24px;text-align:center;font-family:var(--cond);font-weight:900;font-size:15px;letter-spacing:.2em;text-transform:uppercase;color:#b0331f;opacity:0;transition:opacity .5s .5s}
+.ticket.torn .tk-msg{opacity:1}
+.book-actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+.btn{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:13px 22px;border-radius:2px;transition:all .35s var(--ease)}
+.btn.pri{background:var(--accent);color:#fff}
+.btn.pri:hover{background:var(--accent-hi);transform:translateY(-2px);box-shadow:0 12px 30px -12px var(--accent)}
+.btn.gho{border:1px solid var(--hair-amber);color:var(--amber)}
+.btn.gho:hover{background:rgba(240,167,51,.1);border-color:var(--amber)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ============ MEMBERSHIP / ABOUT ============ */
+#member{background:linear-gradient(180deg,#0d0a08,var(--ink));border-top:1px solid var(--hair)}
+.about-2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,80px);margin-top:clamp(30px,4vh,50px);align-items:center}
+.about-2 p{font-family:var(--serif);font-size:clamp(15px,1.7vw,20px);line-height:1.62;color:var(--cream-dim)}
+.about-2 p + p{margin-top:18px}
+.about-2 p b{color:var(--amber-hi);font-weight:700}
+.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stat{border:1px solid var(--hair);border-radius:3px;padding:20px 16px;text-align:center;background:rgba(240,167,51,.03)}
+.stat .num{font-family:var(--display);font-size:clamp(30px,4vw,50px);color:var(--amber);line-height:1}
+.stat .lab{font-family:var(--ui);font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-faint);margin-top:9px}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,28px);margin-top:clamp(46px,6vh,72px)}
+.tier{border:1px solid var(--hair);border-radius:4px;padding:28px 24px;transition:border-color .4s,transform .4s var(--ease),background .4s;position:relative;overflow:hidden}
+.tier:hover{border-color:var(--hair-amber);transform:translateY(-6px);background:rgba(240,167,51,.04)}
+.tier.feat{border-color:var(--hair-amber);background:rgba(240,167,51,.05)}
+.tier.feat::after{content:"MOST POPULAR";position:absolute;top:13px;right:-30px;transform:rotate(38deg);background:var(--accent);color:#fff;font-family:var(--ui);font-weight:600;font-size:8px;letter-spacing:.18em;padding:3px 34px}
+.tier h4{font-family:var(--cond);font-weight:900;font-size:19px;text-transform:uppercase;letter-spacing:.04em;color:var(--cream)}
+.tier .price{font-family:var(--display);font-size:44px;color:var(--amber);margin:14px 0 4px;line-height:1}
+.tier .price small{font-family:var(--ui);font-size:12px;font-weight:400;letter-spacing:.1em;color:var(--cream-faint)}
+.tier ul{list-style:none;margin-top:18px}
+.tier li{font-family:var(--ui);font-size:12.5px;color:var(--cream-dim);padding:8px 0 8px 22px;border-top:1px solid var(--hair);position:relative}
+.tier li::before{content:"";position:absolute;left:2px;top:14px;width:8px;height:8px;border:1px solid var(--amber);border-width:0 0 1px 1px;transform:rotate(-45deg)}
+
+/* ============ FOOTER ============ */
+footer{background:var(--ink);border-top:1px solid var(--hair-amber);overflow:hidden}
+.foot-marquee{border-bottom:1px solid var(--hair);padding:20px 0;overflow:hidden;white-space:nowrap;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.foot-marquee .track{display:inline-block;white-space:nowrap;animation:scroll 34s linear infinite;will-change:transform}
+.foot-marquee:hover .track{animation-play-state:paused}
+.foot-marquee span{font-family:var(--display);font-size:clamp(24px,3.4vw,44px);text-transform:uppercase;color:var(--cream);letter-spacing:.02em}
+.foot-marquee span em{font-style:normal;color:var(--accent)}
+.foot-marquee .star{color:var(--amber);margin:0 26px}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.foot-body{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;padding:clamp(44px,6vw,72px) clamp(20px,6vw,110px) 30px}
+.foot-body h5{font-family:var(--ui);font-size:10px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
+.foot-body .big{font-family:var(--display);font-size:clamp(30px,3.6vw,52px);text-transform:uppercase;color:var(--cream);line-height:.92;margin-bottom:14px}
+.foot-body .big .the{display:block;font-size:.3em;letter-spacing:.4em;color:var(--amber)}
+.foot-body p,.foot-body a{font-family:var(--ui);font-size:13px;line-height:1.9;color:var(--cream-dim)}
+.foot-body a{transition:color .3s}.foot-body a:hover{color:var(--amber)}
+.foot-fine{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;padding:22px clamp(20px,6vw,110px);border-top:1px solid var(--hair);
+  font-family:var(--ui);font-size:11px;letter-spacing:.08em;color:var(--cream-faint)}
+.foot-fine a{color:var(--cream-faint)}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .book-grid{grid-template-columns:1fr}
+  .about-2{grid-template-columns:1fr}
+  .tiers{grid-template-columns:1fr}
+  .foot-body{grid-template-columns:1fr 1fr}
+  .season-line{gap:6px 12px}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:1fr;gap:34px}
+  .stat-strip{gap:12px}
+  .show{grid-template-columns:44px 1fr auto;row-gap:6px}
+  .show .fmt{grid-column:2/4;justify-self:start}
+  .foot-body{grid-template-columns:1fr}
+  .legend{flex-wrap:wrap;gap:12px}
+  .title .the{margin-left:0}
+  .backlink{font-size:9px;letter-spacing:.18em;padding:6px 9px}
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .searchlight{transform:rotate(-6deg)}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<a class="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery">XAVIER <b>FABLE</b> ×50</a>
+
+<!-- film overlays -->
+<canvas id="grain"></canvas>
+<div class="scanline"></div>
+<div class="vignette"></div>
+<div class="projglow"></div>
+<div class="cur" id="cur"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="hero">
+  <div class="searchlight" id="searchlight"></div>
+  <div class="bass" aria-hidden="true">
+    <div class="bass-bar b1"></div>
+    <div class="bass-bar b2"></div>
+    <div class="bass-bar b3"></div>
+  </div>
+  <div class="frame">
+    <div class="kick" id="k">Est. MCMLXXIV · A Repertory Cinema · Screen One</div>
+    <h1 class="title" id="t">
+      <span class="the">THE</span>
+      <span class="lumen" id="lumen"></span>
+    </h1>
+    <p class="tag" id="tag">The dark. And then — <b>the light.</b></p>
+    <p class="sub" id="sub">Restorations · Retrospectives · Midnight Programmes</p>
+    <div class="badge" id="badge"><i></i> Autumn Season № 07 — Ghosts on Celluloid</div>
+  </div>
+  <div class="shutter top" id="shTop"></div>
+  <div class="shutter bot" id="shBot"></div>
+  <div class="scrollcue" id="cue"><span>Programme</span><span class="l"></span></div>
+</header>
+
+<!-- ============ NOW SHOWING ============ -->
+<section class="section" id="showing">
+  <div class="eyebrow reveal">Now Showing <span class="n">Six Titles · Reels I–VI</span></div>
+  <h2 class="sec-head reveal">THE <em>PROGRAMME</em></h2>
+  <p class="lede reveal">Six restorations struck fresh for the season. Each title-designed by hand, printed in a single edition, and screened exactly as it was meant to be seen — in the dark, at scale, on a single luminous wall.</p>
+
+  <div class="grid">
+    <!-- 1 BRUTALIST -->
+    <article class="film reveal">
+      <div class="poster"><div class="pa pa1">
+        <div class="p-tag">35mm · Restored</div>
+        <div class="sun"></div><div class="slab"></div>
+        <div class="yr">1971</div>
+        <div class="ttl">C<span class="o">O</span>NCRETE<br>SUN</div>
+        <div class="cred">Dir. Halvard Stein · A Meridian Films Production · Colour · 2h 04m</div>
+      </div></div>
+      <div class="caption">
+        <div class="cap-title">Concrete Sun</div>
+        <div class="cap-meta">Halvard Stein · <b>1971</b> · 2h 04m · Brutalist</div>
+        <p class="cap-log">A city pours itself into a single, endless afternoon.</p>
+      </div>
+    </article>
+
+    <!-- 2 DECO -->
+    <article class="film reveal">
+      <div class="poster"><div class="pa pa2">
+        <div class="p-tag">4K · Restored</div>
+        <div class="fan"></div><div class="frame2"></div>
+        <div class="ttl"><small>The</small>GILDED<br>HOUR</div>
+        <div class="rule"></div><div class="orn">◆</div>
+        <div class="cred">Vivienne Marchetti · MCMXXXII · A Marchetti Picture</div>
+      </div></div>
+      <div class="caption">
+        <div class="cap-title">The Gilded Hour</div>
+        <div class="cap-meta">Vivienne Marchetti · <b>1932</b> · 1h 48m · Deco</div>
+        <p class="cap-log">Champagne, betrayal, and a staircase that never ends.</p>
+      </div>
+    </article>
+
+    <!-- 3 NEON-NOIR -->
+    <article class="film reveal">
+      <div class="poster"><div class="pa pa3">
+        <div class="p-tag">DCP · 4K</div>
+        <div class="rain"></div><div class="bar"></div>
+        <div class="neon">LAST<span class="m">CALL</span></div>
+        <div class="refl"></div>
+        <div class="cred">Cormac Vane · 1988 · Nightowl Pictures · Colour</div>
+      </div></div>
+      <div class="caption">
+        <div class="cap-title">Last Call</div>
+        <div class="cap-meta">Cormac Vane · <b>1988</b> · 1h 55m · Neon-Noir</div>
+        <p class="cap-log">Everyone in this bar is lying — including the rain.</p>
+      </div>
+    </article>
+
+    <!-- 4 SWISS -->
+    <article class="film reveal">
+      <div class="poster"><div class="pa pa4">
+        <div class="p-tag">DCP</div>
+        <div class="g"></div><div class="r1"></div><div class="r2"></div>
+        <div class="meta">Sørn / 2001<br>1h 37m<br>Colour</div>
+        <div class="ttl">PARALLEL</div>
+        <div class="cred">Ingrid Sørn · Helvetica Filmverket · 2001</div>
+      </div></div>
+      <div class="caption">
+        <div class="cap-title">Parallel</div>
+        <div class="cap-meta">Ingrid Sørn · <b>2001</b> · 1h 37m · Swiss</div>
+        <p class="cap-log">Two lives, one timetable, and no timetable at all.</p>
+      </div>
+    </article>
+
+    <!-- 5 GIALLO -->
+    <article class="film reveal">
+      <div class="poster"><div class="pa pa5">
+        <div class="p-tag">35mm · Midnight</div>
+        <div class="drip"></div><div class="glow"></div>
+        <div class="ttl">SCARLET<br><b>WAX</b></div>
+        <div class="cred">Dario Fenn · 1976 · Sangue Rosso Films · Colour</div>
+      </div></div>
+      <div class="caption">
+        <div class="cap-title">Scarlet Wax</div>
+        <div class="cap-meta">Dario Fenn · <b>1976</b> · 1h 42m · Giallo</div>
+        <p class="cap-log">The mannequins remember every visitor.</p>
+      </div>
+    </article>
+
+    <!-- 6 RETRO-FUTURE -->
+    <article class="film reveal">
+      <div class="poster"><div class="pa pa6">
+        <div class="p-tag">70mm · Restored</div>
+        <div class="stars"></div><div class="osun"></div><div class="horizon"></div>
+        <div class="ttl">OUTER<br>DARK</div>
+        <div class="cred">Yuki Aldous · 1979 · Andromeda Cine · 70mm</div>
+      </div></div>
+      <div class="caption">
+        <div class="cap-title">Outer Dark</div>
+        <div class="cap-meta">Yuki Aldous · <b>1979</b> · 2h 11m · Sci-Fi</div>
+        <p class="cap-log">The signal came back before we ever sent it.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SCHEDULE ============ -->
+<section class="section" id="schedule">
+  <div class="eyebrow reveal">This Week <span class="n">Thu — Sun · Doors 30 min prior</span></div>
+  <h2 class="sec-head reveal">THE <em>MARQUEE</em></h2>
+  <div class="marquee-plate reveal">
+    <div class="bulbs" id="bulbs" aria-hidden="true"></div>
+    <div class="season-line">
+      <h3>Autumn Season № 07</h3><span>— Ghosts on Celluloid</span>
+    </div>
+    <div class="show"><span class="day">Thu</span><div class="name">Concrete Sun<small>Restoration premiere · introduced by the archivist</small></div><span class="time">19:30</span><span class="fmt">35mm</span></div>
+    <div class="show"><span class="day">Fri</span><div class="name">Last Call<small>Neon-noir double bill · part one</small></div><span class="time">21:00</span><span class="fmt">4K DCP</span></div>
+    <div class="show"><span class="day">Fri</span><div class="name">Scarlet Wax<small>Midnight programme · not for the faint</small></div><span class="time">23:30</span><span class="fmt">35mm</span></div>
+    <div class="show"><span class="day">Sat</span><div class="name">The Gilded Hour<small>Matinée · with live piano accompaniment</small></div><span class="time">17:00</span><span class="fmt">4K Restored</span></div>
+    <div class="show"><span class="day">Sat</span><div class="name">Outer Dark<small>The big one · 70mm on the full wall</small></div><span class="time">20:15</span><span class="fmt">70mm</span></div>
+    <div class="show"><span class="day">Sun</span><div class="name">Parallel<small>Closing night · Q&amp;A to follow</small></div><span class="time">18:45</span><span class="fmt">DCP</span></div>
+  </div>
+</section>
+
+<!-- ============ BOOKING ============ -->
+<section class="section" id="booking">
+  <div class="eyebrow reveal">Choose Your Seat <span class="n">Screen One · 96 seats</span></div>
+  <h2 class="sec-head reveal">TAKE A <em>SEAT</em></h2>
+  <div class="book-grid">
+    <div class="reveal">
+      <div class="screen-bar"><div class="arc"></div><span>Screen</span></div>
+      <div class="house" id="house" role="group" aria-label="Auditorium seat map"></div>
+      <div class="legend">
+        <b><i class="a"></i> Available</b>
+        <b><i class="t"></i> Taken</b>
+        <b><i class="s"></i> Your seat</b>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="ticket" id="ticket">
+        <div class="tk-main">
+          <div class="tk-top">
+            <div class="brand">The Lumen<small>Repertory Cinema</small></div>
+            <div class="adm">ADMIT<br>ONE</div>
+          </div>
+          <div class="tk-film">Outer Dark</div>
+          <div class="tk-sub">Autumn Season № 07 — 70mm on the full wall</div>
+          <div class="tk-rows">
+            <div class="tk-cell"><div class="k">Screen</div><div class="v">Screen One</div></div>
+            <div class="tk-cell"><div class="k">Showtime</div><div class="v">Sat · 20:15</div></div>
+            <div class="tk-cell"><div class="k">Row</div><div class="v hot" id="tkRow">—</div></div>
+            <div class="tk-cell"><div class="k">Seat</div><div class="v hot" id="tkSeat">—</div></div>
+          </div>
+        </div>
+        <div class="tk-stub">
+          <div class="barcode" id="barcode" aria-hidden="true"></div>
+          <div class="snum" id="tkNo">№ 0000</div>
+        </div>
+        <div class="tk-msg">Enjoy the show</div>
+      </div>
+      <div class="book-actions">
+        <button class="btn pri" id="tearBtn" disabled>Tear Ticket</button>
+        <button class="btn gho" id="resetBtn">Reset</button>
+      </div>
+      <p style="font-family:var(--ui);font-size:11.5px;line-height:1.7;color:var(--cream-faint);margin-top:16px;letter-spacing:.02em">
+        Pick any open seat above — your stub prints instantly. Then give it a tear, like you mean it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MEMBERSHIP / ABOUT ============ -->
+<section class="section" id="member">
+  <div class="eyebrow reveal">The Cinema <span class="n">One screen · Since 1974</span></div>
+  <h2 class="sec-head reveal">BECOME A <em>REGULAR</em></h2>
+  <div class="about-2">
+    <div class="reveal">
+      <p>THE LUMEN opened its single screen in the autumn of 1974, in the shell of a shuttered variety theatre. We have never added a second screen and we never will. <b>One room, one beam, one film at a time.</b></p>
+      <p>We programme what the multiplex forgot: restorations struck from original negatives, retrospectives of directors who deserved better, and midnight titles too strange to survive daylight. The projector is analogue when it can be, digital when it must be, and warm either way.</p>
+      <p>Members keep the light on. In return, we keep a seat for you — <b>and the good coffee behind the bar.</b></p>
+    </div>
+    <div class="reveal stat-strip">
+      <div class="stat"><div class="num">50</div><div class="lab">Years Dark</div></div>
+      <div class="stat"><div class="num">96</div><div class="lab">Seats</div></div>
+      <div class="stat"><div class="num">1</div><div class="lab">Screen</div></div>
+      <div class="stat"><div class="num">35<span style="font-size:.4em">mm</span></div><div class="lab">& 4K</div></div>
+      <div class="stat"><div class="num">7</div><div class="lab">Nights</div></div>
+      <div class="stat"><div class="num">∞</div><div class="lab">Reels</div></div>
+    </div>
+  </div>
+
+  <div class="tiers">
+    <div class="tier reveal">
+      <h4>The Stalls</h4>
+      <div class="price">£6<small>/month</small></div>
+      <ul>
+        <li>Two members' tickets a month</li>
+        <li>Priority booking, 48 hours early</li>
+        <li>The seasonal printed programme</li>
+        <li>10% off the bar &amp; the coffee</li>
+      </ul>
+    </div>
+    <div class="tier feat reveal">
+      <h4>The Circle</h4>
+      <div class="price">£14<small>/month</small></div>
+      <ul>
+        <li>Unlimited screenings, any night</li>
+        <li>Bring a guest, once a week, free</li>
+        <li>Members-only midnight programmes</li>
+        <li>Your name in the year-end reel</li>
+        <li>20% off the bar &amp; the coffee</li>
+      </ul>
+    </div>
+    <div class="tier reveal">
+      <h4>The Booth</h4>
+      <div class="price">£30<small>/month</small></div>
+      <ul>
+        <li>Everything in The Circle, plus —</li>
+        <li>Access to the 35mm archive vault</li>
+        <li>A standing seat, Row F, held for you</li>
+        <li>Invitations to projectionist evenings</li>
+        <li>First pour of the good coffee</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-marquee">
+    <div class="track" id="mtrack"></div>
+  </div>
+  <div class="foot-body">
+    <div>
+      <div class="big"><span class="the">THE</span>LUMEN</div>
+      <p>A single-screen repertory cinema, keeping the light on since 1974. Restorations, retrospectives, and the occasional ghost.</p>
+    </div>
+    <div>
+      <h5>Visit</h5>
+      <p>14 Halyard Lane<br>Old Gate Quarter<br>Open Thu — Sun, from 6pm</p>
+    </div>
+    <div>
+      <h5>Programme</h5>
+      <p><a href="#showing">Now Showing</a><br><a href="#schedule">This Week</a><br><a href="#booking">Book a Seat</a><br><a href="#member">Membership</a></p>
+    </div>
+    <div>
+      <h5>Box Office</h5>
+      <p><a href="#booking">+00 1974 LUMEN</a><br><a href="#member">hello@thelumen.cinema</a><br>Held tickets release at 6pm</p>
+    </div>
+  </div>
+  <div class="foot-fine">
+    <span>© MMXXVI The Lumen — a fictional repertory cinema, imagined for the XAVIER FABLE ×50 showcase.</span>
+    <a href="/">XAVIER FABLE ×50 ↗</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const TITLEDONE = params.has('titledone');
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const STILL = REDUCED || TITLEDONE;
+
+  /* ---------- custom cursor ---------- */
+  const cur = document.getElementById('cur');
+  if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    let cx=innerWidth/2, cy=innerHeight/2, tx=cx, ty=cy;
+    addEventListener('mousemove', e => { tx=e.clientX; ty=e.clientY; cur.style.opacity=1; });
+    (function loop(){ cx+=(tx-cx)*0.22; cy+=(ty-cy)*0.22; cur.style.transform='translate('+cx+'px,'+cy+'px)'; requestAnimationFrame(loop); })();
+    const hot = 'a,button,.seat:not(.taken),.film,.tier,.show';
+    document.addEventListener('mouseover', e => { if (e.target.closest(hot)) cur.classList.add('hot'); });
+    document.addEventListener('mouseout',  e => { if (e.target.closest(hot)) cur.classList.remove('hot'); });
+  } else { cur.style.display='none'; }
+
+  /* ---------- letterbox sizing ---------- */
+  const shTop = document.getElementById('shTop'), shBot = document.getElementById('shBot');
+  const hero = document.getElementById('hero');
+  function barH(){
+    const H = hero.clientHeight, W = hero.clientWidth;
+    const band = Math.min(H, W/2.39);
+    // cap bars so the film band never gets crushed on portrait/mobile
+    return Math.max(0, Math.min((H - band)/2, H*0.17));
+  }
+  function setBars(px){ shTop.style.height = px+'px'; shBot.style.height = px+'px'; }
+  addEventListener('resize', () => { if (hero.dataset.done) setBars(barH()); });
+
+  /* ---------- film grain ---------- */
+  const gc = document.getElementById('grain'), gtx = gc.getContext('2d', {alpha:true});
+  const GW=170, GH=Math.round(GW*(innerHeight/innerWidth))||96;
+  gc.width=GW; gc.height=GH;
+  gc.style.width='100%'; gc.style.height='100%';
+  const idata = gtx.createImageData(GW,GH);
+  function drawGrain(){
+    const d = idata.data;
+    for (let i=0;i<d.length;i+=4){
+      const v = (Math.random()*255)|0;
+      d[i]=d[i+1]=d[i+2]=v; d[i+3]=Math.random()*70;
+    }
+    gtx.putImageData(idata,0,0);
+  }
+  let gRAF=0, gLast=0, gVisible=true;
+  function grainLoop(t){
+    gRAF = requestAnimationFrame(grainLoop);
+    if (t-gLast < 42) return;   // ~24fps
+    gLast=t; drawGrain();
+  }
+  if (STILL) { drawGrain(); }
+  else { gRAF = requestAnimationFrame(grainLoop); }
+  document.addEventListener('visibilitychange', () => {
+    gVisible = !document.hidden;
+    if (STILL) return;
+    if (gVisible && !gRAF) gRAF=requestAnimationFrame(grainLoop);
+    else if (!gVisible && gRAF){ cancelAnimationFrame(gRAF); gRAF=0; }
+  });
+
+  /* ---------- searchlight sweep + gate weave ---------- */
+  const light = document.getElementById('searchlight');
+  const frame = document.querySelector('.frame');
+  if (!STILL) {
+    let wRAF=0;
+    (function amb(t){
+      wRAF=requestAnimationFrame(amb);
+      const sw = Math.sin(t/2600)*15;
+      light.style.transform = 'rotate('+sw+'deg)';
+      // gate weave — tiny celluloid jitter
+      const jx = (Math.random()-0.5)*0.9;
+      const jy = (Math.random()-0.5)*1.3;
+      frame.style.transform = 'translate('+jx+'px,'+jy+'px)';
+      document.addEventListener('visibilitychange',()=>{ if(document.hidden&&wRAF){cancelAnimationFrame(wRAF);wRAF=0;frame.style.transform='none';} else if(!document.hidden&&!wRAF){wRAF=requestAnimationFrame(amb);} },{once:true});
+    })(0);
+  } else {
+    light.style.transform = 'rotate(-7deg)';
+    frame.style.transform = 'none';
+  }
+
+  /* ---------- LUMEN letters ---------- */
+  const lumen = document.getElementById('lumen');
+  'LUMEN'.split('').forEach(ch => { const s=document.createElement('span'); s.textContent=ch; lumen.appendChild(s); });
+  const letters = [...lumen.children];
+
+  /* ---------- title sequence ---------- */
+  function buildTimeline(){
+    if (!window.gsap) return;
+    const g = window.gsap;
+    g.set('.bass-bar', {xPercent:-112, autoAlpha:1});
+    const tl = g.timeline({defaults:{ease:'power4.out'}});
+    // gate opens
+    tl.set(shTop,{height:'50%'}).set(shBot,{height:'50%'});
+    tl.to([shTop,shBot], {height:barH(), duration:1.1, ease:'expo.inOut'}, 0);
+    // saul-bass bars sweep fully across, then fully off the right edge
+    tl.to('.bass-bar', {xPercent:0, duration:.5, stagger:.09, ease:'power3.out'}, .25);
+    tl.to('.bass-bar', {xPercent:114, duration:.55, stagger:.07, ease:'power3.in'}, .95);
+    // kicker cuts in
+    tl.fromTo('#k', {opacity:0, y:14}, {opacity:1, y:0, duration:.5}, .8);
+    // THE
+    tl.fromTo('.the', {opacity:0, x:-40}, {opacity:1, x:0, duration:.5, ease:'steps(2)'}, 1.05);
+    // LUMEN letters cut in hard, staggered
+    g.set(letters, {opacity:0, y:'40%'});
+    tl.to(letters, {opacity:1, y:'0%', duration:.42, stagger:.075, ease:'back.out(1.7)'}, 1.15);
+    // tagline clip reveal
+    tl.fromTo('#tag', {opacity:0, y:16, clipPath:'inset(0 100% 0 0)'}, {opacity:1, y:0, clipPath:'inset(0 0% 0 0)', duration:.7, ease:'power2.out'}, 1.75);
+    tl.fromTo('#sub', {opacity:0}, {opacity:1, duration:.6}, 2.05);
+    tl.fromTo('#badge', {opacity:0, scale:.9}, {opacity:1, scale:1, duration:.55, ease:'back.out(2)'}, 2.25);
+    tl.fromTo('#cue', {opacity:0}, {opacity:1, duration:.6}, 2.6);
+    tl.add(() => { hero.dataset.done='1'; document.body.classList.add('ready'); }, 1.1);
+    return tl;
+  }
+
+  function start(){
+    const tl = buildTimeline();
+    if (!tl){ // gsap failed — show composed
+      setBars(barH()); document.body.classList.add('ready'); hero.dataset.done='1';
+      document.querySelectorAll('.the,#k,#tag,#sub,#badge,#cue').forEach(e=>e.style.opacity=1);
+      letters.forEach(l=>l.style.opacity=1);
+      return;
+    }
+    if (STILL){ tl.progress(1); tl.pause(); }
+  }
+  if (window.gsap) start();
+  else {
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+    s.onload=start;
+    s.onerror=()=>{ setBars(barH()); document.body.classList.add('ready'); hero.dataset.done='1';
+      document.querySelectorAll('.the,#k,#tag,#sub,#badge,#cue').forEach(e=>e.style.opacity=1); letters.forEach(l=>l.style.opacity=1); };
+    document.head.appendChild(s);
+  }
+
+  /* ---------- reveal on scroll ---------- */
+  const io = new IntersectionObserver((ents)=>{ ents.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} }); }, {threshold:.14, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(i%6*0.05)+'s'; io.observe(el); });
+  if (STILL) document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+
+  /* ---------- marquee bulbs ---------- */
+  const bulbs=document.getElementById('bulbs');
+  if (bulbs){ const n=Math.min(30, Math.round(innerWidth/44));
+    for(let i=0;i<n;i++){ const s=document.createElement('span'); s.style.left=(i/(n-1)*100)+'%'; bulbs.appendChild(s); } }
+
+  /* ---------- barcode ---------- */
+  const bc=document.getElementById('barcode');
+  if (bc){ for(let i=0;i<34;i++){ const b=document.createElement('i'); b.style.height=(14+Math.random()*16)+'px'; b.style.width=(Math.random()>.7?3:2)+'px'; bc.appendChild(b);} }
+
+  /* ---------- footer marquee ---------- */
+  const mtrack=document.getElementById('mtrack');
+  if (mtrack){
+    const unit='<span>NOW SHOWING</span><span class="star">✦</span><span><em>THE</em> LUMEN</span><span class="star">✦</span><span>REPERTORY CINEMA</span><span class="star">✦</span><span>EST. 1974</span><span class="star">✦</span><span>GHOSTS ON CELLULOID</span><span class="star">✦</span><span>35MM &amp; 4K</span><span class="star">✦</span>';
+    mtrack.innerHTML = unit+unit;
+  }
+
+  /* ---------- seat map ---------- */
+  const house=document.getElementById('house');
+  const ROWS='ABCDEFGH'.split(''), COLS=12, AISLE=6;
+  const taken=new Set(['A-3','A-4','B-8','C-5','C-6','D-2','D-10','E-7','E-8','F-4','G-9','G-10','H-1','H-11','B-1','F-12']);
+  const tkRow=document.getElementById('tkRow'), tkSeat=document.getElementById('tkSeat'),
+        tkNo=document.getElementById('tkNo'), tearBtn=document.getElementById('tearBtn'),
+        resetBtn=document.getElementById('resetBtn'), ticket=document.getElementById('ticket');
+  let selected=null;
+  ROWS.forEach(r=>{
+    const row=document.createElement('div'); row.className='seat-row';
+    const l=document.createElement('span'); l.className='rl'; l.textContent=r; row.appendChild(l);
+    for(let c=1;c<=COLS;c++){
+      if(c===AISLE+1){ const g=document.createElement('div'); g.className='gap'; row.appendChild(g); }
+      const id=r+'-'+c;
+      const b=document.createElement('button'); b.className='seat'; b.dataset.id=id;
+      b.setAttribute('aria-label','Row '+r+' Seat '+c);
+      if(taken.has(id)){ b.classList.add('taken'); b.disabled=true; b.setAttribute('aria-label','Row '+r+' Seat '+c+' — taken'); }
+      else b.addEventListener('click',()=>select(b,r,c));
+      row.appendChild(b);
+    }
+    const l2=document.createElement('span'); l2.className='rl'; l2.textContent=r; row.appendChild(l2);
+    house.appendChild(row);
+  });
+  function select(b,r,c){
+    if(ticket.classList.contains('torn')) resetTicket();
+    if(selected) selected.classList.remove('sel');
+    selected=b; b.classList.add('sel');
+    tkRow.textContent=r; tkSeat.textContent=String(c).padStart(2,'0');
+    tkNo.textContent='№ '+(r.charCodeAt(0)-64)+String(c).padStart(2,'0')+'-07';
+    tearBtn.disabled=false;
+  }
+  function resetTicket(){ ticket.classList.remove('torn'); }
+  tearBtn.addEventListener('click',()=>{ if(selected && !tearBtn.disabled){ ticket.classList.add('torn'); } });
+  resetBtn.addEventListener('click',()=>{
+    resetTicket();
+    if(selected){ selected.classList.remove('sel'); selected=null; }
+    tkRow.textContent='—'; tkSeat.textContent='—'; tkNo.textContent='№ 0000'; tearBtn.disabled=true;
+  });
+})();
+</script>
+</body>
+</html>

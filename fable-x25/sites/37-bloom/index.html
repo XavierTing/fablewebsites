@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MORPHOGEN — patterns that grow themselves</title>
+<meta name="description" content="A live Gray–Scott reaction–diffusion lab in WebGL2. Two chemicals, two rules — and coral, leopard spots, fingerprints, labyrinths and dividing cells paint themselves. Click to seed and watch structure decide itself. Turing's 1952 morphogenesis, rendered live.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="MORPHOGEN — patterns that grow themselves">
+<meta property="og:description" content="A live Gray–Scott reaction–diffusion lab in WebGL2. Two chemicals, two rules — coral, spots, fingerprints, mazes and dividing cells paint themselves. Paint seed and watch it grow.">
+<meta property="og:url" content="https://xavierfable50.netlify.app/sites/37-bloom/">
+<meta property="og:image" content="https://xavierfable50.netlify.app/sites/37-bloom/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MORPHOGEN — patterns that grow themselves">
+<meta name="twitter:description" content="A live Gray–Scott reaction–diffusion lab. Two chemicals paint coral, spots, fingerprints and dividing cells. Paint seed, watch it grow.">
+<meta name="twitter:image" content="https://xavierfable50.netlify.app/sites/37-bloom/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧫</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0b0d;
+  --bg2:#070809;
+  --ink:#eef3f2;
+  --teal:#57e0c8;
+  --mint:#8dffd8;
+  --amber:#ffb066;
+  --mut:rgba(230,240,238,.60);
+  --mut2:rgba(230,240,238,.36);
+  --mut3:rgba(230,240,238,.16);
+  --glass:rgba(11,15,16,.60);
+  --glass-edge:rgba(87,224,200,.18);
+  --line:rgba(120,200,190,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--bg);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:rgba(87,224,200,.28);color:#eafff8}
+:focus-visible{outline:1px solid var(--teal);outline-offset:3px;border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#06080a}
+::-webkit-scrollbar-thumb{background:rgba(87,224,200,.20);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(87,224,200,.40)}
+
+/* ---------- WebGL canvas (fixed behind everything) ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:var(--bg);
+  cursor:crosshair;touch-action:none}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 130% 90% at 50% 44%,transparent 52%,rgba(10,11,13,.62) 100%)}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+#cursor{position:fixed;top:0;left:0;z-index:60;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(87,224,200,.55);box-shadow:0 0 16px rgba(87,224,200,.28) inset,0 0 10px rgba(87,224,200,.3);opacity:0;
+  transition:opacity .35s ease,width .18s ease,height .18s ease;mix-blend-mode:screen}
+#cursor::after{content:"";position:absolute;inset:50% auto auto 50%;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:var(--mint)}
+
+/* ---------- shared chrome ---------- */
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.26em}
+
+#backlink{position:fixed;top:24px;left:28px;z-index:40;font-size:10px;
+  color:var(--mut);transition:color .4s ease;text-shadow:0 1px 16px rgba(6,8,9,.9)}
+#backlink .cap{letter-spacing:.24em}
+#backlink b{font-weight:600;color:var(--ink)}
+#backlink:hover{color:var(--teal)}
+
+/* HUD readout */
+#hud{position:fixed;top:22px;right:26px;z-index:40;
+  padding:9px 14px;border-radius:11px;background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.04em;color:var(--mut);
+  display:flex;align-items:center;gap:11px;white-space:nowrap;
+  transition:opacity .5s ease,transform .5s ease}
+#hud.hidden{opacity:0;transform:translateY(-10px);pointer-events:none}
+#hud .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 9px var(--teal)}
+#hud b{color:var(--ink);font-weight:500}
+#hud .rg{color:var(--teal);text-transform:uppercase;letter-spacing:.14em;font-size:9.5px}
+#hud .sep{color:var(--mut3)}
+
+/* ---------- hero ---------- */
+#hero{position:relative;z-index:10;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 clamp(20px,6vw,84px) clamp(150px,22vh,210px);pointer-events:none}
+#hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(135% 62% at 30% 58%,rgba(10,11,13,.42),transparent 60%),
+    linear-gradient(180deg,transparent 0%,rgba(10,11,13,.06) 24%,rgba(10,11,13,.26) 40%,rgba(10,11,13,.18) 54%,rgba(10,11,13,.40) 78%,rgba(10,11,13,.64) 100%)}
+#hero .over{font-family:"IBM Plex Mono";font-size:10.5px;color:var(--mut);margin-bottom:30px;
+  text-shadow:0 1px 14px rgba(6,8,9,.95);letter-spacing:.12em}
+#hero .over b{color:var(--teal);font-weight:500}
+#hero h1{font-weight:600;font-size:clamp(66px,15.5vw,220px);line-height:.84;letter-spacing:-.02em;
+  color:#f3fbf8;text-shadow:0 0 90px rgba(87,224,200,.14),0 6px 60px rgba(6,8,9,.7)}
+#hero .tag{margin-top:20px;font-weight:300;font-size:clamp(19px,3.1vw,34px);letter-spacing:-.01em;
+  color:rgba(238,243,242,.9);text-shadow:0 2px 24px rgba(6,8,9,.85)}
+#hero .tag em{font-style:normal;color:var(--teal)}
+#hero .sub{margin-top:22px;max-width:52ch;font-size:clamp(14.5px,1.7vw,17px);font-weight:300;line-height:1.6;
+  color:rgba(230,240,238,.74);text-shadow:0 2px 22px rgba(6,8,9,.85)}
+#paintcue{margin-top:26px;display:inline-flex;align-items:center;gap:11px;
+  font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);
+  opacity:.9}
+#paintcue .ring{width:15px;height:15px;border-radius:50%;border:1px solid var(--teal);position:relative}
+#paintcue .ring::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid var(--teal);
+  animation:ping 2.4s cubic-bezier(.2,.6,.3,1) infinite}
+@keyframes ping{0%{transform:scale(1);opacity:.9}70%,100%{transform:scale(2.6);opacity:0}}
+
+#scrollcue{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);z-index:11;
+  font-family:"IBM Plex Mono";font-size:9.5px;letter-spacing:.18em;color:var(--mut2);
+  display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;pointer-events:none}
+#scrollcue .ln{width:1px;height:34px;background:linear-gradient(var(--mut3),transparent);position:relative;overflow:hidden}
+#scrollcue .ln::after{content:"";position:absolute;top:0;left:0;width:100%;height:40%;
+  background:linear-gradient(var(--teal),transparent);animation:drip 2.4s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes drip{0%{transform:translateY(-100%)}60%,100%{transform:translateY(260%)}}
+
+/* ---------- controls dock ---------- */
+#dock{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:45;
+  display:flex;align-items:stretch;gap:0;padding:12px 8px;border-radius:16px;
+  background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  box-shadow:0 20px 60px rgba(0,0,0,.55);max-width:calc(100vw - 24px);
+  transition:opacity .5s ease,transform .5s ease}
+#dock.hidden{opacity:0;transform:translateX(-50%) translateY(24px);pointer-events:none}
+.grp{display:flex;flex-direction:column;gap:8px;padding:2px 16px;justify-content:center}
+.grp+.grp{border-left:1px solid var(--line)}
+.grp .lab{font-family:"IBM Plex Mono";font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2)}
+
+/* phase map */
+.pm-wrap{position:relative;width:158px;height:96px}
+#phasemap{width:158px;height:96px;display:block;border-radius:8px;cursor:crosshair;
+  background:linear-gradient(120deg,rgba(87,224,200,.05),rgba(120,120,255,.04));border:1px solid var(--line)}
+#phasemap .dot{fill:rgba(230,240,238,.55);cursor:pointer;transition:fill .25s,r .2s}
+#phasemap .dot:hover{fill:var(--mint)}
+#phasemap .dot.on{fill:var(--teal)}
+#phasemap .lbl{font-family:"IBM Plex Mono";font-size:7px;letter-spacing:.06em;fill:var(--mut);
+  text-transform:uppercase;pointer-events:none}
+#phasemap .lbl.on{fill:var(--mint)}
+#phasemap .marker{fill:none;stroke:var(--mint);stroke-width:1.2}
+#phasemap .axis{font-family:"IBM Plex Mono";font-size:6.5px;fill:var(--mut2);letter-spacing:.1em}
+
+/* regime chips (mobile-facing) */
+.regchips{display:none;flex-wrap:wrap;gap:5px;max-width:190px}
+.regchips button{font-family:"IBM Plex Mono";font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 8px;border-radius:7px;border:1px solid var(--line);color:var(--mut2);transition:.25s;white-space:nowrap}
+.regchips button.on{color:var(--bg);background:var(--teal);border-color:var(--teal);font-weight:500}
+.regchips button:not(.on):hover{color:var(--ink);border-color:var(--glass-edge)}
+
+/* sliders */
+.slider-row{display:flex;flex-direction:column;gap:9px}
+.srow{display:flex;align-items:center;gap:9px}
+.srow .k{font-family:"IBM Plex Mono";font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);width:30px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:112px;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--teal) var(--fill,50%),rgba(120,200,190,.16) var(--fill,50%));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+  background:#eafff8;box-shadow:0 0 10px rgba(87,224,200,.7);cursor:grab;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border:none;border-radius:50%;
+  background:#eafff8;box-shadow:0 0 10px rgba(87,224,200,.7);cursor:grab}
+.val{font-family:"IBM Plex Mono";font-size:10px;color:var(--mut);min-width:44px;text-align:right}
+
+/* palette */
+.seg{display:flex;flex-wrap:wrap;gap:5px;max-width:196px}
+.seg button{font-family:"IBM Plex Mono";font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:6px 9px;border-radius:7px;border:1px solid var(--line);color:var(--mut2);transition:.25s;white-space:nowrap;
+  display:flex;align-items:center;gap:6px}
+.seg button .sw{width:9px;height:9px;border-radius:2px;flex:none;box-shadow:0 0 6px rgba(0,0,0,.4)}
+.seg button.on{color:var(--ink);border-color:var(--glass-edge);background:rgba(87,224,200,.07)}
+.seg button:not(.on):hover{color:var(--ink)}
+
+/* action buttons */
+.actions{flex-direction:row;align-items:center;gap:8px}
+.iconbtn{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;
+  color:var(--mut);transition:color .3s,border-color .3s,background .3s}
+.iconbtn:hover{color:var(--ink);border-color:var(--glass-edge)}
+.iconbtn.on{color:var(--teal);border-color:rgba(87,224,200,.4)}
+.iconbtn svg{width:16px;height:16px}
+
+/* ---------- scrolling content ---------- */
+main{position:relative;z-index:10}
+.section{position:relative;background:var(--bg);
+  padding:clamp(90px,15vh,180px) clamp(20px,7vw,120px)}
+.section.sci{border-top:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(10,11,13,.35) 0%,var(--bg) 20%)}
+.kick{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:26px;display:flex;align-items:center;gap:12px}
+.kick::before{content:"";width:30px;height:1px;background:var(--teal);opacity:.6}
+.sci h2{font-weight:400;font-size:clamp(30px,5.2vw,64px);line-height:1.04;letter-spacing:-.02em;
+  max-width:17ch;color:#f3fbf8}
+.sci h2 em{font-style:normal;color:var(--teal)}
+.lede{margin-top:34px;max-width:62ch;font-size:clamp(17px,2vw,21px);font-weight:300;line-height:1.62;
+  color:rgba(238,243,242,.82)}
+.body{margin-top:54px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 60px;max-width:1000px}
+.body p{font-size:clamp(15px,1.55vw,17px);font-weight:300;line-height:1.72;color:rgba(230,240,238,.72)}
+.body p b{color:var(--ink);font-weight:400}
+.t{color:var(--teal)}.a{color:var(--amber)}
+
+/* equation block */
+.eqn{margin-top:56px;max-width:640px;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(180deg,rgba(87,224,200,.04),rgba(10,11,13,0));padding:30px 32px;
+  font-family:"IBM Plex Mono";font-size:clamp(13px,1.7vw,16px);line-height:2.3;color:rgba(238,243,242,.9)}
+.eqn .cm{color:var(--mut2);font-size:10px;letter-spacing:.14em;text-transform:uppercase;display:block;
+  margin-bottom:14px;line-height:1.4}
+.eqn .op{color:var(--teal)}
+.eqn .term{color:var(--amber)}
+
+/* regime gallery */
+.regimes{margin-top:72px;border-top:1px solid var(--line);padding-top:40px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:22px;max-width:1040px}
+.rg-card{cursor:pointer;transition:transform .3s}
+.rg-card:hover{transform:translateY(-4px)}
+.rg-card .nm{font-family:"IBM Plex Mono";font-size:12.5px;font-weight:500;letter-spacing:.06em;color:var(--ink)}
+.rg-card .fk{font-family:"IBM Plex Mono";font-size:9.5px;letter-spacing:.06em;color:var(--teal);margin-top:7px}
+.rg-card .ds{font-size:12.5px;font-weight:300;line-height:1.5;color:var(--mut);margin-top:11px}
+
+/* quote band */
+.quote{position:relative;z-index:10;background:var(--bg);text-align:center;
+  padding:clamp(80px,14vh,160px) clamp(24px,8vw,140px)}
+.quote p{font-weight:300;font-size:clamp(23px,3.6vw,42px);line-height:1.3;letter-spacing:-.01em;
+  max-width:22ch;margin:0 auto;color:#eef3f2}
+.quote p em{font-style:italic;color:var(--teal)}
+.quote .att{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mut2);margin-top:34px}
+
+/* footer */
+footer{position:relative;z-index:10;background:var(--bg);border-top:1px solid var(--line);
+  padding:clamp(70px,10vh,120px) clamp(20px,7vw,120px) 48px}
+footer .big{font-weight:600;font-size:clamp(52px,13vw,168px);line-height:.9;letter-spacing:-.02em;
+  color:#f3fbf8;text-shadow:0 0 70px rgba(87,224,200,.12)}
+footer .meta{margin-top:44px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:26px;
+  border-top:1px solid var(--line);padding-top:30px;
+  font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.04em;color:var(--mut2)}
+footer .meta a{color:var(--mut);transition:color .3s}
+footer .meta a:hover{color:var(--teal)}
+footer .meta .col{display:flex;flex-direction:column;gap:9px}
+footer .meta b{color:var(--ink);font-weight:500}
+
+/* fallback */
+#nogl{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+  text-align:center;padding:40px;background:var(--bg)}
+#nogl p{max-width:460px;font-size:20px;font-weight:300;line-height:1.6;color:var(--mut)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s ease,transform 1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  .regimes{grid-template-columns:repeat(2,1fr);gap:22px 28px}
+  .body{grid-template-columns:1fr;gap:28px}
+}
+@media (max-width:820px){
+  #hero{padding:0 22px clamp(150px,24vh,190px)}
+  #hero h1{font-size:clamp(44px,12.6vw,104px)}
+  #hero .over{margin-bottom:20px}
+  #hero .sub{max-width:none}
+  #hud{top:16px;right:14px;font-size:9.5px;padding:7px 10px;gap:8px}
+  #hud .rg{font-size:8.5px}
+  #backlink{top:16px;left:16px}
+  #cursor{display:none}
+  #scrollcue{display:none}
+  #dock{padding:10px 4px;bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:0}
+  .pm-wrap{display:none}
+  .regchips{display:flex}
+  .grp{padding:2px 11px}
+  input[type=range]{width:96px}
+}
+@media (max-width:430px){
+  #dock{border-radius:14px}
+  .grp .lab{font-size:7.5px}
+  .val{min-width:40px;font-size:9px}
+  input[type=range]{width:88px}
+  .regchips{max-width:158px}
+  .seg{max-width:158px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  #scrollcue .ln::after,#paintcue .ring::after{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="gl" aria-label="Live Gray–Scott reaction–diffusion pattern. Click and drag to seed."></canvas>
+<div id="veil"></div>
+<div id="grain"></div>
+<div id="cursor"></div>
+
+<a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery"><span class="cap">XAVIER <b>FABLE</b> ×50</span></a>
+
+<div id="hud" class="mono" aria-live="off">
+  <span class="dot"></span><span class="rg" id="hudReg">Coral</span><span class="sep">·</span>
+  <span>f <b id="hudF">0.0545</b></span><span>k <b id="hudK">0.0620</b></span>
+</div>
+
+<!-- HERO -->
+<header id="hero">
+  <div class="over mono">N°37 · <b>GRAY–SCOTT</b> REACTION–DIFFUSION · LIVE WEBGL2 · PING-PONG FBO</div>
+  <h1>MORPHOGEN</h1>
+  <div class="tag">patterns that <em>grow themselves</em></div>
+  <p class="sub">Two chemicals. Two rules. A digital tissue that decides its own structure — coral, leopard spots, fingerprints, labyrinths, dividing cells — from feed and kill alone. Reach in and seed it.</p>
+  <div id="paintcue" class="mono"><span class="ring"></span>click + drag anywhere to paint life</div>
+</header>
+<div id="scrollcue" class="mono"><span>the biology, below</span><span class="ln"></span></div>
+
+<!-- CONTROLS -->
+<div id="dock" role="group" aria-label="Reaction–diffusion controls">
+  <div class="grp">
+    <span class="lab">Phase map · f→ · k↑</span>
+    <div class="pm-wrap">
+      <svg id="phasemap" viewBox="0 0 158 96" role="group" aria-label="Phase map of pattern regimes"></svg>
+    </div>
+    <div class="regchips" id="regchips" role="tablist" aria-label="Pattern regimes"></div>
+  </div>
+  <div class="grp">
+    <span class="lab">Feed &amp; Kill</span>
+    <div class="slider-row">
+      <div class="srow"><span class="k">Feed</span><input id="feed" type="range" min="0.010" max="0.100" step="0.0005" value="0.0545" aria-label="Feed rate"><span class="val mono" id="feedVal">0.0545</span></div>
+      <div class="srow"><span class="k">Kill</span><input id="kill" type="range" min="0.045" max="0.070" step="0.0005" value="0.0620" aria-label="Kill rate"><span class="val mono" id="killVal">0.0620</span></div>
+    </div>
+  </div>
+  <div class="grp">
+    <span class="lab">Palette</span>
+    <div class="seg" id="pal" role="tablist" aria-label="Colour palette">
+      <button data-p="bioteal" class="on" role="tab" aria-selected="true"><span class="sw" style="background:linear-gradient(#8dffd8,#0aa)"></span>Bio-teal</button>
+      <button data-p="ember" role="tab" aria-selected="false"><span class="sw" style="background:linear-gradient(#ffd27a,#b21)"></span>Ember</button>
+      <button data-p="mono" role="tab" aria-selected="false"><span class="sw" style="background:linear-gradient(#fff,#555)"></span>Mono-ink</button>
+      <button data-p="opal" role="tab" aria-selected="false"><span class="sw" style="background:linear-gradient(120deg,#ffb6e6,#a7d8ff,#c8ffd0)"></span>Opal</button>
+    </div>
+  </div>
+  <div class="grp actions">
+    <button id="reseedBtn" class="iconbtn" aria-label="Reseed (R)" title="Reseed the culture (R)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+    </button>
+    <button id="playBtn" class="iconbtn on" aria-label="Play or pause (space)" aria-pressed="true" title="Play / pause (space)">
+      <svg id="playIco" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main>
+  <section class="section sci">
+    <div class="kick reveal">Alan Turing · 1952</div>
+    <h2 class="reveal">The chemistry of a leopard, written as <em>two equations</em>.</h2>
+    <p class="lede reveal">In his last great paper, <i>The Chemical Basis of Morphogenesis</i>, Turing proposed that the spots, stripes and whorls of living things need no blueprint. They fall out — inevitably — of two substances diffusing and reacting across a sheet of cells. He called them <b class="t">morphogens</b>: shape-makers.</p>
+    <div class="body">
+      <p class="reveal">Picture two chemicals soaking through a tissue. One is an <b class="t">activator</b> — where it gathers, it makes more of itself, and more of the second. The second is an <b class="a">inhibitor</b> that spreads faster and shuts the first one down. Local runaway, long-range restraint.</p>
+      <p class="reveal">That single tension — <b>promote nearby, suppress at a distance</b> — is enough. A flawlessly even field becomes unstable to its own noise, and out of the flatness a wavelength is chosen. Peaks and troughs lock into place at a spacing set by the rates of diffusion.</p>
+      <p class="reveal">This lab runs the <b class="t">Gray–Scott</b> variant of Turing's idea on the GPU. Every pixel holds two numbers, <b>u</b> and <b>v</b>. Each frame they diffuse into their neighbours and react — <b>u</b> feeds the growth of <b>v</b>, and <b>v</b> is quietly removed. Two dials govern everything.</p>
+      <p class="reveal"><b class="t">Feed</b> replenishes <b>u</b> everywhere; <b class="a">kill</b> drains <b>v</b>. Nudge them a few thousandths and the whole tissue changes its mind — coral becomes maze becomes drifting spots becomes cells that split and split again. Nothing is drawn. It is all just <b>chemistry finding balance</b>.</p>
+    </div>
+
+    <div class="eqn reveal">
+      <span class="cm">The two rules, per cell, per tick</span>
+      ∂u/∂t = D<sub>u</sub><span class="op">∇²</span>u <span class="op">−</span> u<span class="term">v²</span> <span class="op">+</span> f(1<span class="op">−</span>u)<br>
+      ∂v/∂t = D<sub>v</sub><span class="op">∇²</span>v <span class="op">+</span> u<span class="term">v²</span> <span class="op">−</span> (f<span class="op">+</span>k)v
+    </div>
+
+    <div class="regimes" id="regimeGallery"></div>
+  </section>
+
+  <section class="quote">
+    <p class="reveal">A pattern is not painted onto the animal. It is <em>the animal, working out where it is.</em></p>
+    <div class="att reveal">after A. M. Turing — The Chemical Basis of Morphogenesis, 1952</div>
+  </section>
+</main>
+
+<footer>
+  <div class="big reveal">MORPHOGEN</div>
+  <div class="meta">
+    <div class="col">
+      <b>Patterns that grow themselves.</b>
+      <span>Gray–Scott reaction–diffusion · two chemicals, two rules</span>
+    </div>
+    <div class="col">
+      <span>Simulated live on the GPU in WebGL2</span>
+      <span>ping-pong float FBOs · painted by hand · no blueprint</span>
+    </div>
+    <div class="col">
+      <span>Xavier Fable ×50 — a synthetic-biology lab</span>
+      <a href="/">← back to the gallery</a>
+    </div>
+  </div>
+</footer>
+
+<div id="nogl"><p>This tissue is grown live and needs WebGL2 with float render targets — which your browser did not offer. Try a current desktop browser and let it bloom again.</p></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================================
+   MORPHOGEN — patterns that grow themselves
+   A Gray–Scott reaction–diffusion lab on WebGL2 with ping-pong float FBOs.
+   Two chemicals u,v evolve per texel (9-point laplacian + reaction). The user
+   paints seed (adds v); a lush colour ramp reads patterns as coral, spots,
+   fingerprints, mazes or dividing cells depending on feed/kill.
+   ========================================================================= */
+
+const cv = document.getElementById('gl');
+const gl = cv.getContext('webgl2', { antialias:false, depth:false, stencil:false, alpha:false, premultipliedAlpha:false, powerPreference:'high-performance' });
+const failEl = document.getElementById('nogl');
+function fail(){ failEl.style.display='flex'; }
+if (!gl){ fail(); return; }
+
+// float render targets
+const extF = gl.getExtension('EXT_color_buffer_float');
+if (!extF){ fail(); return; }
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params = new URLSearchParams(location.search);
+const small = Math.min(innerWidth, innerHeight) < 640;
+
+/* -------------------- regimes & presets -------------------- */
+// nb = seed-nuclei count (fragile low-feed regimes need sparse nuclei to survive
+// and self-replicate; dense seeding collapses them to the trivial state).
+// wu = warm-up steps to arrive already bloomed.
+const REGIMES = [
+  { id:'coral',   name:'Coral',   f:0.0545, k:0.0620, nb:150, wu:900, ds:'Branching reefs that grow outward from every seed, thickening into fingerprints.' },
+  { id:'mitosis', name:'Mitosis', f:0.0367, k:0.0649, nb:34,  wu:620, ds:'Blobs that swell, pinch and divide — cells splitting, endlessly, like early life.' },
+  { id:'maze',    name:'Maze',    f:0.0290, k:0.0570, nb:110, wu:820, ds:'A restless labyrinth that fills every gap with winding, self-avoiding corridors.' },
+  { id:'spots',   name:'Spots',   f:0.0300, k:0.0620, nb:40,  wu:640, ds:'Discrete solitons drifting on the field — the leopard’s coat, in slow motion.' },
+  { id:'waves',   name:'Waves',   f:0.0200, k:0.0480, nb:34,  wu:760, ds:'A restless, molten field — undulating fronts that flow, merge and never settle.' },
+];
+const regById = id => REGIMES.find(r => r.id === id) || REGIMES[0];
+
+const PALS = { bioteal:0, ember:1, mono:2, opal:3 };
+
+/* -------------------- state -------------------- */
+const state = {
+  feed: 0.0545, kill: 0.0620,
+  palette: 0,
+  playing: !reduced,
+  regime: 'coral',
+};
+
+// query overrides
+if (params.has('preset')){
+  const r = regById(params.get('preset'));
+  state.feed = r.f; state.kill = r.k; state.regime = r.id;
+}
+if (params.has('palette')) state.palette = PALS[params.get('palette')] ?? 0;
+if (params.has('feed')) state.feed = Math.max(0.010, Math.min(0.100, +params.get('feed')));
+if (params.has('kill')) state.kill = Math.max(0.045, Math.min(0.070, +params.get('kill')));
+const forceStatic = params.has('static') || reduced;
+if (forceStatic) state.playing = false;
+
+/* -------------------- shaders -------------------- */
+const VS = `#version 300 es
+void main(){
+  float x = float((gl_VertexID & 1) << 2) - 1.0;
+  float y = float((gl_VertexID & 2) << 1) - 1.0;
+  gl_Position = vec4(x, y, 0.0, 1.0);
+}`;
+
+// hash / value noise for seeding
+const NOISE = `
+float hash21(vec2 p){ p = fract(p*vec2(233.34,851.73)); p += dot(p, p+23.45); return fract(p.x*p.y); }
+float vnoise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f*f*(3.0-2.0*f);
+  float a = hash21(i), b = hash21(i+vec2(1,0)), c = hash21(i+vec2(0,1)), d = hash21(i+vec2(1,1));
+  return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}`;
+
+// INIT: u=1 everywhere; v injected as N localized nuclei (like hand-painted
+// seeds). Each nucleus grows / self-replicates during warm-up, so every regime
+// arrives at a healthy populated state (dense per-pixel seeding collapses the
+// fragile low-feed regimes to v=0).
+const INIT_FS = `#version 300 es
+precision highp float;
+uniform ivec2 uSize;
+uniform float uSeed;
+uniform int   uBlobs;
+out vec4 O;
+${NOISE}
+void main(){
+  vec2 p = gl_FragCoord.xy;
+  vec2 fsz = vec2(uSize);
+  float u = 1.0, v = 0.0;
+  float shortSide = min(fsz.x, fsz.y);
+  for(int i=0;i<200;i++){
+    if(i>=uBlobs) break;
+    float fi = float(i);
+    vec2 c = vec2(hash21(vec2(uSeed+fi*1.37, 3.1)), hash21(vec2(uSeed+fi*2.71, 7.9)));
+    c = c*0.92 + 0.04;                       // keep off the very edge
+    vec2 dp = (p/fsz - c) * fsz;             // texel-space => round nuclei
+    float r = 2.4 + hash21(vec2(fi, uSeed))*2.2;
+    if(dot(dp,dp) < r*r) v = 0.55;
+  }
+  O = vec4(u, v, 0.0, 1.0);
+}`;
+
+// SIM: Gray-Scott step (9-point laplacian, toroidal wrap) + optional brush
+const SIM_FS = `#version 300 es
+precision highp float;
+uniform highp sampler2D uState;
+uniform ivec2 uSize;
+uniform float uFeed, uKill, uDu, uDv, uDt;
+uniform vec2  uBrush;      // in texel coords (gl_FragCoord space)
+uniform float uBrushR;     // radius, texels
+uniform float uBrushAmt;   // 0 => inactive
+out vec4 O;
+
+vec2 S(ivec2 c){
+  c = (c % uSize + uSize) % uSize;   // wrap
+  return texelFetch(uState, c, 0).xy;
+}
+void main(){
+  ivec2 p = ivec2(gl_FragCoord.xy);
+  vec2 s = S(p);
+  float u = s.x, v = s.y;
+  vec2 lap = vec2(0.0);
+  lap += S(p+ivec2( 1, 0))*0.20;
+  lap += S(p+ivec2(-1, 0))*0.20;
+  lap += S(p+ivec2( 0, 1))*0.20;
+  lap += S(p+ivec2( 0,-1))*0.20;
+  lap += S(p+ivec2( 1, 1))*0.05;
+  lap += S(p+ivec2(-1, 1))*0.05;
+  lap += S(p+ivec2( 1,-1))*0.05;
+  lap += S(p+ivec2(-1,-1))*0.05;
+  lap += s*(-1.0);
+  float uvv = u*v*v;
+  float du = uDu*lap.x - uvv + uFeed*(1.0 - u);
+  float dv = uDv*lap.y + uvv - (uKill + uFeed)*v;
+  u += du*uDt;
+  v += dv*uDt;
+  if (uBrushAmt > 0.0){
+    vec2 d = gl_FragCoord.xy - uBrush;
+    float m = exp(-dot(d,d)/(uBrushR*uBrushR));
+    v += uBrushAmt*m;
+    u -= 0.35*uBrushAmt*m;
+  }
+  O = vec4(clamp(u,0.0,1.0), clamp(v,0.0,1.0), 0.0, 1.0);
+}`;
+
+// DISPLAY: read v, manual bilinear + relief shading, lush palette
+const DISP_FS = `#version 300 es
+precision highp float;
+uniform highp sampler2D uState;
+uniform ivec2 uSize;
+uniform vec2  uRes;
+uniform int   uPalette;
+out vec4 O;
+
+float fetchV(ivec2 c){ c = (c % uSize + uSize) % uSize; return texelFetch(uState, c, 0).y; }
+float valAt(vec2 uv){
+  vec2 t = uv*vec2(uSize) - 0.5;
+  vec2 i = floor(t), f = fract(t);
+  ivec2 b = ivec2(i);
+  float v00 = fetchV(b), v10 = fetchV(b+ivec2(1,0));
+  float v01 = fetchV(b+ivec2(0,1)), v11 = fetchV(b+ivec2(1,1));
+  return mix(mix(v00,v10,f.x), mix(v01,v11,f.x), f.y);
+}
+
+vec3 ramp(float t){
+  t = clamp(t,0.0,1.0);
+  if (uPalette==0){            // bio-teal
+    vec3 c = mix(vec3(0.015,0.10,0.11), vec3(0.02,0.52,0.47), smoothstep(0.0,0.45,t));
+    c = mix(c, vec3(0.34,0.96,0.78), smoothstep(0.42,0.78,t));
+    c = mix(c, vec3(0.82,1.0,0.92),  smoothstep(0.80,1.0,t));
+    return c;
+  } else if (uPalette==1){     // ember
+    vec3 c = mix(vec3(0.14,0.02,0.01), vec3(0.62,0.11,0.03), smoothstep(0.0,0.42,t));
+    c = mix(c, vec3(0.97,0.42,0.08), smoothstep(0.40,0.74,t));
+    c = mix(c, vec3(1.0,0.88,0.52),  smoothstep(0.78,1.0,t));
+    return c;
+  } else if (uPalette==2){     // mono-ink
+    vec3 c = mix(vec3(0.055,0.065,0.085), vec3(0.40,0.44,0.52), smoothstep(0.0,0.5,t));
+    c = mix(c, vec3(0.80,0.85,0.92), smoothstep(0.48,0.82,t));
+    c = mix(c, vec3(1.0,1.0,1.0),    smoothstep(0.84,1.0,t));
+    return c;
+  } else {                     // opal — iridescent
+    vec3 a = vec3(0.62,0.55,0.64), bb = vec3(0.34,0.32,0.30);
+    vec3 cc = vec3(1.0,1.0,1.0),   dd = vec3(0.02,0.28,0.56);
+    vec3 irid = a + bb*cos(6.28318*(cc*(t*0.9+0.08)+dd));
+    return mix(vec3(0.06,0.08,0.12), irid, smoothstep(0.0,0.4,t));
+  }
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 px = 1.0/vec2(uSize);
+  float v  = valAt(uv);
+  float vx = valAt(uv + vec2(px.x,0.0));
+  float vy = valAt(uv + vec2(0.0,px.y));
+  vec2 grad = vec2(vx - v, vy - v);
+
+  vec3 base = vec3(0.039,0.043,0.051);           // #0a0b0d substrate
+  float t = clamp((v - 0.05)/0.36, 0.0, 1.0);
+  float mask = smoothstep(0.06, 0.24, v);
+  vec3 patt = ramp(t);
+
+  // relief shading — fake a surface normal from the pattern gradient
+  vec3 n = normalize(vec3(-grad*46.0, 1.0));
+  vec3 L = normalize(vec3(-0.45, 0.62, 0.72));
+  float diff = clamp(dot(n, L), 0.0, 1.0);
+  float shade = 0.62 + 0.55*diff;
+  patt *= shade;
+
+  // ridge highlight along steep edges
+  float ridge = smoothstep(0.010, 0.075, length(grad));
+  patt += ramp(min(t+0.25,1.0)) * ridge * 0.35;
+
+  vec3 col = mix(base, patt, mask);
+  col += patt * mask * 0.14;                      // soft glow / bloom
+
+  // vignette
+  vec2 q = (uv-0.5); q.x *= uRes.x/uRes.y;
+  col *= 1.0 - 0.40*smoothstep(0.28, 1.12, dot(q,q));
+
+  // filmic-ish tonemap + gentle lift
+  col = vec3(1.0) - exp(-col*1.25);
+  col = pow(col, vec3(0.92));
+  col += (hash(gl_FragCoord.xy) - 0.5)/255.0;     // dither
+  O = vec4(col, 1.0);
+}
+float hash(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }`;
+
+/* -------------------- compile -------------------- */
+function compile(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)){ console.error(gl.getShaderInfoLog(s)); throw new Error('shader'); }
+  return s;
+}
+function program(fs){
+  const p = gl.createProgram();
+  gl.attachShader(p, compile(gl.VERTEX_SHADER, VS));
+  gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(p)); throw new Error('link'); }
+  return p;
+}
+let progInit, progSim, progDisp;
+try {
+  // hash() is declared after main in DISP_FS — move it before by prepending
+  const dispSrc = DISP_FS.replace('void main(){', 'float hash(vec2 p);\nvoid main(){');
+  progInit = program(INIT_FS);
+  progSim  = program(SIM_FS);
+  progDisp = program(dispSrc);
+} catch(e){ console.error(e); fail(); return; }
+
+const U = (p, names) => { const o = {}; names.forEach(n => o[n] = gl.getUniformLocation(p, n)); return o; };
+const uInit = U(progInit, ['uSize','uSeed','uBlobs']);
+const uSim  = U(progSim,  ['uState','uSize','uFeed','uKill','uDu','uDv','uDt','uBrush','uBrushR','uBrushAmt']);
+const uDisp = U(progDisp, ['uState','uSize','uRes','uPalette']);
+
+/* -------------------- ping-pong FBOs -------------------- */
+let simW = 0, simH = 0;
+let texA, texB, fboA, fboB, src = 0;
+
+function makeTex(w, h){
+  const t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, w, h, 0, gl.RGBA, gl.FLOAT, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  return t;
+}
+function makeFbo(tex){
+  const f = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  return f;
+}
+function allocSim(w, h){
+  if (texA){ gl.deleteTexture(texA); gl.deleteTexture(texB); gl.deleteFramebuffer(fboA); gl.deleteFramebuffer(fboB); }
+  simW = w; simH = h;
+  texA = makeTex(w,h); texB = makeTex(w,h);
+  fboA = makeFbo(texA); fboB = makeFbo(texB);
+  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE){ fail(); throw new Error('fbo'); }
+  src = 0;
+  simScaleFactor = Math.max(0.28, Math.min(1.6, (w*h)/133000));
+}
+
+/* -------------------- passes -------------------- */
+function seed(){
+  // INIT into current src texture, with regime-appropriate nuclei count
+  const seedVal = Math.random()*97.3 + 0.5;
+  const nb = regById(state.regime).nb || 90;
+  gl.useProgram(progInit);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, src===0 ? fboA : fboB);
+  gl.viewport(0,0,simW,simH);
+  gl.uniform2i(uInit.uSize, simW, simH);
+  gl.uniform1f(uInit.uSeed, seedVal);
+  gl.uniform1i(uInit.uBlobs, Math.round(nb * simScaleFactor));
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+// scale nuclei count with grid area so density is consistent across viewports
+let simScaleFactor = 1;
+
+const DU = 1.0, DV = 0.5, DT = 1.0;
+function stepSim(brushX, brushY, brushR, brushAmt){
+  const dst = src===0 ? fboB : fboA;
+  const srcTex = src===0 ? texA : texB;
+  gl.useProgram(progSim);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, dst);
+  gl.viewport(0,0,simW,simH);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, srcTex);
+  gl.uniform1i(uSim.uState, 0);
+  gl.uniform2i(uSim.uSize, simW, simH);
+  gl.uniform1f(uSim.uFeed, state.feed);
+  gl.uniform1f(uSim.uKill, state.kill);
+  gl.uniform1f(uSim.uDu, DU);
+  gl.uniform1f(uSim.uDv, DV);
+  gl.uniform1f(uSim.uDt, DT);
+  gl.uniform2f(uSim.uBrush, brushX||0, brushY||0);
+  gl.uniform1f(uSim.uBrushR, brushR||1);
+  gl.uniform1f(uSim.uBrushAmt, brushAmt||0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  src = src===0 ? 1 : 0;
+}
+
+function drawDisplay(){
+  gl.useProgram(progDisp);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.viewport(0,0,cv.width,cv.height);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, src===0 ? texA : texB);
+  gl.uniform1i(uDisp.uState, 0);
+  gl.uniform2i(uDisp.uSize, simW, simH);
+  gl.uniform2f(uDisp.uRes, cv.width, cv.height);
+  gl.uniform1i(uDisp.uPalette, state.palette);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+function warmup(steps){ for (let i=0;i<steps;i++) stepSim(); }
+
+/* -------------------- sizing -------------------- */
+let dpr = 1;
+function sizeCanvas(){
+  dpr = Math.min(devicePixelRatio || 1, 2);
+  const scale = small ? 0.85 : 1.0;
+  const w = Math.max(2, Math.round(innerWidth  * dpr * scale));
+  const h = Math.max(2, Math.round(innerHeight * dpr * scale));
+  if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; }
+}
+function simDims(){
+  // sim resolution tracks screen aspect (square-ish texels => round spots),
+  // capped so pattern feature size stays lush & performance stays high.
+  const longSide = small ? 300 : 460;
+  const a = innerWidth / innerHeight;
+  let w, h;
+  if (a >= 1){ w = longSide; h = Math.round(longSide / a); }
+  else { h = longSide; w = Math.round(longSide * a); }
+  return [Math.max(64,w), Math.max(64,h)];
+}
+
+function regimeWU(){ return regById(state.regime).wu || 800; }
+function boot(){
+  sizeCanvas();
+  const [w,h] = simDims();
+  allocSim(w,h);
+  seed();
+  warmup(forceStatic ? regimeWU()+520 : regimeWU());   // arrive already blooming
+  drawDisplay();
+}
+
+/* -------------------- render loop -------------------- */
+const STEPS = small ? 6 : 8;
+let running = true;
+// brush (painting)
+const brush = { active:false, x:0, y:0 };
+const brushR = () => Math.max(3.5, simW * 0.018);
+const BRUSH_AMT = 0.85;
+
+function frame(){
+  if (!running) return;
+  requestAnimationFrame(frame);
+  if (state.playing || brush.active){
+    for (let i=0;i<STEPS;i++){
+      if (brush.active) stepSim(brush.x, brush.y, brushR(), BRUSH_AMT);
+      else stepSim();
+    }
+    drawDisplay();
+  }
+}
+
+boot();
+if (!forceStatic) requestAnimationFrame(frame);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){ running = false; }
+  else if (!running && !forceStatic){ running = true; requestAnimationFrame(frame); }
+});
+
+/* -------------------- painting -------------------- */
+const curEl = document.getElementById('cursor');
+function toSim(clientX, clientY){
+  // client (top-left origin) -> sim texel coords (bottom-left origin)
+  const u = clientX / innerWidth;
+  const vv = 1 - clientY / innerHeight;
+  return [u * simW, vv * simH];
+}
+function paintAt(clientX, clientY){
+  const [x,y] = toSim(clientX, clientY);
+  brush.x = x; brush.y = y;
+}
+if (!forceStatic){
+  cv.addEventListener('pointerdown', e => {
+    cv.setPointerCapture(e.pointerId);
+    brush.active = true; paintAt(e.clientX, e.clientY);
+    if (!running){ running = true; requestAnimationFrame(frame); }
+  });
+  addEventListener('pointermove', e => {
+    if (brush.active) paintAt(e.clientX, e.clientY);
+    if (!small){
+      curEl.style.opacity = e.clientY < innerHeight*0.92 ? '1' : '0';
+      curEl.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+      const big = brush.active;
+      curEl.style.width = big ? '58px' : '44px';
+      curEl.style.height = big ? '58px' : '44px';
+    }
+  }, { passive:true });
+  addEventListener('pointerup', () => { brush.active = false; });
+  addEventListener('pointercancel', () => { brush.active = false; });
+  if (!small) addEventListener('pointerleave', () => curEl.style.opacity = '0');
+}
+
+/* -------------------- controls -------------------- */
+const $ = id => document.getElementById(id);
+const feedIn = $('feed'), killIn = $('kill'), feedVal = $('feedVal'), killVal = $('killVal');
+const hudReg = $('hudReg'), hudF = $('hudF'), hudK = $('hudK');
+
+function setFill(el){ const p = (el.value - el.min)/(el.max - el.min)*100; el.style.setProperty('--fill', p+'%'); }
+function currentRegimeName(){
+  let best = null, bd = 1e9;
+  for (const r of REGIMES){
+    const d = Math.abs(r.f - state.feed)*140 + Math.abs(r.k - state.kill)*280;
+    if (d < bd){ bd = d; best = r; }
+  }
+  return bd < 0.9 ? best : null;
+}
+function updateHUD(){
+  const r = currentRegimeName();
+  hudReg.textContent = r ? r.name : 'Custom';
+  hudF.textContent = state.feed.toFixed(4);
+  hudK.textContent = state.kill.toFixed(4);
+  state.regime = r ? r.id : 'custom';
+  syncPhaseMap();
+}
+function refreshStatic(){ if (forceStatic) drawDisplay(); }
+
+feedIn.addEventListener('input', () => { state.feed = +feedIn.value; feedVal.textContent = state.feed.toFixed(4); setFill(feedIn); updateHUD(); refreshStatic(); });
+killIn.addEventListener('input', () => { state.kill = +killIn.value; killVal.textContent = state.kill.toFixed(4); setFill(killIn); updateHUD(); refreshStatic(); });
+
+function setRegime(id, reseed){
+  const r = regById(id);
+  state.feed = r.f; state.kill = r.k; state.regime = id;
+  feedIn.value = r.f; killIn.value = r.k;
+  feedVal.textContent = r.f.toFixed(4); killVal.textContent = r.k.toFixed(4);
+  setFill(feedIn); setFill(killIn); updateHUD();
+  if (reseed){ seed(); warmup(forceStatic ? regimeWU()+420 : 140); }
+  refreshStatic();
+}
+
+/* palette */
+const palBtns = [...document.querySelectorAll('#pal button')];
+function selPal(p){
+  state.palette = PALS[p];
+  palBtns.forEach(b => { const on = b.dataset.p===p; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  refreshStatic();
+}
+palBtns.forEach(b => b.addEventListener('click', () => selPal(b.dataset.p)));
+
+/* reseed + play */
+const reseedBtn = $('reseedBtn'), playBtn = $('playBtn'), playIco = $('playIco');
+const ICO_PLAY = '<path d="M7 4l13 8-13 8V4z"/>';
+const ICO_PAUSE = '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+function setPlay(on){
+  state.playing = on;
+  playBtn.classList.toggle('on', on); playBtn.setAttribute('aria-pressed', on);
+  playIco.innerHTML = on ? ICO_PAUSE : ICO_PLAY;
+  if (on && !running && !forceStatic){ running = true; requestAnimationFrame(frame); }
+}
+playBtn.addEventListener('click', () => setPlay(!state.playing));
+reseedBtn.addEventListener('click', () => { seed(); warmup(forceStatic ? regimeWU()+420 : 140); drawDisplay(); });
+
+addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space'){ e.preventDefault(); setPlay(!state.playing); }
+  else if (e.key === 'r' || e.key === 'R'){ seed(); warmup(forceStatic ? regimeWU()+420 : 140); drawDisplay(); }
+});
+
+/* -------------------- phase map (SVG) -------------------- */
+const FMIN=0.010, FMAX=0.100, KMIN=0.045, KMAX=0.070, PW=158, PH=96;
+const padL=8, padR=8, padT=8, padB=8;
+function fx(f){ return padL + (f-FMIN)/(FMAX-FMIN)*(PW-padL-padR); }
+function ky(k){ return padT + (1-(k-KMIN)/(KMAX-KMIN))*(PH-padT-padB); }
+const svg = $('phasemap');
+const SVGNS = 'http://www.w3.org/2000/svg';
+function el(name, attrs){ const e = document.createElementNS(SVGNS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+// label offsets so text doesn't collide with points/edges
+const LBL = { coral:[7,3.5], mitosis:[0,-6,'middle'], maze:[-6,3.5,'end'], spots:[0,11,'middle'], waves:[7,3.5] };
+function buildPhaseMap(){
+  svg.appendChild(el('text', { class:'axis', x:PW-6, y:PH-3, 'text-anchor':'end' })).textContent = 'feed →';
+  const yl = el('text', { class:'axis', x:4, y:12, transform:`rotate(-90 4 12)` }); yl.textContent = 'kill →'; svg.appendChild(yl);
+  REGIMES.forEach(r => {
+    const cx = fx(r.f), cy = ky(r.k);
+    const dot = el('circle', { class:'dot', cx, cy, r:3.2, 'data-id':r.id, tabindex:'0', role:'tab' });
+    dot.addEventListener('click', () => setRegime(r.id, true));
+    dot.addEventListener('keydown', ev => { if (ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); setRegime(r.id, true); } });
+    svg.appendChild(dot);
+    const off = LBL[r.id] || [7,3];
+    const tx = el('text', { class:'lbl', x:cx+off[0], y:cy+off[1], 'data-id':r.id });
+    if (off[2]) tx.setAttribute('text-anchor', off[2]);
+    tx.textContent = r.name;
+    svg.appendChild(tx);
+  });
+  const marker = el('circle', { class:'marker', id:'pmMarker', cx:fx(state.feed), cy:ky(state.kill), r:5.4 });
+  svg.appendChild(marker);
+  // click anywhere to set f/k
+  svg.addEventListener('click', ev => {
+    if (ev.target.classList.contains('dot')) return; // handled
+    const rect = svg.getBoundingClientRect();
+    const mx = (ev.clientX-rect.left)/rect.width*PW;
+    const my = (ev.clientY-rect.top)/rect.height*PH;
+    const f = FMIN + Math.max(0,Math.min(1,(mx-padL)/(PW-padL-padR)))*(FMAX-FMIN);
+    const k = KMIN + Math.max(0,Math.min(1,1-(my-padT)/(PH-padT-padB)))*(KMAX-KMIN);
+    state.feed = Math.round(f/0.0005)*0.0005; state.kill = Math.round(k/0.0005)*0.0005;
+    feedIn.value = state.feed; killIn.value = state.kill;
+    feedVal.textContent = state.feed.toFixed(4); killVal.textContent = state.kill.toFixed(4);
+    setFill(feedIn); setFill(killIn); updateHUD(); refreshStatic();
+  });
+}
+function syncPhaseMap(){
+  const m = $('pmMarker'); if (m){ m.setAttribute('cx', fx(state.feed)); m.setAttribute('cy', ky(state.kill)); }
+  const cur = currentRegimeName();
+  svg.querySelectorAll('.dot').forEach(d => d.classList.toggle('on', cur && d.getAttribute('data-id')===cur.id));
+  svg.querySelectorAll('.lbl').forEach(l => l.classList.toggle('on', cur && l.getAttribute('data-id')===cur.id));
+  // regime chips
+  document.querySelectorAll('#regchips button').forEach(b => b.classList.toggle('on', cur && b.dataset.id===cur.id));
+}
+
+/* -------------------- regime chips (mobile) -------------------- */
+const chipsWrap = $('regchips');
+REGIMES.forEach(r => {
+  const b = document.createElement('button');
+  b.dataset.id = r.id; b.textContent = r.name; b.setAttribute('role','tab');
+  b.addEventListener('click', () => setRegime(r.id, true));
+  chipsWrap.appendChild(b);
+});
+
+/* -------------------- regime gallery (content section) -------------------- */
+const gallery = $('regimeGallery');
+REGIMES.forEach(r => {
+  const c = document.createElement('div');
+  c.className = 'rg-card reveal';
+  c.innerHTML = `<div class="nm">${r.name}</div><div class="fk">f ${r.f.toFixed(4)} · k ${r.k.toFixed(4)}</div><div class="ds">${r.ds}</div>`;
+  c.addEventListener('click', () => { setRegime(r.id, true); scrollTo({ top:0, behavior: reduced ? 'auto' : 'smooth' }); });
+  gallery.appendChild(c);
+});
+
+/* -------------------- init UI -------------------- */
+buildPhaseMap();
+setFill(feedIn); setFill(killIn);
+feedVal.textContent = state.feed.toFixed(4); killVal.textContent = state.kill.toFixed(4);
+updateHUD();
+// reflect query overrides into UI
+feedIn.value = state.feed; killIn.value = state.kill; setFill(feedIn); setFill(killIn);
+if (state.palette){ const key = Object.keys(PALS).find(k => PALS[k]===state.palette); selPal(key); }
+if (forceStatic) setPlay(false);
+
+/* -------------------- chrome hide on scroll -------------------- */
+const dockEl = $('dock'), hudEl = $('hud');
+let hid = false;
+function onScroll(){
+  const hide = scrollY > innerHeight*0.6;
+  if (hide === hid) return; hid = hide;
+  dockEl.classList.toggle('hidden', hide);
+  hudEl.classList.toggle('hidden', hide);
+  if (hide) curEl.style.opacity = '0';
+}
+addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+
+/* -------------------- reveals -------------------- */
+if (!reduced && 'IntersectionObserver' in window){
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold:0.14 });
+  document.querySelectorAll('.reveal').forEach((el,i) => { el.style.transitionDelay = (i%4*70)+'ms'; io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+}
+
+/* -------------------- resize (debounced; re-seed at new sim res) -------------------- */
+let rz;
+addEventListener('resize', () => {
+  clearTimeout(rz);
+  rz = setTimeout(() => {
+    sizeCanvas();
+    const [w,h] = simDims();
+    if (w !== simW || h !== simH){ allocSim(w,h); seed(); warmup(forceStatic ? regimeWU()+420 : Math.min(360, regimeWU())); }
+    drawDisplay();
+  }, 220);
+});
+
+/* -------------------- optional deep-scroll for screenshots -------------------- */
+if (params.has('scroll')){
+  addEventListener('load', () => {
+    const f = Math.max(0, Math.min(1, +params.get('scroll')));
+    scrollTo(0, (document.body.scrollHeight - innerHeight)*f);
+  });
+}
+})();
+</script>
+</body>
+</html>

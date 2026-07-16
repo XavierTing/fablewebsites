@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FURTHER — an open sea</title>
+<meta name="description" content="A cinematic WebGL ocean at golden hour. Rolling Gerstner swell, sun glitter on the wave-faces, a fresnel sky reflection and a shimmering path of light across a deep-teal sea. Stand at the bow. Scrub the day from golden hour to dusk to a moonlit night.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="FURTHER — an open sea">
+<meta property="og:description" content="A cinematic WebGL ocean at golden hour — rolling swell, sun glitter, a road of light across a deep-teal sea. Stand at the bow.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/50-ocean/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/50-ocean/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FURTHER — an open sea">
+<meta name="twitter:description" content="A cinematic WebGL ocean at golden hour — rolling swell, sun glitter, a road of light across a deep-teal sea.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌅</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sea:#061418;
+  --sea2:#08191e;
+  --ink:#f5ede0;
+  --gold:#ffc582;
+  --amber:#ff9a4e;
+  --teal:#6fcabd;
+  --mut:rgba(245,237,224,.60);
+  --mut2:rgba(245,237,224,.36);
+  --mut3:rgba(245,237,224,.18);
+  --line:rgba(245,237,224,.12);
+  --glass:rgba(9,22,27,.44);
+  --glass-edge:rgba(255,197,130,.16);
+  --sp:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--sea);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:rgba(255,154,78,.30);color:#fff6ea}
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#040e11}
+::-webkit-scrollbar-thumb{background:rgba(255,197,130,.20);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,197,130,.40)}
+
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.26em}
+
+/* ---------- WebGL canvas ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:linear-gradient(#0a2028,#061418)}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 50% 6%, transparent 52%, rgba(5,12,15,.42) 100%),
+    linear-gradient(180deg, rgba(6,16,20,.30) 0%, transparent 26%, transparent 62%, rgba(4,10,13,.55) 100%);}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");}
+#nogl{position:fixed;inset:0;z-index:3;display:none;align-items:center;justify-content:center;
+  background:linear-gradient(#123038,#061418);color:var(--mut);font-size:13px}
+
+#cursor{position:fixed;top:0;left:0;z-index:60;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(255,197,130,.55);box-shadow:0 0 18px rgba(255,154,78,.34);opacity:0;
+  transition:opacity .45s ease,width .25s var(--sp),height .25s var(--sp);mix-blend-mode:screen}
+#cursor::after{content:"";position:absolute;inset:13px;border-radius:50%;background:rgba(255,197,130,.75)}
+
+/* ---------- back-link ---------- */
+#backlink{position:fixed;left:26px;bottom:22px;z-index:44;font-size:10px;line-height:1.5;
+  color:var(--mut);transition:color .4s ease;text-shadow:0 1px 20px rgba(4,10,13,.9)}
+#backlink .cap{letter-spacing:.24em;display:block}
+#backlink b{font-weight:500;color:var(--ink)}
+#backlink .arw{color:var(--gold);transition:transform .4s var(--sp);display:inline-block}
+#backlink:hover{color:var(--ink)}
+#backlink:hover .arw{transform:translateX(-4px)}
+
+/* ---------- HUD instrument cluster ---------- */
+#hud{position:fixed;top:20px;right:22px;z-index:40;width:200px;
+  border:1px solid var(--glass-edge);border-radius:13px;background:var(--glass);
+  backdrop-filter:blur(11px) saturate(1.1);-webkit-backdrop-filter:blur(11px) saturate(1.1);
+  padding:13px 15px 12px;box-shadow:0 20px 44px rgba(2,8,11,.4);
+  opacity:0;transform:translateY(-8px)}
+#hud .htop{display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:9px;margin-bottom:9px;border-bottom:1px solid var(--line)}
+#hud .htop .lbl{font-size:8.5px;color:var(--mut2)}
+#hud .htop .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 9px var(--gold);animation:pulse 3.4s var(--sp) infinite}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+.inst{display:flex;align-items:baseline;justify-content:space-between;padding:4.5px 0}
+.inst .k{font-size:9px;color:var(--mut2);letter-spacing:.16em}
+.inst .v{font-size:14px;color:var(--ink);font-weight:500;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.inst .v .u{font-size:9.5px;color:var(--mut);margin-left:3px;font-weight:400}
+#hud .hstate{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;font-size:9px;color:var(--mut)}
+#hud .hstate .s{color:var(--gold)}
+
+/* ---------- controls ---------- */
+#panel{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(10px);z-index:42;
+  display:flex;align-items:center;gap:20px;
+  padding:12px 18px;border:1px solid var(--glass-edge);border-radius:15px;background:var(--glass);
+  backdrop-filter:blur(12px) saturate(1.1);-webkit-backdrop-filter:blur(12px) saturate(1.1);
+  box-shadow:0 22px 50px rgba(2,8,11,.42);opacity:0}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:132px}
+.ctl .row{display:flex;align-items:center;justify-content:space-between}
+.ctl .cl{font-size:8.5px;color:var(--mut2);letter-spacing:.2em}
+.ctl .cv{font-size:9px;color:var(--gold);letter-spacing:.06em}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;min-width:0;height:3px;border-radius:3px;cursor:pointer;
+  background:linear-gradient(90deg,var(--gold) 0%,var(--gold) var(--fill,50%),rgba(245,237,224,.16) var(--fill,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--amber);box-shadow:0 0 12px rgba(255,154,78,.5);transition:transform .2s var(--sp)}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:var(--ink);border:2px solid var(--amber)}
+#play{width:40px;height:40px;flex:0 0 40px;border-radius:50%;border:1px solid var(--glass-edge);
+  background:rgba(255,197,130,.08);display:flex;align-items:center;justify-content:center;
+  transition:background .3s ease,transform .2s var(--sp)}
+#play:hover{background:rgba(255,197,130,.18);transform:scale(1.06)}
+#play svg{width:15px;height:15px;fill:var(--gold)}
+.pdiv{width:1px;height:34px;background:var(--line)}
+
+/* ---------- hero copy ---------- */
+.hero{position:relative;z-index:20;height:100vh;min-height:600px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 clamp(22px,5vw,64px) clamp(96px,15vh,150px);pointer-events:none}
+.hero .eyebrow{font-size:10px;color:rgba(255,240,222,.82);margin-bottom:clamp(16px,3vh,26px);
+  display:flex;align-items:center;gap:12px;text-shadow:0 1px 22px rgba(60,30,8,.75)}
+.hero .eyebrow .ln{width:clamp(24px,5vw,54px);height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+h1{font-weight:300;font-size:clamp(68px,17vw,224px);line-height:.84;letter-spacing:-.03em;
+  color:var(--ink);text-shadow:0 8px 60px rgba(4,10,13,.5)}
+.hero .sub{margin-top:clamp(8px,1.6vh,16px);font-size:clamp(17px,3.2vw,34px);font-weight:300;
+  font-style:italic;letter-spacing:.01em;color:var(--gold)}
+.hero .tag{margin-top:clamp(18px,3vh,30px);max-width:44ch;font-size:clamp(13px,1.5vw,16px);
+  line-height:1.62;color:var(--mut);font-weight:300}
+.hero .scrollcue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
+  font-size:8.5px;color:var(--mut2);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hero .scrollcue .bar{width:1px;height:34px;background:linear-gradient(var(--mut2),transparent);
+  position:relative;overflow:hidden}
+.hero .scrollcue .bar::after{content:"";position:absolute;top:-34px;left:0;width:1px;height:34px;
+  background:linear-gradient(var(--gold),transparent);animation:drop 2.6s var(--sp) infinite}
+@keyframes drop{0%{top:-34px}60%,100%{top:34px}}
+
+/* hero split words for stagger */
+.line{overflow:hidden;display:block}
+.line > span{display:block;transform:translateY(102%)}
+
+/* ---------- scroll content ---------- */
+main{position:relative;z-index:20;background:
+  linear-gradient(180deg, transparent 0%, rgba(5,13,16,.55) 8%, var(--sea) 20%, var(--sea) 100%);}
+.section{max-width:1160px;margin:0 auto;padding:clamp(80px,14vh,150px) clamp(22px,6vw,72px)}
+.reading{border-top:1px solid var(--line)}
+.reading .k{font-size:10px;color:var(--gold);margin-bottom:clamp(28px,5vh,52px)}
+.reading h2{font-weight:300;font-size:clamp(30px,5.4vw,68px);line-height:1.06;letter-spacing:-.02em;max-width:16ch}
+.reading .body{margin-top:clamp(26px,4vh,40px);max-width:58ch;margin-left:auto;
+  font-size:clamp(15px,1.7vw,19px);line-height:1.72;color:var(--mut);font-weight:300}
+.reading .body em{color:var(--ink);font-style:italic}
+
+.verse{border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(30px,5vw,60px)}
+.stanza .idx{font-size:9px;color:var(--gold);letter-spacing:.24em;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px}
+.stanza .idx .ln{flex:1;height:1px;background:var(--line)}
+.stanza h3{font-weight:400;font-size:clamp(19px,2.3vw,25px);margin-bottom:14px;letter-spacing:-.01em}
+.stanza p{font-size:clamp(13px,1.4vw,15px);line-height:1.68;color:var(--mut);font-weight:300}
+
+.close{border-top:1px solid var(--line);text-align:center}
+.close p{font-weight:300;font-size:clamp(24px,4.4vw,52px);line-height:1.16;letter-spacing:-.015em;
+  max-width:20ch;margin:0 auto;color:var(--ink)}
+.close .coords{margin-top:clamp(30px,5vh,52px);font-size:9.5px;color:var(--mut2);letter-spacing:.2em}
+
+footer{position:relative;z-index:20;background:var(--sea);border-top:1px solid var(--line);
+  padding:clamp(48px,8vh,80px) clamp(22px,6vw,72px) 40px}
+.fwrap{max-width:1160px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;
+  gap:32px;flex-wrap:wrap}
+.fwrap .brand{font-weight:300;font-size:clamp(34px,7vw,76px);line-height:.9;letter-spacing:-.03em}
+.fwrap .brand span{color:var(--gold)}
+.fmeta{text-align:right;font-size:10px;color:var(--mut2);line-height:1.9}
+.fmeta a{color:var(--mut);transition:color .3s ease}
+.fmeta a:hover{color:var(--gold)}
+.frule{max-width:1160px;margin:36px auto 0;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:9px;color:var(--mut3);letter-spacing:.14em}
+
+.reveal{opacity:0;transform:translateY(26px)}
+
+@media (max-width:720px){
+  #hud{width:152px;top:14px;right:12px;padding:9px 11px 9px;border-radius:11px}
+  #hud .htop{padding-bottom:7px;margin-bottom:7px}
+  #hud .htop .lbl{font-size:7.5px}
+  .inst{padding:3.5px 0}
+  .inst .v{font-size:12.5px}
+  .inst .k{font-size:8.5px}
+  #hud .hstate{margin-top:7px;padding-top:7px;font-size:8px;white-space:nowrap;gap:8px}
+  #hud .hstate .cap{letter-spacing:.05em}
+  #panel{flex-wrap:wrap;justify-content:flex-start;column-gap:12px;row-gap:11px;
+    padding:11px 14px;bottom:14px;width:calc(100% - 20px);left:50%}
+  .ctl{min-width:0;flex:1 1 190px}
+  .ctl .cl{letter-spacing:.14em;font-size:8.5px}
+  .ctl .cv{font-size:8.5px}
+  .pdiv{display:none}
+  #play{width:34px;height:34px;flex:0 0 34px}
+  .verse{grid-template-columns:1fr;gap:36px}
+  .reading .body{margin-left:0}
+  h1{font-size:clamp(58px,21vw,116px)}
+  .hero .eyebrow{font-size:9px;margin-bottom:13px}
+  .hero .tag{max-width:36ch}
+  .hero .scrollcue{display:none}
+  #backlink{bottom:104px}
+  .hero{padding-bottom:148px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;scroll-behavior:auto}
+  .line > span{transform:none}
+  .reveal{opacity:1;transform:none}
+  #hud{opacity:1;transform:none}
+  #panel{opacity:1;transform:translateX(-50%)}
+  .hero .scrollcue{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div id="veil"></div>
+<div id="grain"></div>
+<div id="nogl">WebGL is unavailable — the sea needs it. Try a modern browser.</div>
+<div id="cursor"></div>
+
+<a id="backlink" href="/" aria-label="Back to the XAVIER FABLE gallery">
+  <span class="cap mono"><span class="arw">←</span> XAVIER FABLE ×50</span>
+  <b class="mono">50 · FURTHER</b>
+</a>
+
+<!-- HUD -->
+<aside id="hud" class="mono" aria-label="Ship's instruments">
+  <div class="htop">
+    <span class="lbl cap">Instrument · Live</span>
+    <span class="dot"></span>
+  </div>
+  <div class="inst"><span class="k cap">Wind</span><span class="v" id="iWind">SW 12<span class="u">kn</span></span></div>
+  <div class="inst"><span class="k cap">Swell</span><span class="v" id="iSwell">1.6<span class="u">m</span></span></div>
+  <div class="inst"><span class="k cap">Bearing</span><span class="v" id="iBrg">214<span class="u">°</span></span></div>
+  <div class="hstate"><span class="cap">Sea · <span class="s" id="iState">moderate</span></span><span class="cap" id="iTime">golden</span></div>
+</aside>
+
+<!-- Controls -->
+<div id="panel" aria-label="Controls">
+  <button id="play" aria-label="Pause the sea">
+    <svg id="playIcon" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+  </button>
+  <div class="pdiv"></div>
+  <div class="ctl">
+    <div class="row"><span class="cl cap">Sea state</span><span class="cv" id="seaVal">moderate</span></div>
+    <input id="sea" type="range" min="0" max="100" value="46" aria-label="Sea state, calm to swell">
+  </div>
+  <div class="ctl">
+    <div class="row"><span class="cl cap">Time of day</span><span class="cv" id="timeVal">golden</span></div>
+    <input id="time" type="range" min="0" max="100" value="0" aria-label="Time of day">
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="eyebrow mono cap"><span class="ln"></span>56°24′N&nbsp;&nbsp;08°00′W · Open water · Golden hour</div>
+  <h1><span class="line"><span>FURTHER</span></span></h1>
+  <div class="sub"><span class="line"><span>an open sea</span></span></div>
+  <p class="tag">Stand at the bow. The water goes on without asking, and the low sun lays a road of light straight across it — right to where you stand.</p>
+  <div class="scrollcue mono cap"><span>Scroll</span><span class="bar"></span></div>
+</header>
+
+<!-- CONTENT -->
+<main>
+  <section class="section reading">
+    <div class="k mono cap">— The reading</div>
+    <h2>The horizon is not a place you arrive.</h2>
+    <p class="body">It is a promise the sea keeps by never keeping it. You steer toward it for a lifetime and it holds its distance exactly — patient, unhurried, always <em>further</em>. Out here there is nothing to reach and nothing to miss. That is the strange mercy of open water: it asks nothing of you but your attention, and returns the whole sky.</p>
+  </section>
+
+  <section class="section verse">
+    <div class="stanza reveal">
+      <div class="idx mono">01 · SWELL<span class="ln"></span></div>
+      <h3>Old news, travelling.</h3>
+      <p>The swell is a storm that ended a thousand miles ago and never got the message. It arrives under the hull as one long rolling breath — rise, and hold, and let go — the sea remembering weather you will never see.</p>
+    </div>
+    <div class="stanza reveal">
+      <div class="idx mono">02 · LIGHT<span class="ln"></span></div>
+      <h3>A thousand small dawns.</h3>
+      <p>At golden hour the sun stops climbing and starts spilling. It gilds a wave-face, then lets it fall dark, then gilds the next — glitter scattered and re-scattered, a shimmering path laid down from the horizon to your feet.</p>
+    </div>
+    <div class="stanza reveal">
+      <div class="idx mono">03 · SILENCE<span class="ln"></span></div>
+      <h3>The loudest thing for miles.</h3>
+      <p>No engine, no gulls. Only the slap and hush of water finding the boat and losing it again, over and over, unbothered. The loudest thing for miles is your own quiet attention, turned all the way up.</p>
+    </div>
+  </section>
+
+  <section class="section close">
+    <p>Somewhere ahead the light goes down and takes the day with it. The sea does not notice. Neither, out here, will you.</p>
+    <div class="coords mono cap">Heading 214° · No land 400 NM · Keep going further</div>
+  </section>
+</main>
+
+<footer>
+  <div class="fwrap">
+    <div class="brand">FURTHER<span>.</span></div>
+    <div class="fmeta mono">
+      An open-sea seascape · WebGL<br>
+      Golden hour → dusk → night → dawn<br>
+      <a href="/">← Return to XAVIER FABLE ×50</a>
+    </div>
+  </div>
+  <div class="frule mono cap">
+    <span>© A field recording of nowhere in particular</span>
+    <span>Gerstner swell · Fresnel sky · Sun glitter</span>
+    <span>50 / 50</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+/* =========================================================================
+   FURTHER — an open sea
+   A large water plane displaced by summed Gerstner waves in the vertex
+   shader (rolling swell). Shaded with a fresnel reflection of a procedural
+   sky dome, sun glitter / specular sparkle on the wave-faces, deep-to-teal
+   depth colour, crest foam, and an atmospheric horizon haze. Slow boat bob.
+   Time of day: golden hour → dusk → moonlit night → dawn.
+   ========================================================================= */
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params  = new URLSearchParams(location.search);
+const small   = Math.min(innerWidth, innerHeight) < 700 || /Mobi|Android/i.test(navigator.userAgent);
+
+const canvas = document.getElementById('gl');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias:!small, alpha:false, powerPreference:'high-performance' });
+} catch(e){ document.getElementById('nogl').style.display='flex'; }
+if (renderer){
+  renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // we tonemap + gamma ourselves
+  const DPR = Math.min(devicePixelRatio||1, 2);
+  const RSCALE = small ? 0.62 : 0.75;
+  renderer.setPixelRatio(DPR * RSCALE);
+  renderer.setSize(innerWidth, innerHeight, false);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(46, innerWidth/innerHeight, 0.5, 6000);
+  const CAM_Y = 6.2;
+  camera.position.set(0, CAM_Y, 16);
+
+  /* ---------------- shared GLSL ---------------- */
+  const COMMON = `
+    float hash21(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
+    float vnoise(vec2 p){
+      vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
+      float a=hash21(i), b=hash21(i+vec2(1,0)), c=hash21(i+vec2(0,1)), d=hash21(i+vec2(1,1));
+      return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+    }
+    float fbm(vec2 p){ float s=0.0,a=0.5; for(int i=0;i<5;i++){ s+=a*vnoise(p); p=p*2.03+11.3; a*=0.5; } return s; }
+    vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14), 0.0, 1.0); }
+  `;
+
+  const SKY_UNIFORMS = `
+    uniform float uTime;
+    uniform vec3  uSunDir;
+    uniform vec3  uSunColor;
+    uniform float uSunSize;
+    uniform float uSunGlow;
+    uniform vec3  uSkyZenith;
+    uniform vec3  uSkyHorizon;
+    uniform vec3  uSkyHaze;
+    uniform float uCloud;
+    uniform float uStarAmt;
+    uniform float uExposure;
+  `;
+
+  const SKY_FUNC = `
+    vec3 skyColor(vec3 dir){
+      dir = normalize(dir);
+      float h = dir.y;
+      float t = pow(clamp(h,0.0,1.0), 0.52);
+      vec3 sky = mix(uSkyHorizon, uSkyZenith, t);
+      float haze = exp(-max(h,0.0)*11.0);
+      sky = mix(sky, uSkyHaze, clamp(haze,0.0,1.0)*0.42);
+      if(h < 0.0) sky = mix(sky, uSkyHaze*0.5, clamp(-h*3.5,0.0,1.0));
+      // sun / moon
+      float sd = clamp(dot(dir, uSunDir), -1.0, 1.0);
+      float disk = smoothstep(cos(uSunSize*1.7), cos(uSunSize*0.55), sd);
+      float glowTight = pow(max(sd,0.0), 170.0);
+      float glowMid   = pow(max(sd,0.0), 30.0);
+      float glowBroad = pow(max(sd,0.0), 10.0);
+      sky += uSunColor * (disk*3.8 + glowTight*uSunGlow*1.8 + glowMid*uSunGlow*0.6 + glowBroad*uSunGlow*0.10);
+      // clouds
+      if(h > 0.0){
+        vec2 cuv = dir.xz/(h+0.13);
+        cuv = cuv*0.5 + vec2(uTime*0.004, uTime*0.0022);
+        float cl = fbm(cuv*1.3);
+        cl = smoothstep(0.44, 0.96, cl) * smoothstep(0.0,0.24,h) * uCloud;
+        float lit = pow(max(sd,0.0), 2.2);
+        vec3 cloudCol = mix(uSkyHaze*0.62, uSunColor*0.85 + vec3(0.16), lit);
+        sky = mix(sky, cloudCol, clamp(cl,0.0,1.0));
+      }
+      // stars
+      if(uStarAmt > 0.001 && h > 0.02){
+        vec2 suv = dir.xz/(h+0.2)*62.0;
+        vec2 gi = floor(suv);
+        float hh = hash21(gi);
+        float d = length(fract(suv)-0.5);
+        float star = smoothstep(0.08,0.0,d)*step(0.977,hh);
+        star *= (0.35 + 0.65*sin(uTime*2.4 + hh*50.0));
+        sky += vec3(0.85,0.92,1.0)*star*uStarAmt*smoothstep(0.02,0.22,h);
+      }
+      return sky;
+    }
+  `;
+
+  /* ---------------- shared uniforms ---------------- */
+  const U = {
+    uTime:       { value: 0 },
+    uSunDir:     { value: new THREE.Vector3(0,0.05,-1) },
+    uSunColor:   { value: new THREE.Color(1.9,1.15,0.55) },
+    uSunSize:    { value: 0.03 },
+    uSunGlow:    { value: 1.0 },
+    uSkyZenith:  { value: new THREE.Color(0.10,0.22,0.34) },
+    uSkyHorizon: { value: new THREE.Color(0.95,0.52,0.28) },
+    uSkyHaze:    { value: new THREE.Color(1.15,0.72,0.42) },
+    uCloud:      { value: 0.5 },
+    uStarAmt:    { value: 0.0 },
+    uExposure:   { value: 1.0 },
+    // ocean-only
+    uCamPos:     { value: new THREE.Vector3() },
+    uWaterDeep:  { value: new THREE.Color(0.006,0.035,0.05) },
+    uWaterShallow:{ value: new THREE.Color(0.03,0.16,0.17) },
+    uFoam:       { value: new THREE.Color(0.9,0.85,0.74) },
+    uSea:        { value: 1.0 },
+    uChoppy:     { value: 1.0 },
+    uWindAngle:  { value: Math.PI/2 },
+    uHazeNear:   { value: 185 },
+    uHazeFar:    { value: 1120 },
+  };
+
+  /* ---------------- sky dome ---------------- */
+  const skyGeo = new THREE.SphereGeometry(3200, 48, 24);
+  const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite:false, depthTest:false,
+    uniforms: U,
+    vertexShader: `
+      varying vec3 vDir;
+      void main(){ vDir = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }
+    `,
+    fragmentShader: `
+      precision highp float;
+      varying vec3 vDir;
+      ${SKY_UNIFORMS}
+      ${COMMON}
+      ${SKY_FUNC}
+      void main(){
+        vec3 col = skyColor(vDir);
+        col *= uExposure;
+        col = aces(col);
+        col = pow(col, vec3(1.0/2.2));
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `
+  });
+  const sky = new THREE.Mesh(skyGeo, skyMat);
+  sky.renderOrder = -1;
+  scene.add(sky);
+
+  /* ---------------- ocean ---------------- */
+  const SEG = small ? 320 : 520;
+  const SIZE = 3200;
+  const oceanGeo = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
+  oceanGeo.rotateX(-Math.PI/2);
+
+  const oceanMat = new THREE.ShaderMaterial({
+    uniforms: U,
+    vertexShader: `
+      precision highp float;
+      uniform float uTime;
+      uniform float uSea;
+      uniform float uChoppy;
+      uniform float uWindAngle;
+      varying vec3  vWorldPos;
+      varying vec3  vNormal;
+      varying float vFoam;
+
+      #define NW 6
+      const float OFF[NW] = float[](0.0, 0.30, -0.38, 0.62, -0.55, 1.02);
+      const float LEN[NW] = float[](36.0, 25.0, 17.0, 11.0, 7.6, 5.3);
+      const float AMP[NW] = float[](1.42, 0.96, 0.60, 0.34, 0.185, 0.10);
+      const float STP[NW] = float[](0.80, 0.76, 0.70, 0.62, 0.54, 0.48);
+      const float SPD[NW] = float[](1.0, 1.05, 1.12, 1.2, 1.3, 1.4);
+
+      void main(){
+        vec3 base = (modelMatrix * vec4(position,1.0)).xyz;
+        vec3 P = vec3(base.x, 0.0, base.z);
+        float nx=0.0, ny=0.0, nz=0.0;
+        float crest=0.0, totA=0.0;
+        const float g = 9.81;
+        for(int i=0;i<NW;i++){
+          float ang = uWindAngle + OFF[i];
+          vec2  D = vec2(cos(ang), sin(ang));
+          float k = 6.2831853/LEN[i];
+          float A = AMP[i]*uSea;
+          float Q = STP[i]*uChoppy;
+          float w = sqrt(g*k)*SPD[i];
+          float ph = k*dot(D, base.xz) - w*uTime;
+          float c = cos(ph), s = sin(ph);
+          P.x += Q*A*D.x*c;
+          P.z += Q*A*D.y*c;
+          P.y += A*s;
+          float WA = k*A;
+          nx += D.x*WA*c;
+          nz += D.y*WA*c;
+          ny += Q*WA*s;
+          crest += A*s;
+          totA  += A;
+        }
+        vec3 N = normalize(vec3(-nx, 1.0-ny, -nz));
+        vWorldPos = P;
+        vNormal = N;
+        vFoam = clamp(crest/(totA*0.72), -1.0, 1.0)*0.5 + 0.5;
+        gl_Position = projectionMatrix * viewMatrix * vec4(P, 1.0);
+      }
+    `,
+    fragmentShader: `
+      precision highp float;
+      varying vec3  vWorldPos;
+      varying vec3  vNormal;
+      varying float vFoam;
+      uniform vec3  uCamPos;
+      uniform vec3  uWaterDeep;
+      uniform vec3  uWaterShallow;
+      uniform vec3  uFoam;
+      uniform float uHazeNear;
+      uniform float uHazeFar;
+      ${SKY_UNIFORMS}
+      ${COMMON}
+      ${SKY_FUNC}
+      void main(){
+        vec3 V = normalize(uCamPos - vWorldPos);
+        vec3 N = normalize(vNormal);
+        float facing = clamp(dot(N,V), 0.0, 1.0);
+
+        // deep-to-teal depth colour
+        vec3 water = mix(uWaterDeep, uWaterShallow, pow(facing, 0.78));
+
+        // fresnel sky reflection
+        float F = 0.02 + 0.98*pow(1.0-facing, 5.0);
+        vec3 R = reflect(-V, N);
+        R.y = max(R.y, 0.012);
+        vec3 refl = skyColor(R);
+        vec3 col = mix(water, refl, clamp(F,0.0,1.0));
+
+        // subsurface crest glow (back-lit tips)
+        float sss = pow(max(dot(N, uSunDir),0.0), 1.5) * smoothstep(0.55,0.96,vFoam);
+        col += (uWaterShallow*1.4 + uSunColor*0.12) * sss * 0.6;
+
+        // sun glitter — perturb the normal so specular breaks into sparkle
+        vec2 wp = vWorldPos.xz;
+        float n1 = vnoise(wp*0.55 + uTime*0.28);
+        float n2 = vnoise(wp*1.27 - uTime*0.22);
+        vec3 Nsp = normalize(N + vec3((n1-0.5), 0.0, (n2-0.5))*0.65);
+        vec3 Hh = normalize(V + uSunDir);
+        float spec = pow(max(dot(Nsp, Hh), 0.0), 200.0);
+        float glint = smoothstep(0.5,0.95, vnoise(wp*2.3 + uTime*0.7));
+        col += uSunColor * spec * (0.6 + 1.8*glint) * 2.8;
+        // specular sheen shapes the shimmering road of light toward camera (kept
+        // tight so off-axis water stays teal instead of reading like lit dunes)
+        float sheen = pow(max(dot(R, uSunDir),0.0), 28.0);
+        col += uSunColor * sheen * 1.15;
+
+        // crest foam — concentrated on breaking tips, gated by sea state
+        float fn = vnoise(wp*2.4 + uTime*0.3)*0.5 + vnoise(wp*5.6 - uTime*0.4)*0.5;
+        float foam = smoothstep(0.76,0.96,vFoam) * smoothstep(0.46,0.88,fn);
+        col = mix(col, uFoam, clamp(foam,0.0,1.0)*0.7);
+
+        // horizon haze — blend far water seamlessly into the sky
+        float dist = length(vWorldPos - uCamPos);
+        vec3 hdir = normalize(vec3(vWorldPos.x-uCamPos.x, 5.0, vWorldPos.z-uCamPos.z));
+        vec3 hazeCol = skyColor(hdir);
+        float haze = smoothstep(uHazeNear, uHazeFar, dist);
+        col = mix(col, hazeCol, haze);
+
+        col *= uExposure;
+        col = aces(col);
+        col = pow(col, vec3(1.0/2.2));
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `
+  });
+  const ocean = new THREE.Mesh(oceanGeo, oceanMat);
+  scene.add(ocean);
+
+  /* ---------------- distant lighthouse (tiny, for scale) ---------------- */
+  const beacon = new THREE.Group();
+  const towerMat = new THREE.MeshBasicMaterial({ color:0x0a1416 });
+  const tower = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.9, 15, 8), towerMat);
+  tower.position.y = 7.5; beacon.add(tower);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(2.0, 2.0, 2.4, 8), towerMat);
+  cap.position.y = 16; beacon.add(cap);
+  const lampMat = new THREE.MeshBasicMaterial({ color:0xffd28a, transparent:true, opacity:0.9 });
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(1.05, 10, 10), lampMat);
+  lamp.position.y = 16; beacon.add(lamp);
+  const rock = new THREE.Mesh(new THREE.SphereGeometry(6, 10, 8), towerMat);
+  rock.position.y = -2.5; rock.scale.set(1.5,0.5,1.5); beacon.add(rock);
+  beacon.position.set(360, 0, -940);
+  beacon.scale.setScalar(1.35);
+  scene.add(beacon);
+
+  /* ---------------- state ---------------- */
+  const state = {
+    playing: true,
+    simTime: 24.0,
+    sea: 0.46,          // slider 0..1
+    dayT: 0.0,          // 0..1 across golden->dusk->night->dawn
+    windTarget: 0.0,    // cursor-driven wind/sun azimuth offset
+    wind: 0.0,
+    elevTarget: 0.0,
+    elev: 0.0,
+  };
+
+  // forced time from query
+  const forceMap = { golden:0.0, dusk:0.30, night:0.52, dawn:0.80 };
+  if (params.has('time') && forceMap[params.get('time')] !== undefined){
+    state.dayT = forceMap[params.get('time')];
+    document.getElementById('time').value = Math.round(state.dayT*100);
+  }
+  if (params.has('sea')) state.sea = Math.max(0, Math.min(1, +params.get('sea')));
+
+  /* ---------------- day keyframes ---------------- */
+  // each: [dayT, {props}]
+  const KF = [
+    { t:0.00, sunElev:0.050, sunCol:[2.15,1.12,0.46], sunSize:0.026, sunGlow:1.05,
+      zen:[0.020,0.135,0.36], hor:[1.08,0.48,0.18], haze:[1.22,0.64,0.30],
+      wDeep:[0.003,0.024,0.040], wShal:[0.020,0.155,0.175], foam:[0.95,0.86,0.72],
+      cloud:0.48, star:0.0, exp:0.98, name:'golden' },
+    { t:0.30, sunElev:0.016, sunCol:[2.10,0.72,0.34], sunSize:0.033, sunGlow:0.72,
+      zen:[0.055,0.06,0.16], hor:[0.78,0.27,0.20], haze:[0.96,0.40,0.30],
+      wDeep:[0.006,0.020,0.036], wShal:[0.028,0.095,0.125], foam:[0.62,0.44,0.42],
+      cloud:0.46, star:0.28, exp:0.96, name:'dusk' },
+    { t:0.52, sunElev:0.42, sunCol:[0.72,0.83,1.06], sunSize:0.020, sunGlow:0.34,
+      zen:[0.006,0.013,0.032], hor:[0.030,0.052,0.105], haze:[0.055,0.085,0.145],
+      wDeep:[0.002,0.009,0.017], wShal:[0.008,0.026,0.044], foam:[0.36,0.44,0.56],
+      cloud:0.26, star:1.0, exp:1.02, name:'night' },
+    { t:0.80, sunElev:0.052, sunCol:[1.72,1.02,0.86], sunSize:0.030, sunGlow:0.92,
+      zen:[0.10,0.16,0.30], hor:[0.92,0.56,0.52], haze:[1.02,0.74,0.66],
+      wDeep:[0.006,0.030,0.050], wShal:[0.030,0.125,0.165], foam:[0.82,0.80,0.82],
+      cloud:0.50, star:0.20, exp:1.0, name:'dawn' },
+    { t:1.00, sunElev:0.050, sunCol:[2.15,1.12,0.46], sunSize:0.026, sunGlow:1.05,
+      zen:[0.020,0.135,0.36], hor:[1.08,0.48,0.18], haze:[1.22,0.64,0.30],
+      wDeep:[0.003,0.024,0.040], wShal:[0.020,0.155,0.175], foam:[0.95,0.86,0.72],
+      cloud:0.48, star:0.0, exp:0.98, name:'golden' },
+  ];
+  const smooth = x => x*x*(3-2*x);
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const lerp3 = (a,b,t)=>[lerp(a[0],b[0],t), lerp(a[1],b[1],t), lerp(a[2],b[2],t)];
+  const _c = new THREE.Color();
+  function setCol(uni, arr){ uni.value.setRGB(arr[0],arr[1],arr[2]); }
+
+  function applyDay(dt){
+    let i=0; while(i<KF.length-1 && dt>KF[i+1].t) i++;
+    const a=KF[i], b=KF[Math.min(i+1,KF.length-1)];
+    const span=Math.max(1e-4, b.t-a.t);
+    const f=smooth(Math.min(1,Math.max(0,(dt-a.t)/span)));
+    U.uSunSize.value = lerp(a.sunSize,b.sunSize,f);
+    U.uSunGlow.value = lerp(a.sunGlow,b.sunGlow,f);
+    U.uCloud.value   = lerp(a.cloud,b.cloud,f);
+    U.uStarAmt.value = lerp(a.star,b.star,f);
+    U.uExposure.value= lerp(a.exp,b.exp,f);
+    setCol(U.uSunColor,   lerp3(a.sunCol,b.sunCol,f));
+    setCol(U.uSkyZenith,  lerp3(a.zen,b.zen,f));
+    setCol(U.uSkyHorizon, lerp3(a.hor,b.hor,f));
+    setCol(U.uSkyHaze,    lerp3(a.haze,b.haze,f));
+    setCol(U.uWaterDeep,  lerp3(a.wDeep,b.wDeep,f));
+    setCol(U.uWaterShallow,lerp3(a.wShal,b.wShal,f));
+    setCol(U.uFoam,       lerp3(a.foam,b.foam,f));
+    const elev = lerp(a.sunElev,b.sunElev,f);
+    return { elev, name: f<0.5?a.name:b.name };
+  }
+
+  /* ---------------- sun direction ---------------- */
+  function updateSun(elev){
+    const azi = state.wind * 0.8;                 // cursor shifts sun with wind
+    const e = elev + state.elev*0.15;
+    const ce = Math.cos(e), se = Math.sin(e);
+    U.uSunDir.value.set(Math.sin(azi)*ce, se, -Math.cos(azi)*ce).normalize();
+    U.uWindAngle.value = Math.PI/2 + state.wind;   // waves roll toward camera
+    // beacon light warms up at dusk/night
+    const night = Math.min(1, U.uStarAmt.value + (state.dayT>0.28&&state.dayT<0.78?0.4:0));
+    lampMat.opacity = 0.35 + 0.55*night + 0.25*Math.sin(state.simTime*1.4);
+  }
+
+  /* ---------------- resize ---------------- */
+  function resize(){
+    camera.aspect = innerWidth/innerHeight;
+    // frame the horizon a touch above centre so the sea fills the lower half
+    const tgtY = camera.aspect < 1 ? 4.4 : 3.3;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight, false);
+    resize._tgtY = tgtY;
+  }
+  addEventListener('resize', () => { resize(); }, { passive:true });
+  resize();
+
+  /* ---------------- HUD ---------------- */
+  const iWind=document.getElementById('iWind'), iSwell=document.getElementById('iSwell'),
+        iBrg=document.getElementById('iBrg'), iState=document.getElementById('iState'),
+        iTime=document.getElementById('iTime');
+  const seaVal=document.getElementById('seaVal'), timeVal=document.getElementById('timeVal');
+  const COMPASS=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  function stateLabel(s){ return s<0.3?'calm':s<0.55?'moderate':s<0.8?'building':'heavy swell'; }
+  let hudTick=0;
+  function updateHUD(){
+    const s=state.sea;
+    const brg=((214 + state.wind*180/Math.PI*1.4)%360+360)%360;
+    const windSpd=Math.round(6 + s*22);
+    const windDir=COMPASS[Math.round(((brg+180)%360)/22.5)%16];
+    const swell=(0.5 + s*3.1).toFixed(1);
+    iWind.innerHTML=`${windDir} ${windSpd}<span class="u">kn</span>`;
+    iSwell.innerHTML=`${swell}<span class="u">m</span>`;
+    iBrg.innerHTML=`${Math.round(brg)}<span class="u">°</span>`;
+    iState.textContent=stateLabel(s);
+    iTime.textContent=curName;
+    seaVal.textContent=stateLabel(s);
+    timeVal.textContent=curName;
+  }
+
+  /* ---------------- interaction ---------------- */
+  const seaInput=document.getElementById('sea'), timeInput=document.getElementById('time');
+  function setFill(el){ const p=(el.value-el.min)/(el.max-el.min)*100; el.style.setProperty('--fill',p+'%'); }
+  setFill(seaInput); setFill(timeInput);
+  seaInput.value=Math.round(state.sea*100); setFill(seaInput);
+
+  seaInput.addEventListener('input', e=>{ state.sea=+e.target.value/100; setFill(e.target); updateHUD(); });
+  timeInput.addEventListener('input', e=>{ state.dayT=+e.target.value/100; setFill(e.target); });
+
+  const playBtn=document.getElementById('play'), playIcon=document.getElementById('playIcon');
+  function renderIcon(){
+    playIcon.innerHTML = state.playing
+      ? '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>'
+      : '<path d="M7 4.5v15l13-7.5z"/>';
+    playBtn.setAttribute('aria-label', state.playing?'Pause the sea':'Play the sea');
+  }
+  playBtn.addEventListener('click', ()=>{ state.playing=!state.playing; renderIcon(); if(state.playing&&running){ last=performance.now(); } });
+
+  // cursor gently shifts wind / sun direction
+  const curEl=document.getElementById('cursor');
+  if(!small){
+    addEventListener('pointermove', e=>{
+      const nx=e.clientX/innerWidth*2-1, ny=e.clientY/innerHeight*2-1;
+      state.windTarget = nx*0.42;
+      state.elevTarget = -ny*0.5;
+      curEl.style.opacity = e.clientY < innerHeight*0.86 ? '1':'0';
+      curEl.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;
+    }, { passive:true });
+    addEventListener('pointerleave', ()=>curEl.style.opacity='0');
+  }
+
+  /* ---------------- render loop ---------------- */
+  let curName='golden';
+  let last=performance.now(), running=true, forceStatic=reduced;
+
+  function tick(dt){
+    if(state.playing) state.simTime += dt;
+    // ease cursor influence
+    state.wind += (state.windTarget - state.wind)*Math.min(1, dt*1.6);
+    state.elev += (state.elevTarget - state.elev)*Math.min(1, dt*1.6);
+    // sea state -> amplitude + choppiness
+    U.uSea.value    = 0.42 + state.sea*1.15;
+    U.uChoppy.value = 0.55 + state.sea*0.75;
+    const day=applyDay(state.dayT); curName=day.name;
+    updateSun(day.elev);
+
+    // gentle boat bob
+    const t=state.simTime;
+    const bobY = Math.sin(t*0.5)*0.34 + Math.sin(t*0.23+1.3)*0.16;
+    const bobX = Math.sin(t*0.31)*0.42;
+    camera.position.set(bobX, CAM_Y + bobY, 16 + Math.sin(t*0.19)*0.6);
+    camera.lookAt(bobX*0.3, (resize._tgtY||3.3) + Math.sin(t*0.27+0.6)*0.22, -160);
+    camera.rotation.z += Math.sin(t*0.26)*0.010;
+
+    sky.position.copy(camera.position);
+    U.uTime.value = state.simTime;
+    U.uCamPos.value.copy(camera.position);
+  }
+
+  function frame(now){
+    if(!running) return;
+    requestAnimationFrame(frame);
+    const dt=Math.min(0.05,(now-last)/1000); last=now;
+    tick(dt);
+    renderer.render(scene, camera);
+  }
+
+  // first paint + HUD
+  applyDay(state.dayT); curName=KF.find(k=>Math.abs(k.t-state.dayT)<0.001)?.name || curName;
+  updateHUD(); renderIcon();
+  setInterval(updateHUD, 220);
+
+  if(forceStatic){
+    state.playing=false;
+    tick(0.0166);              // settle one frame of the still sea
+    renderer.render(scene,camera);
+  } else {
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden){ running=false; }
+    else if(!running && !forceStatic){ running=true; last=performance.now(); requestAnimationFrame(frame); }
+  });
+
+  // fade the hero instruments out once the reader scrolls into the writing
+  const hudEl=document.getElementById('hud'), panelEl=document.getElementById('panel');
+  let heroHidden=false;
+  addEventListener('scroll', ()=>{
+    const past = scrollY > innerHeight*0.58;
+    if(past===heroHidden) return;
+    heroHidden=past;
+    const tgt=past?0:1;
+    if(window.gsap){ window.gsap.to([hudEl,panelEl],{opacity:tgt,duration:0.45,ease:'power2.out',overwrite:true}); }
+    else { hudEl.style.opacity=tgt; panelEl.style.opacity=tgt; }
+    hudEl.style.pointerEvents=past?'none':'auto';
+    panelEl.style.pointerEvents=past?'none':'auto';
+    if(past) curEl.style.opacity='0';
+  }, {passive:true});
+}
+
+/* ---------------- GSAP entrance + scroll reveals ---------------- */
+/* In reduced-motion the CSS media query reveals everything statically, so we
+   skip GSAP entirely and leave the panel's translateX(-50%) centering intact. */
+if (window.gsap && !reduced){
+  const g=window.gsap;
+  if(window.ScrollTrigger) g.registerPlugin(window.ScrollTrigger);
+  g.set('#panel',{ xPercent:-50, y:10 });
+  const tl=g.timeline({ defaults:{ ease:'power3.out' } });
+  tl.to('.line > span',{ y:'0%', duration:1.1, stagger:0.12, delay:0.15 })
+    .from('.hero .eyebrow',{ opacity:0, y:12, duration:0.8 },'-=0.7')
+    .from('.hero .tag',{ opacity:0, y:16, duration:0.8 },'-=0.55')
+    .to('#hud',{ opacity:1, y:0, duration:0.9 },'-=0.6')
+    .to('#panel',{ opacity:1, y:0, duration:0.9 },'-=0.75');
+  if(window.ScrollTrigger){
+    g.utils.toArray('.reveal').forEach(el=>{
+      g.to(el,{ opacity:1, y:0, duration:1.0, ease:'power3.out',
+        scrollTrigger:{ trigger:el, start:'top 82%' } });
+    });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESONANCE — music you can see</title>
+<meta name="description" content="A generative audio-reactive visualizer. A lush ambient piece is synthesised live in your browser with WebAudio; an AnalyserNode turns its frequencies into a breathing bloom of light. Press to begin.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×50">
+<meta property="og:title" content="RESONANCE — music you can see">
+<meta property="og:description" content="Ambient sound generated live in-browser, rendered as a breathing bloom of light. FFT becomes image. Four moods: Dusk, Rain, Aurora, Ember.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/42-resonance/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RESONANCE — music you can see">
+<meta name="twitter:description" content="Ambient sound generated live in-browser, rendered as a breathing bloom of light.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◉</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07060e;
+  --ink:#f3eefe;
+  --c1:255,122,158;   /* accent 1 */
+  --c2:168,116,255;   /* accent 2 */
+  --c3:255,196,130;   /* accent 3 */
+  --glow:255,140,180;
+  --mut:rgba(243,238,254,.62);
+  --mut2:rgba(243,238,254,.36);
+  --mut3:rgba(243,238,254,.16);
+  --line:rgba(243,238,254,.12);
+  --glass:rgba(12,10,22,.46);
+  --glass-edge:rgba(243,238,254,.10);
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--bg);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;line-height:1.5;
+}
+::selection{background:rgba(var(--c1),.30);color:#fff}
+:focus-visible{outline:1px solid rgba(var(--c1),.9);outline-offset:3px;border-radius:4px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+input{font:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#050409}
+::-webkit-scrollbar-thumb{background:rgba(var(--c2),.28);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(var(--c2),.5)}
+
+/* ---------- canvas ---------- */
+#viz{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:var(--bg)}
+#vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 130% 90% at 50% 46%,transparent 42%,rgba(4,3,10,.55) 78%,rgba(3,2,8,.9) 100%);
+  transition:background 1.2s var(--ease);}
+#grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.045;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ---------- scroll progress ---------- */
+#prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;
+  background:linear-gradient(90deg,rgba(var(--c1),.9),rgba(var(--c2),.9));
+  box-shadow:0 0 12px rgba(var(--c1),.6);transition:width .1s linear}
+
+/* ---------- back-link ---------- */
+#backlink{position:fixed;left:22px;bottom:20px;z-index:55;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.22em;
+  color:var(--mut2);padding:7px 11px;border:1px solid var(--line);border-radius:20px;
+  background:var(--glass);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:color .4s var(--ease),border-color .4s var(--ease),transform .4s var(--ease);}
+#backlink b{color:var(--mut);font-weight:500}
+#backlink:hover{color:var(--ink);border-color:rgba(var(--c1),.5);transform:translateY(-1px)}
+body.at-footer #backlink{opacity:0;pointer-events:none;transform:translateY(6px)}
+
+/* ---------- top brand ---------- */
+#brand{position:fixed;top:22px;left:24px;z-index:40;display:flex;align-items:center;gap:11px;
+  pointer-events:none;opacity:0;transform:translateY(-8px);transition:opacity 1s var(--ease) .2s,transform 1s var(--ease) .2s}
+body.begun #brand{opacity:1;transform:none}
+#brand .mark{width:12px;height:12px;border-radius:50%;
+  background:radial-gradient(circle at 40% 38%,rgba(var(--c1),1),rgba(var(--c2),.5) 60%,transparent 72%);
+  box-shadow:0 0 18px rgba(var(--c1),.8);animation:pulse 3.6s var(--ease) infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.35);opacity:1}}
+#brand .wm{font-weight:500;letter-spacing:.34em;font-size:12.5px}
+#brand .wm span{color:var(--mut2)}
+
+/* ---------- HUD / now playing ---------- */
+#hud{position:fixed;top:20px;right:22px;z-index:40;width:236px;
+  padding:14px 15px 13px;border:1px solid var(--glass-edge);border-radius:15px;
+  background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font-family:"IBM Plex Mono",monospace;
+  opacity:0;transform:translateY(-10px);transition:opacity 1s var(--ease) .35s,transform 1s var(--ease) .35s}
+body.begun #hud{opacity:1;transform:none}
+#hud .hrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#hud .lbl{font-size:9px;letter-spacing:.24em;color:var(--mut2)}
+#hud .now{margin-top:9px;font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:16px;letter-spacing:.01em;line-height:1.22;min-height:38px}
+#hud .sub{margin-top:3px;font-size:10.5px;color:var(--mut);letter-spacing:.05em}
+#hud .time{font-size:11px;color:rgba(var(--c1),.95)}
+#hud .meters{margin-top:12px;display:grid;gap:6px}
+#hud .m{display:flex;align-items:center;gap:9px}
+#hud .m .k{font-size:8.5px;letter-spacing:.2em;color:var(--mut2);width:26px}
+#hud .m .bar{flex:1;height:4px;border-radius:4px;background:rgba(243,238,254,.10);overflow:hidden}
+#hud .m .fill{display:block;height:100%;width:8%;border-radius:4px;transition:width .09s linear}
+#hud .m.low .fill{background:linear-gradient(90deg,rgba(var(--c1),.7),rgba(var(--c1),1));box-shadow:0 0 8px rgba(var(--c1),.7)}
+#hud .m.mid .fill{background:linear-gradient(90deg,rgba(var(--c2),.7),rgba(var(--c2),1));box-shadow:0 0 8px rgba(var(--c2),.7)}
+#hud .m.air .fill{background:linear-gradient(90deg,rgba(var(--c3),.7),rgba(var(--c3),1));box-shadow:0 0 8px rgba(var(--c3),.7)}
+#hud .src{margin-top:11px;font-size:9px;letter-spacing:.18em;color:var(--mut2);display:flex;align-items:center;gap:6px}
+#hud .src .dot{width:5px;height:5px;border-radius:50%;background:rgba(var(--c1),.9);box-shadow:0 0 8px rgba(var(--c1),.8)}
+
+/* ---------- control dock ---------- */
+#dock{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);z-index:45;
+  display:flex;align-items:center;gap:8px;padding:9px 10px;
+  border:1px solid var(--glass-edge);border-radius:44px;
+  background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 12px 44px rgba(0,0,0,.5);opacity:0;
+  transition:opacity 1s var(--ease) .5s,transform 1s var(--ease) .5s}
+body.begun #dock{opacity:1;transform:translateX(-50%)}
+.ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--line);color:var(--mut);position:relative;
+  transition:color .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease),transform .25s var(--ease)}
+.ic:hover{color:var(--ink);border-color:rgba(var(--c1),.55);transform:translateY(-1px)}
+.ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#playBtn{background:rgba(var(--c1),.14);border-color:rgba(var(--c1),.4);color:var(--ink)}
+#playBtn:hover{background:rgba(var(--c1),.22)}
+#micBtn.on{background:rgba(var(--c1),.2);border-color:rgba(var(--c1),.6);color:var(--ink)}
+
+.vol{display:flex;align-items:center;gap:8px;padding:0 8px 0 4px}
+.vol svg{width:15px;height:15px;stroke:var(--mut);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+input[type=range]{-webkit-appearance:none;appearance:none;width:72px;height:3px;border-radius:3px;
+  background:rgba(243,238,254,.16);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:rgba(var(--c1),1);box-shadow:0 0 10px rgba(var(--c1),.7);transition:transform .2s var(--ease)}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;border:none;border-radius:50%;background:rgba(var(--c1),1)}
+
+.sep{width:1px;height:26px;background:var(--line)}
+.moods{display:flex;gap:3px;padding:3px;border:1px solid var(--line);border-radius:26px}
+.md{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  padding:7px 12px;border-radius:22px;color:var(--mut2);position:relative;
+  transition:color .35s var(--ease),background .45s var(--ease)}
+.md:hover{color:var(--ink)}
+.md.on{color:var(--bg);background:rgba(var(--c1),.92);font-weight:500}
+
+/* ---------- veil ---------- */
+#veil{position:fixed;inset:0;z-index:80;display:grid;place-items:center;
+  background:radial-gradient(ellipse 90% 70% at 50% 46%,rgba(10,8,20,.62),rgba(4,3,10,.9) 70%,rgba(3,2,8,.98));
+  backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  transition:opacity 1.1s var(--ease),visibility 1.1s var(--ease)}
+#veil.gone{opacity:0;visibility:hidden;pointer-events:none}
+#veil .vin{text-align:center;padding:24px;max-width:640px}
+#veil .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.42em;
+  color:rgba(var(--c1),.9);text-transform:uppercase;margin-bottom:22px}
+#veil h1{font-weight:300;font-size:clamp(46px,10vw,124px);letter-spacing:.02em;line-height:.92;
+  background:linear-gradient(180deg,#fff,rgba(var(--c2),.85));-webkit-background-clip:text;background-clip:text;color:transparent}
+#veil .tag{margin-top:16px;font-size:clamp(15px,2vw,19px);font-weight:300;color:var(--mut);letter-spacing:.04em}
+#veil .note{margin-top:22px;font-size:13.5px;color:var(--mut2);max-width:440px;margin-left:auto;margin-right:auto;line-height:1.7}
+#beginBtn{margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:16px 30px;border-radius:44px;border:1px solid rgba(var(--c1),.5);
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink);
+  background:rgba(var(--c1),.1);position:relative;overflow:hidden;
+  transition:border-color .4s var(--ease),background .4s var(--ease),transform .4s var(--ease)}
+#beginBtn:hover{background:rgba(var(--c1),.2);border-color:rgba(var(--c1),.9);transform:translateY(-2px)}
+#beginBtn .rng{width:11px;height:11px;border-radius:50%;background:rgba(var(--c1),1);box-shadow:0 0 14px rgba(var(--c1),.9);animation:pulse 2.4s var(--ease) infinite}
+#veil .caption{margin-top:26px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;color:var(--mut3)}
+
+/* ---------- scroll cue ---------- */
+#cue{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:35;
+  display:flex;flex-direction:column;align-items:center;gap:9px;pointer-events:none;
+  opacity:0;transition:opacity 1s var(--ease) .8s}
+body.begun #cue{opacity:1}
+#cue .t{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.3em;color:var(--mut2)}
+#cue .ln{width:1px;height:34px;background:linear-gradient(var(--mut3),transparent);position:relative;overflow:hidden}
+#cue .ln::after{content:"";position:absolute;top:-34px;left:0;width:1px;height:34px;
+  background:linear-gradient(rgba(var(--c1),.9),transparent);animation:drop 2.4s var(--ease) infinite}
+@keyframes drop{0%{transform:translateY(0)}70%,100%{transform:translateY(68px)}}
+
+/* ---------- content ---------- */
+main{position:relative;z-index:10}
+.spacer{height:100vh}
+.section{position:relative;padding:110px clamp(24px,7vw,120px);
+  background:linear-gradient(180deg,transparent,rgba(5,4,11,.7) 8%,rgba(5,4,11,.92) 30%,rgba(5,4,11,.96))}
+.section.first{background:linear-gradient(180deg,transparent 0%,rgba(5,4,11,.55) 14%,rgba(5,4,11,.9) 40%,rgba(5,4,11,.95))}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.34em;
+  text-transform:uppercase;color:rgba(var(--c1),.9);display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.kicker::before{content:"";width:34px;height:1px;background:rgba(var(--c1),.5)}
+.h2{font-weight:300;font-size:clamp(30px,5.2vw,62px);letter-spacing:-.01em;line-height:1.03;max-width:16ch}
+.h2 em{font-style:normal;color:transparent;background:linear-gradient(120deg,rgba(var(--c1),1),rgba(var(--c2),1) 55%,rgba(var(--c3),1));-webkit-background-clip:text;background-clip:text}
+.lead{margin-top:26px;max-width:60ch;font-size:clamp(15px,1.7vw,18px);font-weight:300;color:var(--mut);line-height:1.72}
+.lead strong{color:var(--ink);font-weight:400}
+
+.grid3{margin-top:64px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.card{padding:28px 24px;border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(180deg,rgba(243,238,254,.03),rgba(243,238,254,.008));
+  transition:border-color .5s var(--ease),transform .5s var(--ease),background .5s var(--ease)}
+.card:hover{border-color:rgba(var(--c1),.34);transform:translateY(-4px);background:linear-gradient(180deg,rgba(var(--c1),.05),rgba(243,238,254,.01))}
+.card .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:rgba(var(--c2),.9);letter-spacing:.2em}
+.card h3{margin-top:16px;font-weight:400;font-size:20px;letter-spacing:.01em}
+.card p{margin-top:11px;font-size:13.5px;color:var(--mut);font-weight:300;line-height:1.68}
+
+/* signal-chain row */
+.chain{margin-top:60px;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.chain .lnk{padding:28px 26px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
+.chain .lnk:nth-child(2n){border-right:none}
+.chain .lnk:nth-last-child(-n+2){border-bottom:none}
+.chain .lnk .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;color:rgba(var(--c3),.85)}
+.chain .lnk h4{margin-top:10px;font-weight:400;font-size:17px}
+.chain .lnk p{margin-top:8px;font-size:13px;color:var(--mut);font-weight:300;line-height:1.62}
+
+/* moods list */
+.moodgrid{margin-top:60px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.moodcard{padding:24px 20px 22px;border:1px solid var(--line);border-radius:16px;position:relative;overflow:hidden;
+  transition:transform .5s var(--ease),border-color .5s var(--ease)}
+.moodcard:hover{transform:translateY(-4px)}
+.moodcard .swatch{display:flex;gap:6px;margin-bottom:18px}
+.moodcard .swatch i{width:20px;height:20px;border-radius:50%;filter:blur(.3px)}
+.moodcard h4{font-weight:400;font-size:19px;letter-spacing:.02em}
+.moodcard .key{margin-top:5px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;color:var(--mut2)}
+.moodcard p{margin-top:12px;font-size:12.5px;color:var(--mut);font-weight:300;line-height:1.6}
+
+/* footer */
+footer{position:relative;z-index:10;padding:80px clamp(24px,7vw,120px) 40px;
+  background:rgba(4,3,9,.98);border-top:1px solid var(--line)}
+.foot-top{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap}
+.foot-top .big{font-weight:300;font-size:clamp(30px,6vw,74px);line-height:.94;letter-spacing:.01em}
+.foot-top .big span{color:transparent;background:linear-gradient(120deg,rgba(var(--c1),1),rgba(var(--c2),1));-webkit-background-clip:text;background-clip:text}
+.foot-cta{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;color:var(--mut);
+  border:1px solid var(--line);border-radius:40px;padding:14px 22px;transition:all .4s var(--ease)}
+.foot-cta:hover{color:var(--ink);border-color:rgba(var(--c1),.55)}
+.foot-meta{margin-top:60px;padding-top:26px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.14em;color:var(--mut2)}
+.foot-meta a:hover{color:var(--ink)}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(12px);z-index:70;
+  padding:11px 18px;border-radius:30px;border:1px solid var(--glass-edge);background:var(--glass);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--mut);
+  opacity:0;visibility:hidden;transition:opacity .5s var(--ease),transform .5s var(--ease),visibility .5s}
+#toast.show{opacity:1;visibility:visible;transform:translateX(-50%)}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease-out),transform 1s var(--ease-out)}
+.reveal.in{opacity:1;transform:none}
+
+/* fade hero chrome away once reading the content */
+body.scrolled #brand,body.scrolled #hud,body.scrolled #cue{opacity:0!important;pointer-events:none;transition:opacity .6s var(--ease),transform .6s var(--ease)}
+body.scrolled #dock{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+
+@media (max-width:900px){
+  #hud{width:196px;top:14px;right:14px;padding:12px}
+  #brand{top:16px;left:16px}
+  .grid3{grid-template-columns:1fr;gap:16px;margin-top:44px}
+  .chain{grid-template-columns:1fr}
+  .chain .lnk{border-right:none}
+  .chain .lnk:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .moodgrid{grid-template-columns:repeat(2,1fr)}
+  .section{padding:84px 22px}
+  .foot-top{align-items:flex-start}
+}
+@media (max-width:560px){
+  #dock{gap:5px;padding:7px 8px;bottom:14px;flex-wrap:wrap;justify-content:center;max-width:94vw}
+  .ic{width:36px;height:36px}
+  .vol{padding:0 4px}
+  input[type=range]{width:52px}
+  .md{padding:6px 8px;font-size:9px;letter-spacing:.06em}
+  .sep{display:none}
+  #brand{display:none}
+  #hud{width:170px}
+  #hud .now{font-size:14px}
+  #backlink{left:14px;top:16px;bottom:auto}
+  body.scrolled #backlink{opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .5s var(--ease)}
+  #cue{display:none}
+  .moodgrid{grid-template-columns:1fr}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="viz"></canvas>
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="prog"></div>
+
+<!-- brand -->
+<div id="brand"><span class="mark"></span><span class="wm">RESONANCE <span>· live</span></span></div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hrow"><span class="lbl">NOW PLAYING</span><span class="time" id="time">00:00</span></div>
+  <div class="now" id="nowName">—</div>
+  <div class="sub" id="nowSub">generative ambient · Dusk</div>
+  <div class="meters">
+    <div class="m low"><span class="k">LOW</span><span class="bar"><span class="fill" id="mLow"></span></span></div>
+    <div class="m mid"><span class="k">MID</span><span class="bar"><span class="fill" id="mMid"></span></span></div>
+    <div class="m air"><span class="k">AIR</span><span class="bar"><span class="fill" id="mAir"></span></span></div>
+  </div>
+  <div class="src"><span class="dot"></span><span id="srcLabel">SYNTHESISED IN-BROWSER</span></div>
+</div>
+
+<!-- scroll cue -->
+<div id="cue"><span class="t">SCROLL</span><span class="ln"></span></div>
+
+<!-- dock -->
+<div id="dock" role="toolbar" aria-label="Playback controls">
+  <button class="ic" id="playBtn" aria-label="Play or pause">
+    <svg id="playIcon" viewBox="0 0 24 24"><polygon points="7,5 19,12 7,19" fill="currentColor" stroke="none"/></svg>
+  </button>
+  <div class="vol">
+    <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a4 4 0 010 7"/></svg>
+    <input type="range" id="vol" min="0" max="100" value="68" aria-label="Volume">
+  </div>
+  <span class="sep"></span>
+  <div class="moods" id="moods" role="group" aria-label="Mood">
+    <button class="md on" data-mood="dusk">DUSK</button>
+    <button class="md" data-mood="rain">RAIN</button>
+    <button class="md" data-mood="aurora">AURORA</button>
+    <button class="md" data-mood="ember">EMBER</button>
+  </div>
+  <span class="sep"></span>
+  <button class="ic" id="micBtn" aria-label="Toggle microphone input">
+    <svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0012 0"/><path d="M12 17v4"/></svg>
+  </button>
+</div>
+
+<div id="toast"></div>
+
+<!-- content -->
+<main>
+  <div class="spacer"></div>
+
+  <section class="section first">
+    <div class="reveal">
+      <div class="kicker">01 — Sound becomes image</div>
+      <h2 class="h2">Every frame you see is a <em>reading of the air</em>.</h2>
+      <p class="lead">There is no video here and no audio file. A lush ambient piece is <strong>synthesised live</strong> the instant you press begin — then handed, sample by sample, to an <strong>AnalyserNode</strong>. It runs a Fast Fourier Transform, splitting the signal into a spectrum of frequency bins many times a second. Those numbers are the paint.</p>
+      <div class="grid3">
+        <div class="card"><div class="n">/ LOW</div><h3>Bass breathes the core</h3><p>The lowest bins drive the diameter and heat of the central body. When the sub pulse swells, the whole bloom inhales.</p></div>
+        <div class="card"><div class="n">/ MID</div><h3>Mids sculpt the petals</h3><p>The arpeggio and pad energy bend the radial curve — the spectrum plotted in polar space, mirrored into a living, symmetric flower of light.</p></div>
+        <div class="card"><div class="n">/ AIR</div><h3>Highs ignite the motes</h3><p>Filtered noise and the top octaves brighten a field of drifting particles. The shimmer you see is literally the treble.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="reveal">
+      <div class="kicker">02 — The instrument</div>
+      <h2 class="h2">A small orchestra of <em>oscillators</em>, no recordings.</h2>
+      <p class="lead">The piece is a patch, not a track. Six layers evolve against each other through slow low-frequency motion, so it never quite repeats — an infinite, gently drifting sound-bath assembled from raw waveforms.</p>
+      <div class="chain">
+        <div class="lnk"><div class="tag">LAYER 01 · PAD</div><h4>Detuned drone</h4><p>Stacked oscillators tuned to an open fifth, each split into a pair a few cents apart, poured through a slowly-opening low-pass filter.</p></div>
+        <div class="lnk"><div class="tag">LAYER 02 · ARP</div><h4>Gentle arpeggio</h4><p>A soft triangle voice walks the mode, plucked note by note with a short envelope — the melody that carries the mood.</p></div>
+        <div class="lnk"><div class="tag">LAYER 03 · AIR</div><h4>Filtered noise</h4><p>White noise through a wandering band-pass — the breath and hiss that gives the room its size and its top-end sparkle.</p></div>
+        <div class="lnk"><div class="tag">LAYER 04 · SUB</div><h4>Slow pulse</h4><p>A sine an octave below the root, swelling on a tremolo LFO — the heartbeat that the core of the visual answers to.</p></div>
+        <div class="lnk"><div class="tag">LAYER 05 · LFO</div><h4>Slow movement</h4><p>Sub-hertz oscillators glide the filter cutoff and detune so the timbre is always breathing, never static.</p></div>
+        <div class="lnk"><div class="tag">LAYER 06 · MIX</div><h4>Analyser tap</h4><p>Everything meets at a master bus, tapped by the AnalyserNode. The same signal you hear is the one you watch.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="reveal">
+      <div class="kicker">03 — Four rooms of light</div>
+      <h2 class="h2">Choose a <em>mood</em>. The key, the tempo and the palette all move.</h2>
+      <p class="lead">Each mood re-tunes the instrument to a new root and mode, shifts the arpeggio's pace, and re-paints the bloom. Switch anytime — the transition is seamless.</p>
+      <div class="moodgrid">
+        <div class="moodcard"><div class="swatch"><i style="background:rgb(255,122,158)"></i><i style="background:rgb(168,116,255)"></i><i style="background:rgb(255,196,130)"></i></div><h4>Dusk</h4><div class="key">A MINOR · WARM · SLOW</div><p>Rose and violet at the edge of night. The last light, held.</p></div>
+        <div class="moodcard"><div class="swatch"><i style="background:rgb(110,200,255)"></i><i style="background:rgb(120,150,255)"></i><i style="background:rgb(190,214,235)"></i></div><h4>Rain</h4><div class="key">D DORIAN · COOL · DRIFT</div><p>Silvered blue and slate. A contemplative, patient weather.</p></div>
+        <div class="moodcard"><div class="swatch"><i style="background:rgb(94,255,180)"></i><i style="background:rgb(80,224,214)"></i><i style="background:rgb(168,124,255)"></i></div><h4>Aurora</h4><div class="key">E LYDIAN · BRIGHT · LIFT</div><p>Emerald and teal in a luminous major. Cold fire, rising.</p></div>
+        <div class="moodcard"><div class="swatch"><i style="background:rgb(255,146,74)"></i><i style="background:rgb(255,88,96)"></i><i style="background:rgb(255,206,120)"></i></div><h4>Ember</h4><div class="key">C MINOR · WARM · CLOSE</div><p>Coal-orange and gold, a touch faster. Something still burning.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-top">
+      <div class="big">Turn it up.<br><span>Watch it breathe.</span></div>
+      <a class="foot-cta" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">▲ BACK TO THE BLOOM</a>
+    </div>
+    <div class="foot-meta">
+      <span>RESONANCE · a generative visualiser</span>
+      <span>WEBAUDIO · CANVAS · ANALYSERNODE · FFT 2048</span>
+      <span>SPACE GROTESK / IBM PLEX MONO</span>
+      <a href="/">← XAVIER FABLE ×50</a>
+    </div>
+  </footer>
+</main>
+
+<!-- veil -->
+<div id="veil">
+  <div class="vin">
+    <div class="eyebrow">Generative Sound-Bath</div>
+    <h1>RESONANCE</h1>
+    <div class="tag">music you can see</div>
+    <p class="note">A lush ambient piece, synthesised live in your browser and rendered as a breathing bloom of light. Sound needs your permission to begin.</p>
+    <button id="beginBtn"><span class="rng"></span> Press to begin</button>
+    <div class="caption">HEADPHONES RECOMMENDED · NO AUDIO FILES · MADE OF OSCILLATORS</div>
+  </div>
+</div>
+
+<!-- back-link -->
+<a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×50 gallery">XAVIER <b>FABLE</b> ×50</a>
+
+<script>
+(() => {
+"use strict";
+const params = new URLSearchParams(location.search);
+const DEMO = params.has('demo');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STATIC = reduced && !DEMO;
+
+/* ============================================================ MOODS */
+const MOODS = {
+  dusk:{
+    name:'Dusk', keyText:'A minor',
+    css:{c1:'255,122,158',c2:'168,116,255',c3:'255,196,130',glow:'255,140,180',ink:'#f3eefe'},
+    bg:['#0c0817','#14091f','#080511'],
+    col:[[255,122,158],[168,116,255],[255,196,130]],
+    music:{root:110.00, scale:[0,3,5,7,10,12], drone:[0,7,12,19], color:[3,10,15], sub:0.5,
+           step:0.50, cutoff:760, q:6, wave:'sawtooth', arpWave:'triangle', bar:8},
+    names:['Slow Light','Nocturne for Still Air','The Long Violet','Halos','Afterglow','Held Breath','A Room at Dusk']
+  },
+  rain:{
+    name:'Rain', keyText:'D dorian',
+    css:{c1:'110,200,255',c2:'120,150,255',c3:'190,214,235',glow:'120,190,255',ink:'#eaf3ff'},
+    bg:['#060b14','#0a1420','#04080f'],
+    col:[[110,200,255],[120,150,255],[190,214,235]],
+    music:{root:73.42, scale:[0,2,3,5,7,9,10], drone:[0,7,12,17], color:[2,5,14], sub:0.5,
+           step:0.66, cutoff:600, q:5, wave:'triangle', arpWave:'sine', bar:9},
+    names:['Low Tide','Grey Weather','Petrichor','Standing Water','Slow Rain','The Window Seat','Overcast']
+  },
+  aurora:{
+    name:'Aurora', keyText:'E lydian',
+    css:{c1:'94,255,180',c2:'80,224,214',c3:'168,124,255',glow:'110,255,200',ink:'#eafff6'},
+    bg:['#04100c','#06160f','#030b0a'],
+    col:[[94,255,180],[80,224,214],[168,124,255]],
+    music:{root:82.41, scale:[0,2,4,7,9,11,12], drone:[0,7,12,16], color:[4,11,16], sub:0.5,
+           step:0.44, cutoff:980, q:6, wave:'sawtooth', arpWave:'triangle', bar:8},
+    names:['Cold Fire','Curtain Call','The Sky Answers','Rising','Kp Seven','Green Ribbon','First Light']
+  },
+  ember:{
+    name:'Ember', keyText:'C minor',
+    css:{c1:'255,146,74',c2:'255,88,96',c3:'255,206,120',glow:'255,150,90',ink:'#fff1e8'},
+    bg:['#120705','#1a0a08','#0b0403'],
+    col:[[255,146,74],[255,88,96],[255,206,120]],
+    music:{root:65.41, scale:[0,3,5,7,10,12], drone:[0,7,12,19], color:[3,8,15], sub:0.5,
+           step:0.38, cutoff:880, q:7, wave:'sawtooth', arpWave:'triangle', bar:7},
+    names:['Coalglow','Still Burning','Last Warmth','Emberfall','The Low Fire','Banked Heat','Cinder']
+  }
+};
+const ORDER = ['dusk','rain','aurora','ember'];
+let moodKey = 'dusk';
+let mood = MOODS[moodKey];
+
+/* ============================================================ CANVAS */
+const cv = document.getElementById('viz');
+const ctx = cv.getContext('2d');
+let W=0,H=0,DPR=1,cx=0,cy=0,unit=0;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = Math.floor(W*DPR); cv.height = Math.floor(H*DPR);
+  cv.style.width = W+'px'; cv.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  cx = W/2; cy = H*0.46; unit = Math.min(W,H);
+}
+addEventListener('resize', resize, {passive:true});
+resize();
+
+/* glow sprites (tinted, regenerated per mood) */
+function makeSprite(size, rgb, coreBoost){
+  const c = document.createElement('canvas'); c.width=c.height=size;
+  const g = c.getContext('2d');
+  const r = size/2;
+  const grad = g.createRadialGradient(r,r,0,r,r,r);
+  const [R,G,B] = rgb;
+  grad.addColorStop(0, `rgba(${Math.min(255,R+coreBoost)},${Math.min(255,G+coreBoost)},${Math.min(255,B+coreBoost)},1)`);
+  grad.addColorStop(0.22, `rgba(${R},${G},${B},.9)`);
+  grad.addColorStop(0.5, `rgba(${R},${G},${B},.28)`);
+  grad.addColorStop(1, `rgba(${R},${G},${B},0)`);
+  g.fillStyle = grad; g.fillRect(0,0,size,size);
+  return c;
+}
+let sprC=[], sprCore=null, bgGrad=null;
+function buildSprites(){
+  sprC = mood.col.map(rgb => makeSprite(128, rgb, 40));
+  sprCore = makeSprite(320, mood.col[0], 120);
+  bgGrad = null; // rebuilt lazily on draw (depends on size)
+}
+buildSprites();
+
+/* particles */
+let particles=[];
+function initParticles(){
+  const n = W<620 ? 46 : 104;
+  particles = [];
+  for(let i=0;i<n;i++){
+    particles.push({
+      ang: Math.random()*Math.PI*2,
+      rad: 0.12 + Math.random()*0.62,
+      spd: (Math.random()*0.5+0.5)*(Math.random()<.5?-1:1),
+      sz: Math.random()*0.6+0.4,
+      band: Math.floor(Math.random()*3),
+      ph: Math.random()*Math.PI*2
+    });
+  }
+}
+initParticles();
+
+/* spectrum buffers */
+const N = 96;               // display bins
+const specTarget = new Float32Array(N);
+const specDisp = new Float32Array(N);
+let bass=0, mid=0, high=0;   // smoothed band energies
+
+/* echo rings on beats */
+let rings=[]; let bassAvg=0.15, beatCd=0;
+
+/* ============================================================ AUDIO */
+let AC=null, master=null, analyserMusic=null, analyserMic=null, activeAnalyser=null;
+let freqBins=null, audioStarted=false, playing=false, micActive=false, micStream=null;
+let padOsc=[], swellOsc=null, swellGain=null, subOsc=null, subGain=null, padFilter=null, lfo=null, lfoGain=null;
+let airGain=null, airFilter=null, airLfo=null;
+let arpTimer=null, nextNote=0, scaleIdx=0, colorIdx=0, barTimer=0;
+
+function semi(root, s){ return root * Math.pow(2, s/12); }
+
+function startAudio(){
+  if(audioStarted) return;
+  AC = new (window.AudioContext||window.webkitAudioContext)();
+  master = AC.createGain(); master.gain.value = volFromSlider();
+  analyserMusic = AC.createAnalyser();
+  analyserMusic.fftSize = 2048; analyserMusic.smoothingTimeConstant = 0.82;
+  freqBins = new Uint8Array(analyserMusic.frequencyBinCount);
+  master.connect(analyserMusic); analyserMusic.connect(AC.destination);
+  activeAnalyser = analyserMusic;
+
+  const m = mood.music;
+  // pad filter
+  padFilter = AC.createBiquadFilter(); padFilter.type='lowpass';
+  padFilter.frequency.value = m.cutoff; padFilter.Q.value = m.q;
+  const padGain = AC.createGain(); padGain.gain.value = 0.14;
+  padFilter.connect(padGain); padGain.connect(master);
+  // pad oscillators (drone tones, each a detuned pair)
+  padOsc = [];
+  m.drone.forEach(s=>{
+    [-6,6].forEach(det=>{
+      const o = AC.createOscillator();
+      o.type = m.wave; o.frequency.value = semi(m.root, s); o.detune.value = det;
+      o.connect(padFilter); o.start(); padOsc.push(o);
+    });
+  });
+  // LFO -> filter cutoff
+  lfo = AC.createOscillator(); lfo.type='sine'; lfo.frequency.value = 0.06;
+  lfoGain = AC.createGain(); lfoGain.gain.value = m.cutoff*0.42;
+  lfo.connect(lfoGain); lfoGain.connect(padFilter.frequency); lfo.start();
+  // swell (color tone)
+  swellOsc = AC.createOscillator(); swellOsc.type=m.wave;
+  swellOsc.frequency.value = semi(m.root, m.color[0]+12);
+  swellGain = AC.createGain(); swellGain.gain.value = 0.0;
+  const swF = AC.createBiquadFilter(); swF.type='lowpass'; swF.frequency.value=1400;
+  swellOsc.connect(swF); swF.connect(swellGain); swellGain.connect(master); swellOsc.start();
+  // sub
+  subOsc = AC.createOscillator(); subOsc.type='sine';
+  subOsc.frequency.value = m.root*m.sub;
+  subGain = AC.createGain(); subGain.gain.value = 0.0;
+  subOsc.connect(subGain); subGain.connect(master); subOsc.start();
+  const subLfo = AC.createOscillator(); subLfo.type='sine'; subLfo.frequency.value = 0.42;
+  const subLfoG = AC.createGain(); subLfoG.gain.value = 0.11;
+  const subOff = AC.createConstantSource(); subOff.offset.value = 0.12; subOff.start();
+  subLfo.connect(subLfoG); subLfoG.connect(subGain.gain); subOff.connect(subGain.gain); subLfo.start();
+  // air (noise -> bandpass)
+  const nb = AC.createBuffer(1, AC.sampleRate*2, AC.sampleRate);
+  const dat = nb.getChannelData(0);
+  for(let i=0;i<dat.length;i++) dat[i] = (Math.random()*2-1);
+  const noise = AC.createBufferSource(); noise.buffer = nb; noise.loop = true;
+  airFilter = AC.createBiquadFilter(); airFilter.type='bandpass';
+  airFilter.frequency.value = 1600; airFilter.Q.value = 0.7;
+  airGain = AC.createGain(); airGain.gain.value = 0.035;
+  noise.connect(airFilter); airFilter.connect(airGain); airGain.connect(master);
+  airLfo = AC.createOscillator(); airLfo.type='sine'; airLfo.frequency.value = 0.05;
+  const airLfoG = AC.createGain(); airLfoG.gain.value = 900;
+  const airOff = AC.createConstantSource(); airOff.offset.value = 1800; airOff.start();
+  airLfo.connect(airLfoG); airLfoG.connect(airFilter.frequency); airOff.connect(airFilter.frequency);
+  noise.start(); airLfo.start();
+
+  audioStarted = true; playing = true;
+  // ramp swell in slowly
+  swellGain.gain.setTargetAtTime(0.05, AC.currentTime, 3);
+  nextNote = AC.currentTime + 0.2; barTimer = AC.currentTime + m.bar;
+  arpTimer = setInterval(scheduler, 25);
+  startClock();
+  updateSrcLabel();
+}
+
+function scheduler(){
+  if(!AC || !playing || micActive) return;
+  const m = mood.music;
+  while(nextNote < AC.currentTime + 0.12){
+    playArp(nextNote);
+    nextNote += m.step;
+  }
+  // slow chord-colour evolution
+  if(AC.currentTime > barTimer){
+    barTimer = AC.currentTime + m.bar;
+    colorIdx = (colorIdx+1) % m.color.length;
+    if(swellOsc) swellOsc.frequency.setTargetAtTime(semi(m.root, m.color[colorIdx]+12), AC.currentTime, 0.8);
+  }
+}
+function playArp(t){
+  const m = mood.music;
+  // gentle random walk through the scale, up an octave or two
+  if(Math.random()<0.62) scaleIdx += (Math.random()<0.5?1:-1);
+  scaleIdx = (scaleIdx % m.scale.length + m.scale.length) % m.scale.length;
+  const oct = 12*(2 + (Math.random()<0.35?1:0));
+  const f = semi(m.root, m.scale[scaleIdx] + oct);
+  const o = AC.createOscillator(); o.type = m.arpWave; o.frequency.value = f;
+  const g = AC.createGain(); g.gain.value = 0;
+  const fl = AC.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value = 2600;
+  o.connect(fl); fl.connect(g); g.connect(master);
+  const peak = 0.06 + Math.random()*0.03;
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(peak, t+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0008, t + m.step*1.7);
+  o.start(t); o.stop(t + m.step*1.9);
+}
+
+function applyMoodAudio(){
+  if(!audioStarted) return;
+  const m = mood.music, t = AC.currentTime;
+  padOsc.forEach((o,i)=>{
+    const s = m.drone[Math.floor(i/2)];
+    o.type = m.wave;
+    o.frequency.setTargetAtTime(semi(m.root, s), t, 0.4);
+  });
+  padFilter.frequency.setTargetAtTime(m.cutoff, t, 0.6);
+  padFilter.Q.setTargetAtTime(m.q, t, 0.6);
+  lfoGain.gain.setTargetAtTime(m.cutoff*0.42, t, 0.6);
+  if(swellOsc){ swellOsc.type=m.wave; swellOsc.frequency.setTargetAtTime(semi(m.root, m.color[0]+12), t, 0.5); }
+  if(subOsc) subOsc.frequency.setTargetAtTime(m.root*m.sub, t, 0.5);
+  colorIdx = 0;
+}
+
+/* ============================================================ MIC */
+async function toggleMic(){
+  if(micActive){ stopMic(); return; }
+  if(!AC){ toast('Press begin first'); return; }
+  try{
+    micStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const src = AC.createMediaStreamSource(micStream);
+    analyserMic = AC.createAnalyser(); analyserMic.fftSize = 2048; analyserMic.smoothingTimeConstant = 0.8;
+    src.connect(analyserMic); // NOT to destination -> no feedback
+    activeAnalyser = analyserMic;
+    micActive = true;
+    if(master) master.gain.setTargetAtTime(volFromSlider()*0.18, AC.currentTime, 0.3);
+    document.getElementById('micBtn').classList.add('on');
+    updateSrcLabel(); toast('Listening to microphone');
+  }catch(e){
+    toast('Microphone unavailable');
+    document.getElementById('micBtn').classList.remove('on');
+  }
+}
+function stopMic(){
+  micActive = false;
+  if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
+  activeAnalyser = analyserMusic;
+  if(master && AC) master.gain.setTargetAtTime(volFromSlider(), AC.currentTime, 0.3);
+  document.getElementById('micBtn').classList.remove('on');
+  updateSrcLabel();
+}
+
+/* ============================================================ SPECTRUM */
+function readReal(an){
+  an.getByteFrequencyData(freqBins);
+  const bc = an.frequencyBinCount;
+  for(let j=0;j<N;j++){
+    const frac = j/(N-1);
+    let bin = Math.floor(Math.pow(bc-1, Math.pow(frac,1.08)));
+    if(bin<1) bin=1; if(bin>=bc) bin=bc-1;
+    const bin2 = Math.min(bc-1, bin + Math.max(1,Math.floor(bc/N)));
+    let mx=0; for(let k=bin;k<=bin2;k++){ if(freqBins[k]>mx) mx=freqBins[k]; }
+    specTarget[j] = mx/255;
+  }
+}
+let noiseSeed = Array.from({length:64},()=>Math.random()*Math.PI*2);
+function synthSpectrum(t, amp){
+  for(let j=0;j<N;j++){
+    const f = j/(N-1);
+    // bass: strong falloff, pulsing (kept off the floor so it always reads as alive)
+    const bassE = Math.exp(-f*4.5) * (0.72 + 0.28*Math.sin(t*1.25) + 0.1*Math.sin(t*0.4));
+    // moving mid peaks
+    let midE = 0;
+    for(let k=0;k<3;k++){
+      const c = 0.22 + 0.16*k + 0.09*Math.sin(t*0.5 + k*2.1);
+      const w = 0.045;
+      midE += Math.exp(-((f-c)*(f-c))/(2*w*w)) * (0.4 + 0.4*Math.sin(t*(1.6+k*0.9) + k));
+    }
+    // shimmer highs
+    const hiEnv = Math.exp(-Math.pow((f-0.62)/0.32,2));
+    const hiE = hiEnv * (0.14 + 0.14*Math.sin(t*5 + f*38 + noiseSeed[j%64]));
+    let v = bassE*0.85 + midE*0.6 + Math.max(0,hiE);
+    v *= (0.86 + 0.14*Math.sin(t*3 + noiseSeed[j%64]*2));
+    specTarget[j] = Math.max(0, Math.min(1, v)) * amp;
+  }
+}
+function updateSpectrum(t){
+  if(micActive && analyserMic) readReal(analyserMic);
+  else if(audioStarted && playing && analyserMusic) readReal(analyserMusic);
+  else synthSpectrum(t, DEMO?1.0:0.5);   // idle / demo synth
+  // temporal smoothing + band energies
+  let b=0,mi=0,hi=0;
+  for(let j=0;j<N;j++){
+    specDisp[j] += (specTarget[j]-specDisp[j])*0.28;
+    if(j<10) b+=specDisp[j];
+    else if(j<40) mi+=specDisp[j];
+    else hi+=specDisp[j];
+  }
+  b/=10; mi/=30; hi/=(N-40);
+  bass += (b-bass)*0.18; mid += (mi-mid)*0.2; high += (hi-high)*0.22;
+}
+
+/* ============================================================ DRAW */
+function lerpCol(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+
+function draw(t){
+  // background
+  if(!bgGrad){
+    bgGrad = ctx.createRadialGradient(cx,cy,0, cx,cy, unit*0.9);
+    bgGrad.addColorStop(0, mood.bg[1]);
+    bgGrad.addColorStop(0.55, mood.bg[0]);
+    bgGrad.addColorStop(1, mood.bg[2]);
+  }
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle = bgGrad; ctx.fillRect(0,0,W,H);
+
+  const baseR = unit*0.20;
+  const amp = unit*0.155;
+  const rot = t*0.045;
+
+  ctx.globalCompositeOperation='lighter';
+
+  // ---- particle field ----
+  for(const p of particles){
+    p.ang += p.spd*0.0016*(0.5 + mid*1.5);
+    const bandVal = p.band===0?bass:p.band===1?mid:high;
+    const rr = (p.rad + Math.sin(t*0.5+p.ph)*0.02) * unit*0.62;
+    const px = cx + Math.cos(p.ang+rot)*rr;
+    const py = cy + Math.sin(p.ang+rot)*rr;
+    const glow = 0.18 + bandVal*1.4 + 0.15*Math.sin(t*2+p.ph);
+    const s = (6 + p.sz*14) * (0.7 + bandVal*1.1);
+    ctx.globalAlpha = Math.max(0, Math.min(0.9, glow*0.5));
+    const sp = sprC[p.band];
+    ctx.drawImage(sp, px-s, py-s, s*2, s*2);
+  }
+  ctx.globalAlpha = 1;
+
+  // ---- echo rings ----
+  for(let i=rings.length-1;i>=0;i--){
+    const rg = rings[i];
+    rg.r += rg.v; rg.life -= 0.012;
+    if(rg.life<=0){ rings.splice(i,1); continue; }
+    ctx.globalAlpha = Math.max(0, rg.life*0.5);
+    ctx.strokeStyle = `rgba(${mood.col[0][0]},${mood.col[0][1]},${mood.col[0][2]},1)`;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(cx,cy, rg.r, 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // ---- central core ----
+  const coreS = baseR * (0.62 + bass*1.5);
+  ctx.globalAlpha = Math.min(1, 0.55 + bass*0.8);
+  ctx.drawImage(sprCore, cx-coreS, cy-coreS, coreS*2, coreS*2);
+  ctx.globalAlpha = 1;
+
+  // ---- radial spectrum blooms (mirrored, two colours) ----
+  drawBloom(t, rot, baseR, amp, 0, mood.col[0], 0.72, 1.5);
+  drawBloom(t, rot*0.86, baseR*0.985, amp*0.82, Math.PI/N, mood.col[1], 0.5, 1.1);
+
+  // faint inner ring detail
+  ctx.globalAlpha = 0.3 + high*0.5;
+  ctx.strokeStyle = `rgba(${mood.col[2][0]},${mood.col[2][1]},${mood.col[2][2]},.8)`;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx,cy, baseR*0.5*(1+bass*0.4), 0, Math.PI*2); ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  ctx.globalCompositeOperation='source-over';
+}
+
+function drawBloom(t, rot, baseR, amp, phase, col, fillA, lineW){
+  const M = N*2; // mirrored
+  const pts = [];
+  for(let i=0;i<M;i++){
+    const j = i<N ? i : (M-1-i);
+    // smoothing with neighbours (5-tap) to keep the petal edge graceful
+    const s0 = specDisp[Math.max(0,j-2)], s1 = specDisp[Math.max(0,j-1)], s2 = specDisp[j],
+          s3 = specDisp[Math.min(N-1,j+1)], s4 = specDisp[Math.min(N-1,j+2)];
+    const v = (s0*0.12 + s1*0.24 + s2*0.28 + s3*0.24 + s4*0.12);
+    const a = (i/M)*Math.PI*2 + phase + rot;
+    const r = baseR + v*amp + Math.sin(a*3 + t*0.6)*unit*0.004;
+    pts.push([cx + Math.cos(a)*r, cy + Math.sin(a)*r]);
+  }
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for(let i=1;i<M;i++){
+    const p0 = pts[i-1], p1 = pts[i];
+    const mx=(p0[0]+p1[0])/2, my=(p0[1]+p1[1])/2;
+    ctx.quadraticCurveTo(p0[0],p0[1], mx,my);
+  }
+  ctx.closePath();
+  const grad = ctx.createRadialGradient(cx,cy,baseR*0.3, cx,cy, baseR+amp);
+  grad.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},0)`);
+  grad.addColorStop(0.6, `rgba(${col[0]},${col[1]},${col[2]},${fillA*0.22})`);
+  grad.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},${fillA*0.5})`);
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.55+high*0.4})`;
+  ctx.lineWidth = lineW; ctx.stroke();
+}
+
+/* beat -> ring */
+function beatCheck(){
+  bassAvg += (bass-bassAvg)*0.05;
+  if(beatCd>0) beatCd--;
+  if(bass - bassAvg > 0.12 && beatCd<=0 && bass>0.28){
+    rings.push({r: unit*0.16, v: unit*0.0032, life:1});
+    beatCd = 18;
+  }
+}
+
+/* ============================================================ LOOP */
+let running = true, t0 = performance.now();
+function frame(now){
+  if(!running){ return; }
+  const t = (now - t0)/1000;
+  updateSpectrum(t);
+  beatCheck();
+  draw(t);
+  updateHud();
+  requestAnimationFrame(frame);
+}
+function staticFrame(){
+  // calm, still bloom for reduced-motion
+  for(let j=0;j<N;j++){
+    const f=j/(N-1);
+    specDisp[j] = Math.exp(-f*3)*0.5 + Math.exp(-Math.pow((f-0.4)/0.2,2))*0.28;
+  }
+  bass=0.35; mid=0.3; high=0.2;
+  draw(2.2);
+  updateHud();
+}
+
+function updateHud(){
+  document.getElementById('mLow').style.width = (8+Math.min(1,bass*1.4)*92)+'%';
+  document.getElementById('mMid').style.width = (8+Math.min(1,mid*1.6)*92)+'%';
+  document.getElementById('mAir').style.width = (8+Math.min(1,high*1.8)*92)+'%';
+}
+
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){ running=false; }
+  else if(!STATIC){ running=true; t0 = performance.now() - 0; requestAnimationFrame(frame); }
+});
+
+/* ============================================================ UI */
+function volFromSlider(){ return (+document.getElementById('vol').value/100)*0.9; }
+document.getElementById('vol').addEventListener('input', ()=>{
+  if(master && AC){ master.gain.setTargetAtTime(micActive?volFromSlider()*0.18:volFromSlider(), AC.currentTime, 0.1); }
+});
+
+const playIcon = document.getElementById('playIcon');
+function setPlayIcon(pl){
+  playIcon.innerHTML = pl
+    ? '<rect x="7" y="5" width="3.5" height="14" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="3.5" height="14" fill="currentColor" stroke="none"/>'
+    : '<polygon points="7,5 19,12 7,19" fill="currentColor" stroke="none"/>';
+}
+document.getElementById('playBtn').addEventListener('click', ()=>{
+  if(!audioStarted){ beginExperience(); return; }
+  playing = !playing;
+  if(playing){ AC.resume(); master.gain.setTargetAtTime(micActive?volFromSlider()*0.18:volFromSlider(), AC.currentTime, 0.15); resumeClock(); }
+  else { master.gain.setTargetAtTime(0, AC.currentTime, 0.2); pauseClock(); }
+  setPlayIcon(playing);
+});
+document.getElementById('micBtn').addEventListener('click', toggleMic);
+
+document.getElementById('moods').addEventListener('click', e=>{
+  const b = e.target.closest('.md'); if(!b) return;
+  setMood(b.dataset.mood);
+});
+function setMood(key){
+  if(!MOODS[key] || key===moodKey) { if(key===moodKey){} }
+  moodKey = key; mood = MOODS[key];
+  document.querySelectorAll('.md').forEach(x=>x.classList.toggle('on', x.dataset.mood===key));
+  // css vars
+  const r = document.documentElement.style;
+  r.setProperty('--c1', mood.css.c1); r.setProperty('--c2', mood.css.c2);
+  r.setProperty('--c3', mood.css.c3); r.setProperty('--glow', mood.css.glow);
+  r.setProperty('--ink', mood.css.ink);
+  document.body.style.background = mood.bg[0];
+  buildSprites(); bgGrad=null;
+  applyMoodAudio();
+  newTrack();
+  document.getElementById('nowSub').textContent = 'generative ambient · '+mood.name;
+  if(STATIC) staticFrame();
+}
+
+/* track name + clock */
+let trackName='—', clockBase=0, clockStart=0, clockRunning=false;
+function romanish(){ return ['I','II','III','IV','V','VI','VII','VIII','IX','X'][Math.floor(Math.random()*10)]; }
+function newTrack(){
+  const pool = mood.names;
+  trackName = pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('nowName').textContent = trackName;
+  clockBase = 0; clockStart = performance.now();
+}
+function startClock(){ clockRunning=true; clockStart=performance.now(); }
+function pauseClock(){ if(clockRunning){ clockBase += (performance.now()-clockStart)/1000; clockRunning=false; } }
+function resumeClock(){ if(!clockRunning){ clockStart=performance.now(); clockRunning=true; } }
+function fmt(s){ const m=Math.floor(s/60), ss=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0'); }
+setInterval(()=>{
+  if(!audioStarted) return;
+  let el = clockBase + (clockRunning?(performance.now()-clockStart)/1000:0);
+  document.getElementById('time').textContent = fmt(el);
+}, 500);
+
+function updateSrcLabel(){
+  document.getElementById('srcLabel').textContent = micActive ? 'MICROPHONE · LIVE' : 'SYNTHESISED IN-BROWSER';
+}
+
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'), 2600);
+}
+
+/* ============================================================ BEGIN */
+function beginExperience(){
+  document.getElementById('veil').classList.add('gone');
+  document.body.classList.add('begun');
+  if(!STATIC) startAudio();
+  setPlayIcon(true);
+  newTrack();
+}
+document.getElementById('beginBtn').addEventListener('click', beginExperience);
+document.getElementById('veil').addEventListener('click', e=>{
+  if(e.target.id==='veil') beginExperience();
+});
+
+/* ============================================================ SCROLL */
+const prog = document.getElementById('prog');
+addEventListener('scroll', ()=>{
+  const h = document.documentElement.scrollHeight - innerHeight;
+  prog.style.width = (h>0? (scrollY/h*100):0)+'%';
+  document.body.classList.toggle('scrolled', scrollY > innerHeight*0.55);
+}, {passive:true});
+
+if('IntersectionObserver' in window){
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+} else {
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+if('IntersectionObserver' in window){
+  const fio = new IntersectionObserver(es=>{
+    es.forEach(e=> document.body.classList.toggle('at-footer', e.isIntersecting));
+  }, {threshold:0.15});
+  const ft = document.querySelector('footer'); if(ft) fio.observe(ft);
+}
+
+/* ============================================================ INIT */
+document.getElementById('nowName').textContent = mood.names[0];
+const pMood = params.get('mood');
+if(pMood && MOODS[pMood]) setMood(pMood);
+if(DEMO){
+  document.getElementById('veil').classList.add('gone');
+  document.body.classList.add('begun');
+  newTrack();
+}
+const pScroll = params.get('scroll');
+if(pScroll){ addEventListener('load', ()=> setTimeout(()=> scrollTo(0, parseFloat(pScroll)*(document.documentElement.scrollHeight-innerHeight)), 300)); }
+if(STATIC){
+  document.getElementById('veil').classList.remove('gone'); // still allow gesture
+  staticFrame();
+} else {
+  requestAnimationFrame(frame);
+}
+addEventListener('resize', ()=>{ initParticles(); bgGrad=null; if(STATIC) staticFrame(); }, {passive:true});
+})();
+</script>
+</body>
+</html>
