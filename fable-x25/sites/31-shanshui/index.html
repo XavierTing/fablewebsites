@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山水 · SHAN SHUI — A Thousand Li of Rivers and Mountains</title>
+<meta name="description" content="An infinite ink-wash handscroll (手卷) painted entirely in canvas code. Layered mountains dissolve into mist and empty silk as the scroll unrolls forever — procedural guóhuà, no photographs, seeded so it never repeats.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×35">
+<meta property="og:title" content="山水 · SHAN SHUI — A Thousand Li of Rivers and Mountains">
+<meta property="og:description" content="An infinite ink-wash handscroll painted entirely in canvas code. Mountains recede into mist and bare silk as the scroll unrolls forever.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/31-shanshui/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="山水 · SHAN SHUI">
+<meta name="twitter:description" content="An infinite ink-wash handscroll painted entirely in canvas code.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23efe7d3'/%3E%3Cpath d='M6 74 L30 40 L44 58 L60 30 L80 62 L94 74 Z' fill='%231c1a17'/%3E%3Crect x='70' y='16' width='18' height='18' rx='2' fill='%23b22a1e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#efe7d3; --paper-2:#e7dcc6; --paper-3:#ddd0b4;
+    --ink:#1c1a17; --ink-2:#2b2823; --ink-soft:rgba(28,26,23,.74); --ink-faint:rgba(28,26,23,.5);
+    --ink-ghost:rgba(28,26,23,.32);
+    --seal:#b22a1e; --seal-deep:#8f1f16;
+    --mount:#3a3733;
+    --serif:'Noto Serif SC',serif;
+    --brush:'Ma Shan Zheng',cursive;
+    --sans:'Space Grotesk',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-weight:300;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  ::selection{background:rgba(178,42,30,.22); color:var(--ink)}
+  ::-webkit-scrollbar{width:11px;background:var(--paper-2)}
+  ::-webkit-scrollbar-thumb{background:rgba(28,26,23,.26);border:3px solid var(--paper-2);border-radius:6px}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(28,26,23,.45)}
+  :focus{outline:none}
+  :focus-visible{outline:1.5px solid var(--seal);outline-offset:3px;border-radius:2px}
+  a{color:inherit}
+
+  /* ============ STAGE (the unrolling handscroll) ============ */
+  .stage{
+    position:relative; width:100%; height:100svh; min-height:540px;
+    overflow:hidden; background:var(--paper);
+    touch-action:pan-y;
+    cursor:grab;
+  }
+  .stage.dragging{cursor:grabbing}
+  #scroll{display:block; width:100%; height:100%;}
+
+  /* soft top/bottom framing wash so ink sits inside a "mounting" */
+  .stage::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:
+      linear-gradient(180deg, rgba(221,208,180,.5) 0%, transparent 9%, transparent 90%, rgba(210,196,166,.55) 100%),
+      radial-gradient(120% 80% at 50% 42%, transparent 60%, rgba(120,104,74,.14) 100%);}
+  /* fibre grain over everything, very faint */
+  .stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:4;opacity:.05;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* ============ scroll rods (轴) at the far edges ============ */
+  .rod{position:absolute;top:0;bottom:0;width:22px;z-index:6;pointer-events:none;}
+  .rod-l{left:0;background:linear-gradient(90deg, #6b5a3f 0%, #4d3f2a 24%, #8a744f 50%, #3c3019 76%, rgba(60,48,25,0) 100%);
+    box-shadow:2px 0 10px rgba(60,48,25,.35);}
+  .rod-r{right:0;background:linear-gradient(270deg, #6b5a3f 0%, #4d3f2a 24%, #8a744f 50%, #3c3019 76%, rgba(60,48,25,0) 100%);
+    box-shadow:-2px 0 10px rgba(60,48,25,.35);}
+  .rod .knob{position:absolute;left:50%;width:34px;height:34px;transform:translateX(-50%);border-radius:50%;
+    background:radial-gradient(circle at 38% 34%, #b79b6c, #5c4a2e 70%, #3a2e17);box-shadow:0 2px 6px rgba(0,0,0,.4);}
+  .rod .knob.top{top:-6px} .rod .knob.bot{bottom:-6px}
+
+  /* ============ colophon (題跋) — vertical couplet, right on load ============ */
+  .colophon{
+    position:absolute; top:0; right:52px; bottom:96px; z-index:8;
+    display:flex; flex-direction:column; align-items:flex-end; justify-content:center;
+    gap:26px; padding:6vh 0; pointer-events:none;
+  }
+  .colophon .verse{display:flex; gap:22px; writing-mode:vertical-rl; text-orientation:upright}
+  .colophon .line{
+    font-family:var(--brush); font-weight:400;
+    font-size:clamp(26px,3.6vh,44px); line-height:1.9; letter-spacing:.14em;
+    color:var(--ink); text-shadow:0 0 1px rgba(28,26,23,.2);
+  }
+  .colophon .gloss{ max-width:210px; text-align:right; }
+  .colophon .gloss .py{font-family:var(--sans);font-size:10px;letter-spacing:.15em;color:var(--ink-faint);text-transform:uppercase;line-height:1.75}
+  .colophon .gloss .en{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin-top:9px}
+
+  /* ============ back-link ============ */
+  .backlink{
+    position:fixed; top:18px; left:34px; z-index:40;
+    font-family:var(--sans); font-size:10px; letter-spacing:.34em; font-weight:400;
+    color:var(--ink-soft); text-decoration:none;
+    padding:7px 12px 6px; border:1px solid rgba(28,26,23,.28);
+    background:rgba(239,231,211,.7); backdrop-filter:blur(4px);
+    transition:color .4s ease, border-color .4s ease, background .4s ease;
+  }
+  .backlink:hover{color:var(--seal);border-color:rgba(178,42,30,.5);background:rgba(239,231,211,.9)}
+
+  /* ============ controls (minimal ink marks) ============ */
+  .controls{
+    position:absolute; left:50%; bottom:26px; transform:translateX(-50%);
+    z-index:12; display:flex; align-items:center; gap:20px;
+    padding:11px 20px; border-radius:2px;
+    background:rgba(239,231,211,.66); backdrop-filter:blur(7px);
+    border:1px solid rgba(28,26,23,.16);
+    box-shadow:0 6px 24px rgba(60,48,25,.14);
+    max-width:calc(100vw - 60px);
+  }
+  .ctl-btn{
+    width:34px;height:34px;flex:0 0 auto;border:1px solid rgba(28,26,23,.34);
+    background:transparent;border-radius:50%;cursor:pointer;color:var(--ink);
+    display:grid;place-items:center;transition:border-color .3s ease,background .3s ease,color .3s ease;
+  }
+  .ctl-btn:hover{border-color:var(--seal);color:var(--seal)}
+  .ctl-btn svg{width:13px;height:13px;fill:currentColor}
+  .ctl-lbl{font-family:var(--sans);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
+  .ctl-hz{font-family:var(--serif);font-size:15px;color:var(--ink-soft);white-space:nowrap}
+
+  /* speed slider */
+  .speed{display:flex;align-items:center;gap:10px}
+  input[type=range].ink{
+    -webkit-appearance:none;appearance:none;width:96px;height:20px;background:transparent;cursor:pointer;
+  }
+  input[type=range].ink::-webkit-slider-runnable-track{height:1.5px;background:rgba(28,26,23,.4)}
+  input[type=range].ink::-moz-range-track{height:1.5px;background:rgba(28,26,23,.4)}
+  input[type=range].ink::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;
+    background:var(--ink);margin-top:-4.7px;box-shadow:0 0 0 3px rgba(239,231,211,.9);transition:background .3s}
+  input[type=range].ink::-moz-range-thumb{width:11px;height:11px;border:none;border-radius:50%;background:var(--ink);box-shadow:0 0 0 3px rgba(239,231,211,.9)}
+  input[type=range].ink:hover::-webkit-slider-thumb{background:var(--seal)}
+  input[type=range].ink:hover::-moz-range-thumb{background:var(--seal)}
+
+  /* scrub — a long thin ink stroke you drag to jog */
+  .scrub{position:relative;flex:1 1 150px;min-width:110px;height:26px;display:flex;align-items:center;cursor:ew-resize;touch-action:none}
+  .scrub .track{position:absolute;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,rgba(28,26,23,.42) 12%,rgba(28,26,23,.42) 88%,transparent)}
+  .scrub .dot{position:absolute;left:50%;width:9px;height:9px;border-radius:50%;background:var(--ink);transform:translateX(-50%);transition:background .3s}
+  .scrub:hover .dot{background:var(--seal)}
+  .scrub .tick{position:absolute;top:50%;width:1px;height:6px;transform:translateY(-50%);background:rgba(28,26,23,.28)}
+
+  /* down-to-essay affordance */
+  .to-essay{
+    position:absolute;left:50%;bottom:76px;transform:translateX(-50%);z-index:11;
+    font-family:var(--sans);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-faint);
+    text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:5px;
+    opacity:.85;transition:color .4s ease,opacity .4s ease;
+  }
+  .to-essay:hover{color:var(--seal);opacity:1}
+  .to-essay .chev{width:12px;height:12px;animation:bob 2.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+  /* ============ READING (tradition of 山水 + 留白) ============ */
+  .reading{
+    position:relative; background:var(--paper);
+    padding:clamp(64px,10vw,130px) clamp(24px,7vw,110px) 40px;
+    border-top:1px solid rgba(28,26,23,.14);
+  }
+  .reading::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n2)'/%3E%3C/svg%3E");}
+  .reading .inner{position:relative;max-width:1080px;margin:0 auto}
+  .kicker{font-family:var(--sans);font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:26px}
+  .big-cn{font-family:var(--brush);font-weight:400;font-size:clamp(58px,11vw,132px);line-height:.98;color:var(--ink);letter-spacing:.04em}
+  .lead{font-family:var(--serif);font-weight:300;font-size:clamp(18px,2.3vw,25px);line-height:1.75;color:var(--ink);max-width:30ch;margin-top:24px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(30px,4vw,56px);margin-top:clamp(56px,8vw,96px)}
+  .card h3{font-family:var(--serif);font-weight:500;font-size:15px;letter-spacing:.02em;color:var(--ink);margin-bottom:4px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+  .card h3 .cn{font-family:var(--brush);font-size:26px;font-weight:400;white-space:nowrap;flex:0 0 auto}
+  .card h3 .py{font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-ghost);flex:1 1 auto;min-width:0}
+  .card p{font-family:var(--serif);font-weight:300;font-size:15px;line-height:1.78;color:var(--ink-soft);margin-top:12px}
+  .rule{height:1px;background:rgba(28,26,23,.16);margin-bottom:18px}
+
+  /* couplet block */
+  .couplet{margin-top:clamp(64px,9vw,108px);display:flex;flex-wrap:wrap;align-items:center;gap:clamp(28px,5vw,70px)}
+  .couplet .verse{display:flex;gap:22px;writing-mode:vertical-rl;text-orientation:upright}
+  .couplet .verse .ln{font-family:var(--brush);font-weight:400;font-size:clamp(30px,5vh,46px);line-height:1.85;letter-spacing:.12em;color:var(--ink)}
+  .couplet .say{max-width:34ch}
+  .couplet .say .py{font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);line-height:1.9}
+  .couplet .say .en{font-family:var(--serif);font-style:italic;font-size:clamp(16px,2vw,20px);line-height:1.7;color:var(--ink);margin-top:16px}
+  .couplet .say .seal-note{font-family:var(--sans);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-ghost);margin-top:20px}
+
+  /* footer */
+  footer{position:relative;background:var(--paper);padding:clamp(50px,7vw,90px) clamp(24px,7vw,110px) 54px;border-top:1px solid rgba(28,26,23,.14)}
+  footer .inner{max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:28px}
+  footer .sig{font-family:var(--brush);font-size:34px;color:var(--ink)}
+  footer .meta{font-family:var(--sans);font-size:11px;letter-spacing:.14em;line-height:2;color:var(--ink-faint);text-transform:uppercase}
+  footer .home{font-family:var(--sans);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;
+    border-bottom:1px solid rgba(28,26,23,.3);padding-bottom:3px;transition:color .35s,border-color .35s}
+  footer .home:hover{color:var(--seal);border-color:var(--seal)}
+
+  /* ============ responsive ============ */
+  @media (max-width:720px){
+    .backlink{top:14px;left:16px;font-size:9px;letter-spacing:.26em;padding:6px 9px 5px}
+    .colophon{right:20px;gap:14px}
+    .colophon .line{font-size:clamp(21px,3vh,30px)}
+    .colophon .gloss{max-width:130px}
+    .colophon .gloss .en{font-size:11px}
+    .rod{width:14px}.rod .knob{width:24px;height:24px}
+    .controls{gap:12px;padding:9px 13px;bottom:18px}
+    .ctl-lbl{display:none}
+    .speed{gap:7px} input[type=range].ink{width:60px}
+    .scrub{flex-basis:80px;min-width:64px}
+    .to-essay{bottom:66px}
+    .ctl-hz{font-size:13px}
+  }
+  @media (max-width:420px){
+    .colophon .gloss{display:none}
+    .colophon{right:14px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .to-essay .chev{animation:none}
+  }
+  .noscript{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);color:var(--ink-soft);padding:40px;text-align:center}
+</style>
+</head>
+<body>
+<a class="backlink" href="/">XAVIER FABLE ×35</a>
+
+<section class="stage" id="stage" aria-label="An infinite ink-wash handscroll of mountains and rivers">
+  <canvas id="scroll" aria-hidden="true"></canvas>
+
+  <div class="rod rod-l" aria-hidden="true"><span class="knob top"></span><span class="knob bot"></span></div>
+  <div class="rod rod-r" aria-hidden="true"><span class="knob top"></span><span class="knob bot"></span></div>
+
+  <div class="colophon" id="colophon" aria-hidden="true">
+    <div class="verse">
+      <div class="line">遠山如黛橫空際</div>
+      <div class="line">空水浮嵐入畫來</div>
+    </div>
+    <div class="gloss">
+      <div class="py">yuǎn shān rú dài héng kōng jì<br>kōng shuǐ fú lán rù huà lái</div>
+      <div class="en">Far mountains, dark as kohl, lie level with the empty sky; drifting haze on still water comes into the painting.</div>
+    </div>
+  </div>
+
+  <a class="to-essay" href="#reading" aria-label="Read about the tradition">
+    <span>留白 · the tradition</span>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 9l7 7 7-7"/></svg>
+  </a>
+
+  <div class="controls" role="group" aria-label="Handscroll controls">
+    <button class="ctl-btn" id="playBtn" aria-label="Pause drift" aria-pressed="true" title="Play / pause the drift">
+      <svg id="playIcon" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+    </button>
+    <div class="speed">
+      <span class="ctl-lbl">慢 slow</span>
+      <input type="range" class="ink" id="speed" min="0.25" max="2.6" step="0.05" value="1" aria-label="Drift speed">
+      <span class="ctl-lbl">fast 快</span>
+    </div>
+    <div class="scrub" id="scrub" role="slider" aria-label="Scrub the handscroll" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+      <span class="tick" style="left:0"></span><span class="tick" style="left:50%"></span><span class="tick" style="right:0"></span>
+      <span class="track"></span><span class="dot" id="scrubDot"></span>
+    </div>
+    <span class="ctl-hz" id="odo" title="Distance unrolled">行 0 里</span>
+  </div>
+
+  <noscript><div class="noscript">This handscroll is painted live with JavaScript. Please enable it to unroll 山水.</div></noscript>
+</section>
+
+<section class="reading" id="reading">
+  <div class="inner">
+    <div class="kicker">論 · On the tradition</div>
+    <div class="big-cn">山水</div>
+    <p class="lead">Not a picture of a place, but a place to be entered — mountains and water offered to the eye as a walk one takes with the whole body.</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="rule"></div>
+        <h3><span class="cn">留白</span><span class="py">liú bái · leaving white</span></h3>
+        <p>What is not painted carries as much as what is. Mist, river, and sky are most often bare silk — untouched paper the eye reads as light, as distance, as breath. The Song masters trusted emptiness the way a musician trusts a rest. Restraint is the luxury; the void is not absence but room.</p>
+      </div>
+      <div class="card">
+        <div class="rule"></div>
+        <h3><span class="cn">手卷</span><span class="py">shǒu juàn · the handscroll</span></h3>
+        <p>A handscroll is never seen all at once. It is opened an arm's length at a time — unrolled from the right, re-rolled on the left — so the landscape arrives as a journey rather than a single view. You do not stand before it. You travel through it, one reach of the river at a time.</p>
+      </div>
+      <div class="card">
+        <div class="rule"></div>
+        <h3><span class="cn">臥遊</span><span class="py">wò yóu · wandering while lying down</span></h3>
+        <p>When the painter Zong Bing grew too old to climb, he hung his mountains on the wall so he might roam them from his couch. To read shān shuǐ is to travel without moving — a thousand li of peaks and mist crossed in the time it takes the eye to drift from one ridge to the next.</p>
+      </div>
+    </div>
+
+    <div class="couplet">
+      <div class="verse" aria-hidden="true">
+        <span class="ln">遠山如黛橫空際</span>
+        <span class="ln">空水浮嵐入畫來</span>
+      </div>
+      <div class="say">
+        <div class="py">yuǎn shān rú dài héng kōng jì<br>kōng shuǐ fú lán rù huà lái</div>
+        <div class="en">"Far mountains, dark as kohl, lie level with the empty sky; drifting haze on the still water comes into the painting."</div>
+        <div class="seal-note">Every mountain here is generated, not remembered — layered gradients, fractal silk grain, and calligraphic strokes drawn in code. No photograph was used. Seeded, so the scroll never repeats.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="foot">
+  <div class="inner">
+    <div class="sig">千里江山</div>
+    <a class="home" href="/">← Return to the gallery</a>
+    <div class="meta">Painted in canvas · procedural guóhuà<br>XAVIER FABLE ×35 — No. 31</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv = document.getElementById('scroll');
+  var ctx = cv.getContext('2d', { alpha:false });
+  var stage = document.getElementById('stage');
+
+  /* ---------- palette ---------- */
+  var PAPER='#efe7d3', PAPER_HI='#f4eddb', PAPER_LO='#e3d8bf';
+  var SEAL='#b22a1e';
+
+  /* ---------- world / view state ---------- */
+  var DPR=1, viewW=0, viewH=0;
+  var CHUNK_W=1000;                 // world px per cached chunk
+  var MARGIN=54;                    // overpaint margin so blurs/elements never clip at seams
+  var TITLE_X=170;                  // world x of the painted title (set in resize)
+  var SHOW_LATIN=true;              // painted latin subtitle (off on narrow screens)
+  var chunks=new Map();             // index -> {canvas}
+  var worldX=0;                     // left edge of viewport in world coords (>=0)
+  var drift=!REDUCED;               // auto-drift on by default
+  var speed=1;                      // slider multiplier
+  var running=false, raf=null, lastT=0;
+  var holdUntil=0;                  // linger on the title before drift eases in
+  var interacted=false;
+  var fontsReady=false;
+  var LI_SCALE=520;                 // world px per "里" (odometer)
+  var INTRO_END=1180;               // world x where the painted title region ends
+
+  var SEED=20260716;                // fixed seed -> reproducible, never repeats along length
+
+  /* ================= seeded noise ================= */
+  function hash(i, s){
+    var n = (i|0) ^ ((s|0)*0x9e3779b1|0);
+    n = Math.imul(n ^ (n>>>15), 0x85ebca6b);
+    n = Math.imul(n ^ (n>>>13), 0xc2b2ae35);
+    n = (n ^ (n>>>16))>>>0;
+    return n/4294967296;
+  }
+  function vnoise(x, s){
+    var xi=Math.floor(x), xf=x-xi;
+    var a=hash(xi,s), b=hash(xi+1,s);
+    var u=xf*xf*(3-2*xf);
+    return a*(1-u)+b*u;
+  }
+  function fbm(x, s, oct){
+    var amp=0.5, freq=1, sum=0, norm=0;
+    for(var o=0;o<oct;o++){ sum+=amp*vnoise(x*freq, s+o*1013); norm+=amp; amp*=0.5; freq*=2.02; }
+    return sum/norm;
+  }
+  function rndAt(cell, s){ return hash(cell, s); }   // deterministic per integer cell
+
+  /* ================= composition ================= */
+  function H(f){ return f*viewH; }
+
+  // mountain ranges, back -> front
+  function ranges(){
+    return [
+      // far, palest — dissolves into silk
+      { base:0.335, amp:0.115, freq:0.0016, oct:4, sharp:1.15, tone:'62,60,55', a0:0.16, a1:0.02, mist:0.62, seed:SEED+11 },
+      { base:0.40,  amp:0.145, freq:0.0021, oct:4, sharp:1.25, tone:'54,51,47', a0:0.24, a1:0.03, mist:0.66, seed:SEED+37 },
+      // mid — the主峰 body of the scene
+      { base:0.505, amp:0.235, freq:0.0028, oct:5, sharp:1.6,  tone:'42,39,35', a0:0.42, a1:0.05, mist:0.70, cun:true, falls:true, seed:SEED+71 },
+      { base:0.575, amp:0.16,  freq:0.0036, oct:5, sharp:1.5,  tone:'34,31,28', a0:0.58, a1:0.06, mist:0.735,cun:true, seed:SEED+109 }
+    ];
+  }
+  var WATER0=0.70, WATER1=0.895;    // water band fractions
+  var BANK_TOP=0.885, BANK_AMP=0.055; // near foreground bank
+
+  /* ================= paper texture (built once) ================= */
+  var grainPat=null;
+  function buildGrain(){
+    var g=document.createElement('canvas'); g.width=200; g.height=200;
+    var gx=g.getContext('2d');
+    gx.fillStyle=PAPER; gx.fillRect(0,0,200,200);
+    var img=gx.getImageData(0,0,200,200), d=img.data;
+    for(var i=0;i<d.length;i+=4){
+      var n=(Math.random()-0.5)*18;             // fibre speckle
+      var streak=Math.sin((i/4%200)*0.09)*4;    // faint vertical fibre
+      d[i]  =Math.max(0,Math.min(255,d[i]  +n+streak));
+      d[i+1]=Math.max(0,Math.min(255,d[i+1]+n*0.95+streak));
+      d[i+2]=Math.max(0,Math.min(255,d[i+2]+n*0.8));
+    }
+    gx.putImageData(img,0,0);
+    grainPat=ctx.createPattern(g,'repeat');
+  }
+
+  /* ================= chunk painting ================= */
+  function ensureChunk(i){
+    var c=chunks.get(i);
+    if(c) return c;
+    var cw=Math.max(1,Math.ceil((CHUNK_W+2*MARGIN)*DPR)), ch=Math.max(1,Math.ceil(viewH*DPR));
+    var canvas=document.createElement('canvas'); canvas.width=cw; canvas.height=ch;
+    var cx=canvas.getContext('2d');
+    cx.setTransform(DPR,0,0,DPR, MARGIN*DPR, 0);   // local x=0 -> canvas pixel MARGIN
+    paintChunk(cx, i);
+    var obj={canvas:canvas};
+    chunks.set(i,obj);
+    return obj;
+  }
+
+  function paintChunk(cx, ci){
+    var x0=ci*CHUNK_W;                 // world x at local 0
+    var W=CHUNK_W, Vh=viewH, M=MARGIN, L0=-M, LW=W+2*M;
+
+    // --- paper ground ---
+    cx.fillStyle=PAPER; cx.fillRect(L0,0,LW,Vh);
+    // subtle warm vertical tone: silk catches light unevenly
+    var tone=vnoise((x0)*0.0009, SEED+5);
+    var lg=cx.createLinearGradient(0,0,0,Vh);
+    lg.addColorStop(0, 'rgba(244,237,219,'+(0.5+0.25*tone)+')');
+    lg.addColorStop(0.55,'rgba(239,231,211,0)');
+    lg.addColorStop(1, 'rgba(210,196,166,0.28)');
+    cx.fillStyle=lg; cx.fillRect(L0,0,LW,Vh);
+    // fibre grain
+    if(grainPat){ cx.save(); cx.globalAlpha=0.5; cx.translate(-((x0%200)+200)%200,0); cx.fillStyle=grainPat; cx.fillRect(L0-208,0,LW+416,Vh); cx.restore(); }
+    // faint foxing spots
+    paintFoxing(cx, x0, W, Vh);
+
+    // --- distant ranges (back to front) ---
+    var rs=ranges();
+    for(var r=0;r<rs.length;r++) paintRange(cx, x0, rs[r]);
+
+    // --- water band ---
+    paintWater(cx, x0, W, Vh, rs);
+
+    // --- mid-ground drifting mist banks ---
+    paintMistBanks(cx, x0, W, Vh);
+
+    // --- near foreground bank + rocks ---
+    paintBank(cx, x0, W, Vh);
+
+    // --- scattered scene elements ---
+    paintElements(cx, x0, W, Vh);
+
+    // --- sky birds / cranes ---
+    paintBirds(cx, x0, W, Vh);
+
+    // --- periodic seals ---
+    paintSeals(cx, x0, W, Vh);
+
+    // --- painted title at the very open ---
+    if(x0 < INTRO_END && x0+W > -40) paintTitle(cx, x0, Vh);
+  }
+
+  function paintFoxing(cx, x0, W, Vh){
+    var cell=340, first=Math.floor((x0-60)/cell), last=Math.floor((x0+W+60)/cell);
+    for(var c=first;c<=last;c++){
+      if(rndAt(c, SEED+880) > 0.42) continue;
+      var fx=(c+rndAt(c,SEED+881))*cell - x0;
+      var fy=Vh*(0.06+0.9*rndAt(c,SEED+882));
+      var rr=6+16*rndAt(c,SEED+883);
+      var g=cx.createRadialGradient(fx,fy,0,fx,fy,rr);
+      var al=0.05+0.06*rndAt(c,SEED+884);
+      g.addColorStop(0,'rgba(150,110,60,'+al+')'); g.addColorStop(1,'rgba(150,110,60,0)');
+      cx.fillStyle=g; cx.beginPath(); cx.arc(fx,fy,rr,0,7); cx.fill();
+    }
+  }
+
+  function ridgeY(wx, r){
+    var n=fbm(wx*r.freq, r.seed, r.oct);                        // 0..1
+    var env=0.32+0.68*vnoise(wx*0.00085 + r.seed*0.7, r.seed+400); // broad rise/fall
+    var peak=Math.pow(vnoise(wx*0.0011 + r.seed*0.5, r.seed+620), 2.9); // dominant summits
+    var h=Math.pow(n, r.sharp);
+    return H(r.base) - H(r.amp)*(0.16 + 1.02*h)*env - H(r.amp)*0.95*peak;
+  }
+
+  function paintRange(cx, x0, r){
+    var W=CHUNK_W, Vh=viewH, step=3, M=MARGIN;
+    // build ridge path
+    var pts=[];
+    for(var lx=-M-6; lx<=W+M+6; lx+=step){ pts.push([lx, ridgeY(x0+lx, r)]); }
+    // fill body with vertical wash (ridge tone -> transparent toward base)
+    cx.save();
+    cx.beginPath();
+    cx.moveTo(-M-6, Vh);
+    for(var i=0;i<pts.length;i++) cx.lineTo(pts[i][0], pts[i][1]);
+    cx.lineTo(W+M+6, Vh); cx.closePath();
+    var topY=H(r.base)-H(r.amp)*1.2, botY=H(r.base)+H(r.amp)*1.4;
+    var g=cx.createLinearGradient(0, topY, 0, botY);
+    g.addColorStop(0,'rgba('+r.tone+','+r.a0+')');
+    g.addColorStop(0.7,'rgba('+r.tone+','+r.a1+')');
+    g.addColorStop(1,'rgba('+r.tone+',0)');
+    cx.fillStyle=g; cx.fill();
+
+    // ink-bleed feathered ridge edge
+    cx.beginPath();
+    for(var j=0;j<pts.length;j++){ if(j===0)cx.moveTo(pts[j][0],pts[j][1]); else cx.lineTo(pts[j][0],pts[j][1]); }
+    cx.strokeStyle='rgba('+r.tone+','+Math.min(0.9,r.a0*1.7)+')';
+    cx.lineWidth=1.4; cx.lineJoin='round';
+    cx.shadowColor='rgba('+r.tone+','+(r.a0*0.9)+')'; cx.shadowBlur=7;
+    cx.stroke();
+    cx.shadowBlur=0;
+
+    // texture strokes (cùn) on nearer ranges
+    if(r.cun) paintCun(cx, x0, r, pts);
+
+    // occasional waterfall
+    if(r.falls) paintFalls(cx, x0, r);
+    cx.restore();
+  }
+
+  function paintCun(cx, x0, r, pts){
+    // short 'axe-cut' texture strokes hugging the ridge, following the local slope
+    var M=MARGIN, cell=13, first=Math.floor((x0-M)/cell), last=Math.floor((x0+CHUNK_W+M)/cell);
+    cx.save(); cx.lineCap='round';
+    for(var c=first;c<=last;c++){
+      if(rndAt(c, r.seed+700) > 0.34) continue;
+      var lx=(c*cell + cell*rndAt(c,r.seed+702)) - x0;
+      var ry=ridgeY(x0+lx, r);
+      var slope=ridgeY(x0+lx+7, r) - ridgeY(x0+lx-7, r);   // local gradient
+      var sang=Math.atan2(slope, 14);                       // ridge direction
+      var depth=3 + 20*rndAt(c,r.seed+703)*rndAt(c,r.seed+709);  // clustered near the crest
+      var sy=ry+depth;
+      var len=4+7*rndAt(c,r.seed+705);
+      var ang=sang + Math.PI*0.5 + (rndAt(c,r.seed+706)-0.5)*0.5; // roughly down the face
+      cx.beginPath();
+      cx.moveTo(lx, sy);
+      cx.lineTo(lx+Math.cos(ang)*len, sy+Math.sin(ang)*len);
+      cx.strokeStyle='rgba('+r.tone+','+(0.05+0.08*rndAt(c,r.seed+707))+')';
+      cx.lineWidth=0.6+0.6*rndAt(c,r.seed+708);
+      cx.stroke();
+    }
+    cx.restore();
+  }
+
+  function paintFalls(cx, x0, r){
+    // a narrow bright cleft down a mountain face — bounded by dark rock, fading before the water
+    var M=MARGIN, cell=1900, first=Math.floor((x0-M-200)/cell), last=Math.floor((x0+CHUNK_W+M+200)/cell);
+    for(var c=first;c<=last;c++){
+      if(rndAt(c, r.seed+610) > 0.42) continue;
+      var lx=(c*cell + cell*(0.2+0.6*rndAt(c,r.seed+611))) - x0;
+      var top=ridgeY(x0+lx, r)+H(0.035);
+      var len=Math.min(H(0.07+0.04*rndAt(c,r.seed+612)), Math.max(0, H(0.62)-top));
+      if(len < H(0.03)) continue;
+      cx.save();
+      // dark rock walls framing the cleft (so the pale water reads as depth, not a stray bar)
+      cx.strokeStyle='rgba('+r.tone+',0.34)'; cx.lineWidth=2.4; cx.lineCap='round';
+      cx.beginPath(); cx.moveTo(lx-3.4, top); cx.quadraticCurveTo(lx-4.6, top+len*0.5, lx-4, top+len); cx.stroke();
+      cx.beginPath(); cx.moveTo(lx+3.4, top); cx.quadraticCurveTo(lx+2.2, top+len*0.5, lx+2.8, top+len); cx.stroke();
+      // the water — thin, soft, with a subtle break
+      cx.strokeStyle='rgba(240,233,215,0.55)'; cx.lineWidth=2.2;
+      cx.beginPath(); cx.moveTo(lx-0.3, top); cx.quadraticCurveTo(lx-1.2, top+len*0.55, lx-0.6, top+len*0.92); cx.stroke();
+      // faint mist where it meets the base
+      var g=cx.createRadialGradient(lx-1,top+len,0,lx-1,top+len,13);
+      g.addColorStop(0,'rgba(244,237,219,0.7)'); g.addColorStop(1,'rgba(244,237,219,0)');
+      cx.fillStyle=g; cx.beginPath(); cx.arc(lx-1,top+len,13,0,7); cx.fill();
+      cx.restore();
+    }
+  }
+
+  function paintWater(cx, x0, W, Vh, rs){
+    var y0=H(WATER0), y1=H(WATER1), M=MARGIN, L0=-M, LW=W+2*M;
+    // far shore mist: bright band that dissolves mountain bases into the water
+    var mg=cx.createLinearGradient(0,y0-H(0.06),0,y0+H(0.05));
+    mg.addColorStop(0,'rgba(244,237,219,0)');
+    mg.addColorStop(0.5,'rgba(244,237,219,0.82)');
+    mg.addColorStop(1,'rgba(244,237,219,0.1)');
+    cx.fillStyle=mg; cx.fillRect(L0,y0-H(0.07),LW,H(0.13));
+    // faint water tone
+    var wg=cx.createLinearGradient(0,y0,0,y1);
+    wg.addColorStop(0,'rgba(214,205,183,0.16)');
+    wg.addColorStop(1,'rgba(200,190,166,0.28)');
+    cx.fillStyle=wg; cx.fillRect(L0,y0,LW,y1-y0);
+    // broken horizontal reflection strokes
+    cx.save(); cx.lineCap='round';
+    var cell=26, first=Math.floor((x0-M)/cell), last=Math.floor((x0+W+M)/cell);
+    for(var c=first;c<=last;c++){
+      if(rndAt(c,SEED+520) > 0.4) continue;
+      var lx=(c*cell)-x0 + cell*rndAt(c,SEED+521);
+      var ly=y0 + (y1-y0)*(0.12+0.8*rndAt(c,SEED+522));
+      var len=8+26*rndAt(c,SEED+523);
+      cx.strokeStyle='rgba(40,37,33,'+(0.05+0.09*rndAt(c,SEED+524))+')';
+      cx.lineWidth=0.8;
+      cx.beginPath(); cx.moveTo(lx,ly); cx.lineTo(lx+len,ly); cx.stroke();
+    }
+    cx.restore();
+  }
+
+  function paintMistBanks(cx, x0, W, Vh){
+    var cell=680, first=Math.floor((x0-300)/cell), last=Math.floor((x0+W+300)/cell);
+    for(var c=first;c<=last;c++){
+      if(rndAt(c,SEED+440) > 0.66) continue;
+      var lx=(c*cell + cell*rndAt(c,SEED+441)) - x0;
+      var ly=H(0.44 + 0.22*rndAt(c,SEED+442));
+      var rw=170+230*rndAt(c,SEED+443), rh=22+30*rndAt(c,SEED+444);
+      cx.save(); cx.translate(lx,ly); cx.scale(1, rh/rw);
+      var g=cx.createRadialGradient(0,0,0,0,0,rw);
+      var al=0.22+0.24*rndAt(c,SEED+445);
+      g.addColorStop(0,'rgba(244,237,219,'+al+')');
+      g.addColorStop(0.6,'rgba(244,237,219,'+al*0.5+')');
+      g.addColorStop(1,'rgba(244,237,219,0)');
+      cx.fillStyle=g; cx.beginPath(); cx.arc(0,0,rw,0,7); cx.fill();
+      cx.restore();
+    }
+  }
+
+  function bankTop(wx){
+    return H(BANK_TOP) - H(BANK_AMP)*fbm(wx*0.004, SEED+300, 4) - H(0.01);
+  }
+  function paintBank(cx, x0, W, Vh){
+    var step=3, M=MARGIN, pts=[];
+    for(var lx=-M-6;lx<=W+M+6;lx+=step) pts.push([lx, bankTop(x0+lx)]);
+    cx.save();
+    cx.beginPath(); cx.moveTo(-M-6,Vh);
+    for(var i=0;i<pts.length;i++) cx.lineTo(pts[i][0],pts[i][1]);
+    cx.lineTo(W+M+6,Vh); cx.closePath();
+    var g=cx.createLinearGradient(0,H(BANK_TOP)-H(BANK_AMP),0,Vh);
+    g.addColorStop(0,'rgba(26,24,21,0.72)');
+    g.addColorStop(0.5,'rgba(22,20,17,0.9)');
+    g.addColorStop(1,'rgba(18,16,13,0.96)');
+    cx.fillStyle=g; cx.fill();
+    // feathered wet top edge
+    cx.beginPath();
+    for(var j=0;j<pts.length;j++){ if(j===0)cx.moveTo(pts[j][0],pts[j][1]); else cx.lineTo(pts[j][0],pts[j][1]); }
+    cx.strokeStyle='rgba(20,18,15,0.8)'; cx.lineWidth=1.6; cx.lineJoin='round';
+    cx.shadowColor='rgba(20,18,15,0.6)'; cx.shadowBlur=6; cx.stroke(); cx.shadowBlur=0;
+    // reeds / grass tufts on the bank
+    var cell=30, first=Math.floor((x0-M)/cell), last=Math.floor((x0+W+M)/cell);
+    cx.lineCap='round';
+    for(var c=first;c<=last;c++){
+      if(rndAt(c,SEED+330) > 0.28) continue;
+      var gx=(c*cell + cell*rndAt(c,SEED+331)) - x0;
+      var by=bankTop(x0+gx);
+      var n=2+Math.floor(3*rndAt(c,SEED+332));
+      for(var k=0;k<n;k++){
+        var gl=7+9*rndAt(c*7+k,SEED+333);
+        var gang=-Math.PI*0.5+(rndAt(c*7+k,SEED+334)-0.5)*0.7;
+        cx.beginPath(); cx.moveTo(gx+k*1.4,by);
+        cx.lineTo(gx+k*1.4+Math.cos(gang)*gl, by+Math.sin(gang)*gl);
+        cx.strokeStyle='rgba(18,16,13,'+(0.4+0.4*rndAt(c*7+k,SEED+335))+')';
+        cx.lineWidth=0.8; cx.stroke();
+      }
+    }
+    cx.restore();
+  }
+
+  /* ---- discrete elements: pines, pavilions, boat ---- */
+  function paintElements(cx, x0, W, Vh){
+    // pine clusters on the bank
+    var pc=200, first=Math.floor((x0-90)/pc), last=Math.floor((x0+W+90)/pc);
+    for(var c=first;c<=last;c++){
+      if(rndAt(c,SEED+210) > 0.62) continue;
+      var lx=(c*pc + pc*(0.15+0.7*rndAt(c,SEED+211))) - x0;
+      var by=bankTop(x0+lx);
+      pine(cx, lx, by, 0.7+0.6*rndAt(c,SEED+212), c);
+    }
+    // pavilions
+    var vc=1450;
+    first=Math.floor((x0-120)/vc); last=Math.floor((x0+W+120)/vc);
+    for(c=first;c<=last;c++){
+      if(rndAt(c,SEED+230) > 0.55) continue;
+      var vx=(c*vc + vc*(0.2+0.6*rndAt(c,SEED+231))) - x0;
+      var vy=bankTop(x0+vx);
+      pavilion(cx, vx, vy, 0.85+0.4*rndAt(c,SEED+232));
+    }
+    // lone fisherman's boat on the water
+    var bc=2450;
+    first=Math.floor((x0-120)/bc); last=Math.floor((x0+W+120)/bc);
+    for(c=first;c<=last;c++){
+      if(rndAt(c,SEED+250) > 0.66) continue;
+      var bx=(c*bc + bc*(0.15+0.7*rndAt(c,SEED+251))) - x0;
+      var byy=H(WATER0)+ (H(WATER1)-H(WATER0))*(0.28+0.4*rndAt(c,SEED+252));
+      boat(cx, bx, byy, 0.9+0.4*rndAt(c,SEED+253));
+    }
+  }
+
+  function pine(cx, x, baseY, sc, id){
+    cx.save(); cx.translate(x, baseY);
+    var h=(46+22*rndAt(id,SEED+280))*sc;
+    var lean=(rndAt(id,SEED+281)-0.5)*0.42;
+    // trunk (calligraphic, tapering)
+    cx.strokeStyle='rgba(20,18,14,0.88)'; cx.lineCap='round';
+    cx.lineWidth=2.4*sc;
+    cx.beginPath();
+    cx.moveTo(0,2);
+    cx.quadraticCurveTo(lean*h*0.4, -h*0.5, lean*h*0.62, -h*0.78);
+    cx.stroke();
+    // drooping branch strokes
+    var tiers=4+Math.floor(2*rndAt(id,SEED+282));
+    for(var t=0;t<tiers;t++){
+      var f=t/(tiers-1);
+      var ty=-h*(0.34+0.5*f);
+      var bx=lean*(-ty);
+      var spread=(15+11*rndAt(id*13+t,SEED+283))*sc*(1-0.3*f);
+      var side=(t%2===0)?1:-1;
+      cx.lineWidth=0.9*sc; cx.strokeStyle='rgba(22,20,16,0.5)';
+      cx.beginPath(); cx.moveTo(bx,ty);
+      cx.quadraticCurveTo(bx+side*spread*0.45, ty-spread*0.1, bx+side*spread*0.7, ty+spread*0.12);
+      cx.stroke();
+    }
+    // rounded pine crown: overlapping dry-brush dot clusters
+    var cx0=lean*(-(-h*0.62)), cyTop=-h*0.66, crownW=(20+10*rndAt(id,SEED+289))*sc, crownH=h*0.42;
+    var dots=34+Math.floor(26*rndAt(id,SEED+284));
+    for(var d=0;d<dots;d++){
+      var a=rndAt(id*97+d,SEED+285)*6.283;
+      var rr=Math.pow(rndAt(id*91+d,SEED+286),0.6);
+      var px=cx0+Math.cos(a)*rr*crownW;
+      var py=cyTop+ h*0.16 + Math.sin(a)*rr*crownH*0.6 - rr*crownH*0.15;
+      cx.fillStyle='rgba(24,22,17,'+(0.22+0.4*rndAt(id*61+d,SEED+287))+')';
+      cx.beginPath(); cx.arc(px,py, 0.8+1.7*sc*rndAt(id*53+d,SEED+288), 0,7); cx.fill();
+    }
+    cx.restore();
+  }
+
+  function pavilion(cx, x, baseY, sc){
+    cx.save(); cx.translate(x, baseY-2); cx.scale(sc,sc);
+    cx.strokeStyle='rgba(22,20,16,0.9)'; cx.lineWidth=1.3; cx.lineCap='round'; cx.lineJoin='round';
+    var w=17, postH=15;
+    // posts
+    cx.beginPath();
+    cx.moveTo(-w+2,0); cx.lineTo(-w+2,-postH);
+    cx.moveTo(w-2,0);  cx.lineTo(w-2,-postH);
+    cx.moveTo(-w+2,-postH*0.5); cx.lineTo(w-2,-postH*0.5); // rail
+    cx.stroke();
+    // sweeping roof
+    cx.beginPath();
+    cx.moveTo(-w-4,-postH);
+    cx.quadraticCurveTo(-w*0.5,-postH-4,0,-postH-9);
+    cx.quadraticCurveTo(w*0.5,-postH-4,w+4,-postH);
+    cx.stroke();
+    // upturned eaves + finial
+    cx.beginPath(); cx.moveTo(-w-4,-postH); cx.quadraticCurveTo(-w-7,-postH-1,-w-8,-postH-4); cx.stroke();
+    cx.beginPath(); cx.moveTo(w+4,-postH); cx.quadraticCurveTo(w+7,-postH-1,w+8,-postH-4); cx.stroke();
+    cx.beginPath(); cx.moveTo(0,-postH-9); cx.lineTo(0,-postH-13); cx.stroke();
+    cx.restore();
+  }
+
+  function boat(cx, x, y, sc){
+    cx.save(); cx.translate(x,y); cx.scale(sc,sc);
+    cx.strokeStyle='rgba(22,20,16,0.86)'; cx.lineWidth=1.5; cx.lineCap='round'; cx.lineJoin='round';
+    // hull (crescent)
+    cx.beginPath();
+    cx.moveTo(-20,0);
+    cx.quadraticCurveTo(0,9,20,0);
+    cx.quadraticCurveTo(0,3,-20,0);
+    cx.fillStyle='rgba(28,25,20,0.5)'; cx.fill(); cx.stroke();
+    // little canopy
+    cx.beginPath(); cx.moveTo(-8,-1); cx.quadraticCurveTo(-3,-9,4,-1); cx.stroke();
+    // fisherman figure + pole
+    cx.lineWidth=1.2;
+    cx.beginPath(); cx.moveTo(9,-1); cx.lineTo(9,-9); cx.stroke();           // body
+    cx.beginPath(); cx.arc(9,-11,1.7,0,7); cx.fillStyle='rgba(22,20,16,0.86)'; cx.fill(); // head
+    cx.beginPath(); cx.moveTo(9,-7); cx.lineTo(20,-13); cx.stroke();          // pole
+    cx.lineWidth=0.6; cx.strokeStyle='rgba(22,20,16,0.5)';
+    cx.beginPath(); cx.moveTo(20,-13); cx.lineTo(22,-2); cx.stroke();         // line
+    // reflection
+    cx.strokeStyle='rgba(30,27,22,0.16)'; cx.lineWidth=1;
+    cx.beginPath(); cx.moveTo(-16,4); cx.lineTo(16,4); cx.stroke();
+    cx.restore();
+  }
+
+  function paintBirds(cx, x0, W, Vh){
+    var cell=1180, first=Math.floor((x0-200)/cell), last=Math.floor((x0+W+200)/cell);
+    for(var c=first;c<=last;c++){
+      var kind=rndAt(c,SEED+150);
+      if(kind > 0.62) continue;
+      var cx0=(c*cell + cell*(0.2+0.6*rndAt(c,SEED+151))) - x0;
+      var cy0=H(0.10+0.16*rndAt(c,SEED+152));
+      if(kind < 0.14){
+        // a solitary crane, larger
+        crane(cx, cx0, cy0, 1+0.5*rndAt(c,SEED+153));
+      } else {
+        // a loose flock of gull-strokes
+        var n=4+Math.floor(6*rndAt(c,SEED+154));
+        for(var b=0;b<n;b++){
+          var bx=cx0 + (b- n/2)*(11+9*rndAt(c*7+b,SEED+155)) + (rndAt(c*11+b,SEED+156)-0.5)*10;
+          var by=cy0 + Math.abs(b-n/2)*3 + (rndAt(c*13+b,SEED+157)-0.5)*14;
+          gull(cx,bx,by,3+2.4*rndAt(c*17+b,SEED+158));
+        }
+      }
+    }
+  }
+  function gull(cx,x,y,s){
+    cx.strokeStyle='rgba(24,22,18,0.6)'; cx.lineWidth=1.1; cx.lineCap='round';
+    cx.beginPath();
+    cx.moveTo(x-s,y); cx.quadraticCurveTo(x-s*0.3,y-s*0.75,x,y-s*0.15);
+    cx.quadraticCurveTo(x+s*0.3,y-s*0.75,x+s,y); cx.stroke();
+  }
+  function crane(cx,x,y,s){
+    cx.save(); cx.strokeStyle='rgba(22,20,16,0.62)'; cx.lineWidth=1.2*s; cx.lineCap='round';
+    // outstretched wings
+    cx.beginPath();
+    cx.moveTo(x-13*s,y+2*s); cx.quadraticCurveTo(x-4*s,y-4*s,x,y);
+    cx.quadraticCurveTo(x+4*s,y-4*s,x+13*s,y+2*s); cx.stroke();
+    // neck + trailing legs
+    cx.lineWidth=0.9*s;
+    cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x+6*s,y-3*s); cx.stroke();
+    cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-7*s,y+5*s); cx.stroke();
+    cx.restore();
+  }
+
+  /* ---- seals (印章) ---- */
+  var SEAL_WORDS=['臥遊','千里','山水','清賞','留白','煙嵐','江山'];
+  function paintSeals(cx, x0, W, Vh){
+    var cell=1750, first=Math.floor((x0-120)/cell), last=Math.floor((x0+W+120)/cell);
+    for(var c=first;c<=last;c++){
+      if(rndAt(c,SEED+120) > 0.62) continue;
+      var swx=(c*cell + cell*(0.15+0.7*rndAt(c,SEED+121)));
+      if(swx < 1650) continue;                 // keep the opening (title + colophon) uncluttered
+      var sx=swx - x0;
+      var sy=H(0.14 + 0.66*rndAt(c,SEED+122));
+      var size=30+16*rndAt(c,SEED+123);
+      var word=SEAL_WORDS[Math.floor(rndAt(c,SEED+124)*SEAL_WORDS.length)%SEAL_WORDS.length];
+      drawSeal(cx, sx, sy, size, word, c);
+    }
+  }
+  function drawSeal(cx, x, y, s, word, id){
+    cx.save();
+    cx.translate(x,y);
+    cx.rotate((rndAt(id,SEED+125)-0.5)*0.08);
+    // eroded red block (bai-wen: white chars in a red field)
+    var half=s/2, jag=s*0.06;
+    cx.beginPath();
+    var corners=[[-half,-half],[half,-half],[half,half],[-half,half]];
+    for(var i=0;i<=corners.length;i++){
+      var p=corners[i%corners.length];
+      var jx=(rndAt(id*13+i,SEED+126)-0.5)*jag, jy=(rndAt(id*17+i,SEED+127)-0.5)*jag;
+      if(i===0) cx.moveTo(p[0]+jx,p[1]+jy); else cx.lineTo(p[0]+jx,p[1]+jy);
+    }
+    cx.closePath();
+    cx.fillStyle='rgba(178,42,30,0.9)'; cx.fill();
+    // weathering: paper-colour flecks + darker red pooling
+    for(var f=0;f<18;f++){
+      var fx=(rndAt(id*31+f,SEED+128)-0.5)*s, fy=(rndAt(id*37+f,SEED+129)-0.5)*s;
+      cx.fillStyle= (rndAt(id*41+f,SEED+130)>0.5)?'rgba(239,231,211,0.5)':'rgba(120,26,18,0.5)';
+      cx.beginPath(); cx.arc(fx,fy, 0.6+1.1*rndAt(id*43+f,SEED+131),0,7); cx.fill();
+    }
+    // characters knocked out in paper colour (vertical for 2 chars)
+    cx.fillStyle='rgba(240,232,213,0.94)';
+    cx.textAlign='center'; cx.textBaseline='middle';
+    var chars=word.split('');
+    if(chars.length>=2){
+      var fs=s*0.42;
+      cx.font='700 '+fs+'px "Noto Serif SC", serif';
+      cx.fillText(chars[0], -s*0.22, -s*0.2);
+      cx.fillText(chars[1],  s*0.22, -s*0.2);
+      cx.fillText(chars[2]||'', -s*0.22, s*0.24);
+      if(chars[3]) cx.fillText(chars[3], s*0.22, s*0.24);
+    } else {
+      cx.font='700 '+(s*0.6)+'px "Noto Serif SC", serif';
+      cx.fillText(chars[0],0,0);
+    }
+    // thin inner keyline
+    cx.strokeStyle='rgba(239,231,211,0.35)'; cx.lineWidth=1;
+    cx.strokeRect(-half+2.5,-half+2.5,s-5,s-5);
+    cx.restore();
+  }
+
+  /* ---- painted title at the open (山水) ---- */
+  function paintTitle(cx, x0, Vh){
+    var tx=TITLE_X - x0;                    // world x of title anchor
+    cx.save();
+    // huge 山水 in ink, stacked vertically like a scroll title
+    var fs=SHOW_LATIN ? Math.min(Vh*0.29, 196) : Math.min(Vh*0.20, viewW*0.34);
+    cx.font='400 '+fs+'px "Ma Shan Zheng", serif';
+    cx.textAlign='left'; cx.textBaseline='alphabetic';
+    var gy=Vh*0.33;
+    cx.fillStyle='rgba(24,22,18,0.93)';
+    cx.shadowColor='rgba(24,22,18,0.45)'; cx.shadowBlur=4;
+    cx.fillText('山', tx, gy);
+    cx.fillText('水', tx, gy+fs*0.98);
+    cx.shadowBlur=0;
+    // vertical latin subtitle to the right of the column, reading downward
+    if(SHOW_LATIN){
+      var lfs=Math.min(Vh*0.017,13.5);
+      cx.font='400 '+lfs+'px "Space Grotesk", sans-serif';
+      cx.fillStyle='rgba(28,26,23,0.52)';
+      cx.save();
+      cx.translate(tx+fs*1.02, gy-fs*0.5); cx.rotate(Math.PI/2);
+      cx.fillText('S H A N   S H U I  ·  A   T H O U S A N D   L I', 0, 0);
+      cx.restore();
+    }
+    // name seal beside/below the title
+    drawSeal(cx, tx+fs*0.44, gy+fs*1.52, Math.min(Vh*0.072,50), '臥遊', 999);
+    cx.restore();
+  }
+
+  /* ================= main render ================= */
+  function render(){
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    ctx.fillStyle=PAPER; ctx.fillRect(0,0,viewW,viewH);
+    var firstI=Math.floor(worldX/CHUNK_W);
+    var lastI=Math.floor((worldX+viewW)/CHUNK_W);
+    for(var i=firstI;i<=lastI+1;i++){
+      var ch=ensureChunk(i);
+      var sx=i*CHUNK_W - worldX;
+      // blit only the central CHUNK_W of each chunk (margins overpaint the seams)
+      ctx.drawImage(ch.canvas, MARGIN*DPR, 0, CHUNK_W*DPR, viewH*DPR, sx, 0, CHUNK_W, viewH);
+    }
+    // evict distant chunks
+    if(chunks.size>10){
+      chunks.forEach(function(v,k){ if(k<firstI-2 || k>lastI+3){ chunks.delete(k); } });
+    }
+    updateOverlays();
+  }
+
+  /* ================= overlays / HUD ================= */
+  var colophon=document.getElementById('colophon');
+  var odo=document.getElementById('odo');
+  var scrubDot=document.getElementById('scrubDot');
+  var toEssay=document.querySelector('.to-essay');
+  function updateOverlays(){
+    var fade=REDUCED?1:Math.max(0,Math.min(1,1-(worldX-40)/560));
+    colophon.style.opacity=fade;
+    toEssay.style.opacity=(0.35+0.5*fade).toFixed(2);
+    var li=Math.floor(worldX/LI_SCALE);
+    odo.textContent='行 '+li+' 里';
+  }
+
+  /* ================= loop ================= */
+  function needLoop(){ return !REDUCED && drift && !document.hidden; }
+  function tick(t){
+    raf=null;
+    if(!lastT) lastT=t;
+    var dt=Math.min(60, t-lastT); lastT=t;
+    if(drift && !REDUCED){
+      var ramp=1;
+      if(!interacted && holdUntil){
+        if(t < holdUntil) ramp=0;                              // hold on the title
+        else ramp=Math.min(1,(t-holdUntil)/1600);              // then ease into the drift
+      }
+      worldX += speed*dt*0.032*ramp;
+    }
+    render();
+    if(needLoop()) raf=requestAnimationFrame(tick);
+    else lastT=0;
+  }
+  function ensureLoop(){ if(!raf && needLoop()){ lastT=0; raf=requestAnimationFrame(tick); } }
+
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; lastT=0; } }
+    else ensureLoop();
+  });
+
+  /* ================= sizing ================= */
+  function resize(){
+    DPR=Math.min(2, window.devicePixelRatio||1);
+    var r=stage.getBoundingClientRect();
+    viewW=Math.max(320, r.width);
+    viewH=Math.max(360, r.height);
+    SHOW_LATIN = viewW >= 620;
+    TITLE_X = viewW < 620 ? Math.max(22, viewW*0.07) : Math.max(120, viewW*0.10);
+    cv.width=Math.round(viewW*DPR); cv.height=Math.round(viewH*DPR);
+    cv.style.width=viewW+'px'; cv.style.height=viewH+'px';
+    chunks.clear();
+    render();
+  }
+
+  /* ================= controls ================= */
+  var playBtn=document.getElementById('playBtn');
+  var playIcon=document.getElementById('playIcon');
+  function setDrift(on){
+    drift=on && !REDUCED;
+    playBtn.setAttribute('aria-pressed', String(drift));
+    playBtn.setAttribute('aria-label', drift?'Pause drift':'Play drift');
+    if(drift){
+      playIcon.innerHTML='<rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/>';
+      ensureLoop();
+    } else {
+      playIcon.innerHTML='<path d="M7 4 L19 12 L7 20 Z"/>';
+      render();
+    }
+  }
+  playBtn.addEventListener('click', function(){ setDrift(!drift); });
+
+  var speedEl=document.getElementById('speed');
+  speedEl.addEventListener('input', function(){ speed=parseFloat(speedEl.value)||1; });
+
+  // wheel over the stage jogs the scroll horizontally
+  stage.addEventListener('wheel', function(e){
+    var d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+    if(Math.abs(d)<0.5) return;
+    e.preventDefault(); interacted=true;
+    worldX=Math.max(0, worldX + d*0.7);
+    if(!drift) render();
+  }, {passive:false});
+
+  // drag the paper
+  var dragging=false, lastPX=0;
+  stage.addEventListener('pointerdown', function(e){
+    if(e.target.closest('.controls')||e.target.closest('.to-essay')||e.target.closest('.backlink')) return;
+    dragging=true; interacted=true; lastPX=e.clientX; stage.classList.add('dragging');
+    try{ stage.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  stage.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var dx=e.clientX-lastPX; lastPX=e.clientX;
+    worldX=Math.max(0, worldX - dx*1.4);
+    if(!drift) render();
+  });
+  function endDrag(){ dragging=false; stage.classList.remove('dragging'); }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  // scrub jog
+  var scrub=document.getElementById('scrub');
+  var scrubActive=false, scrubStartX=0, scrubBaseWorld=0;
+  function scrubMove(e){
+    if(!scrubActive) return;
+    var dx=(e.clientX!==undefined?e.clientX:e.touches[0].clientX)-scrubStartX;
+    worldX=Math.max(0, scrubBaseWorld + dx*8);
+    var pct=Math.max(-1,Math.min(1,dx/90));
+    scrubDot.style.left=(50+pct*44)+'%';
+    if(!drift) render();
+  }
+  scrub.addEventListener('pointerdown', function(e){
+    scrubActive=true; interacted=true; scrubStartX=e.clientX; scrubBaseWorld=worldX;
+    try{ scrub.setPointerCapture(e.pointerId); }catch(_){}
+    e.preventDefault();
+  });
+  scrub.addEventListener('pointermove', scrubMove);
+  function scrubEnd(){ scrubActive=false; scrubDot.style.left='50%'; }
+  scrub.addEventListener('pointerup', scrubEnd);
+  scrub.addEventListener('pointercancel', scrubEnd);
+  scrub.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'){ worldX+=260; if(!drift)render(); e.preventDefault(); }
+    if(e.key==='ArrowLeft'){ worldX=Math.max(0,worldX-260); if(!drift)render(); e.preventDefault(); }
+  });
+
+  // smooth-scroll the essay anchor
+  toEssay.addEventListener('click', function(e){
+    e.preventDefault();
+    document.getElementById('reading').scrollIntoView({behavior: REDUCED?'auto':'smooth'});
+  });
+
+  /* ================= boot ================= */
+  function readParams(){
+    var p=new URLSearchParams(location.search);
+    if(p.has('x')){
+      var v=parseFloat(p.get('x'));
+      if(!isNaN(v)){ worldX=Math.max(0,v); drift=false; playBtn.setAttribute('aria-pressed','false');
+        playIcon.innerHTML='<path d="M7 4 L19 12 L7 20 Z"/>'; playBtn.setAttribute('aria-label','Play drift'); }
+    }
+  }
+
+  function boot(){
+    buildGrain();
+    resize();
+    readParams();
+    if(REDUCED){                                                  // motion disabled: show the still vista
+      playBtn.setAttribute('aria-pressed','false');
+      playBtn.setAttribute('aria-label','Motion disabled by system preference');
+      playIcon.innerHTML='<path d="M7 4 L19 12 L7 20 Z"/>';
+    }
+    if(drift && !REDUCED) holdUntil = performance.now() + 2900;   // let the title breathe first
+    render();
+    if(!REDUCED && drift) ensureLoop();
+    window.addEventListener('resize', debounce(resize,180));
+  }
+  function debounce(fn,ms){ var t; return function(){ clearTimeout(t); t=setTimeout(fn,ms); }; }
+
+  // paint once immediately (fallback fonts), then repaint when web fonts arrive
+  boot();
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      fontsReady=true; chunks.clear(); render();
+    });
+    // nudge the two canvas fonts to load
+    try{ document.fonts.load('400 100px "Ma Shan Zheng"'); document.fonts.load('700 40px "Noto Serif SC"'); }catch(_){}
+  }
+})();
+</script>
+</body>
+</html>

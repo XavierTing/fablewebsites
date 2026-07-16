@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剪紙 · JIANZHI — The Studio of Symmetric Cuts</title>
+<meta name="description" content="A generative Chinese paper-cutting studio. Fold red rice-paper, make one cut, unfold — a single stroke blooms into an intricate, perfectly symmetric rosette. Six-, eight- and twelve-fold jiǎnzhǐ with 福, 囍, peony, dragon, rabbit, tiger and cranes-and-clouds.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×35">
+<meta property="og:title" content="剪紙 · JIANZHI — The Studio of Symmetric Cuts">
+<meta property="og:description" content="Generative Chinese paper-cutting. Fold, cut, unfold — a single stroke blooms sixfold, eightfold, twelvefold.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/33-jianzhi/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="剪紙 · JIANZHI">
+<meta name="twitter:description" content="Generative Chinese paper-cutting — fold, cut, unfold into symmetric red rosettes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23c8102e'/%3E%3Cg fill='%23f3ece0'%3E%3Ccircle cx='50' cy='50' r='11'/%3E%3Cg%3E%3Ccircle cx='50' cy='24' r='6'/%3E%3Ccircle cx='50' cy='76' r='6'/%3E%3Ccircle cx='24' cy='50' r='6'/%3E%3Ccircle cx='76' cy='50' r='6'/%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Ccircle cx='68' cy='32' r='5'/%3E%3Ccircle cx='32' cy='68' r='5'/%3E%3Ccircle cx='68' cy='68' r='5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3ece0; --paper2:#ece1cf; --paper3:#e4d6be;
+    --red:#c8102e; --red-deep:#a20c22; --red-lite:#e0233b;
+    --gold:#c9a24b; --gold-lite:#dcc07f; --gold-deep:#9c7a35;
+    --ink:#2a211c; --ink-soft:#5a4d43; --ink-faint:rgba(42,33,28,.5);
+    --serif:'Noto Serif SC',serif; --brush:'Ma Shan Zheng',cursive; --sans:'Space Grotesk',sans-serif;
+    --hair:1px solid rgba(156,122,53,.34);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-weight:400; line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden; position:relative; min-height:100vh;
+  }
+  ::selection{background:var(--red);color:var(--paper)}
+  ::-webkit-scrollbar{width:11px;height:11px}
+  ::-webkit-scrollbar-track{background:var(--paper2)}
+  ::-webkit-scrollbar-thumb{background:var(--red);border:2px solid var(--paper2);border-radius:10px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--red-deep)}
+  a{color:inherit}
+  button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+
+  /* grain + vignette */
+  .grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 20%,transparent 55%,rgba(80,50,20,.10) 100%);}
+
+  /* scroll progress */
+  .progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;
+    background:linear-gradient(90deg,var(--gold-deep),var(--gold-lite));z-index:70;transition:transform .1s linear}
+
+  /* backlink */
+  .backlink{position:fixed;top:18px;left:20px;z-index:80;text-decoration:none;
+    font-family:var(--sans);font-size:10px;letter-spacing:.34em;font-weight:500;text-transform:uppercase;
+    color:var(--red);background:rgba(243,236,224,.82);backdrop-filter:blur(7px);
+    border:1px solid rgba(200,16,46,.4);border-radius:2px;padding:8px 12px 7px 14px;
+    transition:color .35s cubic-bezier(.22,1,.36,1),background .35s,border-color .35s}
+  .backlink:hover{color:var(--paper);background:var(--red);border-color:var(--red)}
+  .backlink:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+  /* ---------- hero ---------- */
+  .hero{max-width:960px;margin:0 auto;padding:clamp(72px,10vh,120px) 22px 40px;text-align:center}
+  .kicker{font-size:11px;letter-spacing:.42em;text-transform:uppercase;font-weight:500;color:var(--red);
+    display:inline-flex;align-items:center;gap:12px}
+  .kicker::before,.kicker::after{content:"";width:28px;height:1px;background:var(--gold-deep);opacity:.6}
+  h1.title{font-family:var(--brush);font-weight:400;color:var(--red);
+    font-size:clamp(88px,20vw,220px);line-height:.9;margin:.12em 0 .04em;letter-spacing:.04em;
+    text-shadow:0 3px 0 rgba(162,12,34,.14)}
+  .latin{font-family:var(--sans);font-weight:500;letter-spacing:.44em;font-size:clamp(11px,1.5vw,15px);
+    text-transform:uppercase;color:var(--ink-soft);text-indent:.44em}
+  .tag{max-width:640px;margin:22px auto 0;color:var(--ink-soft);font-size:clamp(14px,1.7vw,16.5px);line-height:1.72}
+  .tag b{color:var(--ink);font-weight:600}
+
+  /* entrance */
+  .rise{opacity:0;transform:translateY(20px);animation:rise 1s cubic-bezier(.16,1,.3,1) forwards}
+  .rise[data-d="1"]{animation-delay:.08s}.rise[data-d="2"]{animation-delay:.18s}
+  .rise[data-d="3"]{animation-delay:.30s}.rise[data-d="4"]{animation-delay:.42s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.rise{animation:none;opacity:1;transform:none}}
+
+  /* ---------- stage ---------- */
+  .stage-wrap{margin:clamp(30px,5vh,52px) auto 0;display:flex;flex-direction:column;align-items:center;gap:clamp(40px,6vh,58px)}
+  .stage{position:relative;width:min(80vmin,560px);aspect-ratio:1;perspective:1300px}
+  .backing{position:absolute;inset:-5%;border-radius:14px;
+    background:
+      radial-gradient(60% 60% at 50% 44%,#faf5ec 0%,#f1e7d5 58%,#e2d3ba 100%);
+    box-shadow:inset 0 2px 18px rgba(120,80,30,.16),0 30px 60px -30px rgba(90,50,20,.4);
+    border:1px solid rgba(156,122,53,.28)}
+  .backing::after{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;
+    box-shadow:inset 0 0 0 6px rgba(201,162,75,.10)}
+  .tilt{position:absolute;inset:0;transition:transform .5s cubic-bezier(.22,1,.36,1);transform-style:preserve-3d;will-change:transform}
+  svg.paper{position:absolute;inset:0;width:100%;height:100%;display:block;
+    filter:drop-shadow(var(--sx,0px) var(--sy,15px) 24px rgba(120,14,20,.34));
+    transition:filter .4s cubic-bezier(.22,1,.36,1)}
+  .paper text{fill:#000}
+
+  /* folded paper overlay */
+  .fold{position:absolute;inset:11%;z-index:5;border-radius:8px;cursor:pointer;
+    background:linear-gradient(145deg,#e0233b 0%,#c8102e 46%,#a20c22 100%);
+    box-shadow:0 24px 46px -18px rgba(120,14,20,.6),inset 0 1px 0 rgba(255,255,255,.16);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    overflow:hidden}
+  .fold::before{content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,transparent 48%,rgba(255,255,255,.10) 49%,transparent 51%),
+              linear-gradient(45deg,transparent 48%,rgba(0,0,0,.12) 49%,transparent 51%);
+    pointer-events:none}
+  .fold .crease{position:absolute;background:rgba(0,0,0,.14)}
+  .fold .crease.v{left:50%;top:8%;bottom:8%;width:1px;transform:translateX(-.5px)}
+  .fold .crease.h{top:50%;left:8%;right:8%;height:1px}
+  .fold .dash{position:absolute;inset:16%;border:1.4px dashed rgba(220,192,127,.72);border-radius:6px}
+  .fold .scis{font-size:clamp(30px,6vmin,44px);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));z-index:1}
+  .fold .flabel{z-index:1;font-family:var(--serif);color:#fbeede;font-weight:600;font-size:13px;letter-spacing:.24em;text-align:center}
+  .fold .flabel small{display:block;font-family:var(--sans);font-weight:400;font-size:9.5px;letter-spacing:.28em;opacity:.72;margin-top:6px;text-transform:uppercase}
+
+  .label{font-family:var(--sans);font-size:11px;letter-spacing:.16em;color:var(--ink-soft);text-align:center;
+    font-variant-numeric:tabular-nums}
+  .label b{color:var(--red);font-weight:500}
+
+  /* ---------- controls ---------- */
+  .controls{margin:clamp(22px,4vh,40px) auto 0;max-width:680px;display:flex;flex-direction:column;gap:14px;
+    background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(236,225,207,.5));
+    border:var(--hair);border-radius:12px;padding:18px 20px;
+    box-shadow:0 20px 40px -30px rgba(90,50,20,.5)}
+  .ctl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+  .ctl-lbl{font-family:var(--serif);font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--ink-soft);
+    min-width:74px;text-align:right;flex:0 0 auto}
+  .ctl-lbl em{font-style:normal;font-family:var(--sans);font-weight:400;font-size:9px;letter-spacing:.18em;
+    color:var(--ink-faint);text-transform:uppercase;margin-left:5px}
+  .seg{display:inline-flex;gap:0;border:1px solid rgba(200,16,46,.34);border-radius:7px;overflow:hidden}
+  .seg button{padding:9px 16px;font-size:13px;font-weight:500;letter-spacing:.05em;color:var(--ink-soft);
+    border-right:1px solid rgba(200,16,46,.2);transition:background .25s,color .25s}
+  .seg button:last-child{border-right:none}
+  .seg button.active{background:var(--red);color:var(--paper)}
+  .seg button:not(.active):hover{background:rgba(200,16,46,.09);color:var(--red)}
+  .chip{padding:8px 14px;font-family:var(--serif);font-size:14px;font-weight:600;color:var(--ink);
+    border:1px solid rgba(156,122,53,.4);border-radius:20px;background:rgba(255,255,255,.35);
+    transition:all .28s cubic-bezier(.22,1,.36,1)}
+  .chip:hover{border-color:var(--red);color:var(--red);transform:translateY(-1px)}
+  .chip.active{background:var(--red);color:var(--paper);border-color:var(--red)}
+  .chip small{font-family:var(--sans);font-weight:400;font-size:9px;letter-spacing:.1em;margin-left:5px;opacity:.72}
+  .actions{margin-top:2px;gap:12px}
+  .btn{padding:11px 22px;border-radius:8px;font-family:var(--serif);font-weight:600;font-size:14px;letter-spacing:.06em;
+    border:1px solid transparent;transition:all .28s cubic-bezier(.22,1,.36,1)}
+  .btn.primary{background:var(--red);color:var(--paper);box-shadow:0 8px 18px -8px rgba(162,12,34,.7)}
+  .btn.primary:hover{background:var(--red-deep);transform:translateY(-2px);box-shadow:0 12px 24px -8px rgba(162,12,34,.8)}
+  .btn.ghost{border-color:rgba(156,122,53,.5);color:var(--gold-deep);background:rgba(255,255,255,.3);
+    font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+  .btn.ghost:hover{border-color:var(--gold);color:var(--ink);background:rgba(201,162,75,.14);transform:translateY(-2px)}
+
+  /* ---------- section base ---------- */
+  section{position:relative;z-index:3}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+  .sec-head{text-align:center;max-width:720px;margin:0 auto clamp(30px,5vh,52px)}
+  .sec-kicker{font-size:10.5px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-deep);font-weight:500}
+  .sec-title{font-family:var(--serif);font-weight:700;color:var(--ink);font-size:clamp(26px,4vw,40px);
+    line-height:1.15;margin:14px 0 12px}
+  .sec-title span{color:var(--red)}
+  .sec-sub{color:var(--ink-soft);font-size:15px;line-height:1.7;max-width:560px;margin:0 auto}
+
+  /* window gallery */
+  .window-sec{padding:clamp(80px,12vh,150px) 22px clamp(50px,7vh,90px);
+    background:linear-gradient(180deg,var(--paper) 0%,#efe6d6 100%)}
+  .window-frame{max-width:1000px;margin:0 auto;padding:clamp(14px,2vw,26px);
+    background:linear-gradient(150deg,#5a3a24,#3f2617);border-radius:10px;
+    box-shadow:0 40px 80px -40px rgba(50,26,10,.7),inset 0 1px 0 rgba(255,220,170,.14);
+    display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,22px)}
+  .pane{position:relative;aspect-ratio:1;border-radius:5px;overflow:hidden;
+    box-shadow:inset 0 0 0 3px rgba(90,58,36,.9),inset 0 0 30px rgba(30,16,6,.5)}
+  .pane .glow{position:absolute;inset:0;
+    background:radial-gradient(70% 70% at 50% 42%,#fff7e4 0%,#ffe6b0 40%,#f4c877 74%,#d99a3f 100%)}
+  .pane .glow::after{content:"";position:absolute;inset:0;opacity:.5;
+    background:repeating-linear-gradient(90deg,transparent 0 18%,rgba(120,80,30,.16) 18.5% 20%),
+              repeating-linear-gradient(0deg,transparent 0 22%,rgba(120,80,30,.12) 22.5% 24%)}
+  .pane svg{position:absolute;inset:6%;width:88%;height:88%;
+    filter:drop-shadow(0 6px 10px rgba(120,20,20,.34))}
+  .pane .pname{position:absolute;left:0;right:0;bottom:0;padding:8px 10px 9px;z-index:2;
+    background:linear-gradient(0deg,rgba(40,22,10,.82),transparent);
+    font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#f6e6c8;text-align:center}
+  .window-cap{max-width:640px;margin:clamp(28px,4vh,44px) auto 0;text-align:center;
+    color:var(--ink-soft);font-size:14.5px;line-height:1.72}
+  .window-cap b{color:var(--red);font-weight:600}
+
+  /* tradition */
+  .tradition{padding:clamp(70px,11vh,140px) 22px clamp(48px,7vh,80px)}
+  .cols{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(26px,4vw,54px)}
+  .col{position:relative;padding-top:26px}
+  .col::before{content:"";position:absolute;top:0;left:0;width:44px;height:2px;background:var(--red)}
+  .col h3{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--ink);margin-bottom:4px}
+  .col .h-en{font-family:var(--sans);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-deep);
+    font-weight:500;margin-bottom:14px}
+  .col p{color:var(--ink-soft);font-size:14.5px;line-height:1.78}
+  .col p+p{margin-top:12px}
+  .pull{max-width:820px;margin:clamp(44px,6vh,72px) auto 0;text-align:center;
+    font-family:var(--serif);font-weight:600;font-size:clamp(20px,3vw,30px);line-height:1.5;color:var(--ink)}
+  .pull span{color:var(--red)}
+  .pull .cn{font-family:var(--brush);font-weight:400;color:var(--red);font-size:1.24em}
+
+  /* footer */
+  footer{border-top:var(--hair);margin-top:clamp(40px,6vh,72px);padding:48px 22px 40px;
+    background:linear-gradient(180deg,transparent,rgba(200,16,46,.05));text-align:center}
+  .foot-mark{font-family:var(--brush);font-size:44px;color:var(--red);line-height:1;margin-bottom:8px}
+  .foot-name{font-family:var(--serif);font-weight:600;letter-spacing:.14em;color:var(--ink);font-size:14px}
+  .foot-tag{color:var(--ink-faint);font-size:12px;margin-top:8px;letter-spacing:.06em}
+  .foot-link{margin-top:20px;display:inline-block;font-family:var(--sans);font-size:10px;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--gold-deep);text-decoration:none;border:1px solid rgba(156,122,53,.4);
+    padding:9px 18px;border-radius:2px;transition:all .3s}
+  .foot-link:hover{background:var(--red);color:var(--paper);border-color:var(--red)}
+
+  /* responsive */
+  @media (max-width:860px){
+    .cols{grid-template-columns:1fr;gap:34px}
+  }
+  @media (max-width:640px){
+    .hero{padding-top:64px}
+    .window-frame{grid-template-columns:1fr;gap:14px}
+    .pane{max-width:340px;margin:0 auto;width:100%}
+    .ctl-lbl{min-width:0;text-align:center;width:100%}
+    .backlink{top:12px;left:12px;padding:7px 10px 6px 12px;font-size:9px}
+    .controls{padding:16px 14px}
+    .seg button{padding:8px 13px}
+  }
+</style>
+</head>
+<body>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div class="progress" id="progress"></div>
+<a class="backlink" href="/">XAVIER FABLE ×35</a>
+
+<header class="hero">
+  <p class="kicker rise" data-d="1">民間剪紙 · Generative Folk Craft</p>
+  <h1 class="title rise" data-d="1">剪紙</h1>
+  <p class="latin rise" data-d="2">JIǍNZHǏ — THE STUDIO OF SYMMETRIC CUTS</p>
+  <p class="tag rise" data-d="3">Fold the red rice-paper. Make a single cut. Unfold — and one stroke of the blade blooms <b>sixfold, eightfold, twelvefold</b> into a rosette of impossible symmetry. Every hole here is punched by algorithm, every fold true to the craft.</p>
+
+  <div class="stage-wrap rise" data-d="4">
+    <div class="stage" id="stage">
+      <div class="backing"></div>
+      <div class="tilt" id="tilt">
+        <svg class="paper" id="paper" viewBox="-500 -500 1000 1000" aria-label="Generated Chinese paper-cut rosette"></svg>
+      </div>
+      <div class="fold" id="fold" role="button" tabindex="0" aria-label="Folded red paper — press to cut">
+        <span class="crease v"></span><span class="crease h"></span>
+        <span class="dash"></span>
+        <span class="scis">✂</span>
+        <span class="flabel">折 · 待剪<small>Folded — ready to cut</small></span>
+      </div>
+    </div>
+    <p class="label" id="label">窗花 № 0000 · 6-fold rosette · 福 Fortune</p>
+  </div>
+
+  <div class="controls rise" data-d="4">
+    <div class="ctl-row">
+      <span class="ctl-lbl">對稱<em>Fold</em></span>
+      <div class="seg" id="symSeg">
+        <button data-sym="6">6</button>
+        <button data-sym="8">8</button>
+        <button data-sym="12">12</button>
+      </div>
+    </div>
+    <div class="ctl-row" id="presetRow">
+      <span class="ctl-lbl">紋樣<em>Motif</em></span>
+      <button class="chip" data-preset="fu">福<small>Fortune</small></button>
+      <button class="chip" data-preset="xi">囍<small>Joy</small></button>
+      <button class="chip" data-preset="peony">牡丹<small>Peony</small></button>
+      <button class="chip" data-preset="dragon">龙<small>Dragon</small></button>
+      <button class="chip" data-preset="rabbit">兔<small>Rabbit</small></button>
+      <button class="chip" data-preset="tiger">虎<small>Tiger</small></button>
+      <button class="chip" data-preset="crane">云鹤<small>Cranes</small></button>
+    </div>
+    <div class="ctl-row actions">
+      <button class="btn primary" id="cutBtn">剪 · CUT</button>
+      <button class="btn ghost" id="svgBtn">Save SVG</button>
+      <button class="btn ghost" id="pngBtn">Save PNG</button>
+    </div>
+  </div>
+</header>
+
+<section class="window-sec">
+  <div class="sec-head reveal">
+    <p class="sec-kicker">窗花 · Window Flowers</p>
+    <h2 class="sec-title">Pasted to the lattice, <span>lit from behind</span></h2>
+    <p class="sec-sub">At the turning of the lunar year the cuts are pressed to paper windows, where the low winter sun pours through every hole and sets the red aglow.</p>
+  </div>
+  <div class="window-frame reveal" id="windowFrame"></div>
+  <p class="window-cap reveal">Each pane is a fresh generation — seeded, symmetric, unrepeatable. The <b>negative space</b> is the art: what the scissors remove is what the light comes through.</p>
+</section>
+
+<section class="tradition">
+  <div class="sec-head reveal">
+    <p class="sec-kicker">傳統 · The Tradition</p>
+    <h2 class="sec-title">Fifteen centuries of <span>subtraction</span></h2>
+    <p class="sec-sub">Jiǎnzhǐ is the oldest of China's folk arts to survive on paper — a craft of removal, where beauty is what remains after the cut.</p>
+  </div>
+  <div class="cols">
+    <div class="col reveal">
+      <h3>剪紙 · The Cut</h3>
+      <p class="h-en">Paper &amp; Blade</p>
+      <p>Since the invention of paper in the Han, village artisans — most of them women — have folded thin sheets and worked them with scissors and fine knives. Fold once and cut, and a single motion is answered on the far side of the crease; fold again, and again, and the pattern multiplies into a rosette.</p>
+      <p>There is no undo. The craft lives entirely in what is taken away.</p>
+    </div>
+    <div class="col reveal">
+      <h3>窗花 · Window Flowers</h3>
+      <p class="h-en">Light Through Paper</p>
+      <p>The most beloved cuts are 窗花 — window flowers — pasted onto the paper lattices of northern courtyards for the Spring Festival. Backlit by winter light, the negative space glows, and the whole room is scattered with red.</p>
+      <p>They are meant to be temporary: hung for the new year, weathered, and cut anew when spring returns.</p>
+    </div>
+    <div class="col reveal">
+      <h3>紅與對稱 · Red &amp; Symmetry</h3>
+      <p class="h-en">Fortune, Balance, the Turning Year</p>
+      <p>Red is the colour of fortune and warding, of weddings and the new year. Symmetry is balance made visible — the folded cut guarantees it, the blade unable to favour one side over the other.</p>
+      <p>福 for fortune, 囍 for doubled joy, the peony for wealth, cranes and clouds for long life: every motif is a wish, multiplied by the fold.</p>
+    </div>
+  </div>
+  <p class="pull reveal">Fold once, cut once — and luck blooms <span class="cn">六</span> sixfold, <span class="cn">八</span> eightfold, <span class="cn">十二</span> twelvefold.</p>
+</section>
+
+<footer>
+  <div class="reveal">
+    <div class="foot-mark">剪</div>
+    <div class="foot-name">剪紙 · JIANZHI STUDIO</div>
+    <p class="foot-tag">A generative homage to Chinese paper-cutting — no two cuts alike. 生成剪紙，紋無二出。</p>
+    <a class="foot-link" href="/">← Return to the gallery · XAVIER FABLE ×35</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const TAU=Math.PI*2, PI=Math.PI;
+  const REDUCED=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const nn=v=>Math.round(v*10)/10, nn2=v=>Math.round(v*1000)/1000;
+  const P=(r,t)=>{const a=-PI/2+t;return [r*Math.cos(a), r*Math.sin(a)];};
+  const S=p=>nn(p[0])+' '+nn(p[1]);
+
+  /* ---------- motif primitives (all return black-hole svg strings) ---------- */
+  function petal(r0,r1,t,w,bulge){
+    const tip=P(r1,t), base=P(r0,t);
+    const dx=tip[0]-base[0], dy=tip[1]-base[1];
+    const len=Math.hypot(dx,dy)||1, ux=dx/len, uy=dy/len, px=-uy, py=ux;
+    const mx=base[0]+dx*bulge, my=base[1]+dy*bulge;
+    const L=[mx+px*w,my+py*w], Rr=[mx-px*w,my-py*w];
+    return `<path d="M${S(base)} Q${S(L)} ${S(tip)} Q${S(Rr)} ${S(base)} Z"/>`;
+  }
+  function sliver(r,t,aw,d){ // lens / crescent centred at (r,t), bows outward by d
+    const p1=P(r,t-aw), p2=P(r,t+aw), c1=P(r+d,t), c2=P(r+d*0.24,t);
+    return `<path d="M${S(p1)} Q${S(c1)} ${S(p2)} Q${S(c2)} ${S(p1)} Z"/>`;
+  }
+  function teeth(r,a0,a1,k,d){ // sawtooth row, apex offset by d
+    let s=''; for(let i=0;i<k;i++){const tc=a0+(a1-a0)*(i+.5)/k, hw=(a1-a0)/k*.5;
+      s+=`<path d="M${S(P(r,tc-hw))} L${S(P(r+d,tc))} L${S(P(r,tc+hw))} Z"/>`;} return s;
+  }
+  function dot(r,t,rad){const p=P(r,t);return `<circle cx="${nn(p[0])}" cy="${nn(p[1])}" r="${nn(rad)}"/>`;}
+  function diamond(r,t,rw,tw){
+    return `<path d="M${S(P(r+rw,t))} L${S(P(r,t+tw))} L${S(P(r-rw,t))} L${S(P(r,t-tw))} Z"/>`;
+  }
+
+  /* ---------- scalloped paper disc ---------- */
+  function discPath(R,N){
+    const bumps=N*2, amp=R*0.016, steps=bumps*10; let d='';
+    for(let i=0;i<=steps;i++){const t=i/steps*TAU, r=R+amp*Math.cos(bumps*t);
+      const x=r*Math.cos(t-PI/2), y=r*Math.sin(t-PI/2);
+      d+=(i?'L':'M')+nn(x)+' '+nn(y);}
+    return d+'Z';
+  }
+
+  /* ---------- one half-wedge of holes ---------- */
+  function buildHalf(N,R,rng,pre){
+    const H=PI/N, sinH=Math.sin(H), floral=pre.vocab==='floral';
+    const rIn=R*Math.max(pre.reserve||0.1,0.08);
+    const A=[]; const rr=(a,b)=>a+(b-a)*rng(); const chance=p=>rng()<p;
+
+    // inner collar just outside reserved centre
+    {const r=rIn+R*0.02, c=2;
+     for(let i=1;i<=c;i++){A.push(sliver(r,H*i/(c+1),H*0.17,R*rr(0.03,0.045)));}}
+
+    // main band -----------------------------------------------------------
+    const a0=rIn+R*0.05, a1=R*0.58, am=(a0+a1)/2;
+    A.push(petal(a0,a1,0,am*sinH*0.94,rr(0.40,0.46)));        // spine petal on bisector
+    A.push(sliver(am,0,H*0.30,-R*0.055));                     // carve layered heart
+    A.push(dot(a0+R*0.03,0,R*0.016));
+    const ft=H*rr(0.66,0.74);
+    A.push(petal(a0+R*0.02,a1-R*0.03,ft,am*sinH*0.34,rr(0.42,0.50)));  // flank petal
+    A.push(petal(rIn+R*0.04,R*0.40,H*0.90,R*0.028,0.5));      // small leaf near edge of wedge
+    A.push(dot(R*rr(0.42,0.48),H*rr(0.28,0.40),R*0.015));
+
+    // decorative mid band --------------------------------------------------
+    if(floral){
+      A.push(petal(R*0.60,R*0.755,0,R*0.63*sinH*0.5,0.44));
+      A.push(petal(R*0.61,R*0.73,H*0.70,R*0.63*sinH*0.30,0.45));
+      A.push(sliver(R*0.665,H*0.5,H*0.40,R*0.03));
+    }else{ // cloud vocabulary: stacked crescent layers
+      A.push(sliver(R*0.625,H*0.5,H*0.42,R*0.05));
+      A.push(sliver(R*0.695,H*0.5,H*0.42,R*0.042));
+      A.push(dot(R*0.66,H*0.16,R*0.013)); A.push(dot(R*0.66,H*0.84,R*0.013));
+    }
+
+    // dot ring ~0.79
+    {const r=R*0.79; A.push(dot(r,0,R*0.02)); A.push(dot(r,H*0.55,R*rr(0.014,0.02)));}
+
+    // outer petal ring 0.82-0.93
+    A.push(petal(R*0.82,R*0.925,0,R*0.87*sinH*0.5,0.42));
+    A.push(petal(R*0.83,R*0.915,H*0.66,R*0.87*sinH*0.30,0.44));
+
+    // occasional sawtooth accent
+    if(chance(0.6)) A.push(teeth(R*0.895,H*0.12,H*0.88,N>8?2:3,-R*0.036));
+
+    // lace border near edge
+    {const r=R*0.965, c=N>8?2:3; for(let i=0;i<c;i++) A.push(dot(r,H*(i+0.5)/c,R*0.011));}
+    A.push(teeth(R*0.997,0.03,H-0.03,N>8?2:3,-R*0.022));
+
+    return A.join('');
+  }
+
+  /* ---------- centred silhouettes (authored in -100..100, y-down) ---------- */
+  const SIL={
+    rabbit:`<ellipse cx="4" cy="36" rx="42" ry="46"/><circle cx="10" cy="-20" r="30"/>`+
+      `<ellipse cx="-4" cy="-60" rx="12" ry="34" transform="rotate(-14 -4 -60)"/>`+
+      `<ellipse cx="26" cy="-58" rx="12" ry="34" transform="rotate(12 26 -58)"/>`+
+      `<ellipse cx="-34" cy="30" rx="16" ry="26"/><ellipse cx="-16" cy="74" rx="26" ry="14"/>`+
+      `<circle cx="46" cy="52" r="14"/>`,
+    tiger:`<ellipse cx="0" cy="40" rx="44" ry="44"/><ellipse cx="-30" cy="72" rx="16" ry="11"/>`+
+      `<ellipse cx="30" cy="72" rx="16" ry="11"/><circle cx="0" cy="-22" r="32"/>`+
+      `<path d="M-32,-46 L-14,-16 L-42,-14 Z"/><path d="M32,-46 L14,-16 L42,-14 Z"/>`+
+      `<ellipse cx="0" cy="-6" rx="30" ry="19"/>`+
+      `<path d="M42,52 C72,42 74,0 54,-14" fill="none" stroke="#000" stroke-width="16" stroke-linecap="round"/>`,
+    dragon:`<path d="M-44,74 C-64,32 -18,28 -14,-6 C-10,-42 -54,-42 -34,-72" fill="none" stroke="#000" stroke-width="24" stroke-linecap="round"/>`+
+      `<circle cx="-34" cy="-72" r="20"/><path d="M-52,-86 L-40,-64 L-60,-66 Z"/><path d="M-30,-90 L-24,-66 L-44,-70 Z"/>`+
+      `<path d="M-16,-72 L8,-80 L2,-58 Z"/><circle cx="16" cy="-76" r="7"/>`+
+      `<path d="M-8,10 L16,4 L8,28 Z"/><path d="M-32,42 L-10,34 L-18,56 Z"/>`+
+      `<path d="M22,66 C44,60 50,38 36,28" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/>`,
+    crane:`<path d="M-6,42 L-11,90" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>`+
+      `<path d="M6,42 L14,90" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>`+
+      `<ellipse cx="0" cy="24" rx="34" ry="23"/><path d="M-34,10 L-54,-8 L-30,34 Z"/>`+
+      `<path d="M18,12 C40,-6 34,-46 20,-58" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/>`+
+      `<circle cx="20" cy="-60" r="10"/><path d="M28,-62 L54,-58 L30,-50 Z"/>`+
+      `<ellipse cx="2" cy="8" rx="24" ry="13" transform="rotate(-18 2 8)"/>`
+  };
+
+  function centerHoles(pre,R,N){
+    const rIn=R*Math.max(pre.reserve||0.1,0.08); let s='';
+    const ring=(dr,cnt,rad)=>{for(let i=0;i<cnt;i++){const a=i/cnt*TAU,x=dr*Math.cos(a),y=dr*Math.sin(a);
+      s+=`<circle cx="${nn(x)}" cy="${nn(y)}" r="${nn(rad)}"/>`;}};
+    if(pre.center.type==='char'){
+      ring(rIn*0.98,N*2,R*0.011);
+      const wide=(pre.center.glyph==='囍');
+      const fs=wide?rIn*1.22:rIn*1.34;
+      s+=`<text x="0" y="0" font-family="'Noto Serif SC',serif" font-weight="900" font-size="${nn(fs)}" text-anchor="middle" dominant-baseline="central" fill="#000">${pre.center.glyph}</text>`;
+    }else if(pre.center.type==='animal'){
+      const sc=(rIn*1.5)/100;
+      // decorative medallion frame: ring of inward-pointing petals + scalloped dot ring
+      const fc=N>6?16:12;
+      for(let i=0;i<fc;i++){const ang=i/fc*TAU; s+=petal(rIn*1.18,rIn*0.9,ang,rIn*Math.sin(PI/fc)*0.72,0.42);}
+      ring(rIn*1.24,fc,R*0.011);
+      s+=`<g transform="scale(${nn2(sc)})" fill="#000">${SIL[pre.center.sil]}</g>`;
+    }else if(pre.center.type==='flower'){
+      const cnt=10, r1=rIn*1.15, r0=R*0.03, w=r1*Math.sin(PI/cnt)*1.05;
+      for(let i=0;i<cnt;i++) s+=petal(r0,r1,i/cnt*TAU,w,0.42);
+      ring(rIn*0.52,cnt,R*0.012);
+      s+=`<circle cx="0" cy="0" r="${nn(R*0.03)}"/>`;
+    }
+    return `<g fill="#000">${s}</g>`;
+  }
+
+  /* ---------- assemble full svg markup ---------- */
+  function svgMarkup(N,R,rng,pre,idr,standalone){
+    const disc=discPath(R,N), half=buildHalf(N,R,rng,pre);
+    const wedge=`<g>${half}</g><g transform="scale(-1,1)">${half}</g>`;
+    let copies=''; for(let k=0;k<N;k++) copies+=`<g transform="rotate(${nn2(k*360/N)})">${wedge}</g>`;
+    const center=centerHoles(pre,R,N);
+    const defs=`<radialGradient id="rg${idr}" cx="42%" cy="34%" r="74%">`+
+        `<stop offset="0" stop-color="#e5283f"/><stop offset="52%" stop-color="#c8102e"/>`+
+        `<stop offset="100%" stop-color="#9c0b21"/></radialGradient>`+
+      `<mask id="cut${idr}" maskUnits="userSpaceOnUse" x="-500" y="-500" width="1000" height="1000">`+
+        `<rect x="-500" y="-500" width="1000" height="1000" fill="#000"/>`+
+        `<path d="${disc}" fill="#fff"/>`+
+        `<g fill="#000">${copies}</g>${center}</mask>`;
+    if(standalone){
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-500 -500 1000 1000" width="1200" height="1200">`+
+        `<defs>${defs}<filter id="ds${idr}" x="-25%" y="-25%" width="150%" height="150%">`+
+        `<feDropShadow dx="0" dy="12" stdDeviation="15" flood-color="#5e0c12" flood-opacity="0.36"/></filter></defs>`+
+        `<rect x="-500" y="-500" width="1000" height="1000" fill="#f3ece0"/>`+
+        `<g filter="url(#ds${idr})"><rect x="-500" y="-500" width="1000" height="1000" fill="url(#rg${idr})" mask="url(#cut${idr})"/></g></svg>`;
+    }
+    return `<defs>${defs}</defs>`+
+      `<rect x="-500" y="-500" width="1000" height="1000" fill="url(#rg${idr})" mask="url(#cut${idr})"/>`;
+  }
+
+  /* ---------- prng ---------- */
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+
+  const PRESETS={
+    fu:    {label:'福 Fortune',    center:{type:'char',glyph:'福'}, reserve:0.34, vocab:'cloud'},
+    xi:    {label:'囍 Double Joy',  center:{type:'char',glyph:'囍'}, reserve:0.34, vocab:'floral'},
+    peony: {label:'牡丹 Peony',     center:{type:'flower'},          reserve:0.11, vocab:'floral'},
+    dragon:{label:'龙 Dragon',      center:{type:'animal',sil:'dragon'}, reserve:0.36, vocab:'cloud'},
+    rabbit:{label:'兔 Rabbit',      center:{type:'animal',sil:'rabbit'}, reserve:0.34, vocab:'floral'},
+    tiger: {label:'虎 Tiger',       center:{type:'animal',sil:'tiger'},  reserve:0.35, vocab:'floral'},
+    crane: {label:'云鹤 Cranes',    center:{type:'animal',sil:'crane'},  reserve:0.34, vocab:'cloud'}
+  };
+  const R=452;
+
+  /* ---------- state + DOM ---------- */
+  const params=new URLSearchParams(location.search);
+  const state={
+    seed:(params.get('seed')!=null?parseInt(params.get('seed'),10):(Math.random()*1e9|0))>>>0,
+    N:[6,8,12].includes(+params.get('sym'))?+params.get('sym'):6,
+    preset:PRESETS[params.get('preset')]?params.get('preset'):'fu'
+  };
+  const forceUnfold=params.get('unfolded')==='1'||REDUCED;
+
+  const paper=document.getElementById('paper'),
+        label=document.getElementById('label'),
+        fold=document.getElementById('fold'),
+        stage=document.getElementById('stage'),
+        tilt=document.getElementById('tilt'),
+        cutBtn=document.getElementById('cutBtn');
+  let RID=0, folded=false;
+
+  function updateActive(){
+    document.querySelectorAll('#symSeg button').forEach(b=>b.classList.toggle('active',+b.dataset.sym===state.N));
+    document.querySelectorAll('#presetRow .chip').forEach(b=>b.classList.toggle('active',b.dataset.preset===state.preset));
+  }
+  function render(doBloom){
+    const rng=mulberry32(state.seed);
+    paper.innerHTML=svgMarkup(state.N,R,rng,PRESETS[state.preset],++RID,false);
+    label.innerHTML=`窗花 № <b>${String(state.seed).padStart(4,'0').slice(-6)}</b> · ${state.N}-fold rosette · ${PRESETS[state.preset].label}`;
+    updateActive();
+    if(doBloom) bloom();
+  }
+  function bloom(){
+    if(REDUCED) return;
+    paper.animate([
+      {clipPath:'circle(0% at 50% 50%)',opacity:0,offset:0},
+      {clipPath:'circle(46% at 50% 50%)',opacity:1,offset:.62},
+      {clipPath:'circle(150% at 50% 50%)',opacity:1,offset:1}
+    ],{duration:1050,easing:'cubic-bezier(.16,1,.3,1)'});
+    tilt.animate([
+      {transform:'scale(.80) rotate(-9deg)'},
+      {transform:'scale(1.02) rotate(1.2deg)',offset:.7},
+      {transform:'none'}
+    ],{duration:1050,easing:'cubic-bezier(.16,1,.3,1)'});
+  }
+  function reveal(){
+    if(folded) return; folded=true;
+    paper.style.opacity='1';
+    if(fold.style.display==='none') return;
+    if(REDUCED){fold.style.display='none';return;}
+    fold.animate([
+      {opacity:1,transform:'scale(1) rotate(0deg)'},
+      {opacity:0,transform:'scale(.34) rotate(-16deg)'}
+    ],{duration:600,easing:'cubic-bezier(.7,0,.84,0)'}).onfinish=()=>{fold.style.display='none';};
+  }
+
+  /* controls */
+  document.getElementById('symSeg').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    state.N=+b.dataset.sym; reveal(); render(true);
+  });
+  document.getElementById('presetRow').addEventListener('click',e=>{
+    const b=e.target.closest('.chip'); if(!b)return;
+    state.preset=b.dataset.preset; reveal(); render(true);
+  });
+  function newCut(){
+    state.seed=(Math.random()*1e9|0)>>>0;
+    if(!folded){ reveal(); cutBtn.textContent='新纹样 · NEW CUT'; }
+    render(true);
+  }
+  cutBtn.addEventListener('click',newCut);
+  fold.addEventListener('click',()=>{ if(!folded){reveal();cutBtn.textContent='新纹样 · NEW CUT';render(true);} });
+  fold.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fold.click();}});
+
+  /* save */
+  function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+  function currentSVG(){return svgMarkup(state.N,R,mulberry32(state.seed),PRESETS[state.preset],'x'+Date.now(),true);}
+  document.getElementById('svgBtn').addEventListener('click',()=>{
+    download(new Blob([currentSVG()],{type:'image/svg+xml'}),`jianzhi-${state.preset}-${state.seed}.svg`);
+  });
+  document.getElementById('pngBtn').addEventListener('click',()=>{
+    const svg=currentSVG(), img=new Image();
+    img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=1400;
+      const x=c.getContext('2d');x.fillStyle='#f3ece0';x.fillRect(0,0,1400,1400);
+      x.drawImage(img,0,0,1400,1400);
+      c.toBlob(b=>{if(b)download(b,`jianzhi-${state.preset}-${state.seed}.png`);},'image/png');};
+    img.onerror=()=>{};
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  });
+
+  /* parallax lift */
+  if(!REDUCED){
+    stage.addEventListener('pointermove',e=>{
+      const r=stage.getBoundingClientRect();
+      const nx=(e.clientX-r.left)/r.width*2-1, ny=(e.clientY-r.top)/r.height*2-1;
+      tilt.style.transform=`translate(${nx*7}px,${ny*7}px) rotateX(${-ny*5}deg) rotateY(${nx*5}deg)`;
+      paper.style.setProperty('--sx',(-nx*14)+'px');
+      paper.style.setProperty('--sy',(16-ny*9)+'px');
+    });
+    stage.addEventListener('pointerleave',()=>{
+      tilt.style.transform='';
+      paper.style.setProperty('--sx','0px');
+      paper.style.setProperty('--sy','15px');
+    });
+  }
+
+  /* window gallery */
+  function buildGallery(){
+    const frame=document.getElementById('windowFrame');
+    const cfg=[
+      {seed:20260214,N:8,preset:'fu',name:'福 · Fortune · 8-fold'},
+      {seed:880,N:6,preset:'peony',name:'牡丹 · Peony · 6-fold'},
+      {seed:2024,N:12,preset:'dragon',name:'龙 · Dragon · 12-fold'}
+    ];
+    frame.innerHTML=cfg.map(c=>{
+      const inner=svgMarkup(c.N,R,mulberry32(c.seed),PRESETS[c.preset],'g'+c.seed,false);
+      return `<div class="pane"><div class="glow"></div>`+
+        `<svg viewBox="-500 -500 1000 1000" aria-label="${c.name}">${inner}</svg>`+
+        `<div class="pname">${c.name}</div></div>`;
+    }).join('');
+  }
+
+  /* scroll progress + reveals */
+  const progress=document.getElementById('progress');
+  addEventListener('scroll',()=>{
+    const h=document.documentElement.scrollHeight-innerHeight;
+    progress.style.transform='scaleX('+(h>0?scrollY/h:0)+')';
+  },{passive:true});
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* init (after fonts so <text> metrics are correct) */
+  function init(){
+    render(false);
+    buildGallery();
+    if(forceUnfold){ fold.style.display='none'; folded=true; cutBtn.textContent='新纹样 · NEW CUT'; }
+    else { paper.style.opacity='0'; }
+  }
+  (document.fonts&&document.fonts.ready||Promise.resolve()).then(init);
+  setTimeout(()=>{if(!paper.innerHTML)init();},1500); // safety net
+})();
+</script>
+</body>
+</html>

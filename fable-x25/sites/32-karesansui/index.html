@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>枯山水 KARESANSUI — a garden you rake</title>
+<meta name="description" content="Karesansui — a dry rock garden you rake with your own hand. Drag to carve grooves in the sand; the raked lines ripple around the stones like water that isn't there.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×35">
+<meta property="og:title" content="枯山水 KARESANSUI — a garden you rake">
+<meta property="og:description" content="A dry rock garden you rake with your own hand. Drag to carve the sand; the grooves ripple around the stones like water that isn't there.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/32-karesansui/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/32-karesansui/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="枯山水 KARESANSUI — a garden you rake">
+<meta name="twitter:description" content="A dry rock garden you rake with your own hand. The grooves ripple around the stones like water that isn't there.">
+<meta name="twitter:image" content="https://xavierfable30.netlify.app/sites/32-karesansui/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛩️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sand:#e9e3d4;
+  --sand-hi:#f3eee1;
+  --sand-lo:#d9d2be;
+  --sand-deep:#ded7c5;
+  --stone:#4b4843;
+  --ink:#3a372f;
+  --ink-soft:#6d6759;
+  --moss:#6f7a4f;
+  --indigo:#333a5e;
+  --indigo-soft:#4a5384;
+  --hair:rgba(75,72,67,.16);
+  --serif:"Shippori Mincho", serif;
+  --sans:"Space Grotesk", system-ui, sans-serif;
+  --ease:cubic-bezier(.22,.9,.24,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--sand)}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  background:var(--sand);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:var(--indigo);color:var(--sand-hi)}
+:focus-visible{outline:1.5px solid var(--indigo);outline-offset:3px;border-radius:2px}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:var(--sand-deep)}
+::-webkit-scrollbar-thumb{background:#c3bba6;border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--indigo-soft)}
+html{scrollbar-width:thin;scrollbar-color:#c3bba6 var(--sand-deep)}
+
+/* ---------------- garden hero ---------------- */
+.garden{
+  position:relative;
+  width:100%;
+  height:100vh;height:100svh;
+  overflow:hidden;
+  background:var(--sand);
+  touch-action:none;
+  cursor:none;
+}
+#stage{
+  position:absolute;inset:0;
+  display:block;width:100%;height:100%;
+}
+/* soft top-left light + vignette baked over the canvas */
+.lighting{
+  position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:
+    radial-gradient(120% 100% at 22% 14%, rgba(255,251,240,.34), rgba(255,251,240,0) 46%),
+    radial-gradient(150% 130% at 78% 108%, rgba(38,34,26,.24), rgba(38,34,26,0) 55%);
+  mix-blend-mode:soft-light;
+}
+.vignette{
+  position:absolute;inset:0;pointer-events:none;z-index:3;
+  box-shadow:inset 0 0 200px 40px rgba(52,48,38,.16), inset 0 0 60px 0 rgba(52,48,38,.08);
+}
+
+/* custom rake cursor sprite */
+.rake-cursor{
+  position:absolute;top:0;left:0;z-index:6;pointer-events:none;
+  width:46px;height:46px;margin:-23px 0 0 -23px;
+  opacity:0;transition:opacity .4s var(--ease);
+  will-change:transform;
+}
+.rake-cursor.on{opacity:.9}
+.rake-cursor svg{width:100%;height:100%;display:block}
+
+/* ---------------- fixed chrome ---------------- */
+.backlink{
+  position:fixed;top:1.7rem;left:1.7rem;z-index:40;
+  font-family:var(--sans);font-weight:400;
+  font-size:.6rem;letter-spacing:.34em;
+  color:var(--ink-soft);
+  padding-bottom:3px;
+  border-bottom:1px solid transparent;
+  transition:color .5s var(--ease), border-color .5s var(--ease);
+  mix-blend-mode:multiply;
+}
+.backlink:hover{color:var(--indigo);border-color:var(--indigo)}
+
+/* haiku, vertical, top-right */
+.haiku{
+  position:absolute;top:clamp(4.6rem,10vh,7rem);right:clamp(1.4rem,3.4vw,3rem);
+  z-index:7;pointer-events:none;
+  display:flex;flex-direction:row-reverse;gap:.85em;
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-family:var(--serif);
+  color:var(--ink);
+  opacity:0;transform:translateY(-8px);
+  animation:haikuIn 2s var(--ease) 1.1s forwards;
+}
+.haiku .line{
+  font-weight:500;
+  font-size:clamp(1.02rem,1.7vh,1.28rem);
+  letter-spacing:.22em;
+  line-height:1;
+}
+.haiku .line.k{color:var(--indigo);font-weight:600}
+.haiku .romaji{
+  writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:var(--sans);font-weight:300;
+  font-size:.56rem;letter-spacing:.2em;
+  color:var(--ink-soft);
+  align-self:flex-start;margin-top:.2em;
+}
+@keyframes haikuIn{to{opacity:.94;transform:none}}
+
+/* drag hint */
+.hint{
+  position:absolute;left:50%;bottom:calc(var(--engawa-h) + 3.4rem);transform:translateX(-50%);
+  z-index:8;pointer-events:none;text-align:center;
+  color:var(--ink-soft);
+  font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;
+  opacity:0;animation:hintPulse 4.6s var(--ease) 1.6s infinite;
+  transition:opacity .7s var(--ease);
+}
+.hint .jp{font-family:var(--serif);letter-spacing:.3em;font-size:.86rem;text-transform:none;display:block;margin-bottom:.5em;color:var(--ink)}
+.hint.gone{opacity:0!important;animation:none}
+@keyframes hintPulse{0%,100%{opacity:.28}50%{opacity:.72}}
+
+/* scroll cue */
+.scroll-cue{
+  position:absolute;right:clamp(1.4rem,3vw,2.4rem);bottom:calc(var(--engawa-h) + 1.3rem);
+  z-index:8;
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  color:var(--ink-soft);
+  font-family:var(--sans);font-size:.55rem;letter-spacing:.32em;text-transform:uppercase;
+  writing-mode:vertical-rl;
+  transition:color .5s var(--ease);
+}
+.scroll-cue:hover{color:var(--indigo)}
+.scroll-cue .bar{writing-mode:horizontal-tb;width:1px;height:38px;background:currentColor;opacity:.5;animation:cueSlide 3.4s var(--ease) infinite}
+@keyframes cueSlide{0%{transform:scaleY(.2);transform-origin:top;opacity:.2}50%{opacity:.6}100%{transform:scaleY(1);transform-origin:top;opacity:0}}
+
+/* ---------------- engawa (veranda) + controls ---------------- */
+.engawa{
+  --engawa-h:76px;
+  position:absolute;left:0;right:0;bottom:0;z-index:10;
+  height:var(--engawa-h);
+  display:flex;align-items:center;justify-content:center;gap:.55rem;
+  padding:0 1.4rem;
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, rgba(0,0,0,0) 1px 108px),
+    linear-gradient(180deg, #6e5637, #5c472c 40%, #503d25);
+  border-top:1px solid rgba(255,240,214,.14);
+  box-shadow:0 -14px 34px -20px rgba(40,30,18,.7), inset 0 2px 0 rgba(255,238,210,.12);
+}
+.engawa::before{
+  content:"";position:absolute;left:0;right:0;top:-14px;height:14px;
+  background:linear-gradient(180deg, rgba(40,30,18,0), rgba(40,30,18,.16));
+  pointer-events:none;
+}
+.engawa::after{ /* wood grain streaks */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='76'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.13' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.07 0 0 0 0 0.03 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+:root{--engawa-h:76px}
+
+.tools{
+  position:relative;z-index:2;
+  display:flex;align-items:stretch;gap:.5rem;
+  flex-wrap:wrap;justify-content:center;
+}
+.tool{
+  display:inline-flex;align-items:center;gap:.55rem;
+  height:38px;padding:0 .95rem;
+  background:linear-gradient(180deg, rgba(233,227,212,.14), rgba(233,227,212,.06));
+  border:1px solid rgba(240,230,208,.2);
+  border-radius:5px;
+  color:#efe7d6;
+  font-family:var(--sans);font-weight:400;
+  font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  cursor:pointer;
+  transition:background .35s var(--ease), border-color .35s var(--ease), color .35s var(--ease), transform .25s var(--ease);
+  white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+}
+.tool .jp{font-family:var(--serif);font-size:.9rem;letter-spacing:.08em;text-transform:none;color:#f3ecdc}
+.tool:hover{background:rgba(233,227,212,.2);border-color:rgba(240,230,208,.42);transform:translateY(-1px)}
+.tool:active{transform:translateY(0)}
+.tool.active{
+  background:linear-gradient(180deg, var(--indigo-soft), var(--indigo));
+  border-color:rgba(180,190,235,.5);
+  color:#fff;
+  box-shadow:0 4px 14px -6px rgba(30,36,70,.7), inset 0 1px 0 rgba(255,255,255,.16);
+}
+.tool.active .jp{color:#fff}
+
+/* rake width stepper */
+.rake-tool{padding-right:.5rem}
+.rake-tool .val{
+  font-variant-numeric:tabular-nums;font-weight:500;min-width:1.1em;text-align:center;
+  font-size:.72rem;letter-spacing:.05em;color:#fff;
+}
+.rake-tool .tines{display:flex;gap:2px;align-items:flex-end;height:15px;margin-left:.15em}
+.rake-tool .tines i{width:2px;background:#efe7d6;border-radius:1px;opacity:.85}
+.step{
+  width:22px;height:26px;border:none;border-radius:4px;cursor:pointer;
+  background:rgba(233,227,212,.12);
+  color:#efe7d6;font-size:.95rem;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:background .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.step:hover{background:rgba(233,227,212,.28)}
+.step:disabled{opacity:.3;cursor:default}
+
+/* ---------------- content below ---------------- */
+main{position:relative;z-index:1;background:var(--sand)}
+.grain{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  opacity:.04;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{width:min(680px, calc(100% - 3rem));margin-inline:auto}
+.essay{padding:19vh 0 0;position:relative}
+section.blk{padding:0 0 17vh;position:relative}
+.essay > *, section.blk > *{position:relative;z-index:1}
+.wm{
+  position:absolute;top:-3vh;right:-9%;z-index:0;
+  writing-mode:vertical-rl;text-orientation:upright;
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(7rem,17vw,15rem);line-height:.86;letter-spacing:.02em;
+  color:rgba(75,72,67,.05);
+  pointer-events:none;user-select:none;
+}
+.kicker{
+  font-family:var(--sans);font-weight:400;
+  font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--indigo);
+  display:flex;align-items:baseline;gap:1em;
+  margin-bottom:2.4rem;
+}
+.kicker .k{font-family:var(--serif);font-size:.95rem;letter-spacing:.44em;color:var(--ink-soft)}
+.kicker::before{content:"";width:26px;height:1px;background:var(--indigo);align-self:center;opacity:.6}
+h2{
+  font-family:var(--serif);font-weight:500;
+  font-size:clamp(1.55rem, 1.15rem + 1.9vw, 2.4rem);
+  line-height:1.55;letter-spacing:.02em;
+  color:var(--ink);
+  margin-bottom:2rem;max-width:20ch;
+}
+h2 .em{color:var(--moss)}
+.lead{
+  font-family:var(--serif);
+  font-size:clamp(1.05rem,.98rem + .4vw,1.22rem);
+  line-height:2.15;letter-spacing:.01em;
+  color:var(--ink);
+  max-width:46ch;
+}
+p{color:var(--ink-soft);font-size:.98rem;line-height:2.05;letter-spacing:.01em;max-width:52ch}
+p + p{margin-top:1.5em}
+p.big{color:var(--ink)}
+.divider{width:100%;height:1px;background:var(--hair);margin:0 auto 15vh;max-width:680px}
+
+/* three-up definition row */
+.defs{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem;margin-top:1rem}
+.def .dk{font-family:var(--serif);font-size:1.5rem;letter-spacing:.1em;color:var(--indigo);margin-bottom:.7rem}
+.def .dt{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.9rem}
+.def p{font-size:.88rem;line-height:1.9}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity 1.1s var(--ease), transform 1.1s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.reveal.d1{transition-delay:.1s}.reveal.d2{transition-delay:.2s}.reveal.d3{transition-delay:.3s}
+
+/* footer */
+footer{
+  padding:14vh 0 11vh;text-align:center;
+  border-top:1px solid var(--hair);
+  background:linear-gradient(180deg, var(--sand), var(--sand-deep));
+}
+footer .fk{font-family:var(--serif);font-weight:600;font-size:1.5rem;letter-spacing:.5em;padding-left:.5em;color:var(--ink);margin-bottom:1.3rem}
+footer .fl{font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-soft);line-height:2.4}
+footer .frule{width:34px;height:1px;background:var(--hair);margin:2.6rem auto 0}
+
+@media (max-width:760px){
+  :root{--engawa-h:64px}
+  .engawa{--engawa-h:64px;padding:0 .7rem;height:auto;min-height:64px;padding-top:.5rem;padding-bottom:.5rem}
+  .tools{gap:.4rem}
+  .tool{height:34px;padding:0 .7rem;font-size:.58rem;letter-spacing:.12em}
+  .tool .jp{font-size:.82rem}
+  .rake-tool .tines{display:none}
+  .backlink{top:1.15rem;left:1.15rem}
+  .haiku{top:4.4rem;right:1.1rem}
+  .haiku .line{font-size:1.02rem;letter-spacing:.18em}
+  .defs{grid-template-columns:1fr;gap:2.6rem}
+  .scroll-cue{display:none}
+  .hint{bottom:calc(var(--engawa-h) + 2.4rem);font-size:.58rem}
+}
+@media (max-width:420px){
+  .tool .lbl{display:none}
+  .tool{padding:0 .62rem}
+  .rake-tool .lbl{display:inline}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .haiku{opacity:.94;transform:none;animation:none}
+  .hint{animation:none;opacity:.5}
+  .scroll-cue .bar{animation:none;opacity:.4}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<a class="backlink" href="/">XAVIER FABLE ×35</a>
+
+<!-- ============ THE GARDEN ============ -->
+<div class="garden" id="garden">
+  <canvas id="stage" aria-label="An interactive dry rock garden. Drag across the sand to rake grooves; the raked lines ripple around the stones."></canvas>
+  <div class="lighting" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="rake-cursor" id="rakeCursor" aria-hidden="true">
+    <svg viewBox="0 0 46 46">
+      <g fill="none" stroke="#3a372f" stroke-width="1.4" stroke-linecap="round" opacity=".9">
+        <line x1="23" y1="6" x2="23" y2="26"/>
+        <path d="M13 26 q10 8 20 0"/>
+        <line x1="13" y1="26" x2="12" y2="34"/>
+        <line x1="17.5" y1="28.5" x2="17" y2="37"/>
+        <line x1="23" y1="29.5" x2="23" y2="38"/>
+        <line x1="28.5" y1="28.5" x2="29" y2="37"/>
+        <line x1="33" y1="26" x2="34" y2="34"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="haiku" aria-label="Haiku: morning sand — without knowing the waves, the stone sleeps.">
+    <div class="line k">朝の砂</div>
+    <div class="line">波を知らずに</div>
+    <div class="line">石眠る</div>
+    <div class="romaji">morning sand · not knowing the waves · the stone sleeps</div>
+  </div>
+
+  <div class="hint" id="hint" aria-hidden="true">
+    <span class="jp">砂を掻く</span>
+    drag the sand to rake
+  </div>
+
+  <a class="scroll-cue" href="#essay" aria-label="Scroll to read about the garden">
+    読む
+    <span class="bar" aria-hidden="true"></span>
+  </a>
+
+  <!-- veranda + tools -->
+  <div class="engawa" id="engawa">
+    <div class="tools" role="toolbar" aria-label="Garden controls">
+      <div class="tool rake-tool" aria-label="Rake width">
+        <button class="step" id="rakeDown" aria-label="Fewer tines">−</button>
+        <span class="lbl">Rake&nbsp;<span class="jp">刃</span></span>
+        <span class="val" id="rakeVal">6</span>
+        <span class="tines" id="rakeTines" aria-hidden="true"></span>
+        <button class="step" id="rakeUp" aria-label="More tines">+</button>
+      </div>
+      <button class="tool" id="btnSmooth"><span class="jp">均</span><span class="lbl">Smooth</span></button>
+      <button class="tool" id="btnStill"><span class="jp">龍安寺</span><span class="lbl">Still garden</span></button>
+      <button class="tool" id="btnStone"><span class="jp">石</span><span class="lbl">Place stone</span></button>
+      <button class="tool" id="btnSound" aria-pressed="false"><span class="jp">音</span><span class="lbl">Sound</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ESSAY ============ -->
+<main>
+  <div class="essay wrap" id="essay">
+    <span class="wm" aria-hidden="true">水</span>
+    <div class="reveal"><div class="kicker">Dry landscape <span class="k">枯山水</span></div></div>
+    <h2 class="reveal d1">A sea with no water. A shore that never moves. This is a garden you read with your eyes and rake with your hands.</h2>
+    <p class="lead reveal d2">Karesansui is the dry garden of the Japanese temple: raked gravel standing in for water, upright stones standing in for islands, mountains, a crane taking off. Nothing here grows in a hurry. Nothing here is watered. The ocean is suggested entirely by the marks of a rake, dragged by a patient hand at dawn — <span style="color:var(--moss)">water remembered, not water kept</span>.</p>
+  </div>
+
+  <div class="divider reveal"></div>
+
+  <section class="blk wrap" id="ma">
+    <span class="wm" aria-hidden="true">間</span>
+    <div class="reveal"><div class="kicker">The interval <span class="k">間</span></div></div>
+    <h2 class="reveal d1">間 — <span class="em">ma</span>. The space that is left empty on purpose.</h2>
+    <p class="reveal d2 big">Between two stones there is distance; between two raked lines there is a ridge; between one breath and the next there is a pause. The Japanese call all of these <em style="font-style:normal;color:var(--indigo)">ma</em> — the interval. It is not nothing. It is the thing the garden is actually made of.</p>
+    <p class="reveal d2">A karesansui gives you very little to look at, and asks you to look at it for a long time. The gravel is not decoration around the stones; the emptiness is not a frame for the fullness. The two need each other exactly, the way a bell needs the silence after it to be heard.</p>
+  </section>
+
+  <section class="blk wrap">
+    <span class="wm" aria-hidden="true">波</span>
+    <div class="reveal"><div class="kicker">The raked ripples <span class="k">波紋</span></div></div>
+    <h2 class="reveal d1">Each morning the monk erases the ocean and rakes it back.</h2>
+    <p class="reveal d2">The parallel lines are open water. The concentric rings are the ripples that spread when a stone breaks the surface — except the stone has been sitting still for four hundred years, and the water is dry, and the ripple is drawn by hand. The raking is not maintenance. It is the practice. To pull straight lines through gravel, to bend them cleanly around a stone, to begin again tomorrow — this is a way of paying attention that has no product and no end.</p>
+    <div class="defs">
+      <div class="def reveal d1">
+        <div class="dk">砂</div>
+        <div class="dt">Suna · Sand</div>
+        <p>Not sand at all, but crushed white granite, raked into water. Coarse enough to hold a groove through the night.</p>
+      </div>
+      <div class="def reveal d2">
+        <div class="dk">石</div>
+        <div class="dt">Ishi · Stone</div>
+        <p>Set in odd-numbered groups, never centred, never symmetrical. The eye is meant to keep moving and never rest.</p>
+      </div>
+      <div class="def reveal d3">
+        <div class="dk">波紋</div>
+        <div class="dt">Hamon · Ripples</div>
+        <p>The rake bends into circles as it nears a stone, and the still garden fills with a motion nobody can hear.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk wrap">
+    <div class="reveal"><div class="kicker">On stillness <span class="k">静</span></div></div>
+    <p class="lead reveal d1">So take the rake. Drag it slowly. Watch the lines find their way around the stones on their own, the way water would, if there were any. When you have made a mess of it — and you will — sweep the sand smooth and begin again. The garden does not remember. That is the whole point of it.</p>
+  </section>
+
+  <footer>
+    <div class="reveal">
+      <div class="fk">枯山水</div>
+      <div class="fl">Karesansui — a garden you rake<br>raked by hand, at dawn, and raked again</div>
+      <div class="frule"></div>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- scroll deep-link helper for screenshots (?scroll=px|selector) ---------- */
+(function(){
+  var s = new URLSearchParams(location.search).get('scroll');
+  if(!s) return;
+  document.documentElement.style.scrollBehavior='auto';
+  var go=function(){
+    var t = /^\d+$/.test(s) ? +s : (document.querySelector(s)? document.querySelector(s).getBoundingClientRect().top+window.scrollY : 0);
+    window.scrollTo(0,t);
+  };
+  requestAnimationFrame(function(){ go(); setTimeout(go,500); });
+})();
+
+/* ============================================================= *
+ *  KARESANSUI — the raked dry garden
+ * ============================================================= */
+var garden = document.getElementById('garden');
+var canvas = document.getElementById('stage');
+var ctx = canvas.getContext('2d');
+
+var W=0, H=0, scale=1;
+var S = 15;            // groove spacing (css px)
+var GRID = 4;          // marching-squares cell size
+var LIGHT = normalize(-1,-1);   // top-left light (2D)
+var HW = 1.85;         // relief wall offset
+var rocks = [];        // {x,y,r,pts}
+var decorLeaves = [];  // {x,y,rot,scl,col}
+var mossPatches = [];  // {x,y,r,seed}
+
+// offscreen buffers
+var gBuf = mkBuf();    // sand + committed grooves  (persistent, source of truth)
+var dBuf = mkBuf();    // rocks + moss + leaves     (decor overlay)
+var grBuf = mkBuf();   // freshly generated grooves (transparent), for reveal
+var noiseTile = null;
+
+var raf=0, animating=false;
+
+function mkBuf(){ var c=document.createElement('canvas'); return {canvas:c, ctx:c.getContext('2d')}; }
+
+/* ------------ vector helpers ------------ */
+function normalize(x,y){ var l=Math.hypot(x,y)||1; return {x:x/l, y:y/l}; }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(v,a,b){ return v<a?a:v>b?b:v; }
+function smoothstep(a,b,x){ var t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+
+/* deterministic prng */
+function mulberry(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; var t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ------------ sizing ------------ */
+function resize(){
+  W = garden.clientWidth;
+  H = garden.clientHeight;
+  scale = Math.min(window.devicePixelRatio||1, 2);
+  [canvas, gBuf.canvas, dBuf.canvas, grBuf.canvas].forEach(function(cv){
+    cv.width = Math.round(W*scale);
+    cv.height = Math.round(H*scale);
+  });
+  buildScene();
+}
+
+/* ------------ scene: rocks, moss, leaves ------------ */
+function buildScene(){
+  rocks = [];
+  var mobile = W < 760;
+  var md = Math.min(W,H);
+  // group layout (fractions of W,H) — asymmetric, odd groupings
+  var layout = mobile ? [
+    [0.30,0.34,0.088],[0.40,0.44,0.052],
+    [0.68,0.60,0.072],
+    [0.30,0.74,0.050]
+  ] : [
+    [0.255,0.40,0.070],[0.335,0.52,0.044],
+    [0.60,0.33,0.062],
+    [0.72,0.58,0.050],[0.655,0.665,0.034],
+    [0.475,0.75,0.040]
+  ];
+  layout.forEach(function(l,i){
+    var r = clamp(l[2]*md, 20, 120);
+    rocks.push(makeRock(l[0]*W, l[1]*H, r, i*97+13));
+  });
+  // moss patches creeping from the base of some stones (warmth, authentic)
+  mossPatches = [];
+  var mrand = mulberry(717);
+  rocks.forEach(function(rk,idx){
+    if(mrand() < 0.6){
+      mossPatches.push({
+        x: rk.x - rk.r*0.28 + mrand()*rk.r*0.56,
+        y: rk.y + rk.r*0.58,
+        r: rk.r*(0.42+mrand()*0.24),
+        seed:(idx+3)*53
+      });
+    }
+  });
+  // fallen maple leaves
+  decorLeaves = [];
+  var lrand = mulberry(4242);
+  var nl = mobile?3:6;
+  var cols = ['#a83b28','#b9542a','#8f3320','#c56a2e'];
+  for(var j=0;j<nl;j++){
+    decorLeaves.push({
+      x:(0.08+0.84*lrand())*W, y:(0.10+0.78*lrand())*H,
+      rot:lrand()*Math.PI*2, scl:(mobile?9:12)+lrand()*7,
+      col:cols[(lrand()*cols.length)|0]
+    });
+  }
+  buildNoise();
+}
+
+function makeRock(x,y,r,seed){
+  var rnd = mulberry(seed);
+  var n = 11;
+  var raw = [];
+  var baseRot = rnd()*Math.PI*2;
+  for(var i=0;i<n;i++){
+    var a = baseRot + i/n*Math.PI*2;
+    var rr = r*(0.80 + rnd()*0.42);
+    // squash slightly for a seated boulder look
+    raw.push({ x:x+Math.cos(a)*rr, y:y+Math.sin(a)*rr*0.9 });
+  }
+  return { x:x, y:y, r:r, pts:raw };
+}
+
+function buildNoise(){
+  var n = document.createElement('canvas'); n.width=180; n.height=180;
+  var nc = n.getContext('2d');
+  var img = nc.createImageData(180,180);
+  var d = img.data, rnd = mulberry(99);
+  for(var i=0;i<d.length;i+=4){
+    var v = rnd();
+    var g = 235 + (v*40-20);           // near sand tone
+    d[i]=g; d[i+1]=g-4; d[i+2]=g-16;
+    d[i+3]= v<0.5 ? (v*30)|0 : (v*46)|0;
+  }
+  nc.putImageData(img,0,0);
+  noiseTile = n;
+}
+
+/* ------------ sand base ------------ */
+function paintSand(buf){
+  var c = buf.ctx;
+  c.setTransform(1,0,0,1,0,0);
+  c.clearRect(0,0,buf.canvas.width,buf.canvas.height);
+  c.setTransform(scale,0,0,scale,0,0);
+  // warm gradient, lighter top-left
+  var g = c.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#efe9db');
+  g.addColorStop(0.5,'#e9e3d4');
+  g.addColorStop(1,'#ddd6c4');
+  c.fillStyle=g; c.fillRect(0,0,W,H);
+  // radial warm pool top-left
+  var rg = c.createRadialGradient(W*0.24,H*0.16,0, W*0.24,H*0.16, Math.max(W,H)*0.8);
+  rg.addColorStop(0,'rgba(255,250,238,.28)');
+  rg.addColorStop(1,'rgba(255,250,238,0)');
+  c.fillStyle=rg; c.fillRect(0,0,W,H);
+  // grain
+  if(noiseTile){
+    var pat = c.createPattern(noiseTile,'repeat');
+    c.globalAlpha=0.55; c.fillStyle=pat; c.fillRect(0,0,W,H); c.globalAlpha=1;
+  }
+}
+
+/* ============================================================= *
+ *  PHASE FIELD  — grooves are iso-contours of phase(x,y)
+ * ============================================================= */
+var P = { base:'wave' }; // 'wave' default, 'flat' for still-garden preset
+function baseAt(x,y){
+  // base parallel field (mostly horizontal, gentle wave)
+  if(P.base==='flat') return y;
+  return y + 6*Math.sin(x*0.0118 + y*0.004) + 3.2*Math.sin(x*0.03+1.7);
+}
+function phaseAt(x,y){
+  var ph = baseAt(x,y);
+  // raked border frame — contours parallel to edges near the rim.
+  // baseline-match to the field so groove spacing stays even (no bunching).
+  var de = Math.min(x, y, W-x, H-y);
+  var BR = 66;
+  if(de < BR){
+    var wB = 1 - smoothstep(0,1, de/BR);        // 1 at edge -> 0 inward
+    var frameC = (ph|0);                          // continuity anchor
+    ph = lerp(ph, frameC - (BR - de), wB*0.82);
+  }
+  // rocks -> concentric rings. Each ring field is offset by the local base value
+  // at the rock centre (rk.bc) so rings blend into the field at matched spacing.
+  var sumW=0, sumR=0;
+  for(var i=0;i<rocks.length;i++){
+    var rk=rocks[i];
+    var d = Math.hypot(x-rk.x, y-rk.y) - rk.r;
+    var infl = rk.r*0.7 + 128;
+    if(d < infl){
+      var t = d<0?0:d/infl;
+      var wR = (1-t)*(1-t); wR = wR*wR*(3-2*wR);  // smootherstep-ish falloff
+      sumW += wR; sumR += wR*(rk.bc + d);
+    }
+  }
+  if(sumW > 0){
+    var radial = sumR/sumW;
+    ph = lerp(ph, radial, Math.min(sumW,1)*0.97);
+  }
+  return ph;
+}
+
+/* ---- marching squares over the phase field into grBuf ---- */
+function buildGrooves(){
+  var c = grBuf.ctx;
+  c.setTransform(1,0,0,1,0,0);
+  c.clearRect(0,0,grBuf.canvas.width,grBuf.canvas.height);
+  c.setTransform(scale,0,0,scale,0,0);
+  c.lineCap='round';
+  // baseline anchor for each rock's ring field (matched spacing)
+  for(var ri=0;ri<rocks.length;ri++){ rocks[ri].bc = baseAt(rocks[ri].x, rocks[ri].y); }
+
+  var g=GRID, nx=Math.ceil(W/g), ny=Math.ceil(H/g);
+  var cols=nx+1;
+  var V=new Float32Array((nx+1)*(ny+1));
+  for(var j=0;j<=ny;j++){
+    var yy=Math.min(j*g,H);
+    for(var i=0;i<=nx;i++){
+      V[j*cols+i]=phaseAt(Math.min(i*g,W), yy);
+    }
+  }
+  // buckets by contrast (0..3) for highlight & shadow, plus one core path
+  var NB=4;
+  var hi=[], sh=[]; for(var b=0;b<NB;b++){ hi.push(new Path2D()); sh.push(new Path2D()); }
+  var core=new Path2D();
+
+  var Lx=LIGHT.x, Ly=LIGHT.y;
+  for(var j=0;j<ny;j++){
+    for(var i=0;i<nx;i++){
+      var x0=i*g, x1=(i+1)*g, y0=j*g, y1=(j+1)*g;
+      var tl=V[j*cols+i], tr=V[j*cols+i+1], bl=V[(j+1)*cols+i], br=V[(j+1)*cols+i+1];
+      var mn=Math.min(tl,tr,bl,br), mx=Math.max(tl,tr,bl,br);
+      var L0=Math.ceil(mn/S), L1=Math.floor(mx/S);
+      if(L1-L0>40) continue; // guard against runaway (shouldn't happen)
+      for(var L=L0;L<=L1;L++){
+        var lv=L*S;
+        // crossings on edges, order: top,right,bottom,left
+        var pts=[], px, t;
+        if((tl-lv)*(tr-lv)<0){ t=(lv-tl)/(tr-tl); pts.push(x0+t*(x1-x0), y0); }
+        if((tr-lv)*(br-lv)<0){ t=(lv-tr)/(br-tr); pts.push(x1, y0+t*(y1-y0)); }
+        if((bl-lv)*(br-lv)<0){ t=(lv-bl)/(br-bl); pts.push(x0+t*(x1-x0), y1); }
+        if((tl-lv)*(bl-lv)<0){ t=(lv-tl)/(bl-tl); pts.push(x0, y0+t*(y1-y0)); }
+        if(pts.length>=2) addSeg(core,hi,sh,NB,Lx,Ly, pts[0],pts[1],pts[2],pts[3]);
+        if(pts.length>=4) addSeg(core,hi,sh,NB,Lx,Ly, pts[4],pts[5],pts[6],pts[7]);
+      }
+    }
+  }
+  // paint: wide soft ambient shadow, hard shadow, core trough, highlight (bottom-up relief)
+  var shA=[0.13,0.26,0.40,0.54], hiA=[0.17,0.31,0.46,0.6];
+  // soft ambient occlusion under each groove (wider, low alpha) — gives depth
+  c.lineWidth=2.4; c.strokeStyle='rgba(112,104,84,1)';
+  for(var b=0;b<NB;b++){ c.globalAlpha=shA[b]*0.24; c.stroke(sh[b]); }
+  // hard shadow wall
+  c.lineWidth=1.6; c.strokeStyle='rgba(86,80,64,1)';
+  for(var b=0;b<NB;b++){ c.globalAlpha=shA[b]; c.stroke(sh[b]); }
+  // cool trough
+  c.lineWidth=1.5; c.globalAlpha=0.34; c.strokeStyle='rgba(146,148,146,1)';
+  c.stroke(core);
+  // highlight wall
+  c.lineWidth=1.3; c.strokeStyle='rgba(255,253,246,1)';
+  for(var b=0;b<NB;b++){ c.globalAlpha=hiA[b]; c.stroke(hi[b]); }
+  c.globalAlpha=1;
+}
+
+function addSeg(core,hi,sh,NB,Lx,Ly, ax,ay,bx,by){
+  var dx=bx-ax, dy=by-ay, l=Math.hypot(dx,dy); if(l<1e-4) return;
+  dx/=l; dy/=l;
+  var mx=dy, my=-dx;                 // normal
+  var align = mx*Lx+my*Ly;
+  var sgn = align>=0?1:-1;
+  var con = Math.abs(align);
+  var b = clamp((con*NB)|0,0,NB-1);
+  core.moveTo(ax,ay); core.lineTo(bx,by);
+  var ox=mx*HW*sgn, oy=my*HW*sgn;
+  hi[b].moveTo(ax+ox,ay+oy); hi[b].lineTo(bx+ox,by+oy);
+  sh[b].moveTo(ax-ox,ay-oy); sh[b].lineTo(bx-ox,by-oy);
+}
+
+/* ------------ decor (rocks / moss / leaves) into dBuf ------------ */
+function drawDecor(){
+  var c=dBuf.ctx;
+  c.setTransform(1,0,0,1,0,0);
+  c.clearRect(0,0,dBuf.canvas.width,dBuf.canvas.height);
+  c.setTransform(scale,0,0,scale,0,0);
+
+  // moss patches (defined, textured — at the base of stones)
+  mossPatches.forEach(function(m){
+    var rnd=mulberry(m.seed);
+    c.save();
+    var g=c.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r);
+    g.addColorStop(0,'rgba(103,116,74,0.52)');
+    g.addColorStop(0.55,'rgba(103,116,74,0.22)');
+    g.addColorStop(1,'rgba(103,116,74,0)');
+    c.fillStyle=g;
+    c.beginPath(); c.ellipse(m.x,m.y,m.r,m.r*0.66,0,0,Math.PI*2); c.fill();
+    var dots=Math.round(m.r*1.5);
+    for(var k=0;k<dots;k++){
+      var a=rnd()*Math.PI*2, rr=rnd()*m.r*0.82;
+      var px=m.x+Math.cos(a)*rr, py=m.y+Math.sin(a)*rr*0.66;
+      c.fillStyle='rgba('+(rnd()<0.5?'84,97,56':'128,142,88')+','+(0.18+rnd()*0.34)+')';
+      var s=0.7+rnd()*1.5;
+      c.beginPath(); c.arc(px,py,s,0,Math.PI*2); c.fill();
+    }
+    c.restore();
+  });
+
+  // rocks
+  rocks.forEach(function(rk){ drawRock(c,rk); });
+
+  // maple leaves on top
+  decorLeaves.forEach(function(lf){ drawLeaf(c,lf); });
+}
+
+function rockPath(c,rk){
+  var p=rk.pts, n=p.length;
+  c.beginPath();
+  // smooth closed catmull-rom-ish via quadratic midpoints
+  var mx=(p[n-1].x+p[0].x)/2, my=(p[n-1].y+p[0].y)/2;
+  c.moveTo(mx,my);
+  for(var i=0;i<n;i++){
+    var cur=p[i], nx=p[(i+1)%n];
+    var mmx=(cur.x+nx.x)/2, mmy=(cur.y+nx.y)/2;
+    c.quadraticCurveTo(cur.x,cur.y, mmx,mmy);
+  }
+  c.closePath();
+}
+
+function drawRock(c,rk){
+  c.save();
+  // cast shadow (offset toward bottom-right, soft)
+  c.save();
+  c.translate(rk.r*0.16, rk.r*0.22);
+  rockPath(c,rk);
+  c.fillStyle='rgba(50,45,36,0.30)';
+  c.shadowColor='rgba(50,45,36,0.5)';
+  c.shadowBlur=rk.r*0.7;
+  c.shadowOffsetX=rk.r*0.12; c.shadowOffsetY=rk.r*0.22;
+  c.fill();
+  c.restore();
+
+  // contact / moss base ring
+  rockPath(c,rk);
+  c.save(); c.clip();
+  var mg=c.createRadialGradient(rk.x,rk.y+rk.r*0.55,rk.r*0.2, rk.x,rk.y+rk.r*0.55,rk.r*1.15);
+  mg.addColorStop(0,'rgba(90,101,62,0.55)');
+  mg.addColorStop(0.5,'rgba(90,101,62,0.16)');
+  mg.addColorStop(1,'rgba(90,101,62,0)');
+  c.fillStyle=mg; c.fillRect(rk.x-rk.r*1.4,rk.y-rk.r*1.4,rk.r*2.8,rk.r*2.8);
+  c.restore();
+
+  // body with volume (light top-left)
+  rockPath(c,rk);
+  var g=c.createLinearGradient(rk.x-rk.r,rk.y-rk.r, rk.x+rk.r,rk.y+rk.r);
+  g.addColorStop(0,'#5a564e');
+  g.addColorStop(0.45,'#4b4843');
+  g.addColorStop(1,'#37342f');
+  c.fillStyle=g; c.fill();
+
+  // rim highlight top-left
+  c.save(); rockPath(c,rk); c.clip();
+  var hg=c.createRadialGradient(rk.x-rk.r*0.4,rk.y-rk.r*0.5,0, rk.x-rk.r*0.4,rk.y-rk.r*0.5,rk.r*1.3);
+  hg.addColorStop(0,'rgba(214,206,190,0.34)');
+  hg.addColorStop(0.4,'rgba(214,206,190,0.08)');
+  hg.addColorStop(1,'rgba(214,206,190,0)');
+  c.fillStyle=hg; c.fillRect(rk.x-rk.r*1.4,rk.y-rk.r*1.4,rk.r*2.8,rk.r*2.8);
+  // subtle speckle texture
+  var rnd=mulberry((rk.x*7+rk.y)|0);
+  for(var i=0;i<Math.round(rk.r*1.4);i++){
+    var a=rnd()*Math.PI*2, rr=rnd()*rk.r*0.9;
+    c.fillStyle='rgba('+(rnd()<0.5?'20,18,14':'150,144,132')+','+(0.05+rnd()*0.09)+')';
+    c.fillRect(rk.x+Math.cos(a)*rr, rk.y+Math.sin(a)*rr*0.9, 1.4,1.4);
+  }
+  c.restore();
+
+  // crisp edge
+  rockPath(c,rk);
+  c.lineWidth=1; c.strokeStyle='rgba(30,27,22,0.5)'; c.stroke();
+  c.restore();
+}
+
+function drawLeaf(c,lf){
+  c.save();
+  c.translate(lf.x,lf.y); c.rotate(lf.rot);
+  // soft shadow
+  c.save(); c.translate(lf.scl*0.12,lf.scl*0.18);
+  maplePath(c,lf.scl); c.fillStyle='rgba(50,40,30,0.18)';
+  c.shadowColor='rgba(50,40,30,0.35)'; c.shadowBlur=lf.scl*0.5; c.fill();
+  c.restore();
+  // leaf
+  maplePath(c,lf.scl);
+  var g=c.createLinearGradient(-lf.scl,-lf.scl,lf.scl,lf.scl);
+  g.addColorStop(0,lf.col);
+  g.addColorStop(1,'#7a2718');
+  c.fillStyle=g; c.fill();
+  // stem + midrib
+  c.strokeStyle='rgba(60,20,12,0.5)'; c.lineWidth=0.8;
+  c.beginPath(); c.moveTo(0,lf.scl*0.9); c.lineTo(0,-lf.scl*0.2); c.stroke();
+  c.restore();
+}
+function maplePath(c,s){
+  // 5-lobe maple, spiky
+  c.beginPath();
+  var lobes=5;
+  for(var i=0;i<=lobes;i++){
+    var a=-Math.PI/2 + (i/lobes)*Math.PI*2*0.86 - 0.75;
+    var tip = {x:Math.cos(a)*s, y:Math.sin(a)*s};
+    var na=-Math.PI/2 + ((i+0.5)/lobes)*Math.PI*2*0.86 - 0.75;
+    var valley={x:Math.cos(na)*s*0.34, y:Math.sin(na)*s*0.34};
+    if(i===0) c.moveTo(tip.x,tip.y);
+    else c.lineTo(tip.x,tip.y);
+    c.lineTo(valley.x,valley.y);
+  }
+  c.closePath();
+}
+
+/* ============================================================= *
+ *  compositing / presentation
+ * ============================================================= */
+function present(){
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(gBuf.canvas,0,0);
+  ctx.drawImage(dBuf.canvas,0,0);
+}
+
+/* copy a buffer's pixels into a fresh canvas */
+function snapshot(buf){
+  var c=document.createElement('canvas'); c.width=buf.canvas.width; c.height=buf.canvas.height;
+  c.getContext('2d').drawImage(buf.canvas,0,0); return c;
+}
+
+/* ============================================================= *
+ *  generate / reveal / reset
+ * ============================================================= */
+function regenerate(instant){
+  paintSand(gBuf);          // blank sand into source buffer
+  buildGrooves();           // grBuf now holds groove marks (transparent)
+  drawDecor();
+  if(instant || reduced){
+    // composite grooves fully, present static
+    gBuf.ctx.setTransform(1,0,0,1,0,0);
+    gBuf.ctx.drawImage(grBuf.canvas,0,0);
+    present();
+  }else{
+    revealSweep();
+  }
+}
+
+function revealSweep(){
+  stopAnim();
+  var dur=1150, t0=performance.now();
+  animating=true;
+  var Wd=canvas.width, Hd=canvas.height;
+  function frame(now){
+    if(document.hidden){ raf=requestAnimationFrame(frame); return; }
+    var p=clamp((now-t0)/dur,0,1);
+    var e=1-Math.pow(1-p,3);
+    var xd=e*Wd;
+    paintSand(gBuf);
+    gBuf.ctx.setTransform(1,0,0,1,0,0);
+    if(xd>0) gBuf.ctx.drawImage(grBuf.canvas, 0,0,xd,Hd, 0,0,xd,Hd);
+    // broom leading line
+    drawBroom(gBuf, xd/scale);
+    present();
+    if(p<1){ raf=requestAnimationFrame(frame); }
+    else { animating=false; raf=0;
+      paintSand(gBuf); gBuf.ctx.setTransform(1,0,0,1,0,0); gBuf.ctx.drawImage(grBuf.canvas,0,0); present(); }
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+function drawBroom(buf,xcss){
+  if(xcss<=0||xcss>=W) return;
+  var c=buf.ctx; c.setTransform(scale,0,0,scale,0,0);
+  var g=c.createLinearGradient(xcss-26,0,xcss+4,0);
+  g.addColorStop(0,'rgba(255,252,244,0)');
+  g.addColorStop(1,'rgba(255,252,244,0.5)');
+  c.fillStyle=g; c.fillRect(xcss-26,0,30,H);
+  c.strokeStyle='rgba(150,144,130,0.5)'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(xcss,0); c.lineTo(xcss,H); c.stroke();
+}
+
+function smoothReset(){
+  if(reduced){ paintSand(gBuf); present(); return; }
+  stopAnim();
+  var snap=snapshot(gBuf);
+  var dur=1000, t0=performance.now();
+  var Wd=canvas.width, Hd=canvas.height;
+  animating=true;
+  function frame(now){
+    if(document.hidden){ raf=requestAnimationFrame(frame); return; }
+    var p=clamp((now-t0)/dur,0,1);
+    var e=1-Math.pow(1-p,3);
+    var xd=e*Wd;
+    paintSand(gBuf);                        // fresh blank sand everywhere
+    gBuf.ctx.setTransform(1,0,0,1,0,0);
+    if(xd<Wd) gBuf.ctx.drawImage(snap, xd,0,Wd-xd,Hd, xd,0,Wd-xd,Hd); // keep old ahead of broom
+    drawBroom(gBuf, xd/scale);
+    present();
+    if(p<1) raf=requestAnimationFrame(frame);
+    else { animating=false; raf=0; paintSand(gBuf); present(); }
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+function stopAnim(){ if(raf){ cancelAnimationFrame(raf); raf=0; } animating=false; }
+
+/* ============================================================= *
+ *  LIVE RAKING
+ * ============================================================= */
+var raking=false, lastPt=null, tineN=6, RAKE_SP=13, drawScheduled=false;
+var stoneMode=false;
+
+function rakeTangent(px,py,dirx,diry){
+  // blend the drag direction toward the flow around the nearest rock
+  var best=null,bd=1e9;
+  for(var i=0;i<rocks.length;i++){
+    var rk=rocks[i]; var d=Math.hypot(px-rk.x,py-rk.y)-rk.r;
+    if(d<bd){bd=d;best=rk;}
+  }
+  if(!best) return {x:dirx,y:diry};
+  var infl=best.r*0.7+118;
+  if(bd>=infl || bd<0) { if(bd<0){ /* over a rock: still tangential */ } else return {x:dirx,y:diry}; }
+  var t=clamp(bd<0?0:bd/infl,0,1);
+  var w=(1-t)*(1-t); w=w*w*(3-2*w);
+  // radial + tangential
+  var rx=px-best.x, ry=py-best.y; var rl=Math.hypot(rx,ry)||1; rx/=rl; ry/=rl;
+  var tx=-ry, ty=rx;                        // tangential
+  if(tx*dirx+ty*diry<0){ tx=-tx; ty=-ty; }  // align with travel
+  var ex=lerp(dirx,tx,w*0.92), ey=lerp(diry,ty,w*0.92);
+  var el=Math.hypot(ex,ey)||1;
+  return {x:ex/el, y:ey/el};
+}
+
+function insideRock(x,y,pad){
+  for(var i=0;i<rocks.length;i++){
+    var rk=rocks[i];
+    if(Math.hypot(x-rk.x,y-rk.y) < rk.r+ (pad||0)) return true;
+  }
+  return false;
+}
+
+function reliefSeg(c,ax,ay,bx,by){
+  var dx=bx-ax, dy=by-ay, l=Math.hypot(dx,dy); if(l<0.01) return;
+  dx/=l; dy/=l; var mx=dy,my=-dx;
+  var align=mx*LIGHT.x+my*LIGHT.y, sgn=align>=0?1:-1, con=Math.abs(align);
+  var ox=mx*HW*sgn, oy=my*HW*sgn;
+  // soft ambient shadow (wide)
+  c.strokeStyle='rgba(112,104,84,'+(0.06+0.14*con)+')'; c.lineWidth=3.0;
+  c.beginPath(); c.moveTo(ax-ox,ay-oy); c.lineTo(bx-ox,by-oy); c.stroke();
+  // hard shadow wall
+  c.strokeStyle='rgba(86,80,64,'+(0.16+0.40*con)+')'; c.lineWidth=1.6;
+  c.beginPath(); c.moveTo(ax-ox,ay-oy); c.lineTo(bx-ox,by-oy); c.stroke();
+  // core trough
+  c.strokeStyle='rgba(146,148,146,0.34)'; c.lineWidth=1.5;
+  c.beginPath(); c.moveTo(ax,ay); c.lineTo(bx,by); c.stroke();
+  // highlight
+  c.strokeStyle='rgba(255,253,246,'+(0.2+0.5*con)+')'; c.lineWidth=1.3;
+  c.beginPath(); c.moveTo(ax+ox,ay+oy); c.lineTo(bx+ox,by+oy); c.stroke();
+}
+
+function rakeSegment(a,b){
+  var c=gBuf.ctx; c.setTransform(scale,0,0,scale,0,0); c.lineCap='round';
+  var dx=b.x-a.x, dy=b.y-a.y, l=Math.hypot(dx,dy); if(l<1.2) return false;
+  var mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+  var dir=normalize(dx,dy);
+  var eff=rakeTangent(mid.x,mid.y,dir.x,dir.y);
+  var nx=eff.y, ny=-eff.x;                    // normal to effective dir
+  var half=(tineN-1)/2;
+  for(var k=0;k<tineN;k++){
+    var off=(k-half)*RAKE_SP;
+    var ax=a.x+nx*off, ay=a.y+ny*off;
+    var bx=b.x+nx*off, by=b.y+ny*off;
+    var cx=(ax+bx)/2, cy=(ay+by)/2;
+    if(insideRock(cx,cy,-2)) continue;        // let grooves die at the stone
+    reliefSeg(c,ax,ay,bx,by);
+  }
+  return true;
+}
+
+/* pointer handling */
+function pt(e){
+  var r=canvas.getBoundingClientRect();
+  return { x:(e.clientX-r.left), y:(e.clientY-r.top) };
+}
+
+function onDown(e){
+  var p=pt(e);
+  if(p.y > H - getEngawaH() ) return;         // don't rake on the veranda
+  if(stoneMode){ toggleStoneAt(p.x,p.y); return; }
+  raking=true; lastPt=p; dismissHint();
+  try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+}
+function onMove(e){
+  moveCursor(e);
+  if(!raking) return;
+  var p=pt(e);
+  if(rakeSegment(lastPt,p)){ lastPt=p; if(!drawScheduled){ drawScheduled=true; requestAnimationFrame(function(){drawScheduled=false; present();}); } }
+}
+function onUp(e){ raking=false; }
+
+function toggleStoneAt(x,y){
+  // remove if clicking an existing stone
+  for(var i=0;i<rocks.length;i++){
+    if(Math.hypot(x-rocks[i].x,y-rocks[i].y) < rocks[i].r+6){ rocks.splice(i,1); regenerate(reduced); return; }
+  }
+  if(y>H-getEngawaH()-4) return;
+  var md=Math.min(W,H);
+  rocks.push(makeRock(x,y, clamp(md*0.05,20,90), (x*13+y*7)|0));
+  regenerate(reduced);
+}
+
+/* ---- custom cursor ---- */
+var cur=document.getElementById('rakeCursor');
+function moveCursor(e){
+  var r=garden.getBoundingClientRect();
+  var x=e.clientX-r.left, y=e.clientY-r.top;
+  cur.style.transform='translate('+x+'px,'+y+'px)';
+  var overVeranda = y > H-getEngawaH();
+  cur.classList.toggle('on', !overVeranda);
+}
+function getEngawaH(){
+  var v=getComputedStyle(document.documentElement).getPropertyValue('--engawa-h');
+  return parseFloat(v)||76;
+}
+
+function dismissHint(){ var h=document.getElementById('hint'); if(h) h.classList.add('gone'); }
+
+/* ============================================================= *
+ *  CONTROLS
+ * ============================================================= */
+function renderTines(){
+  var box=document.getElementById('rakeTines'); if(!box) return;
+  box.innerHTML='';
+  for(var i=0;i<tineN;i++){ var b=document.createElement('i'); b.style.height=(6+ (i%2)*7)+'px'; box.appendChild(b); }
+  document.getElementById('rakeVal').textContent=tineN;
+  document.getElementById('rakeDown').disabled = tineN<=2;
+  document.getElementById('rakeUp').disabled = tineN>=9;
+}
+document.getElementById('rakeDown').addEventListener('click',function(){ tineN=clamp(tineN-1,2,9); renderTines(); });
+document.getElementById('rakeUp').addEventListener('click',function(){ tineN=clamp(tineN+1,2,9); renderTines(); });
+
+document.getElementById('btnSmooth').addEventListener('click',function(){ P.base='wave'; buildGrooves(); smoothReset(); });
+document.getElementById('btnStill').addEventListener('click',function(){
+  P.base='flat'; regenerate(reduced); P.base='wave';
+});
+var btnStone=document.getElementById('btnStone');
+btnStone.addEventListener('click',function(){
+  stoneMode=!stoneMode; btnStone.classList.toggle('active',stoneMode);
+  garden.style.cursor = stoneMode? 'crosshair':'none';
+  cur.classList.toggle('on', !stoneMode);
+  btnStone.querySelector('.lbl').textContent = stoneMode? 'Tap sand · tap stone' : 'Place stone';
+});
+
+/* ---------- ambient sound (gesture-gated, silent by default) ---------- */
+var audio=null, btnSound=document.getElementById('btnSound');
+function startAudio(){
+  var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null;
+  var ac=new AC();
+  var master=ac.createGain(); master.gain.value=0; master.connect(ac.destination);
+  // wind: filtered brown noise
+  var buf=ac.createBuffer(1, ac.sampleRate*4, ac.sampleRate);
+  var d=buf.getChannelData(0), last=0;
+  for(var i=0;i<d.length;i++){ var wn=Math.random()*2-1; last=(last+0.02*wn)/1.02; d[i]=last*3.2; }
+  var src=ac.createBufferSource(); src.buffer=buf; src.loop=true;
+  var lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=420; lp.Q.value=0.6;
+  var wgain=ac.createGain(); wgain.gain.value=0.5;
+  src.connect(lp); lp.connect(wgain); wgain.connect(master);
+  // slow LFO on wind gain
+  var lfo=ac.createOscillator(); lfo.frequency.value=0.06;
+  var lfoG=ac.createGain(); lfoG.gain.value=0.28;
+  lfo.connect(lfoG); lfoG.connect(wgain.gain);
+  src.start(); lfo.start();
+  var bellTimer=null;
+  function bell(){
+    if(ac.state!=='running'){ return; }
+    var t=ac.currentTime;
+    var g=ac.createGain(); g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.10,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+5.5);
+    var parts=[1,2.02,2.78,4.1], base=196*(Math.random()<0.5?1:1.5);
+    parts.forEach(function(m,idx){
+      var o=ac.createOscillator(); o.type='sine'; o.frequency.value=base*m;
+      var gg=ac.createGain(); gg.gain.value=(idx===0?0.6:0.25/idx);
+      o.connect(gg); gg.connect(g); o.start(t); o.stop(t+5.6);
+    });
+    g.connect(master);
+    bellTimer=setTimeout(bell, 16000+Math.random()*18000);
+  }
+  bellTimer=setTimeout(bell, 3500);
+  return { ac:ac, master:master, stopBell:function(){ if(bellTimer) clearTimeout(bellTimer); } };
+}
+btnSound.addEventListener('click',function(){
+  var on=btnSound.classList.toggle('active');
+  btnSound.setAttribute('aria-pressed', on?'true':'false');
+  if(on){
+    if(!audio) audio=startAudio();
+    if(audio){ if(audio.ac.state==='suspended') audio.ac.resume(); audio.master.gain.setTargetAtTime(0.5, audio.ac.currentTime, 1.2); }
+  }else if(audio){
+    audio.master.gain.setTargetAtTime(0.0, audio.ac.currentTime, 0.6);
+  }
+});
+
+/* ============================================================= *
+ *  wiring
+ * ============================================================= */
+canvas.addEventListener('pointerdown', onDown);
+window.addEventListener('pointermove', onMove);
+window.addEventListener('pointerup', onUp);
+window.addEventListener('pointercancel', onUp);
+garden.addEventListener('pointerleave', function(){ cur.classList.remove('on'); });
+
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden && audio){ audio.master.gain.value=0; }
+  if(!document.hidden && audio && btnSound.classList.contains('active')){ audio.master.gain.setTargetAtTime(0.5, audio.ac.currentTime, 1.0); }
+});
+
+var rz;
+window.addEventListener('resize', function(){ clearTimeout(rz); rz=setTimeout(function(){ resize(); regenerate(true); }, 220); });
+
+/* essay reveals */
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(reduced){ els.forEach(function(e){e.classList.add('in');}); return; }
+  var io=new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target);} }); },{threshold:0.14, rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){ io.observe(e); });
+})();
+
+/* boot */
+renderTines();
+resize();
+regenerate(reduced);   // reduced -> instant static garden; otherwise reveal sweep
+})();
+</script>
+</body>
+</html>

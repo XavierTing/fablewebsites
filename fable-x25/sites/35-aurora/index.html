@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURORA — a night that answers</title>
+<meta name="description" content="A live WebGL aurora borealis over a still northern lake at 68.4°N. Luminous curtains ripple, fold and pulse above a silhouetted tree line and its mirror on frozen water. Wait in the cold for the sky to move.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×35">
+<meta property="og:title" content="AURORA — a night that answers">
+<meta property="og:description" content="A live WebGL aurora over a still northern lake at 68.4°N. Curtains of light ripple, fold and pulse — reflected on frozen water. A night that answers.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/35-aurora/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/35-aurora/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AURORA — a night that answers">
+<meta name="twitter:description" content="A live WebGL aurora over a still northern lake. A night that answers.">
+<meta name="twitter:image" content="https://xavierfable30.netlify.app/sites/35-aurora/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#04060d;
+  --ink:#eaf6ff;
+  --green:#6cffb0;
+  --teal:#40e6d0;
+  --violet:#b06cff;
+  --crimson:#ff5a72;
+  --amber:#ffb765;
+  --mut:rgba(226,240,255,.60);
+  --mut2:rgba(226,240,255,.34);
+  --mut3:rgba(226,240,255,.18);
+  --glass:rgba(8,14,26,.52);
+  --glass-edge:rgba(120,200,220,.16);
+  --line:rgba(120,200,220,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{background:var(--night);color:var(--ink)}
+body{
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+::selection{background:rgba(108,255,176,.28);color:#eafff5}
+:focus-visible{outline:1px solid var(--green);outline-offset:3px;border-radius:3px}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font:inherit;color:inherit;background:none;border:none}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#05080f}
+::-webkit-scrollbar-thumb{background:rgba(108,255,176,.20);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(108,255,176,.38)}
+
+/* ---------- WebGL canvas (fixed behind everything) ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0;background:var(--night)}
+#veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 120% 78% at 50% 30%,transparent 55%,rgba(4,6,13,.5) 100%);}
+#grain{position:fixed;inset:-40%;width:180%;height:180%;z-index:2;pointer-events:none;opacity:.045;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");}
+#cursor{position:fixed;top:0;left:0;z-index:60;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;pointer-events:none;
+  border:1px solid rgba(108,255,176,.5);box-shadow:0 0 14px rgba(108,255,176,.35);opacity:0;
+  transition:opacity .4s ease,transform .18s ease-out;mix-blend-mode:screen}
+
+/* ---------- shared chrome ---------- */
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.cap{text-transform:uppercase;letter-spacing:.26em}
+
+#backlink{position:fixed;top:24px;left:28px;z-index:40;font-size:10px;
+  color:var(--mut);transition:color .4s ease;
+  text-shadow:0 1px 16px rgba(4,6,13,.9)}
+#backlink .cap{letter-spacing:.24em}
+#backlink b{font-weight:500;color:var(--ink)}
+#backlink:hover{color:var(--green)}
+
+/* KP readout */
+#kp{position:fixed;top:22px;right:26px;z-index:40;
+  padding:9px 15px;border-radius:11px;background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);
+  font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.06em;color:var(--mut);
+  display:flex;align-items:center;gap:9px;white-space:nowrap;
+  transition:opacity .5s ease,transform .5s ease}
+#kp.hidden{opacity:0;transform:translateY(-10px);pointer-events:none}
+#kp .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 9px var(--green)}
+#kp b{color:var(--ink);font-weight:500}
+#kp .lvl{color:var(--green)}
+
+/* ---------- hero ---------- */
+#hero{position:relative;z-index:10;height:100vh;min-height:560px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 clamp(20px,6vw,84px) clamp(96px,15vh,150px);pointer-events:none}
+#hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(4,6,13,.28) 62%,rgba(4,6,13,.52) 100%);opacity:0}
+#hero .over{font-family:"IBM Plex Mono";font-size:10.5px;color:var(--mut2);
+  margin-bottom:20px;text-shadow:0 1px 14px rgba(4,6,13,.85)}
+#hero h1{font-weight:300;font-size:clamp(78px,20vw,268px);line-height:.86;
+  letter-spacing:.02em;margin-left:-.02em;
+  color:#f2fbff;text-shadow:0 0 90px rgba(108,255,176,.16),0 6px 60px rgba(4,6,13,.7)}
+#hero .coord{font-family:"IBM Plex Mono";font-size:clamp(11px,1.4vw,14px);letter-spacing:.14em;
+  color:var(--teal);margin-top:22px;text-shadow:0 1px 16px rgba(4,6,13,.9)}
+#hero .coord .n{color:var(--mut)}
+#wist{margin-top:26px;max-width:560px;min-height:2.9em;
+  font-size:clamp(16px,2.2vw,22px);font-weight:300;line-height:1.5;color:rgba(234,246,255,.9);
+  text-shadow:0 2px 26px rgba(4,6,13,.85)}
+#wist span{display:inline;opacity:0;transition:opacity 1.1s ease}
+#wist.in span{opacity:1}
+#scrollcue{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);
+  font-family:"IBM Plex Mono";font-size:9.5px;color:var(--mut2);display:flex;flex-direction:column;
+  align-items:center;gap:9px;text-align:center}
+#scrollcue .ln{width:1px;height:34px;background:linear-gradient(var(--mut3),transparent);position:relative;overflow:hidden}
+#scrollcue .ln::after{content:"";position:absolute;top:0;left:0;width:100%;height:40%;
+  background:linear-gradient(var(--green),transparent);animation:drip 2.4s cubic-bezier(.5,0,.5,1) infinite}
+@keyframes drip{0%{transform:translateY(-100%)}60%,100%{transform:translateY(260%)}}
+
+/* ---------- controls dock ---------- */
+#dock{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:45;
+  display:flex;align-items:center;gap:0;padding:10px 12px;border-radius:16px;
+  background:var(--glass);border:1px solid var(--glass-edge);
+  backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);max-width:calc(100vw - 32px);
+  transition:opacity .5s ease,transform .5s ease}
+#dock.hidden{opacity:0;transform:translateX(-50%) translateY(20px);pointer-events:none}
+.grp{display:flex;flex-direction:column;gap:6px;padding:2px 15px}
+.grp+.grp{border-left:1px solid var(--line)}
+.grp .lab{font-family:"IBM Plex Mono";font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2)}
+.grp .row{display:flex;align-items:center;gap:9px}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:104px;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--green) var(--fill,50%),rgba(120,200,220,.16) var(--fill,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+  background:#eafff5;box-shadow:0 0 10px rgba(108,255,176,.7);cursor:grab;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border:none;border-radius:50%;
+  background:#eafff5;box-shadow:0 0 10px rgba(108,255,176,.7);cursor:grab}
+.val{font-family:"IBM Plex Mono";font-size:10px;color:var(--mut);min-width:30px;text-align:right}
+
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{font-family:"IBM Plex Mono";font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 9px;color:var(--mut2);transition:color .3s,background .3s;white-space:nowrap}
+.seg button.on{color:#04060d;font-weight:500}
+.seg button[data-p="green"].on{background:var(--green)}
+.seg button[data-p="violet"].on{background:var(--violet)}
+.seg button[data-p="red"].on{background:var(--crimson)}
+.seg button:not(.on):hover{color:var(--ink)}
+
+.iconbtn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;
+  color:var(--mut);transition:color .3s,border-color .3s,background .3s}
+.iconbtn:hover{color:var(--ink);border-color:var(--glass-edge)}
+.iconbtn.on{color:var(--green);border-color:rgba(108,255,176,.4)}
+.iconbtn svg{width:15px;height:15px}
+
+/* ---------- scrolling content ---------- */
+main{position:relative;z-index:10}
+.section{position:relative;background:var(--night);
+  padding:clamp(90px,15vh,180px) clamp(20px,7vw,120px)}
+.section.sci{border-top:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(4,6,13,.4) 0%,var(--night) 22%)}
+.kick{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--green);margin-bottom:26px;display:flex;align-items:center;gap:12px}
+.kick::before{content:"";width:30px;height:1px;background:var(--green);opacity:.6}
+.sci h2{font-weight:300;font-size:clamp(30px,5.2vw,64px);line-height:1.04;letter-spacing:-.01em;
+  max-width:15ch;color:#f2fbff}
+.sci h2 em{font-style:normal;color:var(--green)}
+.lede{margin-top:34px;max-width:60ch;font-size:clamp(17px,2vw,21px);font-weight:300;line-height:1.62;
+  color:rgba(234,246,255,.82)}
+.body{margin-top:56px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:44px 60px;max-width:1000px}
+.body p{font-size:clamp(15px,1.55vw,17px);font-weight:300;line-height:1.72;color:rgba(226,240,255,.72)}
+.body p b{color:var(--ink);font-weight:400}
+.g{color:var(--green)}.v{color:var(--violet)}.r{color:var(--crimson)}.a{color:var(--amber)}
+
+.spectra{margin-top:72px;border-top:1px solid var(--line);padding-top:40px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:26px;max-width:1000px}
+.spec .em{font-family:"IBM Plex Mono";font-size:clamp(20px,3vw,30px);font-weight:500;letter-spacing:-.01em}
+.spec .nm{font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mut2);margin-top:8px}
+.spec .desc{font-size:13px;font-weight:300;line-height:1.5;color:var(--mut);margin-top:10px}
+
+/* pull quote band */
+.quote{position:relative;z-index:10;background:var(--night);text-align:center;
+  padding:clamp(80px,14vh,160px) clamp(24px,8vw,140px)}
+.quote p{font-weight:300;font-size:clamp(24px,3.8vw,44px);line-height:1.28;letter-spacing:-.01em;
+  max-width:20ch;margin:0 auto;color:#eaf6ff}
+.quote .att{font-family:"IBM Plex Mono";font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mut2);margin-top:34px}
+
+/* footer */
+footer{position:relative;z-index:10;background:var(--night);border-top:1px solid var(--line);
+  padding:clamp(70px,10vh,120px) clamp(20px,7vw,120px) 48px}
+footer .big{font-weight:300;font-size:clamp(56px,14vw,180px);line-height:.9;letter-spacing:.02em;
+  color:#f2fbff;text-shadow:0 0 70px rgba(108,255,176,.12)}
+footer .meta{margin-top:44px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:26px;
+  border-top:1px solid var(--line);padding-top:30px;
+  font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.05em;color:var(--mut2)}
+footer .meta a{color:var(--mut);transition:color .3s}
+footer .meta a:hover{color:var(--green)}
+footer .meta .col{display:flex;flex-direction:column;gap:9px}
+footer .meta b{color:var(--ink);font-weight:500}
+
+/* fallback */
+#nogl{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+  text-align:center;padding:40px;background:var(--night)}
+#nogl p{max-width:440px;font-size:20px;font-weight:300;line-height:1.6;color:var(--mut)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:820px){
+  #hero{padding:0 22px clamp(104px,18vh,140px)}
+  #hero::after{opacity:1}
+  #hero h1{font-size:clamp(62px,17vw,112px)}
+  #hero .coord{margin-top:18px}
+  #wist{margin-top:20px;font-size:clamp(15px,4.4vw,19px)}
+  .body{grid-template-columns:1fr;gap:30px}
+  .spectra{grid-template-columns:repeat(2,1fr);gap:24px}
+  #kp{top:16px;right:14px;font-size:9.5px;padding:7px 11px}
+  #backlink{top:18px;left:18px}
+  #dock{padding:8px 4px;bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .grp{padding:2px 9px}
+  .grp .val{display:none}
+  input[type=range]{width:78px}
+  .grp.starGrp{display:none}
+  #cursor{display:none}
+  #scrollcue{display:none}
+}
+@media (max-width:430px){
+  #dock{border-radius:14px;gap:0}
+  .grp .lab{font-size:7.5px}
+  .seg button{padding:6px 8px;font-size:8.5px}
+  input[type=range]{width:82px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  #scrollcue .ln::after{animation:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  #wist span{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<canvas id="gl" aria-label="Live aurora borealis over a northern lake"></canvas>
+<div id="veil"></div>
+<div id="grain"></div>
+<div id="cursor"></div>
+
+<a id="backlink" href="/" aria-label="Back to XAVIER FABLE ×35 gallery"><span class="cap">XAVIER <b>FABLE</b> ×35</span></a>
+
+<div id="kp" class="mono" aria-live="off">
+  <span class="dot"></span><span>KP <b id="kpVal">5.4</b></span><span class="lvl" id="kpLvl">G1 · active</span>
+</div>
+
+<!-- HERO -->
+<header id="hero">
+  <div class="over mono">N°35 · 68.4°N 18.8°E · Abisko sky · live shader</div>
+  <h1>AURORA</h1>
+  <div class="coord mono">68.4°N 18.8°E <span class="n">— above the tree line</span></div>
+  <div id="wist"><span></span></div>
+  <div id="scrollcue" class="mono"><span>the science, below</span><span class="ln"></span></div>
+</header>
+
+<!-- CONTROLS -->
+<div id="dock" role="group" aria-label="Aurora controls">
+  <div class="grp">
+    <span class="lab">Intensity · calm → storm</span>
+    <div class="row"><input id="intensity" type="range" min="0" max="100" value="52" aria-label="Aurora intensity"><span class="val mono" id="intVal">calm</span></div>
+  </div>
+  <div class="grp">
+    <span class="lab">Palette</span>
+    <div class="row"><div class="seg" id="pal" role="tablist" aria-label="Palette">
+      <button data-p="green" class="on" role="tab" aria-selected="true">Green</button>
+      <button data-p="violet" role="tab" aria-selected="false">Violet</button>
+      <button data-p="red" role="tab" aria-selected="false">Red</button>
+    </div></div>
+  </div>
+  <div class="grp starGrp">
+    <span class="lab">Stars</span>
+    <div class="row"><input id="stars" type="range" min="0" max="100" value="60" aria-label="Star density"><span class="val mono" id="starVal">·</span></div>
+  </div>
+  <div class="grp">
+    <span class="lab">Sky</span>
+    <div class="row">
+      <button id="playBtn" class="iconbtn on" aria-label="Play or pause" aria-pressed="true">
+        <svg id="playIco" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+      </button>
+      <button id="droneBtn" class="iconbtn" aria-label="Ambient drone" aria-pressed="false" title="Ambient drone (off)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path id="wave1" d="M15.5 8.5a5 5 0 0 1 0 7"/><path id="wave2" d="M18.5 6a9 9 0 0 1 0 12"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main>
+  <section class="section sci">
+    <div class="kick reveal">What you are actually seeing</div>
+    <h2 class="reveal">A spark thrown off the meeting of a <em>star</em> and a <em>shield</em>.</h2>
+    <p class="lede reveal">The colour overhead is not paint and not fire. It is a collision — ninety-three million miles in the making — that you happened to be standing under.</p>
+    <div class="body">
+      <p class="reveal">The sun is always exhaling. Roughly <b>a million tonnes</b> of charged particles leave it every second and ride outward on the <b>solar wind</b>, crossing the dark between us at some four hundred kilometres a second.</p>
+      <p class="reveal">Earth meets them with a magnetic field — an invisible shield that bends the stream around the planet and funnels the strays down toward the poles, where the shield dips inward and finally touches the top of the air.</p>
+      <p class="reveal">A hundred kilometres up, those particles strike <b>oxygen</b> and <b>nitrogen</b>. Each atom takes the blow, holds it for a fraction of a second, then hands the energy back as a single note of <b>light</b>.</p>
+      <p class="reveal">Oxygen answers in <b class="g">green</b>, and — higher, thinner, rarer — in deep <b class="r">red</b>. Nitrogen fringes the falling curtains <b class="v">violet</b>. Every ribbon is the visible edge of atoms relaxing, all at once, in the cold.</p>
+    </div>
+    <div class="spectra">
+      <div class="spec reveal"><div class="em g">557.7</div><div class="nm">nm · oxygen</div><div class="desc">The green that arrives first, and always. Emitted near 100–150 km.</div></div>
+      <div class="spec reveal"><div class="em r">630.0</div><div class="nm">nm · oxygen</div><div class="desc">The rare high crimson, far above the green, on the biggest nights.</div></div>
+      <div class="spec reveal"><div class="em v">427.8</div><div class="nm">nm · nitrogen</div><div class="desc">The violet-blue fringe at the lower, fast-fading edge of a curtain.</div></div>
+      <div class="spec reveal"><div class="em" style="color:var(--teal)">400</div><div class="nm">km/s · solar wind</div><div class="desc">The speed of the breath that had to leave a star to reach this lake.</div></div>
+    </div>
+  </section>
+
+  <section class="quote">
+    <p class="reveal">You wait for the cold to mean something. Tonight, at last, it does.</p>
+    <div class="att reveal">field note — 02:14, ice still holding</div>
+  </section>
+</main>
+
+<footer>
+  <div class="big reveal">AURORA</div>
+  <div class="meta">
+    <div class="col">
+      <b>A night that answers.</b>
+      <span>68.4°N 18.8°E — above the tree line</span>
+    </div>
+    <div class="col">
+      <span>Real-time aurora, stars &amp; lake mirror</span>
+      <span>rendered live in a single fragment shader</span>
+    </div>
+    <div class="col">
+      <span>Xavier Fable ×35 — a study in northern light</span>
+      <a href="/">← back to the gallery</a>
+    </div>
+  </div>
+</footer>
+
+<div id="nogl"><p>This sky is drawn in real time and needs WebGL2 — which your browser did not offer. Come back with another window, and wait in the cold again.</p></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================================
+   AURORA — a night that answers
+   Full-scene fragment shader (WebGL2): domain-warped auroral curtains with
+   vertical ray structure + substorm pulses, a twinkling star field & Milky
+   Way, silhouetted pine ridge + a warm-windowed cabin, and a still lake that
+   mirrors the sky with rippled reflection. Single fullscreen triangle.
+   ========================================================================= */
+
+const cv = document.getElementById('gl');
+const gl = cv.getContext('webgl2', { antialias:false, depth:false, stencil:false, alpha:false, powerPreference:'high-performance' });
+if (!gl) { document.getElementById('nogl').style.display = 'flex'; return; }
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params = new URLSearchParams(location.search);
+const small = Math.min(innerWidth, innerHeight) < 620;
+
+/* -------------------- shaders -------------------- */
+const VS = `#version 300 es
+void main(){
+  float x = float((gl_VertexID & 1) << 2) - 1.0;
+  float y = float((gl_VertexID & 2) << 1) - 1.0;
+  gl_Position = vec4(x, y, 0.0, 1.0);
+}`;
+
+const FS = `#version 300 es
+precision highp float;
+out vec4 O;
+
+uniform vec2  uRes;
+uniform float uAspect;
+uniform float uTime;
+uniform float uIntensity;   // ~0.35 .. 1.55
+uniform float uStars;       // 0 .. 1
+uniform int   uPalette;     // 0 green, 1 violet, 2 red
+uniform int   uLayers;      // curtain count
+uniform vec2  uMouse;       // 0..1, y up
+uniform float uMInf;        // mouse influence 0..1
+uniform float uWaterY;      // waterline (fraction of height)
+
+const float PI = 3.14159265;
+
+/* ---- noise ---- */
+float h21(vec2 p){ p = fract(p*vec2(123.34,345.45)); p += dot(p, p+34.345); return fract(p.x*p.y); }
+float h11(float n){ return fract(sin(n*91.3458)*47453.5453); }
+float vnoise(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  vec2 u = f*f*(3.0-2.0*f);
+  float a = h21(i), b = h21(i+vec2(1,0)), c = h21(i+vec2(0,1)), d = h21(i+vec2(1,1));
+  return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+}
+float fbm(vec2 p){
+  float s = 0.0, a = 0.55;
+  for(int i=0;i<4;i++){ s += a*vnoise(p); p = p*2.02 + 11.3; a *= 0.5; }
+  return s;
+}
+
+/* ---- aurora vertical colour gradient (0 bottom .. 1 top) ---- */
+vec3 auroraColor(float t){
+  t = clamp(t, 0.0, 1.0);
+  vec3 magenta = vec3(0.72,0.36,1.00);
+  vec3 green   = vec3(0.40,1.00,0.66);
+  vec3 teal    = vec3(0.26,0.92,0.84);
+  vec3 crimson = vec3(1.00,0.28,0.42);
+  vec3 c;
+  if(uPalette==0){
+    c = mix(magenta, green, smoothstep(0.02,0.30,t));
+    c = mix(c, teal,        smoothstep(0.34,0.74,t));
+    c = mix(c, mix(teal,crimson,0.45), smoothstep(0.86,1.0,t));
+  } else if(uPalette==1){
+    vec3 vio = vec3(0.60,0.30,1.00), pink = vec3(0.98,0.44,0.96), gr = vec3(0.46,0.92,0.80);
+    c = mix(pink, vio, smoothstep(0.0,0.42,t));
+    c = mix(c, mix(vio,gr,0.42), smoothstep(0.42,0.80,t));
+    c = mix(c, vec3(0.58,0.52,1.0), smoothstep(0.82,1.0,t));
+  } else {
+    c = mix(vec3(0.60,0.92,0.58), green, smoothstep(0.0,0.24,t));
+    c = mix(c, mix(green,crimson,0.62), smoothstep(0.34,0.68,t));
+    c = mix(c, crimson, smoothstep(0.70,1.0,t));
+  }
+  return c;
+}
+
+/* ---- auroral curtains ---- */
+vec3 aurora(vec2 sk){
+  // sk.x horizontal (aspect-scaled), sk.y = normalised height above horizon
+  float sh = sk.y;
+  if(sh <= 0.001) return vec3(0.0);
+  float sx = sk.x;
+  float t  = uTime;
+
+  // global folding warp
+  float warp = fbm(vec2(sx*1.5 + t*0.045, sh*1.3 - t*0.028));
+  float sxw  = sx + (warp-0.5)*0.40;
+
+  // wind drift + cursor bias
+  float mx   = (uMouse.x-0.5)*uAspect*1.55;
+  float wind = 0.11*sin(t*0.07) + (uMouse.x-0.5)*0.30*uMInf;
+
+  vec3 acc = vec3(0.0);
+  for(int i=0;i<10;i++){
+    if(i>=uLayers) break;
+    float fi   = float(i);
+    float seed = fi*23.13 + 4.7;
+    float baseX = (h11(fi*1.71)-0.5)*2.7;
+    float fold  = fbm(vec2(sh*1.6 + seed, t*0.05 + seed*0.31));
+    float cx    = baseX + (fold-0.5)*1.15 + wind;
+    float d     = sxw - cx;
+
+    // horizontal curtain profile: bright narrow core, small halo, dark gaps
+    float w    = 30.0 + 22.0*h11(fi*3.31);
+    float core = exp(-d*d*w);
+    float halo = exp(-d*d*w*0.16)*0.32;
+
+    // vertical ray streaks: mostly x-varying -> long vertical striations, high contrast
+    float rays = fbm(vec2(sxw*11.0 + seed*2.0, sh*0.42 + t*0.03));
+    float rayAmt = 0.18 + 1.25*pow(rays, 1.7);
+
+    // bright lower "hem" border + rays fading upward (differing lengths)
+    float hemH  = 0.05 + 0.09*h11(fi*5.17) + (fbm(vec2(sxw*3.0+seed,1.7))-0.5)*0.05;
+    float aH    = sh - hemH;
+    float border = exp(-aH*aH*300.0);
+    float topN   = fbm(vec2(sxw*4.2 + seed, 3.1));
+    float bodyUp = smoothstep(-0.03,0.0,aH)*exp(-max(aH,0.0)*(1.5+2.3*topN));
+    float vert   = border*0.85 + bodyUp;
+
+    // travelling substorm pulse
+    float pulse = 0.5 + 0.5*sin(t*0.55 - sh*3.1 + fi*1.27 + sxw*0.85);
+
+    // cursor energises nearby curtains
+    float near = exp(-(cx-mx)*(cx-mx)*2.6);
+    float boost = 1.0 + uMInf*near*1.6;
+
+    float amp = (core*1.1 + halo)*vert*rayAmt*(0.35+0.9*pulse)*boost;
+    acc += auroraColor(clamp(sh*1.15, 0.0, 1.0)) * amp;
+  }
+
+  // faint overhead corona (rays converging near zenith)
+  float cor = smoothstep(0.74,1.0,sh);
+  float corRay = pow(fbm(vec2(sxw*12.0, sh*0.4 + t*0.04)), 1.5);
+  acc += auroraColor(0.62)*cor*corRay*0.18;
+
+  return acc * uIntensity;
+}
+
+/* ---- star field ---- */
+float starLayer(vec2 uv, float cells, float dens, float tw){
+  vec2 sp = vec2(uv.x*uAspect, uv.y)*cells;
+  vec2 id = floor(sp), f = fract(sp);
+  float rnd = h21(id);
+  if(rnd > dens) return 0.0;
+  vec2 pos = vec2(h21(id+1.3), h21(id+2.7))*0.7 + 0.15;
+  float dd = length(f - pos);
+  float bri = pow(h21(id+5.1), 3.2);
+  float tk  = 0.55 + 0.45*sin(uTime*tw*(0.6+1.7*h21(id+7.7)) + rnd*6.28);
+  float s = smoothstep(0.09, 0.0, dd)*bri*tk;
+  s += smoothstep(0.02,0.0,dd)*bri*0.6; // hard core
+  return s;
+}
+
+/* ---- shooting stars ---- */
+vec3 shooting(vec2 uv){
+  vec3 c = vec3(0.0);
+  for(int i=0;i<2;i++){
+    float period = 8.5 + float(i)*4.5;
+    float idx = floor(uTime/period + float(i)*0.37);
+    if(h11(idx*1.7 + float(i)*5.0) < 0.5) continue;
+    float life = fract(uTime/period + float(i)*0.37)*period;
+    float dur = 1.15;
+    if(life > dur) continue;
+    float p = life/dur;
+    vec2 start = vec2(h11(idx*2.1)*0.8+0.1, 0.72+0.22*h11(idx*3.3));
+    float ang = -0.55 - h11(idx*4.1)*0.55;
+    vec2 dir = vec2(cos(ang), sin(ang));
+    vec2 head = start + dir*p*0.55;
+    vec2 a = head - dir*0.09, b = head;
+    vec2 pa = uv-a, ba = b-a;
+    float hh = clamp(dot(pa,ba)/dot(ba,ba), 0.0, 1.0);
+    float dseg = length(pa - ba*hh);
+    float streak = smoothstep(0.0035, 0.0, dseg)*hh;
+    float fade = smoothstep(1.0,0.55,p)*smoothstep(0.0,0.08,p);
+    c += vec3(0.85,0.95,1.0)*streak*fade*1.4;
+  }
+  return c;
+}
+
+/* ---- silhouette ridge (tree line + low mountain) ---- */
+float treeH(float x){
+  float base = 0.028 + 0.018*sin(x*1.7+0.6) + 0.013*vnoise(vec2(x*2.2, 1.0));
+  // a low mountain mass on the left horizon
+  float mtn  = 0.10*smoothstep(-1.0,-0.28,x)*(1.0-smoothstep(-0.28,0.20,x))*(0.7+0.3*vnoise(vec2(x*1.4, 3.0)));
+  // large-scale envelope: clusters of taller/shorter forest, natural gaps
+  float env = 0.45 + 0.85*vnoise(vec2(x*1.4 + 5.0, 0.0));
+  // pine comb — teeth count scales with aspect so they stay a sensible size on mobile
+  float freq = 8.0 + 16.0*uAspect;
+  float t = x*freq; float cell = floor(t), f = fract(t);
+  // pointier firs: sharpen the triangle a touch
+  float pine = (0.018 + 0.044*h11(cell*0.123))*pow(max(1.0-abs(f-0.5)*2.0, 0.0), 0.85);
+  float t2 = (x+0.013)*freq*1.8; float c2 = floor(t2), f2 = fract(t2);
+  float pine2 = (0.011 + 0.028*h11(c2*0.321))*pow(max(1.0-abs(f2-0.5)*2.0, 0.0), 0.85);
+  return base + mtn + max(pine, pine2)*env;
+}
+float ridgeY(float x){ return uWaterY + treeH(x); }
+
+/* ---- cabin (body + roof + warm window) ---- */
+void cabin(vec2 p, out float body, out float win){
+  body = 0.0; win = 0.0;
+  float cx = 0.185;
+  vec2 q = vec2((p.x-cx)*uAspect, p.y-uWaterY);
+  float w = 0.020, hgt = 0.024;
+  float bx = step(abs(q.x), w)*step(0.0, q.y)*step(q.y, hgt);
+  float roofH = 0.016;
+  float rt = (q.y-hgt)/roofH;
+  float roof = step(0.0, q.y-hgt)*step(q.y-hgt, roofH)*step(abs(q.x), w*1.15*(1.0-clamp(rt,0.0,1.0)));
+  body = max(bx, roof);
+  vec2 wc = vec2(0.007, hgt*0.52);
+  win = step(abs(q.x-wc.x), 0.005)*step(abs(q.y-wc.y), 0.0075);
+}
+
+/* ---- night sky base + everything above the horizon ---- */
+vec3 skyColor(vec2 uv){
+  float sh = (uv.y - uWaterY)/(1.0 - uWaterY);
+  float camPan = 0.06*sin(uTime*0.024);
+
+  // base gradient
+  vec3 col = mix(vec3(0.015,0.023,0.050), vec3(0.010,0.016,0.038), clamp(sh,0.0,1.0));
+  // horizon airglow (faint teal-green)
+  col += vec3(0.018,0.055,0.050)*exp(-sh*7.0)*0.7;
+
+  // milky way band
+  float band = uv.y - (0.62 + 0.17*(uv.x-0.5));
+  float mw = exp(-band*band/0.011);
+  float mwTex = fbm(vec2(uv.x*8.0+10.0, uv.y*8.0));
+  col += vec3(0.075,0.088,0.135)*mw*(0.30+0.80*mwTex);
+
+  // stars (two parallax layers)
+  float dens = 0.55 + uStars*0.40;
+  vec2 pv = vec2(uv.x + camPan*0.18, uv.y);
+  float st = starLayer(pv, 78.0, dens, 1.4) + starLayer(vec2(uv.x+camPan*0.30, uv.y), 128.0, dens*0.85, 2.1)*0.8;
+  st += starLayer(pv, 78.0, dens, 1.4)*mw*0.5; // denser along milky way
+  st *= smoothstep(0.0,0.06,sh); // no stars under horizon glow
+  col += vec3(0.86,0.92,1.0)*st;
+
+  // shooting stars
+  col += shooting(uv);
+
+  // aurora
+  vec2 sk = vec2((uv.x-0.5)*uAspect*1.55 + camPan, sh);
+  col += aurora(sk);
+
+  return col;
+}
+
+/* ---- world above water (sky OR silhouette) at a given uv ---- */
+vec3 aboveWater(vec2 p){
+  float rid = ridgeY(p.x);
+  float body, win; cabin(p, body, win);
+  vec3 sil = vec3(0.007,0.011,0.021);
+  // faint aurora rim on the tree tops
+  float rim = exp(-max(rid - p.y, 0.0)*90.0)*0.5;
+  sil += vec3(0.05,0.14,0.11)*rim;
+
+  if(win > 0.5) return vec3(1.0,0.62,0.24)*2.4;         // warm window
+  if(body > 0.5) return sil;                            // cabin body/roof
+  if(p.y < rid) return sil;                             // tree/mountain line
+
+  vec3 sky = skyColor(p);
+  // soft amber halo around the cabin window bleeding into the night
+  vec2 wq = vec2((p.x-0.185)*uAspect, p.y-uWaterY-0.0125);
+  float halo = exp(-dot(wq,wq)*130.0);
+  sky += vec3(1.0,0.64,0.28)*halo*0.85;
+  return sky;
+}
+
+/* ---- lake reflection ---- */
+vec3 lake(vec2 uv){
+  float depth = uWaterY - uv.y;                 // >0 downward
+  // ripples: horizontal smear grows toward the viewer
+  float r1 = sin(uv.x*46.0 + uTime*0.8) + sin(uv.x*23.0 - uTime*0.5 + 1.7);
+  float r2 = fbm(vec2(uv.x*10.0, uv.y*34.0 - uTime*0.35));
+  float amp = 0.0018 + depth*0.062;
+  float dx = (r1*0.25 + (r2-0.5))*amp;
+  float dy = (fbm(vec2(uv.x*18.0+3.0, uTime*0.22))-0.5)*amp*0.5;
+  vec2 p = vec2(uv.x + dx, uWaterY + depth + dy);
+  p.y = max(p.y, uWaterY + 0.0008);
+  vec3 refl = aboveWater(p);
+  refl *= exp(-depth*0.95);                       // darken with distance (keep aurora glow)
+  vec3 tint = vec3(0.010,0.020,0.036);
+  refl = mix(refl, tint, clamp(0.10 + depth*0.70, 0.0, 0.66));
+  // subtle surface glint near shore
+  refl += vec3(0.05,0.12,0.11)*exp(-depth*40.0)*0.35;
+  return refl;
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec3 col = (uv.y >= uWaterY) ? aboveWater(uv) : lake(uv);
+
+  // vignette
+  vec2 q = uv - 0.5; q.x *= uAspect;
+  col *= 1.0 - 0.42*smoothstep(0.30, 1.15, dot(q,q));
+
+  // filmic tonemap (let highlights bloom to white)
+  col = vec3(1.0) - exp(-col*1.28);
+  col = pow(col, vec3(0.9)); // slight lift
+
+  // dither vs banding
+  col += (h21(gl_FragCoord.xy + fract(uTime)) - 0.5)/220.0;
+
+  O = vec4(col, 1.0);
+}`;
+
+/* -------------------- GL setup -------------------- */
+function compile(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+let prog;
+try {
+  prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+} catch(e){ console.error('shader', e); document.getElementById('nogl').style.display='flex'; return; }
+gl.useProgram(prog);
+
+const U = {};
+['uRes','uAspect','uTime','uIntensity','uStars','uPalette','uLayers','uMouse','uMInf','uWaterY']
+  .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+
+/* -------------------- state -------------------- */
+const state = {
+  intensity: 1.0,
+  stars: 0.6,
+  palette: 0,
+  playing: !reduced,
+  simTime: 24.0,      // start on a composed frame
+  mouseX: 0.5, mouseY: 0.6, mInf: 0,
+};
+
+// query overrides (for screenshots / deep links)
+const palMap = { green:0, violet:1, red:2 };
+if (params.has('palette')) state.palette = palMap[params.get('palette')] ?? 0;
+if (params.has('intensity')) state.intensity = 0.35 + Math.max(0,Math.min(1,+params.get('intensity')))*1.2;
+if (params.has('stars')) state.stars = Math.max(0,Math.min(1,+params.get('stars')));
+if (params.has('t')) state.simTime = +params.get('t');
+const forceStatic = params.has('static') || reduced;
+if (forceStatic) state.playing = false;
+
+let dprCap = small ? 1.5 : 2;
+let renderScale = small ? 0.62 : 0.82;   // heavy shader -> render below native
+let waterY = 0.32;
+
+function resize(){
+  const aspect = innerWidth / innerHeight;
+  waterY = aspect < 1.0 ? 0.26 : 0.325;
+  const dpr = Math.min(devicePixelRatio||1, dprCap) * renderScale;
+  const w = Math.max(2, Math.round(innerWidth*dpr));
+  const h = Math.max(2, Math.round(innerHeight*dpr));
+  if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0,0,w,h); }
+  gl.uniform2f(U.uRes, w, h);
+  gl.uniform1f(U.uAspect, innerWidth/innerHeight);
+  gl.uniform1f(U.uWaterY, waterY);
+  gl.uniform1i(U.uLayers, small ? 6 : 8);
+}
+addEventListener('resize', resize);
+resize();
+
+/* -------------------- render -------------------- */
+function draw(){
+  gl.uniform1f(U.uTime, state.simTime);
+  gl.uniform1f(U.uIntensity, state.intensity);
+  gl.uniform1f(U.uStars, state.stars);
+  gl.uniform1i(U.uPalette, state.palette);
+  gl.uniform2f(U.uMouse, state.mouseX, state.mouseY);
+  gl.uniform1f(U.uMInf, state.mInf);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+let last = performance.now(), running = true;
+function frame(now){
+  if (!running) return;
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now-last)/1000); last = now;
+  if (state.playing) state.simTime += dt;
+  state.mInf *= Math.pow(0.12, dt);            // decay cursor influence
+  if (state.mInf < 0.002) state.mInf = 0;
+  draw();
+}
+
+if (forceStatic){
+  draw();                                       // single breathtaking frame
+} else {
+  requestAnimationFrame(frame);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){ running = false; }
+  else if (!running && !forceStatic){ running = true; last = performance.now(); requestAnimationFrame(frame); }
+});
+
+/* -------------------- interaction: cursor influences sky -------------------- */
+const curEl = document.getElementById('cursor');
+if (!forceStatic && !small){
+  addEventListener('pointermove', e => {
+    state.mouseX = e.clientX/innerWidth;
+    state.mouseY = 1 - e.clientY/innerHeight;
+    state.mInf = Math.min(1, state.mInf + 0.10);
+    curEl.style.opacity = e.clientY < innerHeight*0.9 ? '1' : '0';
+    curEl.style.transform = `translate(${e.clientX}px,${e.clientY}px)`;
+  }, { passive:true });
+  addEventListener('pointerleave', () => curEl.style.opacity = '0');
+}
+
+/* -------------------- controls -------------------- */
+const $ = id => document.getElementById(id);
+const intInput = $('intensity'), starInput = $('stars');
+const intVal = $('intVal'), starVal = $('starVal');
+const kpVal = $('kpVal'), kpLvl = $('kpLvl'), kpDot = document.querySelector('#kp .dot');
+
+function setFill(el){ const p = (el.value-el.min)/(el.max-el.min)*100; el.style.setProperty('--fill', p+'%'); }
+
+function intensityLabel(v){
+  if (v < 0.62) return 'calm';
+  if (v < 0.95) return 'stirring';
+  if (v < 1.25) return 'active';
+  return 'storm';
+}
+function updateKP(){
+  // KP index flavour derived from intensity (0.35..1.55 -> ~1..9)
+  const kp = ((state.intensity - 0.35)/1.2)*8.2 + 0.8;
+  kpVal.textContent = kp.toFixed(1);
+  let lvl = 'quiet', col = 'var(--teal)';
+  if (kp >= 7){ lvl = 'G3 · severe'; col = 'var(--crimson)'; }
+  else if (kp >= 6){ lvl = 'G2 · strong'; col = 'var(--violet)'; }
+  else if (kp >= 5){ lvl = 'G1 · active'; col = 'var(--green)'; }
+  else if (kp >= 3.5){ lvl = 'unsettled'; col = 'var(--teal)'; }
+  else { lvl = 'quiet'; col = 'var(--mut)'; }
+  kpLvl.textContent = lvl; kpLvl.style.color = col; kpDot.style.background = col; kpDot.style.boxShadow = '0 0 9px '+col;
+}
+function refreshStatic(){ if (forceStatic) draw(); }
+
+intInput.addEventListener('input', () => {
+  state.intensity = 0.35 + (+intInput.value/100)*1.2;
+  intVal.textContent = intensityLabel(state.intensity);
+  setFill(intInput); updateKP(); refreshStatic();
+});
+starInput.addEventListener('input', () => {
+  state.stars = +starInput.value/100;
+  starVal.textContent = state.stars < .34 ? 'few' : state.stars < .7 ? 'many' : 'dense';
+  setFill(starInput); refreshStatic();
+});
+
+// palette
+const palBtns = [...document.querySelectorAll('#pal button')];
+function selPal(p){
+  state.palette = palMap[p];
+  palBtns.forEach(b => { const on = b.dataset.p===p; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  refreshStatic();
+}
+palBtns.forEach(b => b.addEventListener('click', () => selPal(b.dataset.p)));
+
+// play / pause
+const playBtn = $('playBtn'), playIco = $('playIco');
+const ICO_PLAY = '<path d="M7 4l13 8-13 8V4z"/>';
+const ICO_PAUSE = '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+function setPlay(on){
+  state.playing = on;
+  playBtn.classList.toggle('on', on); playBtn.setAttribute('aria-pressed', on);
+  playIco.innerHTML = on ? ICO_PAUSE : ICO_PLAY;
+  if (on && !running && !forceStatic){ running = true; last = performance.now(); requestAnimationFrame(frame); }
+}
+playBtn.addEventListener('click', () => setPlay(!state.playing));
+
+/* -------------------- ambient drone (WebAudio, gesture-gated, off) -------------------- */
+const droneBtn = $('droneBtn');
+let audioCtx = null, droneOn = false, droneNodes = null;
+function buildDrone(){
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  const master = audioCtx.createGain(); master.gain.value = 0; master.connect(audioCtx.destination);
+  const lp = audioCtx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=520; lp.Q.value=0.6; lp.connect(master);
+  const freqs = [55, 82.41, 110, 164.81];
+  const oscs = freqs.map((f,i) => {
+    const o = audioCtx.createOscillator(); o.type = i%2? 'sine':'triangle'; o.frequency.value = f*(1 + (Math.random()-.5)*0.004);
+    const g = audioCtx.createGain(); g.gain.value = i===0?0.5:0.22/(i);
+    o.connect(g); g.connect(lp); o.start();
+    // slow shimmer LFO
+    const lfo = audioCtx.createOscillator(); lfo.frequency.value = 0.03 + i*0.017;
+    const lg = audioCtx.createGain(); lg.gain.value = 0.10; lfo.connect(lg); lg.connect(g.gain); lfo.start();
+    return o;
+  });
+  droneNodes = { master };
+}
+droneBtn.addEventListener('click', async () => {
+  if (!audioCtx) buildDrone();
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  droneOn = !droneOn;
+  droneBtn.classList.toggle('on', droneOn);
+  droneBtn.setAttribute('aria-pressed', droneOn);
+  droneBtn.title = 'Ambient drone ('+(droneOn?'on':'off')+')';
+  const now = audioCtx.currentTime;
+  droneNodes.master.gain.cancelScheduledValues(now);
+  droneNodes.master.gain.setTargetAtTime(droneOn?0.14:0.0, now, 1.2);
+});
+
+/* -------------------- wistful cycling copy -------------------- */
+const wistLines = [
+  "Two in the morning. The lake has not moved in hours. Neither have we.",
+  "You wait for the cold to mean something. Tonight, it does.",
+  "Nothing, nothing, nothing — and then the whole sky leans down to answer.",
+  "We stopped checking the forecast. The sky keeps its own time.",
+  "Green first. Always green first. Then the colours you came to doubt.",
+];
+const wistEl = $('wist'), wistSpan = wistEl.querySelector('span');
+let wi = 0;
+wistSpan.textContent = wistLines[0];
+if (!reduced){
+  requestAnimationFrame(() => wistEl.classList.add('in'));
+  setInterval(() => {
+    wistEl.classList.remove('in');
+    setTimeout(() => { wi = (wi+1)%wistLines.length; wistSpan.textContent = wistLines[wi]; wistEl.classList.add('in'); }, 1100);
+  }, 6200);
+} else {
+  wistEl.classList.add('in');
+}
+
+/* -------------------- reveals on scroll -------------------- */
+if (!reduced && 'IntersectionObserver' in window){
+  const io = new IntersectionObserver((es) => {
+    es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.16 });
+  document.querySelectorAll('.reveal').forEach((el,i) => { el.style.transitionDelay = (i%4*70)+'ms'; io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+}
+
+/* -------------------- init labels -------------------- */
+setFill(intInput); setFill(starInput);
+intVal.textContent = intensityLabel(state.intensity);
+starVal.textContent = state.stars < .34 ? 'few' : state.stars < .7 ? 'many' : 'dense';
+updateKP();
+
+// reflect query overrides into UI
+intInput.value = Math.round((state.intensity-0.35)/1.2*100); setFill(intInput); intVal.textContent = intensityLabel(state.intensity);
+starInput.value = Math.round(state.stars*100); setFill(starInput);
+if (state.palette){ const key = Object.keys(palMap).find(k=>palMap[k]===state.palette); selPal(key); }
+if (forceStatic) setPlay(false);
+
+// hide the control dock + KP readout once we scroll into the reading sections
+const dockEl = document.getElementById('dock'), kpEl = document.getElementById('kp');
+let hidChrome = false;
+function onScroll(){
+  const hide = scrollY > innerHeight*0.62;
+  if (hide === hidChrome) return;
+  hidChrome = hide;
+  dockEl.classList.toggle('hidden', hide);
+  kpEl.classList.toggle('hidden', hide);
+  if (hide) curEl.style.opacity = '0';
+}
+addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+
+// optional deep-scroll for screenshots: ?scroll=0.5
+if (params.has('scroll')){
+  addEventListener('load', () => {
+    const f = Math.max(0,Math.min(1,+params.get('scroll')));
+    scrollTo(0, (document.body.scrollHeight - innerHeight)*f);
+  });
+}
+})();
+</script>
+</body>
+</html>

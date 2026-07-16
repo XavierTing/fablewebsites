@@ -5,10 +5,10 @@ import { execSync } from 'child_process';
 
 const ROOT = '/Users/xavierting/Desktop/Xavier Agentic Workflow/Website Inspiration/fable-x25';
 const BASE = 'http://localhost:8899';
-const slugs = ['01-liquid-metal','02-terrain','03-cosmos','04-origami','05-kinetic-type','06-brutalist-mag','07-type-clock','08-ascii','09-terminal','10-synth','11-ink','12-fractal','13-fashion','14-noir','15-vapor','16-deco','17-flora','18-annual-report','19-weather','20-generative','21-museum','22-y2k','23-teahouse','24-clay','25-architecture','26-vivarium','27-gravity-poems','28-sleeper','29-arcana','30-orrery'];
+const slugs = ['01-liquid-metal','02-terrain','03-cosmos','04-origami','05-kinetic-type','06-brutalist-mag','07-type-clock','08-ascii','09-terminal','10-synth','11-ink','12-fractal','13-fashion','14-noir','15-vapor','16-deco','17-flora','18-annual-report','19-weather','20-generative','21-museum','22-y2k','23-teahouse','24-clay','25-architecture','26-vivarium','27-gravity-poems','28-sleeper','29-arcana','30-orrery','31-shanshui','32-karesansui','33-jianzhi','34-rain-glass','35-aurora'];
 // per-site extra query params so the shot shows the site "alive"
-const params = { '10-synth':'?awake=1', '27-gravity-poems':'?ch=1&settle=1', '28-sleeper':'?scene=dusk', '29-arcana':'?state=drawn&flip=3' };
-const waits  = { '09-terminal':7000, '20-generative':6500, '11-ink':6000, '04-origami':5000, '26-vivarium':6000, '27-gravity-poems':6000, '28-sleeper':6000, '29-arcana':5000, '30-orrery':5000 };
+const params = { '10-synth':'?awake=1', '27-gravity-poems':'?ch=1&settle=1', '28-sleeper':'?scene=dusk', '29-arcana':'?state=drawn&flip=3', '33-jianzhi':'?unfolded=1&preset=fu', '31-shanshui':'?x=6500' };
+const waits  = { '09-terminal':7000, '20-generative':6500, '11-ink':6000, '04-origami':5000, '26-vivarium':6000, '27-gravity-poems':6000, '28-sleeper':6000, '29-arcana':5000, '30-orrery':5000, '31-shanshui':5000, '32-karesansui':5000, '33-jianzhi':4500, '34-rain-glass':5500, '35-aurora':5000 };
 
 const pages = [
   { url: '/', png: ROOT + '/assets/og.png', dir: ROOT + '/assets' },

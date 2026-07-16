@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nightglass — rain on a window, on the last train home</title>
+<meta name="description" content="A window on a night train home. Real droplet refraction in WebGL: fogged glass, condensation beads, and drops that form, cling and slide — each one a small, upside-down city of light.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×35">
+<meta property="og:title" content="Nightglass — rain on a window, on the last train home">
+<meta property="og:description" content="A window on a night train home. Real droplet refraction in WebGL — fogged glass, condensation beads, and drops that slide and lens the city lights behind them.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/34-rain-glass/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/34-rain-glass/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nightglass — rain on a window, on the last train home">
+<meta name="twitter:description" content="Real droplet refraction in WebGL — fogged glass and sliding drops that lens the city lights behind them.">
+<meta name="twitter:image" content="https://xavierfable30.netlify.app/sites/34-rain-glass/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌧️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --glass:#0a0c10;
+    --amber:#ffb35c;
+    --amber-2:#ff8a4c;
+    --cool:#5fb0d8;
+    --mist:#c7d0dc;
+    --ink:#dfe6ef;
+    --ink-dim:rgba(223,230,239,.58);
+    --ink-faint:rgba(223,230,239,.32);
+    --line:rgba(199,208,220,.14);
+    --pane:rgba(14,18,24,.42);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{
+    background:var(--glass);
+    color:var(--ink);
+    font-family:"Space Grotesk",system-ui,sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    cursor:none;
+  }
+  @media (hover:none){ body{cursor:auto} }
+  ::selection{background:rgba(255,179,92,.85);color:#160c04}
+  ::-webkit-scrollbar{width:9px}
+  ::-webkit-scrollbar-track{background:#07090c}
+  ::-webkit-scrollbar-thumb{background:#1a222c;border-radius:6px;border:2px solid #07090c}
+  ::-webkit-scrollbar-thumb:hover{background:#2a3641}
+  :focus-visible{outline:1px solid var(--amber);outline-offset:3px;border-radius:3px}
+  a{color:inherit}
+
+  /* ---------- canvas ---------- */
+  #glass{
+    position:fixed;inset:0;width:100vw;height:100vh;height:100svh;
+    display:block;z-index:0;background:var(--glass);
+  }
+  .grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- soft cursor ---------- */
+  #cursor{
+    position:fixed;top:0;left:0;z-index:60;pointer-events:none;
+    width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;
+    border:1px solid rgba(199,208,220,.5);
+    box-shadow:inset 0 0 18px rgba(199,208,220,.12), 0 0 12px rgba(95,176,216,.12);
+    transition:width .3s cubic-bezier(.22,.8,.24,1), height .3s cubic-bezier(.22,.8,.24,1), opacity .3s, border-color .3s;
+    mix-blend-mode:screen;opacity:0;
+  }
+  #cursor.on{opacity:1}
+  #cursor.press{width:22px;height:22px;border-color:rgba(255,179,92,.75)}
+  #cursor::after{content:"";position:absolute;inset:0;margin:auto;width:3px;height:3px;border-radius:50%;background:rgba(199,208,220,.7)}
+  @media (hover:none){ #cursor{display:none} }
+
+  /* ---------- back link ---------- */
+  .back{
+    position:fixed;top:20px;left:22px;z-index:50;
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.26em;
+    color:var(--ink-dim);text-decoration:none;padding:6px 2px;
+    transition:color .35s ease;
+  }
+  .back::after{
+    content:"";display:block;height:1px;margin-top:5px;background:var(--amber);
+    transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,.8,.24,1);
+  }
+  .back:hover{color:var(--amber)}
+  .back:hover::after{transform:scaleX(1)}
+
+  /* ---------- info deck (train window sticker) ---------- */
+  .deck{
+    position:fixed;top:18px;right:20px;z-index:50;
+    font-family:"IBM Plex Mono",monospace;
+    text-align:right;line-height:1.55;
+    padding:11px 14px;border-radius:3px;
+    background:linear-gradient(180deg, rgba(15,20,27,.5), rgba(10,13,18,.34));
+    border:1px solid var(--line);
+    box-shadow:0 10px 30px -18px rgba(0,0,0,.9), inset 0 1px 0 rgba(199,208,220,.06);
+    backdrop-filter:blur(7px) saturate(1.05);-webkit-backdrop-filter:blur(7px) saturate(1.05);
+  }
+  .deck .t{font-size:20px;font-weight:500;letter-spacing:.06em;color:var(--ink);font-variant-numeric:tabular-nums}
+  .deck .r{font-size:9.5px;letter-spacing:.24em;color:var(--ink-faint);text-transform:uppercase;margin-top:3px}
+  .deck .r b{color:var(--amber);font-weight:500}
+
+  /* ---------- hero copy ---------- */
+  .hero{
+    position:relative;z-index:20;height:100svh;min-height:560px;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:0 clamp(22px,5vw,80px) clamp(120px,20vh,180px);
+    pointer-events:none;
+  }
+  .kicker{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.42em;
+    text-transform:uppercase;color:var(--amber);opacity:.9;margin-bottom:clamp(16px,3vh,26px);
+    display:flex;align-items:center;gap:12px;
+  }
+  .kicker::before{content:"";width:clamp(28px,5vw,54px);height:1px;background:linear-gradient(90deg,var(--amber),transparent)}
+  h1{
+    font-weight:300;line-height:.9;letter-spacing:-.02em;
+    font-size:clamp(52px,12vw,168px);
+    color:var(--ink);
+    text-shadow:0 2px 40px rgba(0,0,0,.55);
+  }
+  h1 em{font-style:italic;font-weight:300;color:var(--mist);opacity:.92}
+  .lines{
+    min-height:clamp(56px,7vh,58px);position:relative;
+    margin-top:clamp(20px,3.4vh,34px);max-width:44ch;
+  }
+  .lines .ln{
+    position:absolute;left:0;top:0;
+    font-size:clamp(15px,2vw,21px);font-weight:300;line-height:1.4;
+    color:var(--ink-dim);letter-spacing:.005em;
+    opacity:0;transform:translateY(8px);
+    transition:opacity 1.4s ease, transform 1.4s cubic-bezier(.22,.8,.24,1);
+  }
+  .lines .ln.show{opacity:1;transform:none}
+  .scrollcue{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:20;
+    font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.3em;
+    color:var(--ink-faint);text-transform:uppercase;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    transition:opacity .5s;
+  }
+  .scrollcue span{display:block;width:1px;height:26px;background:linear-gradient(180deg,var(--ink-faint),transparent);animation:cue 2.4s ease-in-out infinite}
+  @keyframes cue{0%,100%{transform:scaleY(.4);opacity:.4;transform-origin:top}50%{transform:scaleY(1);opacity:1;transform-origin:top}}
+
+  /* ---------- controls dock ---------- */
+  .dock{
+    position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:55;
+    display:flex;align-items:center;gap:clamp(10px,1.6vw,20px);
+    padding:11px 16px;border-radius:14px;
+    background:linear-gradient(180deg, rgba(18,24,32,.6), rgba(9,12,17,.5));
+    border:1px solid var(--line);
+    box-shadow:0 22px 60px -26px rgba(0,0,0,.95), inset 0 1px 0 rgba(199,208,220,.07);
+    backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px) saturate(1.1);
+  }
+  .ctl{display:flex;flex-direction:column;gap:6px}
+  .ctl .lbl{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint)}
+  .ctl.row{flex-direction:row;align-items:center;gap:9px}
+  .sep{width:1px;height:30px;background:var(--line)}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:clamp(70px,10vw,120px);height:3px;border-radius:3px;
+    background:linear-gradient(90deg,var(--amber) 0%,var(--amber) var(--p,50%),rgba(199,208,220,.18) var(--p,50%));
+    cursor:pointer;outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 4px rgba(255,179,92,.16);cursor:pointer;transition:box-shadow .2s}
+  input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 6px rgba(255,179,92,.24)}
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border:none;border-radius:50%;background:var(--ink);cursor:pointer}
+  .btn{
+    font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-dim);background:rgba(199,208,220,.05);border:1px solid var(--line);
+    padding:8px 12px;border-radius:9px;cursor:pointer;white-space:nowrap;
+    transition:color .25s, border-color .25s, background .25s, transform .1s;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{color:var(--ink);border-color:rgba(255,179,92,.4);background:rgba(255,179,92,.06)}
+  .btn:active{transform:translateY(1px)}
+  .btn .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);opacity:.55;transition:opacity .25s, background .25s}
+  .btn.active .dot{opacity:1}
+  .btn.active{color:var(--ink);border-color:rgba(255,179,92,.5)}
+  .toggle{position:relative;width:52px;height:24px;border-radius:14px;border:1px solid var(--line);background:rgba(199,208,220,.06);cursor:pointer;transition:background .3s}
+  .toggle .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--amber);transition:left .3s cubic-bezier(.22,.8,.24,1), background .3s}
+  .toggle.cool{background:rgba(95,176,216,.12)}
+  .toggle.cool .knob{left:30px;background:var(--cool)}
+  @media (max-width:640px){
+    .dock{gap:10px;padding:9px 12px;bottom:14px;flex-wrap:nowrap;max-width:calc(100vw - 20px);overflow:visible}
+    .ctl .lbl{font-size:7.5px}
+    .dock .hide-sm{display:none}
+    .btn{padding:7px 9px;font-size:9px}
+    .deck{top:16px;right:14px;padding:8px 11px}
+    .deck .t{font-size:16px}
+    .deck .r .lng{display:none}
+    .hero{padding-bottom:150px}
+    .lines{min-height:74px;max-width:none}
+    .lines .ln{font-size:15px}
+    .scrollcue{display:none}
+    .kicker{letter-spacing:.3em}
+  }
+
+  /* ---------- scroll content ---------- */
+  main{position:relative;z-index:20}
+  .prose{
+    max-width:1180px;margin:0 auto;padding:clamp(80px,14vh,150px) clamp(22px,6vw,90px);
+  }
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--amber);margin-bottom:22px}
+  .prose h2{font-weight:300;font-size:clamp(30px,5vw,62px);line-height:1.04;letter-spacing:-.015em;color:var(--ink);max-width:20ch}
+  .prose h2 em{font-style:italic;color:var(--mist)}
+  .lead{font-size:clamp(17px,2.1vw,23px);line-height:1.6;color:var(--ink-dim);max-width:56ch;margin-top:clamp(22px,3.6vh,36px);font-weight:300}
+  .lead + .lead{margin-top:18px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,90px);align-items:start}
+  @media (max-width:820px){ .split{grid-template-columns:1fr;gap:34px} }
+  .panel{
+    background:var(--pane);border:1px solid var(--line);border-radius:16px;
+    padding:clamp(26px,3.5vw,44px);
+    backdrop-filter:blur(9px) saturate(1.05);-webkit-backdrop-filter:blur(9px) saturate(1.05);
+    box-shadow:0 30px 80px -50px rgba(0,0,0,.9), inset 0 1px 0 rgba(199,208,220,.05);
+  }
+  .fieldnotes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,20px);margin-top:clamp(30px,5vh,50px)}
+  @media (max-width:700px){ .fieldnotes{grid-template-columns:1fr} }
+  .note{background:var(--pane);border:1px solid var(--line);border-radius:13px;padding:22px 22px 24px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .4s, transform .4s cubic-bezier(.22,.8,.24,1)}
+  .note:hover{border-color:rgba(255,179,92,.3);transform:translateY(-3px)}
+  .note .n{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.24em;color:var(--ink-faint);text-transform:uppercase}
+  .note .v{font-weight:300;font-size:clamp(28px,4vw,44px);line-height:1;margin:14px 0 10px;color:var(--ink);font-variant-numeric:tabular-nums}
+  .note .v small{font-size:.42em;color:var(--ink-dim);letter-spacing:.02em;margin-left:2px}
+  .note .d{font-size:13.5px;line-height:1.5;color:var(--ink-dim)}
+
+  footer{
+    position:relative;z-index:20;border-top:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(8,10,14,.2), rgba(8,10,14,.72));
+    padding:clamp(50px,8vh,90px) clamp(22px,6vw,90px) clamp(40px,6vh,60px);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  .foot-in{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap}
+  .foot-mark{font-size:clamp(24px,3.4vw,40px);font-weight:300;letter-spacing:-.01em;line-height:1}
+  .foot-mark em{font-style:italic;color:var(--mist)}
+  .foot-sub{font-size:13.5px;color:var(--ink-dim);margin-top:12px;max-width:40ch;line-height:1.55}
+  .foot-meta{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;color:var(--ink-faint);text-align:right;line-height:1.9}
+  .foot-meta a{text-decoration:none;color:var(--ink-dim);transition:color .3s}
+  .foot-meta a:hover{color:var(--amber)}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 1s cubic-bezier(.22,.8,.24,1), transform 1s cubic-bezier(.22,.8,.24,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (prefers-reduced-motion: reduce){
+    .lines .ln{transition:none}
+    .scrollcue span{animation:none}
+    .reveal{transition:none;opacity:1;transform:none}
+  }
+  .noscene{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:2;color:var(--ink-faint);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.2em}
+</style>
+</head>
+<body>
+<canvas id="glass"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div id="cursor" aria-hidden="true"></div>
+<div class="noscene" id="noscene">WEBGL UNAVAILABLE — THE WINDOW IS DARK TONIGHT</div>
+
+<a class="back" href="/">XAVIER FABLE ×35</a>
+
+<div class="deck" aria-label="train window info">
+  <div class="t" id="clock">23:47</div>
+  <div class="r"><span class="lng">Northbound · Car 6 · </span><b id="temp">−4°C</b> outside</div>
+</div>
+
+<div class="hero">
+  <div class="kicker">Nightglass — the last train home</div>
+  <h1>Rain, on <em>glass.</em></h1>
+  <div class="lines" id="lines" aria-live="polite">
+    <div class="ln">Somewhere between the last stop and everything you meant to say.</div>
+    <div class="ln">The city undoes itself into light, and the light into water.</div>
+    <div class="ln">Every drop keeps a small, upside-down city of its own.</div>
+    <div class="ln">Condensation writes on the window, then quietly forgets.</div>
+    <div class="ln">Nobody is waiting at this hour — and tonight, that's alright.</div>
+  </div>
+</div>
+
+<div class="scrollcue" id="scrollcue">Scroll <span></span></div>
+
+<div class="dock" role="group" aria-label="scene controls">
+  <div class="ctl">
+    <div class="lbl">Rain</div>
+    <input id="rain" type="range" min="0" max="100" value="52" aria-label="rain intensity">
+  </div>
+  <div class="sep hide-sm"></div>
+  <button class="btn" id="wipe" title="wipe a streak across the fog">Wipe the glass</button>
+  <div class="sep hide-sm"></div>
+  <div class="ctl row hide-sm">
+    <div class="lbl">Warm</div>
+    <div class="toggle" id="palette" role="switch" aria-checked="false" aria-label="warm or cool city lights" tabindex="0"><div class="knob"></div></div>
+    <div class="lbl">Cool</div>
+  </div>
+  <div class="sep"></div>
+  <button class="btn active" id="play" aria-label="play or pause"><span class="dot"></span><span id="playtxt">Pause</span></button>
+  <button class="btn" id="sound" aria-label="toggle rain sound"><span class="dot" style="background:var(--cool)"></span><span>Sound</span></button>
+</div>
+
+<main>
+  <section class="prose reveal">
+    <div class="eyebrow">01 — The window</div>
+    <h2>A pane of fogged glass is a <em>lens factory.</em></h2>
+    <div class="split">
+      <div>
+        <p class="lead">Breath and cold do the work. The whole surface hazes over — a thousand tiny beads of condensation, each too small to see through, together soft enough to turn a city into a field of warm, drifting bokeh.</p>
+        <p class="lead">Then gravity finds the heavier ones. A drop gathers weight, hesitates at the top of the glass, and slides — swallowing beads as it goes, growing, leaving a clear wet trail where the fog is wiped away.</p>
+      </div>
+      <div class="panel">
+        <p class="lead" style="margin-top:0">Look closely at a single running drop. It is a real lens: it bends and magnifies the lights behind it, flips them, and sharpens what the fog had blurred. A whole city, rendered upside-down, held for a second inside a bead of water.</p>
+        <p class="lead">Every effect on this page is that optics, computed live in a fragment shader — a height-field of drops perturbing the light behind the glass. Drag to wipe the mist. Click to leave a new drop.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="prose reveal">
+    <div class="eyebrow">02 — Northbound, 23:47</div>
+    <h2>The train hums a note it has hummed <em>a thousand nights.</em></h2>
+    <p class="lead">Platforms slide past like slow film. Sodium orange, a stray cyan sign, the amber wash of a window still lit in a tower where someone is also awake. The carriage is warm and nearly empty. You could sleep. You don't. You watch the rain rearrange the skyline, drop by drop, and let the day come apart quietly behind the glass.</p>
+
+    <div class="fieldnotes">
+      <div class="note">
+        <div class="n">Distance home</div>
+        <div class="v" id="fn-dist">38<small>km</small></div>
+        <div class="d">Three stops, one river, and the long dark stretch where the lights thin out.</div>
+      </div>
+      <div class="note">
+        <div class="n">On the glass, now</div>
+        <div class="v"><span id="fn-drops">—</span><small>drops</small></div>
+        <div class="d">Counted live as they form and fall. The fog re-forms the moment you stop wiping.</div>
+      </div>
+      <div class="note">
+        <div class="n">Outside</div>
+        <div class="v">−4<small>°C</small></div>
+        <div class="d">Cold enough that your breath stays on the window a while after you've moved on.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="prose reveal">
+    <div class="eyebrow">03 — The physics of getting home late</div>
+    <h2>Distance is just <em>light, slightly blurred.</em></h2>
+    <p class="lead" style="max-width:60ch">The far things go soft; the near things sharpen and slide away. Somewhere out there is a street you'd know in the dark, a door, a lamp left on. From here it's only a smear of warm colour on cold glass — but you're moving toward it, one drop, one platform, one held breath at a time.</p>
+  </section>
+
+  <footer>
+    <div class="foot-in">
+      <div>
+        <div class="foot-mark">Rain, on <em>glass.</em></div>
+        <div class="foot-sub">A window on a night train home. Real droplet refraction — fog, beads, and sliding lenses — rendered live in WebGL.</div>
+      </div>
+      <div class="foot-meta">
+        NIGHTGLASS · 2026<br>
+        WEBGL · GLSL · SPACE GROTESK<br>
+        <a href="/">← back to XAVIER FABLE ×35</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script type="module">
+import * as THREE from 'three';
+
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const IS_MOBILE = window.matchMedia('(max-width:760px)').matches || ('ontouchstart' in window && window.innerWidth < 900);
+const canvas = document.getElementById('glass');
+
+let renderer;
+try{
+  renderer = new THREE.WebGLRenderer({ canvas, antialias:false, alpha:false, powerPreference:'high-performance', stencil:false, depth:false });
+}catch(e){ renderer = null; }
+if(!renderer || !renderer.getContext()){
+  document.getElementById('noscene').style.display='flex';
+  console.warn('WebGL unavailable');
+}else{
+  boot();
+}
+
+function boot(){
+  const MAX_DROPS = 44;
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const QUALITY = IS_MOBILE ? 0.66 : 0.82;      // ~0.75 render scale
+  let RES = DPR * QUALITY;
+
+  renderer.setClearColor(0x0a0c10, 1);
+  renderer.autoClear = true;
+
+  // ----- fullscreen quad plumbing -----
+  const quadCam = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  const quadGeo = new THREE.PlaneGeometry(2,2);
+  const quadScene = new THREE.Scene();
+  const quadMesh = new THREE.Mesh(quadGeo, null);
+  quadMesh.frustumCulled = false;
+  quadScene.add(quadMesh);
+  function blit(mat, target){
+    quadMesh.material = mat;
+    renderer.setRenderTarget(target || null);
+    renderer.render(quadScene, quadCam);
+  }
+
+  // ----- render targets -----
+  function makeRT(w,h){
+    return new THREE.WebGLRenderTarget(w,h,{
+      minFilter:THREE.LinearFilter, magFilter:THREE.LinearFilter,
+      wrapS:THREE.ClampToEdgeWrapping, wrapT:THREE.ClampToEdgeWrapping,
+      format:THREE.RGBAFormat, type:THREE.UnsignedByteType, depthBuffer:false, stencilBuffer:false
+    });
+  }
+  let W=2, H=2, BW=2, BH=2, ASPECT=1;
+  let sharpRT, blurA, blurB, fogA, fogB;
+
+  function allocTargets(){
+    if(sharpRT){ sharpRT.dispose(); blurA.dispose(); blurB.dispose(); fogA.dispose(); fogB.dispose(); }
+    sharpRT = makeRT(BW,BH);
+    const bw2 = Math.max(2, Math.round(BW/2)), bh2 = Math.max(2, Math.round(BH/2));
+    blurA = makeRT(bw2,bh2);
+    blurB = makeRT(bw2,bh2);
+    fogA = makeRT(BW,BH);
+    fogB = makeRT(BW,BH);
+    // init fog buffers to 0 (fully fogged)
+    renderer.setRenderTarget(fogA); renderer.setClearColor(0x000000,1); renderer.clear();
+    renderer.setRenderTarget(fogB); renderer.clear();
+    renderer.setClearColor(0x0a0c10,1);
+    renderer.setRenderTarget(null);
+  }
+
+  // ================= CITY LIGHTS (sharp background) =================
+  // gradient base
+  const gradMat = new THREE.ShaderMaterial({
+    depthTest:false, depthWrite:false,
+    uniforms:{ uPalette:{value:0}, uTime:{value:0} },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0);}`,
+    fragmentShader:`
+      precision highp float; varying vec2 vUv; uniform float uPalette; uniform float uTime;
+      void main(){
+        float y = vUv.y;
+        // deep night, faint city glow rising from the bottom
+        vec3 top = vec3(0.028,0.036,0.052);
+        vec3 mid = vec3(0.045,0.052,0.070);
+        vec3 lowWarm = vec3(0.115,0.075,0.052);
+        vec3 lowCool = vec3(0.050,0.078,0.098);
+        vec3 low = mix(lowWarm, lowCool, uPalette);
+        vec3 col = mix(low, mid, smoothstep(0.0,0.5,y));
+        col = mix(col, top, smoothstep(0.35,1.0,y));
+        // soft distant city glow near the bottom horizon
+        float g = exp(-pow((y-0.02)*3.6,2.0)) * (0.6+0.4*sin(uTime*0.05));
+        col += mix(vec3(0.08,0.05,0.028), vec3(0.025,0.05,0.07), uPalette) * g * 0.42;
+        gl_FragColor = vec4(col,1.0);
+      }`
+  });
+
+  // instanced bokeh lights
+  const N_LIGHTS = IS_MOBILE ? 90 : 150;
+  const baseQuad = new THREE.PlaneGeometry(1,1);
+  const lightGeo = new THREE.InstancedBufferGeometry();
+  lightGeo.index = baseQuad.index;
+  lightGeo.attributes.position = baseQuad.attributes.position;
+  lightGeo.attributes.uv = baseQuad.attributes.uv;
+  const aBase=[], aSize=[], aSeed=[], aBright=[], aWarm=[], aCool=[], aStretch=[];
+  function rnd(a,b){ return a + Math.random()*(b-a); }
+  const warmSet = [[1.0,0.70,0.36],[1.0,0.54,0.30],[1.0,0.82,0.5],[1.0,0.62,0.28]];
+  const coolSet = [[0.37,0.69,0.85],[0.42,0.82,0.72],[0.55,0.78,0.9],[0.8,0.88,0.7]];
+  for(let i=0;i<N_LIGHTS;i++){
+    aBase.push(rnd(-1.15,1.15), Math.pow(Math.random(),1.18)*2.0-1.0); // slight low bias, still fills upper
+    const streak = Math.random()<0.13;
+    const bright = Math.random()<0.16;               // occasional bright compact "sign" light
+    const sz = streak ? rnd(0.012,0.03) : (bright ? rnd(0.014,0.03) : rnd(0.02,0.07));
+    aSize.push(sz);
+    aStretch.push(streak ? rnd(3.0,7.0) : rnd(0.9,1.15));
+    aSeed.push(Math.random());
+    aBright.push(streak ? rnd(0.3,0.55) : (bright ? rnd(1.3,2.1) : rnd(0.5,1.25)));
+    const w = warmSet[(Math.random()*warmSet.length)|0];
+    const c = coolSet[(Math.random()*coolSet.length)|0];
+    // bias palette: mostly warm sources, some intrinsically cool
+    const coolBias = Math.random()<0.22;
+    aWarm.push(w[0],w[1],w[2]);
+    aCool.push(coolBias? w[0]:c[0], coolBias? w[1]:c[1], coolBias? w[2]:c[2]);
+  }
+  lightGeo.setAttribute('aBase', new THREE.InstancedBufferAttribute(new Float32Array(aBase),2));
+  lightGeo.setAttribute('aSize', new THREE.InstancedBufferAttribute(new Float32Array(aSize),1));
+  lightGeo.setAttribute('aSeed', new THREE.InstancedBufferAttribute(new Float32Array(aSeed),1));
+  lightGeo.setAttribute('aBright', new THREE.InstancedBufferAttribute(new Float32Array(aBright),1));
+  lightGeo.setAttribute('aStretch', new THREE.InstancedBufferAttribute(new Float32Array(aStretch),1));
+  lightGeo.setAttribute('aWarm', new THREE.InstancedBufferAttribute(new Float32Array(aWarm),3));
+  lightGeo.setAttribute('aCool', new THREE.InstancedBufferAttribute(new Float32Array(aCool),3));
+  lightGeo.instanceCount = N_LIGHTS;
+
+  const lightMat = new THREE.ShaderMaterial({
+    transparent:true, depthTest:false, depthWrite:false, blending:THREE.AdditiveBlending,
+    uniforms:{ uTime:{value:0}, uAspect:{value:1}, uPalette:{value:0}, uSpeed:{value:1} },
+    vertexShader:`
+      attribute vec2 aBase; attribute float aSize; attribute float aSeed;
+      attribute float aBright; attribute float aStretch; attribute vec3 aWarm; attribute vec3 aCool;
+      uniform float uTime, uAspect, uPalette, uSpeed;
+      varying vec2 vLocal; varying vec3 vColor; varying float vB;
+      void main(){
+        float t = uTime*uSpeed;
+        vec2 center = aBase;
+        center.x -= t*(0.020 + aSeed*0.018);          // train drift left
+        center.x += sin(t*0.05 + aSeed*6.28)*0.010;
+        center.y += cos(t*0.04 + aSeed*4.7)*0.006;     // gentle bob / sway
+        center.x = mod(center.x+1.3, 2.6) - 1.3;       // wrap
+        float tw = 0.82 + 0.18*sin(t*(0.6+aSeed*1.4)+aSeed*20.0); // twinkle
+        vec2 corner = position.xy;
+        corner.y *= aStretch;
+        vec2 p = center + corner * aSize * vec2(1.0/uAspect, 1.0);
+        vLocal = position.xy * 2.0;
+        vColor = mix(aWarm, aCool, uPalette) * aBright * tw;
+        gl_Position = vec4(p, 0.0, 1.0);
+      }`,
+    fragmentShader:`
+      precision highp float; varying vec2 vLocal; varying vec3 vColor; varying float vB;
+      void main(){
+        float d = length(vLocal);
+        float core = exp(-d*d*4.5);
+        float halo = exp(-d*d*1.3)*0.35;
+        float a = core + halo;
+        gl_FragColor = vec4(vColor*a, a);
+      }`
+  });
+  const lightMesh = new THREE.Mesh(lightGeo, lightMat);
+  lightMesh.frustumCulled = false;
+  const cityScene = new THREE.Scene();
+  const gradMesh = new THREE.Mesh(quadGeo, gradMat);
+  gradMesh.frustumCulled = false; gradMesh.renderOrder = -1;
+  cityScene.add(gradMesh); cityScene.add(lightMesh);
+
+  // ================= BLUR =================
+  const blurMat = new THREE.ShaderMaterial({
+    depthTest:false, depthWrite:false,
+    uniforms:{ uTex:{value:null}, uDir:{value:new THREE.Vector2()}, uRes:{value:new THREE.Vector2()} },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0);}`,
+    fragmentShader:`
+      precision highp float; varying vec2 vUv; uniform sampler2D uTex; uniform vec2 uDir; uniform vec2 uRes;
+      void main(){
+        vec2 px = uDir / uRes;
+        vec3 c = texture2D(uTex, vUv).rgb * 0.227027;
+        c += texture2D(uTex, vUv + px*1.3846).rgb * 0.316216;
+        c += texture2D(uTex, vUv - px*1.3846).rgb * 0.316216;
+        c += texture2D(uTex, vUv + px*3.2308).rgb * 0.070270;
+        c += texture2D(uTex, vUv - px*3.2308).rgb * 0.070270;
+        gl_FragColor = vec4(c,1.0);
+      }`
+  });
+
+  // ================= FOG (persistent, ping-pong) =================
+  const fogDecayMat = new THREE.ShaderMaterial({
+    depthTest:false, depthWrite:false,
+    uniforms:{ uPrev:{value:null}, uRegrow:{value:0.9981} },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0);}`,
+    fragmentShader:`
+      precision highp float; varying vec2 vUv; uniform sampler2D uPrev; uniform float uRegrow;
+      void main(){ float c = texture2D(uPrev, vUv).r * uRegrow; gl_FragColor = vec4(c,c,c,1.0); }`
+  });
+
+  // stamps that clear the fog (cursor wipes + drop trails)
+  const MAX_STAMPS = 512;
+  const stampGeo = new THREE.InstancedBufferGeometry();
+  stampGeo.index = baseQuad.index;
+  stampGeo.attributes.position = baseQuad.attributes.position;
+  stampGeo.attributes.uv = baseQuad.attributes.uv;
+  const stampData = new Float32Array(MAX_STAMPS*4); // x,y,r,strength
+  const stampAttr = new THREE.InstancedBufferAttribute(stampData,4);
+  stampAttr.setUsage(THREE.DynamicDrawUsage);
+  stampGeo.setAttribute('aStamp', stampAttr);
+  stampGeo.instanceCount = 0;
+  const stampMat = new THREE.ShaderMaterial({
+    transparent:true, depthTest:false, depthWrite:false, blending:THREE.AdditiveBlending,
+    uniforms:{ uAspect:{value:1} },
+    vertexShader:`
+      attribute vec4 aStamp; uniform float uAspect; varying vec2 vLocal; varying float vS;
+      void main(){
+        vec2 c = aStamp.xy * 2.0 - 1.0;   // uv->ndc
+        float r = aStamp.z;
+        vec2 corner = position.xy * r * 2.0 * vec2(1.0/uAspect,1.0);
+        vLocal = position.xy*2.0; vS = aStamp.w;
+        gl_Position = vec4(c + corner, 0.0, 1.0);
+      }`,
+    fragmentShader:`
+      precision highp float; varying vec2 vLocal; varying float vS;
+      void main(){ float d=length(vLocal); float a=smoothstep(1.0,0.0,d); a=a*a; gl_FragColor=vec4(a*vS); }`
+  });
+  const stampMesh = new THREE.Mesh(stampGeo, stampMat);
+  stampMesh.frustumCulled = false;
+  const stampScene = new THREE.Scene(); stampScene.add(stampMesh);
+
+  // ================= COMPOSITE =================
+  const compMat = new THREE.ShaderMaterial({
+    depthTest:false, depthWrite:false,
+    uniforms:{
+      uSharp:{value:null}, uBlur:{value:null}, uFog:{value:null},
+      uDrops:{value:Array.from({length:MAX_DROPS},()=>new THREE.Vector3())},
+      uDropCount:{value:0},
+      uAspect:{value:1}, uTime:{value:0}, uRes:{value:new THREE.Vector2()},
+      uScroll:{value:0}, uMoving:{value:1}
+    },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0);}`,
+    fragmentShader:`
+      precision highp float;
+      #define MAX_DROPS ${MAX_DROPS}
+      varying vec2 vUv;
+      uniform sampler2D uSharp, uBlur, uFog;
+      uniform vec3 uDrops[MAX_DROPS];
+      uniform int uDropCount;
+      uniform float uAspect, uTime, uScroll, uMoving;
+      uniform vec2 uRes;
+
+      float hash21(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
+      vec2 hash22(vec2 p){ float n=hash21(p); return vec2(n, hash21(p+n)); }
+
+      void main(){
+        vec2 uv = vUv;
+        // gentle train sway of the whole view
+        uv += vec2(sin(uTime*0.5)*0.0016, cos(uTime*0.37)*0.0011) * uMoving;
+
+        float fog = clamp(texture2D(uFog, uv).r, 0.0, 1.0);
+
+        // ---- find dominant lens (drops + beads) ----
+        float bestX = 2.0;          // normalized distance to center of best lens
+        vec2  bestDir = vec2(0.0);  // aspect-space outward dir
+        float bestR = 0.0;          // radius in uv.y units
+        vec2  bestCenter = uv;
+
+        for(int i=0;i<MAX_DROPS;i++){
+          if(i>=uDropCount) break;
+          vec3 dp = uDrops[i];
+          vec2 d = (uv - dp.xy); d.x *= uAspect;
+          float rr = length(d);
+          float x = rr / max(dp.z,1e-4);
+          if(x < 1.0 && x < bestX){ bestX=x; bestDir=d/max(rr,1e-5); bestR=dp.z; bestCenter=dp.xy; }
+        }
+
+        // condensation beads on fogged glass (hashed grid in aspect space)
+        float bw = 1.0 - fog;
+        if(bw > 0.06){
+          float cells = ${IS_MOBILE ? '26.0':'34.0'};
+          vec2 g = vec2(uv.x*uAspect, uv.y)*cells;
+          vec2 gid = floor(g);
+          for(int oy=-1;oy<=1;oy++){
+            for(int ox=-1;ox<=1;ox++){
+              vec2 id = gid + vec2(float(ox),float(oy));
+              vec2 rnd = hash22(id);
+              if(rnd.x < 0.62){                    // not every cell has a bead
+                vec2 cg = id + 0.2 + 0.6*rnd;
+                float brg = 0.10 + 0.20*hash21(id+7.1);
+                vec2 d = g - cg;
+                float rr = length(d);
+                float x = rr/brg;
+                if(x < 1.0 && x < bestX){
+                  bestX = x; bestDir = d/max(rr,1e-5); bestR = brg/cells;
+                  bestCenter = vec2((cg.x/cells)/uAspect, cg.y/cells);
+                }
+              }
+            }
+          }
+        }
+
+        // ---- lens refraction ----
+        vec2 refrUV = uv;
+        float dropMask = 0.0;
+        float spec = 0.0;
+        float edge = 0.0;
+        if(bestX < 1.0){
+          float x = bestX;
+          float slope = x / sqrt(1.0 - min(x*x, 0.985));
+          slope = min(slope, 9.0);
+          vec2 dirUv = normalize(vec2(bestDir.x/uAspect, bestDir.y) + 1e-6);
+          // a real drop is a converging lens: it captures the light behind it,
+          // magnifies it and flips it. Build an inverted, zoomed sample centred on the drop.
+          vec2 toC = uv - bestCenter;
+          vec2 lensUV = bestCenter - toC * (0.60 + bestR*3.0);      // inverted + magnified
+          lensUV -= dirUv * slope * bestR * 0.20;                    // edge bending
+          refrUV = mix(uv, lensUV, smoothstep(1.0,0.7,x));
+          dropMask = smoothstep(1.0, 0.80, x);
+          edge = smoothstep(0.5,1.0,x);
+          // specular from an upper-left light
+          vec3 nrm = normalize(vec3(bestDir * x, 1.0));
+          vec3 L = normalize(vec3(-0.55,0.72,0.65));
+          spec = pow(max(dot(nrm,L),0.0), 44.0) * (1.0-edge);
+        }
+
+        vec3 sharpPlain = texture2D(uSharp, uv).rgb;
+        vec3 sharpRefr  = texture2D(uSharp, clamp(refrUV,0.001,0.999)).rgb;
+        vec3 blurCol    = texture2D(uBlur, uv).rgb;
+
+        // wiped glass shows the sharp view; fogged glass shows blur
+        vec3 base = mix(blurCol, sharpPlain, fog);
+        // inside a drop: the refracted (lensed, sharpened, brighter) view
+        vec3 lensed = sharpRefr * 1.22 + sharpRefr*sharpRefr*0.35;
+        vec3 col = mix(base, lensed, dropMask);
+
+        // glassy depth: darken toward the drop edge, brighten a touch inside
+        col *= 1.0 - 0.34*dropMask*edge;
+        col += col * 0.12 * dropMask * (1.0-edge);
+        // bright refractive rim
+        col += vec3(0.55,0.62,0.72) * dropMask * edge * 0.12;
+        // lower meniscus: a bright refracted crescent opposite the light source
+        float men = smoothstep(0.82,1.0,bestX) * smoothstep(0.0,0.7,-bestDir.y);
+        col += vec3(0.70,0.76,0.88) * men * dropMask * 0.09;
+        // specular glint (cool white), upper-left
+        col += vec3(0.78,0.84,0.95) * spec * 0.9;
+
+        // condensation micro-grain, only on fog
+        float grain = hash21(uv*uRes + uTime*60.0);
+        col += (grain-0.5) * 0.028 * bw;
+        // faint cool cast of cold glass over fogged areas
+        col = mix(col, col*vec3(0.92,0.96,1.03)+vec3(0.006,0.008,0.012), bw*0.5);
+
+        // vignette
+        vec2 vc = (vUv-0.5);
+        vc.x *= 1.06;
+        float vig = smoothstep(0.95, 0.25, dot(vc,vc)*1.4);
+        col *= mix(0.42, 1.0, vig);
+
+        // dim as content scrolls over the glass
+        col *= mix(1.0, 0.4, uScroll);
+
+        // subtle filmic lift/clip
+        col = max(col, 0.0);
+        col = col/(col+0.86)*1.86;
+        gl_FragColor = vec4(col, 1.0);
+      }`
+  });
+
+  // ================= SIMULATION =================
+  const state = {
+    rain: 0.52,
+    palette: 0,          // 0 warm .. 1 cool
+    paletteTarget: 0,
+    playing: !REDUCED,
+    scroll: 0,
+    time: 0,
+  };
+  const drops = [];      // active large drops
+  let pointer = { x:0.5, y:0.5, px:0.5, py:0.5, active:false, inside:false };
+
+  function spawnDrop(x,y,big){
+    if(drops.length >= MAX_DROPS-1) return;
+    drops.push({
+      x, y,
+      r: big ? rnd(0.024,0.044) : rnd(0.011,0.024),
+      vy: 0, wob: Math.random()*6.28, seed:Math.random(),
+      sliding: false, slideThresh: rnd(0.026,0.04), age:0
+    });
+  }
+
+  const stampList = [];
+  function addStamp(x,y,r,s){
+    if(stampList.length >= MAX_STAMPS) return;
+    stampList.push(x,y,r,s);
+  }
+
+  function seedCondensationDrops(){
+    // hero drops of varied sizes for a full-looking pane
+    const n = 12 + Math.round(state.rain*14);
+    for(let i=0;i<n;i++) spawnDrop(rnd(0.04,0.96), rnd(0.05,0.9), Math.random()<0.35);
+    // a few already sliding, mid-pane, so trails are visible immediately
+    for(let k=0;k<3;k++){
+      const d = drops[(Math.random()*drops.length)|0];
+      if(d){ d.sliding=true; d.r=rnd(0.03,0.045); d.y=rnd(0.35,0.6); d.vy=rnd(0.08,0.16); }
+    }
+  }
+
+  function stepDrops(dt){
+    // spawn toward a target count driven by rain intensity
+    const target = Math.round(8 + state.rain*26);
+    if(drops.length < target && Math.random() < (0.05 + state.rain*0.5)){
+      spawnDrop(rnd(0.03,0.97), rnd(0.02,0.4), Math.random()<0.3);
+    }
+    for(let i=drops.length-1;i>=0;i--){
+      const d = drops[i];
+      d.age += dt;
+      if(!d.sliding){
+        // clinging: grow slowly as condensation gathers
+        d.r += dt * (0.0022 + state.rain*0.006) * (0.6+d.seed);
+        if(d.r > d.slideThresh && Math.random() < 0.7){ d.sliding = true; }
+      } else {
+        d.vy += dt * (0.12 + d.r*9.0);           // heavier drops accelerate more
+        d.vy = Math.min(d.vy, 0.6);
+        const prevY = d.y, prevX = d.x;
+        d.y += d.vy * dt;
+        d.wob += dt*2.0;
+        d.x += Math.sin(d.wob + d.seed*10.0) * dt * 0.013;
+        // grow as it consumes beads it passes over
+        d.r += dt * 0.008 * (0.5+state.rain);
+        d.r = Math.min(d.r, 0.06);
+        // deposit clear trail (wipes fog) between prev and current position
+        const segs = Math.max(1, Math.round((d.y-prevY)/0.005));
+        for(let s=1;s<=segs;s++){
+          const t=s/segs;
+          addStamp(prevX+(d.x-prevX)*t, prevY+(d.y-prevY)*t, d.r*0.7, 0.6);
+        }
+      }
+      if(d.y > 1.06 || d.r < 0.0005){ drops.splice(i,1); }
+    }
+    // keep a base of clinging drops around
+    const clingers = drops.filter(d=>!d.sliding).length;
+    if(clingers < 8 && Math.random()<0.35) spawnDrop(rnd(0.04,0.96), rnd(0.05,0.85), Math.random()<0.3);
+  }
+
+  // ----- upload drops to uniform + stamps to geometry -----
+  function uploadDrops(){
+    const arr = compMat.uniforms.uDrops.value;
+    const n = Math.min(drops.length, MAX_DROPS);
+    for(let i=0;i<n;i++){ arr[i].set(drops[i].x, drops[i].y, drops[i].r); }
+    compMat.uniforms.uDropCount.value = n;
+  }
+  function uploadStamps(){
+    const n = Math.min(stampList.length/4, MAX_STAMPS);
+    for(let i=0;i<n*4;i++){ stampData[i] = stampList[i]; }
+    stampAttr.needsUpdate = true;
+    stampGeo.instanceCount = n;
+  }
+
+  // ================= SIZE =================
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    RES = Math.min(window.devicePixelRatio||1,2) * QUALITY;
+    BW = Math.max(2, Math.round(W*RES));
+    BH = Math.max(2, Math.round(H*RES));
+    ASPECT = BW/BH;
+    renderer.setSize(BW,BH,false);
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    allocTargets();
+    lightMat.uniforms.uAspect.value = ASPECT;
+    stampMat.uniforms.uAspect.value = ASPECT;
+    compMat.uniforms.uAspect.value = ASPECT;
+    compMat.uniforms.uRes.value.set(BW,BH);
+    blurMat.uniforms.uRes.value.set(Math.round(BW/2), Math.round(BH/2));
+  }
+  window.addEventListener('resize', ()=>{ clearTimeout(window.__rz); window.__rz=setTimeout(resize,120); });
+
+  // ================= RENDER =================
+  function renderScene(dt){
+    state.time += dt;
+    // palette ease
+    state.palette += (state.paletteTarget - state.palette) * Math.min(1, dt*3.0);
+
+    // 1) city (sharp)
+    gradMat.uniforms.uTime.value = state.time;
+    gradMat.uniforms.uPalette.value = state.palette;
+    lightMat.uniforms.uTime.value = state.time;
+    lightMat.uniforms.uPalette.value = state.palette;
+    renderer.setRenderTarget(sharpRT);
+    renderer.clear();
+    renderer.render(cityScene, quadCam);
+
+    // 2) blur (down to half, H then V)
+    blurMat.uniforms.uTex.value = sharpRT.texture;
+    blurMat.uniforms.uDir.value.set(1,0);
+    blit(blurMat, blurA);
+    blurMat.uniforms.uTex.value = blurA.texture;
+    blurMat.uniforms.uDir.value.set(0,1);
+    blit(blurMat, blurB);
+    // second heavier pass
+    blurMat.uniforms.uTex.value = blurB.texture;
+    blurMat.uniforms.uDir.value.set(2.2,0);
+    blit(blurMat, blurA);
+    blurMat.uniforms.uTex.value = blurA.texture;
+    blurMat.uniforms.uDir.value.set(0,2.2);
+    blit(blurMat, blurB);
+
+    // 3) fog update: decay (fogA->fogB) then stamp additively into fogB
+    fogDecayMat.uniforms.uPrev.value = fogA.texture;
+    blit(fogDecayMat, fogB);
+    uploadStamps();
+    if(stampGeo.instanceCount > 0){
+      renderer.setRenderTarget(fogB);
+      renderer.render(stampScene, quadCam);
+    }
+    // swap
+    const t = fogA; fogA = fogB; fogB = t;
+
+    // 4) composite to screen
+    uploadDrops();
+    compMat.uniforms.uSharp.value = sharpRT.texture;
+    compMat.uniforms.uBlur.value = blurB.texture;
+    compMat.uniforms.uFog.value = fogA.texture;
+    compMat.uniforms.uTime.value = state.time;
+    compMat.uniforms.uScroll.value = state.scroll;
+    blit(compMat, null);
+  }
+
+  // ================= LOOP =================
+  let last = performance.now(), rafId=null, running=false, hidden=false;
+  function frame(now){
+    if(!running) return;
+    let dt = (now-last)/1000; last=now;
+    dt = Math.min(dt, 0.05);
+    // continuous soft wipe under the moving cursor (like a hand near the glass)
+    if(pointer.inside){
+      const dx=pointer.x-pointer.px, dy=pointer.y-pointer.py;
+      const dist=Math.hypot(dx,dy);
+      const steps=Math.max(1, Math.round(dist/0.01));
+      const str = pointer.active ? 0.5 : 0.16;
+      const rad = pointer.active ? 0.05 : 0.035;
+      for(let s=1;s<=steps;s++){ const t=s/steps; addStamp(pointer.px+dx*t, pointer.py+dy*t, rad, str); }
+      pointer.px=pointer.x; pointer.py=pointer.y;
+    }
+    stepDrops(dt);
+    renderScene(dt);
+    stampList.length = 0;
+    rafId = requestAnimationFrame(frame);
+  }
+  function start(){ if(running||hidden||!state.playing) return; running=true; last=performance.now(); rafId=requestAnimationFrame(frame); }
+  function stop(){ running=false; if(rafId) cancelAnimationFrame(rafId); rafId=null; }
+
+  document.addEventListener('visibilitychange', ()=>{
+    hidden = document.hidden;
+    if(hidden) stop(); else if(state.playing && !REDUCED) start();
+  });
+
+  // ================= POINTER =================
+  const cursorEl = document.getElementById('cursor');
+  function toUV(clientX, clientY){ return { x: clientX / W, y: 1 - clientY / H }; }
+  window.addEventListener('pointermove', (e)=>{
+    const u = toUV(e.clientX, e.clientY);
+    pointer.x=u.x; pointer.y=u.y;
+    if(!pointer.inside){ pointer.px=u.x; pointer.py=u.y; pointer.inside=true; }
+    // over glass region (above the fold roughly) — always allow, canvas is fixed full-screen
+    if(cursorEl){ cursorEl.style.transform=`translate(${e.clientX}px,${e.clientY}px)`; cursorEl.classList.add('on'); }
+  }, {passive:true});
+  window.addEventListener('pointerdown', (e)=>{
+    pointer.active=true; cursorEl && cursorEl.classList.add('press');
+    const u=toUV(e.clientX,e.clientY); spawnDrop(u.x, u.y, true);
+    addStamp(u.x,u.y,0.05,0.6);
+    ensureAudioResume();
+  });
+  window.addEventListener('pointerup', ()=>{ pointer.active=false; cursorEl && cursorEl.classList.remove('press'); });
+  window.addEventListener('pointerleave', ()=>{ pointer.inside=false; cursorEl && cursorEl.classList.remove('on'); });
+  // touch: treat drags as wipes + spawn on tap
+  window.addEventListener('touchmove',(e)=>{ if(e.touches[0]){ const t=e.touches[0]; const u=toUV(t.clientX,t.clientY); pointer.x=u.x;pointer.y=u.y; pointer.inside=true; pointer.active=true; } }, {passive:true});
+  window.addEventListener('touchend', ()=>{ pointer.active=false; });
+
+  // ================= UI =================
+  const rain=document.getElementById('rain'), wipeBtn=document.getElementById('wipe'),
+        paletteTgl=document.getElementById('palette'), playBtn=document.getElementById('play'),
+        playTxt=document.getElementById('playtxt'), soundBtn=document.getElementById('sound');
+
+  function setRange(el){ el.style.setProperty('--p', el.value+'%'); }
+  setRange(rain);
+  rain.addEventListener('input', ()=>{ state.rain = rain.value/100; setRange(rain); });
+
+  function doWipe(){
+    // animated hand-swipe clearing a wide streak
+    const y0 = 0.62 + Math.random()*0.12;
+    const dir = Math.random()<0.5?1:-1;
+    const obj={t:0};
+    const run = (tt)=>{
+      const x = dir>0 ? tt : 1-tt;
+      const y = y0 + Math.sin(tt*Math.PI)*0.05;
+      for(let k=0;k<3;k++) addStamp(x, y-0.06+k*0.06, 0.075, 0.7);
+    };
+    if(window.gsap){ gsap.to(obj,{t:1,duration:0.75,ease:'power2.inOut',onUpdate:()=>run(obj.t)}); }
+    else { let s=0; const iv=setInterval(()=>{ s+=0.06; run(s); if(s>=1) clearInterval(iv); },16); }
+  }
+  wipeBtn.addEventListener('click', doWipe);
+
+  function togglePalette(){
+    state.paletteTarget = state.paletteTarget>0.5?0:1;
+    paletteTgl.classList.toggle('cool', state.paletteTarget>0.5);
+    paletteTgl.setAttribute('aria-checked', state.paletteTarget>0.5?'true':'false');
+  }
+  paletteTgl.addEventListener('click', togglePalette);
+  paletteTgl.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); togglePalette(); } });
+
+  playBtn.addEventListener('click', ()=>{
+    state.playing = !state.playing;
+    playBtn.classList.toggle('active', state.playing);
+    playTxt.textContent = state.playing ? 'Pause' : 'Play';
+    if(state.playing) start(); else stop();
+  });
+
+  // ================= AUDIO (filtered noise rain, off by default) =================
+  let audio=null, audioOn=false;
+  function buildAudio(){
+    const AC = window.AudioContext||window.webkitAudioContext; if(!AC) return null;
+    const ctx = new AC();
+    const bufSize = 2*ctx.sampleRate;
+    const noiseBuf = ctx.createBuffer(1,bufSize,ctx.sampleRate);
+    const data = noiseBuf.getChannelData(0);
+    let b0=0,b1=0,b2=0;
+    for(let i=0;i<bufSize;i++){ const white=Math.random()*2-1; b0=0.99*b0+white*0.05; b1=0.96*b1+white*0.06; b2=0.90*b2+white*0.08; data[i]=(b0+b1+b2)*0.4; }
+    const src = ctx.createBufferSource(); src.buffer=noiseBuf; src.loop=true;
+    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1050; lp.Q.value=0.4;
+    const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=320;
+    const g = ctx.createGain(); g.gain.value=0;
+    src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(ctx.destination);
+    src.start();
+    return {ctx, g};
+  }
+  function ensureAudioResume(){ if(audio && audio.ctx.state==='suspended') audio.ctx.resume(); }
+  soundBtn.addEventListener('click', ()=>{
+    if(!audio) audio = buildAudio();
+    if(!audio) return;
+    audioOn = !audioOn;
+    if(audio.ctx.state==='suspended') audio.ctx.resume();
+    if(window.gsap) gsap.to(audio.g.gain,{value: audioOn?0.09:0, duration:1.2, ease:'sine.inOut'});
+    else audio.g.gain.value = audioOn?0.09:0;
+    soundBtn.classList.toggle('active', audioOn);
+  });
+
+  // ================= COPY CYCLE =================
+  const lineEls = [...document.querySelectorAll('#lines .ln')];
+  let li=0;
+  function cycleLines(){
+    lineEls.forEach((el,i)=>el.classList.toggle('show', i===li));
+    li=(li+1)%lineEls.length;
+  }
+  if(!REDUCED){ cycleLines(); setInterval(cycleLines, 5200); }
+  else { lineEls[0].classList.add('show'); }
+
+  // clock + live drop count
+  const clockEl=document.getElementById('clock'), fnDrops=document.getElementById('fn-drops');
+  function tick(){
+    // fictional slow clock near midnight
+    const base = new Date(2026,0,1,23,47,0);
+    base.setSeconds(base.getSeconds() + Math.floor(state.time)*1);
+    const hh=String(base.getHours()).padStart(2,'0'), mm=String(base.getMinutes()).padStart(2,'0');
+    clockEl.textContent = `${hh}:${mm}`;
+    if(fnDrops) fnDrops.textContent = drops.length;
+  }
+  setInterval(tick, 1000);
+
+  // scroll dim + reveals
+  const revEls=[...document.querySelectorAll('.reveal')];
+  const io = new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:0.14});
+  revEls.forEach(el=>io.observe(el));
+  const scrollcue=document.getElementById('scrollcue');
+  function onScroll(){
+    const s = Math.min(1, window.scrollY / (window.innerHeight*0.9));
+    state.scroll = s;
+    if(scrollcue) scrollcue.style.opacity = s>0.05 ? '0':'1';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  // screenshot helper: ?y=<px> jumps the page for capturing scrolled states
+  const _y = new URLSearchParams(location.search).get('y');
+  if(_y){ requestAnimationFrame(()=>{ window.scrollTo(0, parseInt(_y,10)||0); onScroll(); }); }
+
+  // ================= INIT =================
+  resize();
+  seedCondensationDrops();
+
+  if(REDUCED){
+    // static beautiful frame: seed drops + a couple of trails, render a few settle frames, then stop
+    for(let i=0;i<10;i++) spawnDrop(rnd(0.06,0.94), rnd(0.05,0.85), Math.random()<0.4);
+    // pre-carve two slid trails
+    for(let k=0;k<2;k++){
+      const x=rnd(0.25,0.75); for(let y=0.15;y<0.9;y+=0.02) addStamp(x+Math.sin(y*20)*0.006, y, 0.02, 0.5);
+    }
+    for(let f=0;f<40;f++){ renderScene(0.016); stampList.length=0; }
+    playBtn.classList.remove('active'); playTxt.textContent='Play';
+  } else {
+    // warm up: a few silent frames so drops/beads exist immediately
+    for(let f=0;f<6;f++){ stepDrops(0.05); renderScene(0.03); stampList.length=0; }
+    start();
+  }
+  onScroll();
+  window.__nightglass = { state, drops };
+}
+</script>
+</body>
+</html>
