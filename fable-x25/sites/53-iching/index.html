@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>易經 · THE BOOK OF CHANGES — cast the coins</title>
+<meta name="description" content="An I Ching oracle by candlelight. Hold a question, cast three bronze coins six times, and read your hexagram — its judgment, image, moving lines, and the hexagram it is changing into.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×55">
+<meta property="og:title" content="易經 · THE BOOK OF CHANGES — cast the coins">
+<meta property="og:description" content="Hold a question, cast three bronze coins six times, and read your hexagram — its judgment, image, moving lines, and what it is changing into.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="易經 · THE BOOK OF CHANGES — cast the coins">
+<meta name="twitter:description" content="Consult the I Ching by candlelight. Cast the coins, read the hexagram, follow the changing lines.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2288%22>☯</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e0f14;
+  --ink-2:#090a0e;
+  --night:#12141d;
+  --panel:#14161f;
+  --panel-2:#181b26;
+  --gold:#c9a24b;
+  --gold-b:#ecca7e;
+  --gold-d:rgba(201,162,75,.42);
+  --gold-f:rgba(201,162,75,.18);
+  --hair:rgba(201,162,75,.16);
+  --indigo:#2b3350;
+  --indigo-l:#3d4870;
+  --paper:#ece3cf;
+  --paper-d:rgba(236,227,207,.62);
+  --paper-f:rgba(236,227,207,.36);
+  --bronze-0:#3a2c16;
+  --bronze-1:#7c5a2c;
+  --bronze-2:#b98d4c;
+  --bronze-3:#e2bd76;
+  --serif-sc:"Noto Serif SC",serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --sans:"Space Grotesk",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-o:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--sans);
+  font-weight:300;
+  line-height:1.62;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--gold);color:#120d04}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:var(--ink-2)}
+::-webkit-scrollbar-thumb{background:#231d12;border-radius:6px;border:2px solid var(--ink-2)}
+::-webkit-scrollbar-thumb:hover{background:#372c19}
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:3px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--gold);text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3{font-weight:400;line-height:1.04}
+
+/* ---------- atmosphere ---------- */
+.bg-field{position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 8%, #171a26 0%, #0d0e15 46%, #08090d 100%),
+    var(--ink);}
+.bg-field::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 55% at 50% 40%, rgba(201,162,75,.06), transparent 62%);}
+.grain{position:fixed;inset:-40%;width:180%;height:180%;pointer-events:none;z-index:80;opacity:.42;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.82 0 0 0 0 0.72 0 0 0 0 0.5 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:79;
+  background:radial-gradient(ellipse 92% 82% at 50% 40%,transparent 52%,rgba(3,3,6,.62) 100%)}
+.candle{position:fixed;left:50%;top:34%;width:150vmin;height:150vmin;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:-1;
+  background:radial-gradient(circle,rgba(236,202,126,.10) 0%,rgba(201,162,75,.045) 30%,transparent 60%);
+  animation:flicker 6.5s ease-in-out infinite alternate}
+@keyframes flicker{0%{opacity:.78}30%{opacity:1}55%{opacity:.72}80%{opacity:.92}100%{opacity:.8}}
+
+/* ---------- bagua motif ---------- */
+.bagua{position:absolute;left:50%;top:50%;width:min(78vh,760px);height:min(78vh,760px);
+  transform:translate(-50%,-50%);pointer-events:none;z-index:0;opacity:.5}
+.bagua .ring{position:absolute;inset:0;border:1px solid var(--gold-f);border-radius:50%}
+.bagua .ring.r2{inset:9%;border-color:rgba(201,162,75,.10)}
+.bagua .ring.r3{inset:22%;border-style:dashed;border-color:rgba(201,162,75,.07)}
+.bagua .spin{position:absolute;inset:0;animation:spin 140s linear infinite}
+.bagua .tg{position:absolute;left:50%;top:50%;font-size:clamp(20px,2.4vw,30px);color:var(--gold);
+  opacity:.4;transform-origin:0 0}
+.bagua .taiji{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-size:clamp(30px,5vw,58px);color:var(--gold-d);opacity:.3}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- cursor ---------- */
+.cur{position:fixed;left:0;top:0;width:7px;height:7px;border-radius:50%;background:var(--gold-b);
+  z-index:300;pointer-events:none;opacity:0;transform:translate(-50%,-50%);
+  box-shadow:0 0 10px rgba(236,202,126,.7);transition:width .25s var(--ease),height .25s var(--ease),opacity .3s,background .25s}
+.cur.on{opacity:.9}
+.cur.hov{width:26px;height:26px;background:transparent;border:1px solid var(--gold-d)}
+@media(pointer:fine){body.cur-live,body.cur-live a,body.cur-live button,body.cur-live input{cursor:none}}
+
+/* ---------- back-link ---------- */
+.backlink{position:fixed;top:20px;left:22px;z-index:200;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.30em;text-transform:uppercase;
+  color:var(--gold-d);padding:8px 4px;transition:color .4s var(--ease)}
+.backlink .yi{font-family:var(--serif-sc);font-size:15px;letter-spacing:0;color:var(--gold-d);transition:color .4s}
+.backlink:hover,.backlink:hover .yi{color:var(--gold-b)}
+
+/* progress */
+.prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+  background:linear-gradient(90deg,var(--gold-d),var(--gold-b));box-shadow:0 0 8px rgba(201,162,75,.4)}
+
+/* ---------- layout ---------- */
+section{position:relative}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);opacity:.85}
+.kicker .dot{color:var(--gold-d);margin:0 .55em}
+.eyebrow-sc{font-family:var(--serif-sc);letter-spacing:.16em}
+
+/* ---------- ORACLE / altar ---------- */
+#oracle{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:clamp(54px,6.5vh,84px) 20px clamp(40px,5vh,64px);overflow:hidden}
+.altar{position:relative;z-index:2;width:100%;max-width:900px;margin:0 auto;text-align:center;
+  display:flex;flex-direction:column;align-items:center}
+.altar .kicker{margin-bottom:clamp(14px,2.2vh,22px)}
+.title-sc{font-family:var(--serif-sc);font-weight:600;
+  font-size:clamp(50px,10vw,108px);letter-spacing:.06em;line-height:.9;
+  color:transparent;background:linear-gradient(175deg,#f4e6bf 0%,var(--gold-b) 40%,var(--gold) 72%,#9a7a34 100%);
+  -webkit-background-clip:text;background-clip:text;
+  text-shadow:0 0 44px rgba(201,162,75,.14)}
+.title-en{margin-top:12px;font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:clamp(18px,2.4vw,26px);color:var(--paper);letter-spacing:.01em;line-height:1.28}
+.title-en em{color:var(--gold-b);font-style:italic}
+.lede{margin-top:10px;max-width:50ch;font-size:clamp(12.5px,1.3vw,14px);color:var(--paper-d);font-weight:300;line-height:1.55}
+
+/* stage */
+.stage{margin-top:clamp(18px,2.8vh,32px);display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vh,20px)}
+
+/* coins */
+.coins{display:flex;gap:clamp(16px,2.4vw,30px);align-items:center;justify-content:center;height:clamp(58px,7.4vw,82px)}
+.coin-toss{width:clamp(54px,7.4vw,78px);height:clamp(54px,7.4vw,78px);perspective:600px;will-change:transform}
+.coin{width:100%;height:100%;position:relative;transform-style:preserve-3d;will-change:transform;transition:transform .5s var(--ease)}
+.face{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.5), inset 0 2px 5px rgba(255,232,180,.35), inset 0 -5px 12px rgba(30,18,4,.6);
+  background:
+    radial-gradient(circle at 34% 28%, var(--bronze-3) 0%, var(--bronze-2) 30%, var(--bronze-1) 66%, var(--bronze-0) 100%);
+  border:1px solid rgba(60,42,16,.9)}
+.face.back{transform:rotateY(180deg);
+  background:radial-gradient(circle at 66% 72%, #c8a05c 0%, #a07636 34%, #6d4f26 70%, #33260f 100%)}
+.face .hole{position:absolute;left:50%;top:50%;width:30%;height:30%;transform:translate(-50%,-50%);
+  background:var(--ink-2);border-radius:3px;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.85), 0 1px 0 rgba(236,202,126,.25)}
+.face .seal{position:absolute;font-family:var(--serif-sc);font-weight:600;color:#4a3413;
+  font-size:clamp(11px,1.5vw,16px);text-shadow:0 1px 0 rgba(255,232,180,.28);line-height:1}
+.face .s-t{top:9%;left:50%;transform:translateX(-50%)}
+.face .s-b{bottom:9%;left:50%;transform:translateX(-50%)}
+.face .s-l{left:8%;top:50%;transform:translateY(-50%)}
+.face .s-r{right:8%;top:50%;transform:translateY(-50%)}
+.face.back .rev{width:60%;height:60%;border:1px solid rgba(60,42,16,.6);border-radius:50%;opacity:.5}
+
+/* hexagram builder frame */
+.hexbuild{display:flex;flex-direction:column;gap:clamp(6px,.85vh,9px);width:clamp(196px,24vw,252px)}
+.ln{height:clamp(14px,1.8vw,19px);display:flex;align-items:center;justify-content:center;gap:14%;position:relative;
+  opacity:0;transform:translateY(9px)}
+.ln.show{animation:lineIn .72s var(--ease-o) forwards}
+@keyframes lineIn{to{opacity:1;transform:none}}
+.ln .bar{height:100%;border-radius:3px;flex:1;
+  background:linear-gradient(180deg,var(--gold-b),var(--gold) 55%,#8f6f2e);
+  box-shadow:0 0 16px rgba(201,162,75,.32), inset 0 1px 0 rgba(255,240,205,.5)}
+.ln.yin .bar{flex:0 0 43%}
+.ln .ghost{position:absolute;inset:0;border-radius:3px;border:1px dashed rgba(201,162,75,.13)}
+.ln.mv::after{content:"";position:absolute;left:50%;top:50%;width:clamp(7px,1vw,9px);height:clamp(7px,1vw,9px);
+  transform:translate(-50%,-50%) rotate(45deg);z-index:3}
+.ln.yang.mv::after{background:var(--ink);box-shadow:0 0 0 2px var(--gold-b), 0 0 12px rgba(236,202,126,.6);border-radius:50%;transform:translate(-50%,-50%)}
+.ln.yin.mv::after{width:clamp(9px,1.3vw,13px);height:clamp(9px,1.3vw,13px);
+  background:radial-gradient(circle,var(--gold-b),transparent 68%)}
+/* empty slot */
+.ln.empty{opacity:1;transform:none}
+.ln.empty .bar{background:none;box-shadow:none}
+.ln.empty .slot{position:absolute;inset:0;border-radius:3px;border:1px dashed rgba(201,162,75,.15);opacity:.7}
+
+/* cast readout */
+.readout{min-height:22px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);opacity:0;transition:opacity .4s}
+.readout.on{opacity:.92}
+.readout .v{color:var(--gold-b);font-weight:500}
+.readout .k{color:var(--paper-f)}
+
+/* question */
+.q-field{margin-top:clamp(14px,2.2vh,24px);width:min(520px,90vw);position:relative}
+.q-field input{width:100%;background:rgba(20,22,31,.55);border:1px solid var(--hair);border-radius:2px;
+  color:var(--paper);font-family:var(--serif);font-size:clamp(16px,2vw,20px);font-style:italic;
+  padding:14px 18px;text-align:center;transition:border-color .4s,background .4s}
+.q-field input::placeholder{color:var(--paper-f);font-style:italic}
+.q-field input:focus{border-color:var(--gold-d);background:rgba(24,27,38,.7)}
+.q-label{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ink);padding:0 10px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-d)}
+
+/* controls */
+.controls{margin-top:clamp(16px,2.4vh,24px);display:flex;flex-direction:column;align-items:center;gap:13px}
+.btn-cast{position:relative;font-family:var(--sans);font-weight:400;font-size:13px;letter-spacing:.2em;text-transform:uppercase;
+  color:#140f04;padding:15px 40px;border-radius:2px;overflow:hidden;
+  background:linear-gradient(180deg,var(--gold-b),var(--gold) 60%,#a17f34);
+  box-shadow:0 8px 26px rgba(201,162,75,.24), inset 0 1px 0 rgba(255,244,214,.55);
+  transition:transform .3s var(--ease),box-shadow .3s,filter .3s}
+.btn-cast:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(201,162,75,.36), inset 0 1px 0 rgba(255,244,214,.6);filter:brightness(1.05)}
+.btn-cast:active{transform:translateY(0)}
+.btn-cast:disabled{opacity:.45;cursor:default;filter:grayscale(.4)}
+.btn-cast .glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 120%,rgba(255,255,255,.6),transparent 60%);opacity:0;transition:opacity .3s}
+.btn-cast:hover .glow{opacity:.4}
+
+.subrow{display:flex;align-items:center;gap:clamp(14px,3vw,26px);flex-wrap:wrap;justify-content:center}
+.toggle{display:inline-flex;border:1px solid var(--hair);border-radius:2px;overflow:hidden}
+.toggle button{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  padding:9px 15px;color:var(--paper-f);transition:color .3s,background .3s}
+.toggle button.act{color:#140f04;background:linear-gradient(180deg,var(--gold-b),var(--gold))}
+.toggle button:not(.act):hover{color:var(--gold-b)}
+.txt-btn{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-f);
+  padding:8px 4px;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
+.txt-btn:hover{color:var(--gold-b);border-color:var(--gold-d)}
+.hint{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-f);opacity:.7}
+
+/* scroll cue */
+.cue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--paper-f);opacity:.7;
+  transition:opacity .5s}
+.cue .line{width:1px;height:34px;background:linear-gradient(var(--gold-d),transparent);animation:cueMove 2.6s var(--ease) infinite}
+@keyframes cueMove{0%{transform:scaleY(.3);transform-origin:top;opacity:0}40%{opacity:1}100%{transform:scaleY(1);transform-origin:top;opacity:0}}
+
+/* ---------- READING ---------- */
+#reading{padding:0;max-height:0;overflow:hidden;opacity:0;transition:opacity .8s var(--ease)}
+#reading.open{max-height:none;opacity:1;padding:clamp(48px,8vh,96px) 0 clamp(40px,6vh,72px)}
+.reading-inner{max-width:1000px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.rd-rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--hair) 30%,var(--hair) 70%,transparent);margin-bottom:clamp(40px,6vh,64px)}
+.rd-topkicker{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.36em;text-transform:uppercase;color:var(--gold-d);margin-bottom:clamp(30px,4vh,44px)}
+
+/* hexagram card head */
+.rd-head{display:grid;grid-template-columns:auto 1fr;gap:clamp(28px,5vw,56px);align-items:center;margin-bottom:clamp(34px,5vh,52px)}
+.big-hex{display:flex;flex-direction:column;gap:9px;width:clamp(120px,14vw,150px);flex:none}
+.big-hex .ln{opacity:1;transform:none;height:clamp(16px,1.8vw,20px)}
+.hx-meta .num{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+.hx-meta .glyph{font-family:var(--serif-sc);font-size:clamp(30px,5vw,52px);color:var(--gold-b);line-height:1;margin:6px 0 2px}
+.hx-meta .name{font-family:var(--serif-sc);font-weight:600;font-size:clamp(38px,6.5vw,70px);color:var(--paper);line-height:1;letter-spacing:.02em}
+.hx-meta .name .py{font-family:var(--serif);font-style:italic;font-weight:500;font-size:.44em;color:var(--gold-b);margin-left:.35em;letter-spacing:0}
+.hx-meta .en{font-family:var(--serif);font-size:clamp(20px,3vw,30px);color:var(--paper);margin-top:6px;font-weight:500}
+.hx-meta .trig{margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-d);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hx-meta .trig b{color:var(--gold-b);font-weight:500}
+.hx-meta .trig .tgc{font-family:var(--serif-sc);font-size:18px;color:var(--gold);letter-spacing:0}
+
+/* judgment / image */
+.rd-texts{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,44px);margin-bottom:clamp(34px,5vh,50px)}
+.rd-block .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-d);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.rd-block .lbl .zh{font-family:var(--serif-sc);font-size:14px;color:var(--gold);letter-spacing:.1em}
+.rd-block p{font-family:var(--serif);font-size:clamp(19px,2.4vw,25px);line-height:1.42;color:var(--paper);font-weight:400}
+
+/* moving lines + transform */
+.changing{border-top:1px solid var(--hair);padding-top:clamp(30px,4.4vh,44px)}
+.changing .ch-lbl{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:clamp(24px,3.4vh,34px)}
+.mv-list{display:flex;flex-direction:column;gap:16px;max-width:720px;margin:0 auto clamp(34px,5vh,48px)}
+.mv-item{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;
+  background:linear-gradient(180deg,rgba(24,27,38,.5),rgba(18,20,29,.3));border:1px solid var(--hair);border-radius:3px;
+  padding:16px 20px}
+.mv-item .pos{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-b);
+  padding-top:4px;white-space:nowrap}
+.mv-item .pos .cn{font-family:var(--serif-sc);font-size:15px;color:var(--gold);letter-spacing:0}
+.mv-item p{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.1vw,21px);line-height:1.4;color:var(--paper)}
+
+/* present -> future */
+.transform{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(20px,5vw,60px);
+  max-width:760px;margin:0 auto;text-align:center}
+.tf-col .cap{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-d);margin-bottom:16px}
+.tf-hex{display:flex;flex-direction:column;gap:7px;width:clamp(110px,15vw,140px);margin:0 auto 16px}
+.tf-hex .ln{opacity:1;transform:none;height:clamp(13px,1.6vw,17px)}
+.tf-name{font-family:var(--serif-sc);font-weight:600;font-size:clamp(24px,3.4vw,34px);color:var(--paper);line-height:1}
+.tf-name .num{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--gold);margin-bottom:8px;font-weight:400}
+.tf-en{font-family:var(--serif);font-style:italic;font-size:clamp(15px,1.9vw,19px);color:var(--gold-b);margin-top:6px}
+.tf-arrow{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--gold)}
+.tf-arrow .a{font-size:26px;line-height:1}
+.tf-arrow .t{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-d)}
+.no-change{text-align:center;font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.2vw,22px);color:var(--paper-d);max-width:56ch;margin:0 auto}
+.no-change b{color:var(--gold-b);font-style:normal;font-weight:500}
+
+.rd-actions{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-top:clamp(40px,6vh,60px)}
+.rd-actions .txt-btn{color:var(--gold-d);border-color:transparent;border-bottom:1px solid var(--gold-f)}
+.rd-actions .txt-btn:hover{color:var(--gold-b);border-color:var(--gold-d)}
+
+/* ---------- SECTIONS ---------- */
+.sec-head{text-align:center;margin-bottom:clamp(40px,6vh,64px)}
+.sec-head .kicker{margin-bottom:16px;display:block}
+.sec-head h2{font-family:var(--serif-sc);font-weight:600;font-size:clamp(30px,5vw,50px);color:var(--paper);letter-spacing:.03em}
+.sec-head h2 .en{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(17px,2.2vw,24px);color:var(--gold-b);margin-top:10px;letter-spacing:.01em}
+.sec-head p{max-width:56ch;margin:16px auto 0;font-size:clamp(13px,1.4vw,15px);color:var(--paper-d)}
+
+#sixtyfour{padding:clamp(70px,11vh,130px) 0}
+.hx-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:clamp(8px,1.1vw,15px)}
+.hx-cell{position:relative;aspect-ratio:3/4;border:1px solid var(--hair);border-radius:3px;
+  background:linear-gradient(180deg,rgba(22,25,35,.5),rgba(14,15,20,.4));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px,.8vh,9px);
+  padding:8px 4px;cursor:pointer;transition:border-color .35s var(--ease),transform .35s var(--ease),background .35s}
+.hx-cell:hover{border-color:var(--gold-d);transform:translateY(-3px);background:linear-gradient(180deg,rgba(30,33,45,.7),rgba(18,20,28,.5))}
+.hx-cell .mini{display:flex;flex-direction:column;gap:2.5px;width:clamp(28px,3.2vw,40px)}
+.hx-cell .mini .ln{opacity:1;transform:none;height:clamp(4px,.6vw,6px);gap:20%}
+.hx-cell .mini .ln .bar{box-shadow:none;border-radius:1.5px}
+.hx-cell .cn{font-family:var(--serif-sc);font-weight:500;font-size:clamp(13px,1.5vw,17px);color:var(--paper);line-height:1}
+.hx-cell .no{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--gold-d)}
+.hx-cell:hover .cn{color:var(--gold-b)}
+
+/* detail panel (click a cell) */
+.hx-detail{margin-top:clamp(26px,4vh,40px);border:1px solid var(--hair);border-radius:4px;
+  background:linear-gradient(180deg,rgba(22,25,35,.6),rgba(14,15,20,.4));
+  padding:clamp(22px,3.4vw,36px);display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,4vw,44px);align-items:center;
+  opacity:0;transform:translateY(10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.hx-detail.on{opacity:1;transform:none}
+.hx-detail .d-hex{display:flex;flex-direction:column;gap:6px;width:clamp(84px,10vw,110px)}
+.hx-detail .d-hex .ln{opacity:1;transform:none;height:clamp(11px,1.4vw,15px)}
+.hx-detail .d-num{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--gold);text-transform:uppercase}
+.hx-detail .d-name{font-family:var(--serif-sc);font-weight:600;font-size:clamp(26px,4vw,42px);color:var(--paper);margin:6px 0 2px;line-height:1}
+.hx-detail .d-name .py{font-family:var(--serif);font-style:italic;font-size:.42em;color:var(--gold-b);margin-left:.3em}
+.hx-detail .d-en{font-family:var(--serif);font-style:italic;font-size:clamp(16px,2vw,21px);color:var(--gold-b)}
+.hx-detail .d-jud{font-family:var(--serif);font-size:clamp(16px,2vw,21px);color:var(--paper);margin-top:14px;line-height:1.4}
+.hx-detail .d-trig{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-d)}
+.hx-detail .d-trig b{color:var(--gold-b);font-weight:500}
+
+/* trigrams */
+#trigrams{padding:clamp(70px,11vh,130px) 0;background:linear-gradient(180deg,transparent,rgba(10,11,16,.6) 50%,transparent)}
+.tg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,20px)}
+.tg-card{border:1px solid var(--hair);border-radius:4px;padding:clamp(20px,2.6vw,30px) clamp(16px,2vw,24px);text-align:center;
+  background:linear-gradient(180deg,rgba(22,25,35,.5),rgba(14,15,20,.35));transition:border-color .35s,transform .35s var(--ease)}
+.tg-card:hover{border-color:var(--gold-d);transform:translateY(-3px)}
+.tg-card .sym{font-size:clamp(38px,5vw,58px);color:var(--gold-b);line-height:1;margin-bottom:12px;
+  text-shadow:0 0 24px rgba(201,162,75,.2)}
+.tg-card .zh{font-family:var(--serif-sc);font-weight:600;font-size:clamp(22px,2.8vw,30px);color:var(--paper)}
+.tg-card .py{font-family:var(--serif);font-style:italic;font-size:clamp(15px,1.8vw,19px);color:var(--gold-b);margin-top:2px}
+.tg-card .el{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--paper-d);margin-top:10px}
+
+/* method */
+#method{padding:clamp(70px,11vh,130px) 0}
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px)}
+.m-col .n{font-family:var(--serif);font-style:italic;font-size:clamp(30px,4vw,44px);color:var(--gold-d);line-height:1}
+.m-col h3{font-family:var(--serif-sc);font-weight:600;font-size:clamp(18px,2vw,22px);color:var(--paper);margin:14px 0 12px}
+.m-col p{font-size:clamp(13px,1.4vw,14.5px);color:var(--paper-d);line-height:1.7}
+.m-col p b{color:var(--gold-b);font-weight:400}
+
+/* footer */
+footer{padding:clamp(56px,8vh,90px) 0 clamp(40px,6vh,60px);border-top:1px solid var(--hair);text-align:center}
+footer .yi{font-family:var(--serif-sc);font-weight:600;font-size:clamp(30px,5vw,46px);color:var(--gold-b);letter-spacing:.14em}
+footer .lg{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.2vw,23px);color:var(--paper);margin-top:14px}
+footer .meta{margin-top:26px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-f);
+  display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+footer .meta a{color:var(--gold-d);transition:color .3s}
+footer .meta a:hover{color:var(--gold-b)}
+footer .copy{margin-top:20px;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--paper-f);opacity:.6}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);z-index:300;
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#140f04;
+  background:linear-gradient(180deg,var(--gold-b),var(--gold));padding:12px 22px;border-radius:2px;
+  opacity:0;pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media(max-width:860px){
+  .rd-head{grid-template-columns:1fr;justify-items:center;text-align:center;gap:24px}
+  .hx-meta .trig{justify-content:center}
+  .rd-texts{grid-template-columns:1fr;gap:26px}
+  .hx-grid{grid-template-columns:repeat(4,1fr)}
+  .tg-grid{grid-template-columns:repeat(2,1fr)}
+  .method-grid{grid-template-columns:1fr;gap:30px}
+  .hx-detail{grid-template-columns:1fr;justify-items:center;text-align:center}
+}
+@media(max-width:560px){
+  .transform{grid-template-columns:1fr;gap:26px}
+  .tf-arrow{flex-direction:row;gap:14px}
+  .tf-arrow .a{transform:rotate(90deg)}
+  .mv-item{grid-template-columns:1fr;gap:8px;text-align:left}
+  .subrow{gap:16px}
+  .rd-head{gap:18px}
+}
+@media(max-width:420px){
+  .hx-grid{grid-template-columns:repeat(4,1fr);gap:7px}
+  .hx-cell .cn{font-size:14px}
+}
+
+/* reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+  .candle,.bagua .spin,.cue .line{animation:none}
+  .ln.show{opacity:1;transform:none}
+}
+html.no-anim .candle,html.no-anim .bagua .spin,html.no-anim .cue .line{animation:none}
+html.no-anim .ln.show{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="bg-field"></div>
+<div class="candle"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="prog" id="prog"></div>
+<div class="cur" id="cur"></div>
+
+<a class="backlink" href="/"><span class="yi">易</span>XAVIER FABLE ×55</a>
+
+<!-- ============ ORACLE ============ -->
+<header id="oracle">
+  <div class="bagua" aria-hidden="true">
+    <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+    <div class="spin" id="baguaSpin"></div>
+    <div class="taiji">☯</div>
+  </div>
+
+  <div class="altar">
+    <div class="kicker">周易<span class="dot">·</span>ZHŌU YÌ<span class="dot">·</span>THE BOOK OF CHANGES</div>
+    <h1 class="title-sc">易&#8202;經</h1>
+    <p class="title-en">Hold a question. Cast the coins six times.<br>Let the <em>moment</em> answer.</p>
+    <p class="lede">The oldest of the Chinese classics reads the present as a pattern of six lines — solid and broken, still and changing — and shows you the shape the moment is turning into.</p>
+
+    <div class="stage">
+      <div class="coins" id="coins" aria-hidden="true"></div>
+      <div class="hexbuild" id="hexbuild" aria-label="Your hexagram, built from the bottom line up"></div>
+      <div class="readout" id="readout" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="q-field">
+      <span class="q-label">Your Question</span>
+      <input id="question" type="text" maxlength="120" placeholder="What should I hold to, and what should I let go of?" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="controls">
+      <button class="btn-cast" id="castBtn"><span class="glow"></span><span id="castLabel">Cast the First Line</span></button>
+      <div class="subrow">
+        <div class="toggle" id="toggle" role="group" aria-label="Divination method">
+          <button data-m="coins" class="act">Three Coins</button>
+          <button data-m="yarrow">Yarrow Stalks</button>
+        </div>
+        <button class="txt-btn" id="resetBtn" hidden>New Question</button>
+      </div>
+      <div class="hint" id="hint">Three bronze coins · six casts · bottom line first</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ READING ============ -->
+<section id="reading" aria-live="polite">
+  <div class="reading-inner">
+    <div class="rd-rule"></div>
+    <div class="rd-topkicker" id="rdTopKicker">The coins have spoken</div>
+
+    <div class="rd-head">
+      <div class="big-hex" id="rdBigHex"></div>
+      <div class="hx-meta" id="rdMeta"></div>
+    </div>
+
+    <div class="rd-texts">
+      <div class="rd-block">
+        <div class="lbl"><span class="zh">卦辭</span> The Judgment</div>
+        <p id="rdJudg"></p>
+      </div>
+      <div class="rd-block">
+        <div class="lbl"><span class="zh">象辭</span> The Image</div>
+        <p id="rdImg"></p>
+      </div>
+    </div>
+
+    <div class="changing" id="rdChanging"></div>
+
+    <div class="rd-actions">
+      <button class="txt-btn" id="saveBtn">Save this reading</button>
+      <button class="txt-btn" id="againBtn">Ask again</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIXTY-FOUR ============ -->
+<section id="sixtyfour">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">六十四卦<span class="dot">·</span>THE SIXTY-FOUR</span>
+      <h2>Every Situation Under Heaven<span class="en">the complete King Wen sequence</span></h2>
+      <p>Two trigrams stacked make a hexagram; sixty-four in all, ordered as King Wen arranged them three thousand years ago. Touch any figure to read its judgment.</p>
+    </div>
+    <div class="hx-grid" id="hxGrid"></div>
+    <div class="hx-detail" id="hxDetail" hidden></div>
+  </div>
+</section>
+
+<!-- ============ TRIGRAMS ============ -->
+<section id="trigrams">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">八卦<span class="dot">·</span>THE EIGHT TRIGRAMS</span>
+      <h2>The Building Blocks<span class="en">bā guà — the eight images</span></h2>
+      <p>Every hexagram is a pair of these: an image below and an image above. Heaven and Earth, Water and Fire, Thunder and Wind, Mountain and Lake — the eight forces from which the sixty-four are drawn.</p>
+    </div>
+    <div class="tg-grid" id="tgGrid"></div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">占法<span class="dot">·</span>THE METHOD</span>
+      <h2>How the Oracle Answers<span class="en">on coins, stalks, and changing lines</span></h2>
+    </div>
+    <div class="method-grid">
+      <div class="m-col">
+        <div class="n">壹</div>
+        <h3>Three coins, six times</h3>
+        <p>For each line, three bronze coins are tossed. Heads count <b>three</b>, tails <b>two</b>; their sum — six, seven, eight, or nine — becomes one line of the hexagram, built from the bottom upward.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">貳</div>
+        <h3>Yin, yang — young or old</h3>
+        <p>Odd sums are <b>yang</b> (solid), even are <b>yin</b> (broken). A six or a nine is an <b>old</b> line, already straining toward its opposite — these are the changing lines. Seven and eight are young and still.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">參</div>
+        <h3>Present into future</h3>
+        <p>The hexagram you cast is the <b>present</b>. Flip every changing line and a second hexagram appears — the <b>situation to come</b>. The oracle speaks not of fate but of movement: what is, and what it is becoming.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="yi">易</div>
+    <div class="lg">The only constant is change.</div>
+    <div class="meta">
+      <a href="/">← XAVIER FABLE ×55</a>
+      <span>易經 · Zhōu Yì · The Book of Changes</span>
+    </div>
+    <div class="copy">A candlelit oracle · faithful-in-spirit translations · built for the showcase</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Reading link copied</div>
+
+<script>
+"use strict";
+/* ============================================================
+   TRIGRAMS  (bits read bottom→middle→top; 1 = yang / solid)
+   index: 0乾 1兌 2離 3震 4巽 5坎 6艮 7坤
+   ============================================================ */
+const TRIGRAMS = [
+  {bits:"111", zh:"乾", py:"Qián", en:"Heaven",   el:"The Creative", sym:"☰"},
+  {bits:"110", zh:"兌", py:"Duì",  en:"Lake",     el:"The Joyous",   sym:"☱"},
+  {bits:"101", zh:"離", py:"Lí",   en:"Fire",     el:"The Clinging", sym:"☲"},
+  {bits:"100", zh:"震", py:"Zhèn", en:"Thunder",  el:"The Arousing", sym:"☳"},
+  {bits:"011", zh:"巽", py:"Xùn",  en:"Wind",     el:"The Gentle",   sym:"☴"},
+  {bits:"010", zh:"坎", py:"Kǎn",  en:"Water",    el:"The Abysmal",  sym:"☵"},
+  {bits:"001", zh:"艮", py:"Gèn",  en:"Mountain", el:"Keeping Still",sym:"☶"},
+  {bits:"000", zh:"坤", py:"Kūn",  en:"Earth",    el:"The Receptive",sym:"☷"}
+];
+
+/* ============================================================
+   THE 64 HEXAGRAMS  (King Wen order)
+   H(number, upperTrigramIdx, lowerTrigramIdx, name, pinyin, english,
+     judgment, image, line1..line6)   lines are bottom→top
+   ============================================================ */
+function H(n,up,lo,zh,py,en,judg,img,l1,l2,l3,l4,l5,l6){
+  return {n,up,lo,zh,py,en,judg,img,lines:[l1,l2,l3,l4,l5,l6],
+    key: TRIGRAMS[lo].bits + TRIGRAMS[up].bits};
+}
+const HEX = [
+H(1,0,0,`乾`,`Qián`,`The Creative`,
+ `The Creative works sublime success; persevering like heaven itself furthers all.`,
+ `Heaven moves ceaselessly — so the noble one grows strong and never rests.`,
+ `Hidden dragon. Do not act yet.`,`Dragon appearing in the field; it profits to see the great one.`,`All day the noble one is active; at nightfall still wary. No blame.`,`Wavering flight above the depths. No blame.`,`Flying dragon in the heavens; it profits to see the great one.`,`Arrogant dragon will have cause to repent.`),
+H(2,7,7,`坤`,`Kūn`,`The Receptive`,
+ `The Receptive brings sublime success through the perseverance of a mare.`,
+ `The earth's condition is receptive devotion — the noble one carries the world.`,
+ `Hoarfrost underfoot; the hard ice is not far.`,`Straight, square, great — without purpose, nothing goes unfurthered.`,`Hidden lines; stay persevering. The work is finished, not owned.`,`A tied-up sack. No blame, no praise.`,`A yellow lower garment. Supreme good fortune.`,`Dragons war in the meadow; their blood is black and yellow.`),
+H(3,5,3,`屯`,`Zhūn`,`Difficulty at the Beginning`,
+ `Sprouting through hard ground — do not go far; appoint helpers.`,
+ `Clouds and thunder gather — the noble one brings order out of confusion.`,
+ `Hesitation, obstruction. Remain steadfast; gather allies.`,`Difficulties pile up; the maiden waits ten years, then is betrothed.`,`Hunting deer with no guide — better to give up than press on.`,`Horse and wagon part, then reunite. To go brings fortune.`,`Difficulty in blessing. Small perseverance, fortune; great, misfortune.`,`Horse and wagon part; bloody tears flow.`),
+H(4,6,5,`蒙`,`Méng`,`Youthful Folly`,
+ `Folly succeeds. I do not seek the young fool; he seeks me.`,
+ `A spring at the mountain's foot — the noble one nurtures character with care.`,
+ `To dispel folly, discipline helps; yet loosen the fetters in time.`,`To bear with fools brings fortune; the son who keeps the house.`,`Do not take the maiden who loses herself. Nothing furthers.`,`Entangled in folly. Humiliation.`,`Childlike folly brings good fortune.`,`In punishing folly, do not wound; only ward off the wrong.`),
+H(5,5,0,`需`,`Xū`,`Waiting`,
+ `Waiting with sincerity — brilliant success; crossing the great water furthers.`,
+ `Clouds rise to heaven — the noble one eats, drinks, and stays glad.`,
+ `Waiting in the meadow. Persevere; remain steadfast.`,`Waiting on the sand. Some talk; in the end, good fortune.`,`Waiting in the mud invites the robber near.`,`Waiting in blood. Climb out of the pit.`,`Waiting at meat and wine. Perseverance brings good fortune.`,`One falls into the pit; three uninvited guests arrive. Honor them.`),
+H(6,0,5,`訟`,`Sòng`,`Conflict`,
+ `Conflict — be sincere yet cautious; halfway fortune, the very end misfortune.`,
+ `Heaven and water move apart — the noble one plans the beginning of every affair.`,
+ `Do not prolong the affair; a little talk, then good fortune.`,`One cannot win the conflict; retreat home. No guilt falls on your people.`,`Nourished by ancient virtue; perseverance amid danger ends well.`,`Cannot win; turn back to fate, change course, find peace.`,`To contend before this one — supreme good fortune.`,`Even a granted belt is torn away thrice by morning.`),
+H(7,7,5,`師`,`Shī`,`The Army`,
+ `The Army needs a steadfast, seasoned leader. Good fortune, no blame.`,
+ `Water within the earth — the noble one gathers and nurtures the people.`,
+ `The army marches by order; without discipline, misfortune.`,`In the midst of the host, good fortune. The king bestows honors thrice.`,`The army may carry corpses in the wagon. Misfortune.`,`The army retreats and camps. No blame.`,`Game in the field; seizing it furthers. Let the elder lead the host.`,`The great prince issues commands; found states — but employ no small men.`),
+H(8,5,7,`比`,`Bǐ`,`Holding Together`,
+ `Union brings fortune; inquire again — those who come too late meet misfortune.`,
+ `Waters upon the earth — the ancient kings bound the realms in fellowship.`,
+ `Hold together with sincerity; the full jar draws unexpected fortune.`,`Hold together inwardly. Perseverance brings good fortune.`,`You hold together with the wrong people.`,`Hold together with those beyond. Perseverance, good fortune.`,`Manifest union — the king hunts, sparing what flees. Good fortune.`,`Union without a head brings misfortune.`),
+H(9,4,0,`小畜`,`Xiǎo Chù`,`The Taming Power of the Small`,
+ `The small tames the great. Dense clouds, no rain — from our western fields.`,
+ `Wind drives across heaven — the noble one refines the outward form.`,
+ `Return to the way — how could that be a fault? Good fortune.`,`He lets himself be drawn back. Good fortune.`,`The wagon loses its spokes; man and wife roll their eyes.`,`Sincere, the blood retreats, fear departs. No blame.`,`Sincere and firmly bound — rich in neighbors, sharing all.`,`The rain comes, rest arrives. Yet to persevere now brings danger.`),
+H(10,0,1,`履`,`Lǚ`,`Treading`,
+ `Treading on the tiger's tail — it does not bite. Success.`,
+ `Heaven above, lake below — the noble one discerns high from low.`,
+ `Simple conduct; going forward without blame.`,`Treading a smooth, level road; the steadfast recluse, good fortune.`,`A one-eyed man sees, a lame man walks — the tiger bites. Misfortune.`,`Treading the tiger's tail with care and dread — the end, good fortune.`,`Resolute conduct. Persevere, though danger is near, and stay aware.`,`Look to your conduct, weigh the omens; when whole, great fortune.`),
+H(11,7,0,`泰`,`Tài`,`Peace`,
+ `Peace — the small departs, the great arrives. Good fortune, success.`,
+ `Heaven and earth unite — the ruler shapes and completes their course.`,
+ `Pull ridge-grass by the roots; each stalk brings the others. Fortune.`,`Bear the uncultured, cross the river, forget nothing far — walk the middle.`,`No plain without a slope, no going without return. Steadfast in hardship.`,`Fluttering down, not boasting of wealth, sincere with the neighbors.`,`The sovereign gives his daughter in marriage. Blessing, supreme fortune.`,`The wall falls back into the moat. Now use no armies. Accept the turning.`),
+H(12,0,7,`否`,`Pǐ`,`Standstill`,
+ `Standstill — obstruction of evil men; the great departs, the small arrives.`,
+ `Heaven and earth draw apart — the noble one withdraws his worth to escape harm.`,
+ `Pull the ridge-grass; steadfastness brings good fortune and success.`,`They bear and endure; the small find fortune, the great, standstill overcome.`,`They bear their shame in silence.`,`One who acts at heaven's command — no blame; his kind share the blessing.`,`Standstill gives way. Good fortune. "What if it fails?" — bind it to the mulberry.`,`The standstill ends. First stagnation, then joy.`),
+H(13,0,2,`同人`,`Tóng Rén`,`Fellowship with Men`,
+ `Fellowship in the open. Success. It furthers to cross the great water.`,
+ `Heaven with fire — the noble one sorts the clans and distinguishes things.`,
+ `Fellowship at the gate. No blame.`,`Fellowship kept within the clan alone. Humiliation.`,`Weapons hidden in the thicket; he climbs the hill but dares not rise for years.`,`He mounts the wall but cannot attack. Good fortune — the turning point.`,`First they weep and lament, then laugh; the great armies meet at last.`,`Fellowship in the meadow. No remorse.`),
+H(14,2,0,`大有`,`Dà Yǒu`,`Possession in Great Measure`,
+ `Possession in great measure. Supreme success.`,
+ `Fire high in heaven — the noble one curbs evil and furthers the good.`,
+ `No dealings with what harms; not yet at fault, if one stays aware.`,`A great wagon for loading. One may set out. No blame.`,`A prince offers tribute to the Son of Heaven; the small man cannot.`,`He keeps his abundance apart from arrogance. No blame.`,`Sincerity that both awes and charms. Good fortune.`,`Heaven blesses him. Good fortune; nothing that does not further.`),
+H(15,7,6,`謙`,`Qiān`,`Modesty`,
+ `Modesty creates success; the noble one carries things through to the end.`,
+ `Mountain within the earth — the noble one levels excess and lifts the low.`,
+ `Modest about modesty — one may cross the great water. Good fortune.`,`Modesty that speaks out. Perseverance brings good fortune.`,`Modest and toiling; the noble one carries it to the end. Good fortune.`,`Nothing that does not further modesty in movement.`,`Not boasting of wealth; use force to correct only when needed.`,`Modesty that speaks out; set the armies to right your own domain.`),
+H(16,3,7,`豫`,`Yù`,`Enthusiasm`,
+ `Enthusiasm — it furthers to install helpers and set armies marching.`,
+ `Thunder bursts from the earth — the ancients made music to honor the divine.`,
+ `Enthusiasm that boasts aloud. Misfortune.`,`Firm as a rock — and not a whole day. Perseverance brings good fortune.`,`Enthusiasm that looks up and hesitates brings remorse.`,`The source of enthusiasm; great things are won. Doubt not — friends gather.`,`Persistent illness, yet one lives on and does not die.`,`Deluded enthusiasm. But if it changes after completion, no blame.`),
+H(17,1,3,`隨`,`Suí`,`Following`,
+ `Following has supreme success. Perseverance furthers; no blame.`,
+ `Thunder within the lake — at nightfall the noble one goes in to rest.`,
+ `The standard is changing; steadfastness brings fortune. Go out and mingle.`,`If one clings to the little boy, he loses the strong man.`,`If one clings to the strong man, he loses the boy — and finds what he seeks.`,`Following wins a prize; steadfastness brings misfortune. Walk in truth.`,`Sincere toward the good. Good fortune.`,`He is held fast, bound; the king offers him on the western mountain.`),
+H(18,6,4,`蠱`,`Gǔ`,`Work on the Decayed`,
+ `Work on what is spoiled — supreme success; it furthers to cross the great water.`,
+ `Wind at the mountain's foot — the noble one rouses the people and nourishes virtue.`,
+ `Repairing the father's decay; danger, then fortune.`,`Repairing the mother's decay; not too rigidly.`,`Repairing the father's decay; a little remorse, no great blame.`,`Tolerating the father's decay; going on brings humiliation.`,`Repairing the father's decay; one earns praise.`,`He serves neither king nor prince; he sets himself higher goals.`),
+H(19,7,1,`臨`,`Lín`,`Approach`,
+ `Approach has supreme success. But by the eighth month, misfortune comes.`,
+ `The earth above the lake — the noble one teaches and protects without limit.`,
+ `Approach together. Perseverance brings good fortune.`,`Approach together. Good fortune; nothing that does not further.`,`Comfortable approach. Nothing furthers — but grieve, and no blame.`,`Complete approach. No blame.`,`Wise approach; this befits a great prince. Good fortune.`,`Great-hearted approach. Good fortune, no blame.`),
+H(20,4,7,`觀`,`Guān`,`Contemplation`,
+ `Contemplation — the ablution made, the offering not yet brought; sincere and grave.`,
+ `Wind moves over the earth — the ancient kings visited the regions to teach.`,
+ `Boylike contemplation; harmless for the small man, shameful for the noble.`,`Contemplation through the door-crack; furthering for a woman's perseverance.`,`Contemplation of my own life decides advance or retreat.`,`Contemplation of the realm's light; welcome as the king's guest.`,`Contemplation of my life; the noble one is without blame.`,`Contemplation of the whole life; the noble one is without blame.`),
+H(21,2,3,`噬嗑`,`Shì Kè`,`Biting Through`,
+ `Biting through brings success; it furthers to administer justice.`,
+ `Thunder and lightning — the ancient kings fixed the laws with clarity.`,
+ `His feet in the stocks, his toes hidden. No blame.`,`Biting through tender meat, the nose vanishes. No blame.`,`Biting old dried meat, meeting poison; slight shame, no blame.`,`Biting dried gristly meat, one finds metal arrows. Persevere. Fortune.`,`Biting dried lean meat, one finds yellow gold. Be aware. No blame.`,`His neck in the cangue, his ears vanish. Misfortune.`),
+H(22,6,2,`賁`,`Bì`,`Grace`,
+ `Grace has success. In small matters it furthers to undertake something.`,
+ `Fire at the mountain's foot — the noble one clarifies affairs, not verdicts.`,
+ `He graces his toes, leaves the wagon, and walks.`,`He graces the beard on his chin.`,`Graced and moist; constant perseverance brings good fortune.`,`Grace or plainness? A white horse comes as if winged — no robber, a suitor.`,`Grace in hills and garden; the roll of silk is meager. Humiliation, then fortune.`,`Simple white grace. No blame.`),
+H(23,6,7,`剝`,`Bō`,`Splitting Apart`,
+ `Splitting apart. It does not further to go anywhere now.`,
+ `The mountain rests on the earth — the superior gives freely to those below.`,
+ `The bed-legs are split away; the steadfast are destroyed. Misfortune.`,`The bed's frame is split; the steadfast are destroyed. Misfortune.`,`He splits with them and is without blame.`,`The bed is split up to the skin. Misfortune.`,`A string of fishes; favor comes through the court ladies. All furthers.`,`A great fruit still uneaten; the noble one gets a wagon, the mean one's roof splits.`),
+H(24,7,3,`復`,`Fù`,`Return`,
+ `Return. Success. Going out and coming in without harm; friends arrive.`,
+ `Thunder within the earth — at the solstice the kings closed the passes.`,
+ `Return from a short distance; no need for remorse. Great good fortune.`,`Quiet return. Good fortune.`,`Repeated return. Danger, but no blame.`,`Walking among others, one returns alone to the way.`,`Noble-hearted return. No remorse.`,`Deluded return. Misfortune; armies defeated, the ruler struck for ten years.`),
+H(25,0,3,`無妄`,`Wú Wàng`,`Innocence`,
+ `Innocence — supreme success. But if one is not upright, misfortune follows.`,
+ `Thunder rolls under heaven — the kings nurtured all beings in their season.`,
+ `Innocent action brings good fortune.`,`Reap without sowing for gain, clear land without hoarding — then it furthers.`,`Undeserved misfortune: the tethered ox becomes the wanderer's gain.`,`One who can be persevering remains without blame.`,`Use no medicine for an illness not your fault; it passes of itself.`,`Innocent action now brings misfortune; nothing furthers.`),
+H(26,6,0,`大畜`,`Dà Chù`,`The Taming Power of the Great`,
+ `The great is tamed. Perseverance furthers; eat not at home — cross the water.`,
+ `Heaven within the mountain — the noble one studies the words and deeds of old.`,
+ `Danger is at hand. It furthers to desist.`,`The wagon's axle-straps are removed.`,`A good horse that follows others; be daily aware of chariot and arms.`,`The headboard of a young bull. Great good fortune.`,`The tusk of a gelded boar. Good fortune.`,`One attains the way of heaven. Success.`),
+H(27,6,3,`頤`,`Yí`,`The Corners of the Mouth`,
+ `Nourishment. Perseverance brings fortune. Watch closely what you feed on.`,
+ `Thunder beneath the mountain — the noble one is careful of words and sparing in food.`,
+ `You let your magic tortoise go and stare at me, jaw drooping. Misfortune.`,`Nourishment turned upside down; seeking from the heights brings misfortune.`,`Turning from nourishment; steadfastness, misfortune. Do not act ten years.`,`Nourishment upside down brings fortune; the tiger watches with steady gaze.`,`Turning from the path; abide, and good fortune. Do not cross the great water.`,`The source of nourishment; danger, yet fortune. It furthers to cross the water.`),
+H(28,1,4,`大過`,`Dà Guò`,`Preponderance of the Great`,
+ `The ridgepole sags to breaking. It furthers to have a goal; success.`,
+ `The lake rises over the trees — the noble one stands alone, unafraid, unbowed.`,
+ `To spread white rushes underneath. No blame.`,`A withered poplar sprouts at the root; the old man takes a young wife.`,`The ridgepole sags to breaking. Misfortune.`,`The ridgepole is braced. Fortune — but ulterior motives bring shame.`,`A withered poplar puts forth flowers; the old woman takes a young husband.`,`One must wade in; the water rises over the head. Misfortune, but no blame.`),
+H(29,5,5,`坎`,`Kǎn`,`The Abysmal`,
+ `The Abyss repeated. With sincerity the heart wins through; action brings honor.`,
+ `Water flows on and never stops — the noble one walks in lasting virtue.`,
+ `Into the pit within the pit; one falls. Misfortune.`,`The abyss is dangerous; strive only for the small.`,`Forward and back, abyss upon abyss. Pause; do not act.`,`A jug of wine, a bowl of rice, earthen vessels through the window. No blame.`,`The abyss does not overflow; fill it only to the brim. No blame.`,`Bound with cords, set among thorns; three years lost. Misfortune.`),
+H(30,2,2,`離`,`Lí`,`The Clinging`,
+ `The Clinging furthers through perseverance. Care for the cow brings good fortune.`,
+ `A twofold brightness — the great one illumines the four quarters of the world.`,
+ `The footprints run crisscross; be reverent, and no blame.`,`Yellow light. Supreme good fortune.`,`In the light of the setting sun — sing, or wail at the great age. Misfortune.`,`It comes suddenly, flares up, dies down, is cast away.`,`Tears in floods, sighing and lament. Good fortune.`,`The king goes forth to punish; he takes the leaders, spares the followers. No blame.`),
+H(31,1,6,`咸`,`Xián`,`Influence`,
+ `Influence brings success. Perseverance furthers; to take a maiden, good fortune.`,
+ `A lake upon the mountain — the noble one keeps his mind open to receive.`,
+ `The influence stirs the big toe.`,`The influence stirs the calves. Misfortune to act; abide, and good fortune.`,`The influence moves the thighs; to follow blindly brings humiliation.`,`Perseverance, fortune; restless to and fro, only friends follow your thought.`,`The influence in the flesh of the neck. No remorse.`,`The influence in jaws, cheeks, and tongue — mere words.`),
+H(32,3,4,`恆`,`Héng`,`Duration`,
+ `Duration. Success, no blame. Perseverance furthers; it furthers to have a goal.`,
+ `Thunder and wind endure — the noble one stands firm and does not change his course.`,
+ `Seeking duration too soon; perseverance brings misfortune. Nothing furthers.`,`Remorse vanishes.`,`One who gives his virtue no duration meets shame; steadfastness, humiliation.`,`No game in the field.`,`Giving duration to character; fortune for a wife, misfortune for a man.`,`Restlessness as a lasting state. Misfortune.`),
+H(33,0,6,`遯`,`Dùn`,`Retreat`,
+ `Retreat succeeds. In small matters, perseverance furthers.`,
+ `The mountain beneath heaven — the noble one keeps the mean at a distance, without anger.`,
+ `Retreat at the tail is dangerous; undertake nothing.`,`Held fast with yellow oxhide — none can tear it loose.`,`A halted retreat is a wearying sickness; keep servants and maids. Fortune.`,`Voluntary retreat brings the noble one fortune, the small man downfall.`,`Friendly retreat. Perseverance brings good fortune.`,`Cheerful retreat. Everything furthers.`),
+H(34,3,0,`大壯`,`Dà Zhuàng`,`The Power of the Great`,
+ `The Power of the Great. Perseverance furthers.`,
+ `Thunder high in heaven — the noble one treads no path against the order.`,
+ `Power in the toes; to go on brings misfortune — this is surely so.`,`Perseverance brings good fortune.`,`The small man works through power; the noble one through restraint. The ram butts the hedge.`,`Perseverance, fortune; the hedge opens, the horns are freed. Power at the axle.`,`One loses the ram with ease. No remorse.`,`The ram butts the hedge, can go neither back nor on. Persevere, and fortune.`),
+H(35,2,7,`晉`,`Jìn`,`Progress`,
+ `Progress — the prince is honored with horses in threefold profusion.`,
+ `The sun rises over the earth — the noble one brightens his own bright virtue.`,
+ `Progressing, then turned back. Be steadfast; if none trust you, stay calm. No blame.`,`Progressing, yet sorrowful; steadfast fortune, and great blessing from the ancestress.`,`All are in accord; remorse vanishes.`,`Progress like a hamster. Perseverance brings danger.`,`Remorse vanishes; take neither gain nor loss to heart. All furthers.`,`Progress with the horns — only to punish your own domain. Danger, then fortune.`),
+H(36,7,2,`明夷`,`Míng Yí`,`Darkening of the Light`,
+ `Darkening of the light. In adversity, it furthers to be steadfast.`,
+ `The light sinks into the earth — the noble one veils his brightness, yet still shines.`,
+ `The light darkens in flight, wings drooping; three days without food, still going on.`,`Wounded in the left thigh; give strong help, swift as a horse. Good fortune.`,`Hunting in the south, the great chief is caught; expect no over-quick cure.`,`He enters the left belly, grasps the heart of darkness, and leaves the gate.`,`The darkening of the light as with Prince Ji. Perseverance furthers.`,`Not light but darkness; first he climbed to heaven, then plunged into the earth.`),
+H(37,4,2,`家人`,`Jiā Rén`,`The Family`,
+ `The Family. The perseverance of the woman furthers.`,
+ `Wind rises from the fire — the noble one's words have substance, his life endurance.`,
+ `Firm seclusion within the family. Remorse vanishes.`,`She follows no whim; she tends the meals. Perseverance, good fortune.`,`Harsh words bring remorse, yet fortune; too much laughter, humiliation.`,`She is the treasure of the house. Great good fortune.`,`As a king approaches his family — fear not. Good fortune.`,`His work commands trust and reverence; in the end, good fortune.`),
+H(38,2,1,`睽`,`Kuí`,`Opposition`,
+ `Opposition. In small matters, good fortune.`,
+ `Fire above, lake below — amid all likeness the noble one keeps his own way.`,
+ `Remorse vanishes; the lost horse returns of itself. See even bad men. No blame.`,`One meets his lord in a narrow street. No blame.`,`The wagon dragged back, the oxen halted, hair and nose cut off. Hard start, good end.`,`Isolated by opposition, one meets a like-minded friend in trust. Danger, no blame.`,`Remorse vanishes; the companion bites through the wrappings. To go, no blame.`,`Isolated, one sees the pig caked with mud — then rain falls, and fortune comes.`),
+H(39,5,6,`蹇`,`Jiǎn`,`Obstruction`,
+ `Obstruction — the southwest furthers, the northeast does not. See the great one.`,
+ `Water upon the mountain — the noble one turns inward and molds his character.`,
+ `Going leads to obstruction, coming meets praise.`,`The servant meets obstruction on obstruction — through no fault of his own.`,`Going leads to obstruction; hence he comes back.`,`Going leads to obstruction, coming leads to union.`,`In the midst of the greatest obstruction, friends come.`,`Going leads to obstruction, coming to great fortune. See the great one.`),
+H(40,3,5,`解`,`Xiè`,`Deliverance`,
+ `Deliverance — the southwest furthers. If nothing remains to be done, return brings fortune.`,
+ `Thunder and rain break loose — the noble one pardons faults and forgives sins.`,
+ `Without blame.`,`One kills three foxes in the field, receives a yellow arrow. Perseverance, fortune.`,`A man carries a burden yet rides — this tempts robbers near. Humiliation.`,`Deliver yourself from your big toe; then the true companion comes, and trust.`,`The noble one delivers himself; good fortune, and it proves the small men.`,`The prince shoots a hawk on the high wall; he takes it. All furthers.`),
+H(41,6,1,`損`,`Sǔn`,`Decrease`,
+ `Decrease with sincerity brings supreme fortune. Two small bowls may serve the offering.`,
+ `A lake at the mountain's foot — the noble one curbs anger and restrains desire.`,
+ `Going quickly when the task is done, no blame; but weigh how much to decrease.`,`Perseverance furthers; to undertake, misfortune. Decrease nothing, add nothing.`,`When three travel, one departs; when one travels alone, he finds a companion.`,`If a man decreases his faults, the other hastens gladly. No blame.`,`Someone increases him — ten pairs of tortoises cannot refuse. Supreme fortune.`,`If one is increased without decreasing others, no blame. Persevere; gain servants.`),
+H(42,4,3,`益`,`Yì`,`Increase`,
+ `Increase — it furthers to undertake something, to cross the great water.`,
+ `Wind and thunder increase each other — seeing good, the noble one imitates it.`,
+ `It furthers to do great deeds. Supreme fortune, no blame.`,`Someone increases him — ten pairs of tortoises cannot refuse. Offer to the king.`,`One is enriched through unfortunate events. No blame, if sincere and measured.`,`Walk the middle, report to the prince, and he follows. Good for moving the capital.`,`If in truth your heart is kind, ask not — supreme fortune. Your kindness is known.`,`He brings increase to no one; someone strikes him. No constancy of heart. Misfortune.`),
+H(43,1,0,`夬`,`Guài`,`Breakthrough`,
+ `Breakthrough — proclaim it truthfully at court. Danger; take up no arms first.`,
+ `The lake rises to heaven — the noble one shares riches, wary of resting on virtue.`,
+ `Mighty in the forward toes; going without strength enough brings blame.`,`A cry of alarm at night; be armed — then fear nothing.`,`Strength in the cheekbones brings misfortune; he walks alone in the rain, soiled, yet no blame.`,`No skin on the thighs, hard going. Led like a sheep, remorse would vanish — but the words are not believed.`,`Weeds must be resolutely rooted out; walk the middle, and no blame.`,`No cry of warning; in the end, misfortune.`),
+H(44,0,4,`姤`,`Gòu`,`Coming to Meet`,
+ `Coming to Meet — the maiden is powerful. Do not marry such a maiden.`,
+ `Heaven above, wind below — the prince spreads his commands to the four quarters.`,
+ `Checked with a brake of bronze; perseverance, fortune. A lean pig strains within.`,`A fish in the tank. No blame; but this does not further guests.`,`No skin on the thighs, hard going; if aware of danger, no great blame.`,`No fish in the tank; this leads to misfortune.`,`A melon veiled with willow leaves; hidden lines — then it falls from heaven.`,`He comes to meet with his horns. Humiliation. No blame.`),
+H(45,1,7,`萃`,`Cuì`,`Gathering Together`,
+ `Gathering. The king nears his temple. See the great one; great offerings, fortune.`,
+ `The lake rises over the earth — the noble one renews his weapons against the unforeseen.`,
+ `Sincere, yet not to the end — now confusion, now gathering; call, and one grasp turns it to laughter.`,`Letting oneself be drawn brings fortune, no blame; a small offering suffices in truth.`,`Gathering amid sighs; nothing furthers. Go on without blame; a slight humiliation.`,`Great good fortune, no blame.`,`Men gather round position — with no fault, and not yet trusted. Supreme, lasting perseverance.`,`Lamenting and sighing, floods of tears. No blame.`),
+H(46,7,4,`升`,`Shēng`,`Pushing Upward`,
+ `Pushing Upward has supreme success. See the great one; go south, good fortune.`,
+ `Wood grows within the earth — the noble one heaps the small to reach the high.`,
+ `Pushing upward, welcomed. Great good fortune.`,`If one is sincere, even a small offering serves. No blame.`,`One pushes upward into an empty city.`,`The king offers on Mount Qi. Good fortune, no blame.`,`Perseverance brings fortune; one pushes upward by steps.`,`Pushing upward in the dark. It furthers only unceasing perseverance.`),
+H(47,1,5,`困`,`Kùn`,`Oppression`,
+ `Oppression. Success for the steadfast; the great one, fortune. Words go unbelieved.`,
+ `A lake run dry — the noble one stakes his life to follow his will.`,
+ `He sits oppressed under a bare tree, sinks into a gloomy valley; three years, no sight.`,`Oppressed at meat and wine; the scarlet sashes come. Offer sacrifice; to set out, misfortune.`,`Oppressed by stone, resting on thorns; he enters his house, sees not his wife. Misfortune.`,`He comes quietly, oppressed in a golden carriage. Humiliation, but a good end.`,`Nose and feet cut off; oppressed by the man in scarlet. Joy comes slowly; make offerings.`,`Oppressed by creepers on a shaky height; repent your "movement brings remorse," and fortune.`),
+H(48,5,4,`井`,`Jǐng`,`The Well`,
+ `The town may change, the well does not. No loss, no gain; if the rope falls short, misfortune.`,
+ `Water over wood — the noble one comforts the people and urges them to help each other.`,
+ `The well is muddy; none drink. No creatures come to an old well.`,`The well is a hollow where fishes dwell; the jug is cracked and leaks.`,`The well is cleaned, yet none drink — my heart grieves; it could be drawn.`,`The well is being lined with stone. No blame.`,`A clear, cold spring; one drinks from it.`,`One draws from the well without hindrance; it is dependable. Supreme fortune.`),
+H(49,1,2,`革`,`Gé`,`Revolution`,
+ `Revolution — on your own day you are believed. Supreme success; remorse vanishes.`,
+ `Fire within the lake — the noble one orders the calendar and marks the seasons.`,
+ `Wrapped in the hide of a yellow cow.`,`On your own day, revolution. To set out brings fortune, no blame.`,`To set out, misfortune; be steadfast in danger. When talk of change comes thrice, trust it.`,`Remorse vanishes; men trust him. Changing the mandate brings fortune.`,`The great man changes like a tiger; even before divining, he is trusted.`,`The noble one changes like a panther; the small man molts his face. Abide; fortune.`),
+H(50,2,4,`鼎`,`Dǐng`,`The Cauldron`,
+ `The Cauldron. Supreme good fortune. Success.`,
+ `Fire over wood — the noble one consecrates his fate by making his station correct.`,
+ `The cauldron with legs upturned; it furthers to remove stagnation. Take a concubine for the son. No blame.`,`The cauldron is full; my comrades envy but cannot reach me. Good fortune.`,`The handle is altered, the way blocked, the fat pheasant uneaten; then rain, and fortune.`,`The cauldron's legs break; the prince's meal is spilled, his person soiled. Misfortune.`,`The cauldron has yellow handles, rings of gold. Perseverance furthers.`,`The cauldron has rings of jade. Great good fortune; nothing that does not further.`),
+H(51,3,3,`震`,`Zhèn`,`The Arousing`,
+ `Shock brings success. Amid terror the wise one laughs and speaks; he spills no sacred wine.`,
+ `Thunder upon thunder — in fear and trembling the noble one sets his life in order.`,
+ `Shock comes — "Oh! Oh!" — then laughing words, "Ha! Ha!" Good fortune.`,`Shock comes with danger; treasures lost a hundredfold. Climb the nine hills; seek not — in seven days you regain them.`,`Shock brings distraction; if it moves you to act, no misfortune.`,`Shock is mired in the mud.`,`Shock goes back and forth with danger; yet nothing at all is lost. Perform your task.`,`Shock brings ruin, terrified glances; to go now, misfortune. It strikes the neighbor, not you. No blame.`),
+H(52,6,6,`艮`,`Gèn`,`Keeping Still`,
+ `Keeping still — the back at rest, no self felt; in the courtyard, no one seen. No blame.`,
+ `Mountains standing close — the noble one lets his thoughts go no further than his place.`,
+ `Keeping the toes still. No blame; lasting perseverance furthers.`,`Keeping the calves still; he cannot rescue the one he follows — his heart is heavy.`,`Keeping the hips still, stiffening the sacrum. Dangerous — the heart suffocates.`,`Keeping the trunk still. No blame.`,`Keeping the jaws still; the words have order. Remorse vanishes.`,`Noble-hearted keeping still. Good fortune.`),
+H(53,4,6,`漸`,`Jiàn`,`Development`,
+ `Development — the maiden is given in marriage; good fortune. Perseverance furthers.`,
+ `On the mountain, a tree — the noble one abides in worth to better the ways of men.`,
+ `The wild goose nears the shore; the young one in danger. There is talk. No blame.`,`The goose nears the cliff; eating and drinking in peace. Good fortune.`,`The goose nears the plateau; the man goes and returns not, the wife conceives but bears not. Ward off robbers.`,`The goose nears the tree; perhaps it finds a flat branch. No blame.`,`The goose nears the summit; three years the wife conceives not — none can hinder. Fortune.`,`The goose nears the cloud-heights; its feathers serve the sacred dance. Good fortune.`),
+H(54,3,1,`歸妹`,`Guī Mèi`,`The Marrying Maiden`,
+ `The Marrying Maiden. To undertake brings misfortune. Nothing furthers.`,
+ `Thunder over the lake — the noble one, knowing the end, understands the flaw.`,
+ `The maiden marries as a concubine; a lame man who can still tread. To undertake, fortune.`,`A one-eyed man who can still see; the perseverance of a solitary furthers.`,`The maiden marries as a slave, then returns to marry as a concubine.`,`The maiden delays; a late marriage comes in its own time.`,`The sovereign gives his daughter; her sleeves plainer than the maid's. The moon near full. Fortune.`,`The woman holds a basket without fruit; the man stabs the sheep without blood. Nothing furthers.`),
+H(55,3,2,`豐`,`Fēng`,`Abundance`,
+ `Abundance has success. The king attains it; be not sad — be like the sun at noon.`,
+ `Thunder and lightning together — the noble one decides lawsuits and carries out punishments.`,
+ `One meets his destined ruler; ten days is no error. To go wins recognition.`,`The curtain so thick that polestars show at noon; go, and you meet distrust. Sincerity opens it. Fortune.`,`The underbrush so thick that small stars show at noon; the right arm broken. No blame.`,`The tent so full that polestars show at noon; he meets his ruler, his equal. Good fortune.`,`Lines of blessing come; fame draws near. Good fortune.`,`His house in abundance, yet he screens off his family; peering out, no one seen for three years. Misfortune.`),
+H(56,2,6,`旅`,`Lǚ`,`The Wanderer`,
+ `The Wanderer. Success through smallness; steadfast in wandering, good fortune.`,
+ `Fire on the mountain — the noble one is clear and cautious in punishments, and delays no lawsuit.`,
+ `If the wanderer busies himself with trifles, he draws down disaster.`,`The wanderer comes to an inn with his goods; he wins a young servant's steadfastness.`,`The wanderer's inn burns down; he loses his servant's steadfastness. Danger.`,`The wanderer rests in a shelter, with goods and an axe; yet my heart is not glad.`,`He shoots a pheasant; it drops with one arrow. In the end, praise and office.`,`The bird's nest burns; the wanderer laughs first, then must weep. He loses his cow. Misfortune.`),
+H(57,4,4,`巽`,`Xùn`,`The Gentle`,
+ `The Gentle — through smallness, success. It furthers to see the great one.`,
+ `Winds following one another — the noble one spreads his commands and does his work.`,
+ `Advancing and retreating — the perseverance of a warrior furthers.`,`Penetration under the bed; scribes and diviners in great number. Fortune, no blame.`,`Repeated penetration. Humiliation.`,`Remorse vanishes; in the hunt, a threefold catch.`,`Perseverance, fortune; no beginning, but an end. Three days before, three after — fortune.`,`Penetration under the bed; he loses his goods and his axe. Perseverance, misfortune.`),
+H(58,1,1,`兌`,`Duì`,`The Joyous`,
+ `The Joyous. Success. Perseverance furthers.`,
+ `Lakes resting one on another — the noble one joins with friends to learn and discuss.`,
+ `Contented joyousness. Good fortune.`,`Sincere joyousness. Good fortune; remorse vanishes.`,`Coming joyousness. Misfortune.`,`Joyousness weighed is not yet at peace; rid of faults, there is joy.`,`Sincerity toward what disintegrates is dangerous.`,`Seductive joyousness.`),
+H(59,4,5,`渙`,`Huàn`,`Dispersion`,
+ `Dispersion succeeds. The king nears his temple; cross the great water. Perseverance furthers.`,
+ `The wind drives over the water — the ancient kings offered to the divine and raised temples.`,
+ `He brings help with the strength of a horse. Good fortune.`,`At dissolution, he hurries to his support. Remorse vanishes.`,`He dissolves his self; no remorse.`,`He dissolves his group — supreme fortune. Dispersion gathers a mound none can conceive.`,`Dissolving sweat pours out with a great cry; scatter what the king hoards. No blame.`,`He dissolves his blood; departing, keeping distance, going out. No blame.`),
+H(60,5,1,`節`,`Jié`,`Limitation`,
+ `Limitation succeeds. Galling limitation must not be persevered in.`,
+ `Water over the lake — the noble one sets number and measure, and examines virtue.`,
+ `Not going out the door and the courtyard. No blame.`,`Not going out the gate and the courtyard. Misfortune.`,`One who knows no limits will have cause to lament. No blame.`,`Contented limitation. Success.`,`Sweet limitation brings good fortune; to go on brings esteem.`,`Galling limitation. Perseverance brings misfortune; yet remorse vanishes.`),
+H(61,4,1,`中孚`,`Zhōng Fú`,`Inner Truth`,
+ `Inner Truth moves even pigs and fishes. Cross the great water. Perseverance furthers.`,
+ `Wind over the lake — the noble one weighs lawsuits and delays the death sentence.`,
+ `Being prepared brings fortune; hidden motives bring unrest.`,`A crane calls in the shade; its young answers. I have a good goblet — I will share it with you.`,`He finds a comrade; now he drums, now stops, now sobs, now sings.`,`The moon near full; the team-horse goes astray. No blame.`,`He possesses a truth that links all together. No blame.`,`Cockcrow rising to heaven. Perseverance brings misfortune.`),
+H(62,3,6,`小過`,`Xiǎo Guò`,`Preponderance of the Small`,
+ `The Small in excess — succeed in small, not great. The bird's message: better to stay below.`,
+ `Thunder on the mountain — the noble one gives excess to reverence, mourning, and thrift.`,
+ `The bird flies too high and meets misfortune.`,`She passes her grandfather, meets her grandmother; not reaching the prince, meets the minister. No blame.`,`If one is not extremely careful, someone may strike from behind. Misfortune.`,`No blame; he meets it without passing by. Going brings danger — be on guard. Do not act.`,`Dense clouds, no rain from our western fields; the prince shoots and takes the one in the cave.`,`He passes it by, not meeting; the flying bird leaves him. Misfortune — this is calamity.`),
+H(63,5,2,`既濟`,`Jì Jì`,`After Completion`,
+ `After Completion succeeds in small things. Persevere; the beginning fortunate, the end disorder.`,
+ `Water over fire — the noble one takes thought for misfortune and guards against it in advance.`,
+ `He brakes his wheels, wets his tail. No blame.`,`A woman loses the curtain of her carriage; seek not — in seven days you regain it.`,`The Ancestor punished the Devil's Country; three years to conquer it. Use no lesser men.`,`The finest clothes turn to rags; be on guard all day.`,`The eastern neighbor's ox-offering yields less than the western neighbor's small rite that wins the blessing.`,`He gets his head in the water. Danger.`),
+H(64,2,5,`未濟`,`Wèi Jì`,`Before Completion`,
+ `Before Completion, success. The little fox, nearly across, wets its tail. Nothing furthers yet.`,
+ `Fire over water — the noble one is careful to keep things apart, each in its place.`,
+ `He wets his tail. Humiliation.`,`He brakes his wheels. Perseverance brings good fortune.`,`Before completion, to set out brings misfortune; yet it furthers to cross the great water.`,`Perseverance, fortune; remorse vanishes. With a shock he subdues the Devil's Country, and is rewarded.`,`Perseverance, fortune, no remorse; the light of the noble one is true. Good fortune.`,`In sincerity one drinks wine — no blame; but wet your head, and you lose it, in truth.`)
+];
+
+const BY_KEY = {};
+HEX.forEach(h=>{ BY_KEY[h.key]=h; });
+
+/* ============================================================ */
+const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const noAnim = reduceMotion; // headless honors reduced-motion via query param below too
+const $ = s=>document.querySelector(s);
+const $$ = s=>Array.prototype.slice.call(document.querySelectorAll(s));
+
+/* ---- helpers to render line/hexagram markup ---- */
+function lineHTML(yang, moving, extraClass){
+  var cls = "ln " + (yang?"yang":"yin") + (moving?" mv":"") + (extraClass?(" "+extraClass):"");
+  var inner = yang
+    ? '<span class="bar"></span>'
+    : '<span class="bar"></span><span class="gap" style="flex:0 0 14%"></span><span class="bar"></span>';
+  return '<div class="'+cls+'">'+inner+'</div>';
+}
+// values: array bottom->top of {yang,moving}; render top->bottom for display
+function hexHTML(values){
+  var out="";
+  for(var i=5;i>=0;i--){ out += lineHTML(values[i].yang, values[i].moving, "show"); }
+  return out;
+}
+function keyFromValues(values){ // bottom->top yang bits
+  var lo = ""+(values[0].yang?1:0)+(values[1].yang?1:0)+(values[2].yang?1:0);
+  var up = ""+(values[3].yang?1:0)+(values[4].yang?1:0)+(values[5].yang?1:0);
+  return lo+up;
+}
+function transformValues(values){
+  return values.map(function(v){
+    return v.moving ? {yang:!v.yang, moving:false} : {yang:v.yang, moving:false};
+  });
+}
+
+/* ---- casting ---- */
+// weighted value picker; returns 6/7/8/9
+function pickValue(model){
+  var r = Math.random();
+  if(model==="yarrow"){ // 6:1/16 7:5/16 8:7/16 9:3/16
+    if(r < 1/16) return 6;
+    if(r < 6/16) return 7;
+    if(r < 13/16) return 8;
+    return 9;
+  } else { // coins  6:1/8 7:3/8 8:3/8 9:1/8
+    if(r < 1/8) return 6;
+    if(r < 4/8) return 7;
+    if(r < 7/8) return 8;
+    return 9;
+  }
+}
+function valueMeta(v){
+  return {
+    value:v,
+    yang:(v===7||v===9),
+    moving:(v===6||v===9),
+    heads:v-6,
+    name:(v===6?"old yin":v===7?"young yang":v===8?"young yin":"old yang"),
+    note:(v===6?"changing":v===9?"changing":"still")
+  };
+}
+
+/* ============================================================
+   STATE + UI
+   ============================================================ */
+var state = { model:"coins", castValues:[], casting:false, done:false };
+var CAST_ORD = ["First","Second","Third","Fourth","Fifth","Sixth"];
+
+var coinsEl = $("#coins");
+var buildEl = $("#hexbuild");
+var readoutEl = $("#readout");
+var castBtn = $("#castBtn");
+var castLabel = $("#castLabel");
+var resetBtn = $("#resetBtn");
+var hintEl = $("#hint");
+var cueEl = {style:{}}; // scroll cue removed; keep safe no-op for legacy refs
+var readingEl = $("#reading");
+
+function buildCoins(){
+  coinsEl.innerHTML="";
+  for(var i=0;i<3;i++){
+    var t=document.createElement("div"); t.className="coin-toss";
+    t.innerHTML =
+      '<div class="coin">'+
+        '<div class="face front">'+
+          '<span class="seal s-t">元</span><span class="seal s-r">亨</span>'+
+          '<span class="seal s-b">貞</span><span class="seal s-l">利</span>'+
+          '<span class="hole"></span>'+
+        '</div>'+
+        '<div class="face back"><span class="rev"></span><span class="hole"></span></div>'+
+      '</div>';
+    coinsEl.appendChild(t);
+  }
+}
+function resetBuild(){
+  buildEl.innerHTML="";
+  for(var i=5;i>=0;i--){
+    var d=document.createElement("div");
+    d.className="ln empty"; d.dataset.idx=i;
+    d.innerHTML='<span class="slot"></span>';
+    buildEl.appendChild(d);
+  }
+}
+function fillLine(idx, meta){
+  // find the row with dataset idx
+  var row = buildEl.querySelector('.ln[data-idx="'+idx+'"]');
+  if(!row) return;
+  var cls = "ln "+(meta.yang?"yang":"yin")+(meta.moving?" mv":"")+" show";
+  row.className = cls;
+  row.innerHTML = meta.yang
+    ? '<span class="bar"></span>'
+    : '<span class="bar"></span><span class="gap" style="flex:0 0 14%"></span><span class="bar"></span>';
+}
+
+/* coin animation via Web Animations API */
+function animateCoins(metas, cb){
+  var coinNodes = coinsEl.querySelectorAll(".coin");
+  var heads = metas.heads; // 0..3 how many show front
+  // decide which coins are front
+  var order=[0,1,2].sort(function(){return Math.random()-.5;});
+  var frontSet = {};
+  for(var i=0;i<heads;i++){ frontSet[order[i]]=true; }
+  if(noAnim){
+    for(var j=0;j<3;j++){
+      coinNodes[j].style.transform = frontSet[j] ? "rotateY(0deg)" : "rotateY(180deg)";
+    }
+    cb();
+    return;
+  }
+  var finished=0;
+  for(var k=0;k<3;k++){
+    (function(node, front, delay){
+      var toss = node.parentNode; // coin-toss
+      var spins = 2 + Math.floor(Math.random()*2);
+      var endRot = spins*360 + (front?0:180);
+      var dur = 950 + Math.random()*220;
+      // vertical arc on wrapper
+      toss.animate([
+        {transform:"translateY(0) rotateZ(0deg)"},
+        {transform:"translateY(-96px) rotateZ("+(Math.random()*40-20)+"deg)", offset:.42},
+        {transform:"translateY(0) rotateZ(0deg)"}
+      ],{duration:dur,delay:delay,easing:"cubic-bezier(.3,.05,.4,1)",fill:"both"});
+      // spin on coin
+      var an = node.animate([
+        {transform:"rotateY(0deg) rotateX(0deg)"},
+        {transform:"rotateY("+endRot+"deg) rotateX("+(spins*180)+"deg)"}
+      ],{duration:dur,delay:delay,easing:"cubic-bezier(.25,.7,.3,1)",fill:"both"});
+      an.onfinish=function(){
+        node.style.transform = front ? "rotateY(0deg)" : "rotateY(180deg)";
+        finished++;
+        if(finished===3) cb();
+      };
+    })(coinNodes[k], frontSet[k], k*90);
+  }
+}
+
+function updateCastLabel(){
+  var n = state.castValues.length;
+  if(n>=6){ return; }
+  castLabel.textContent = "Cast the "+CAST_ORD[n]+" Line";
+}
+
+function doCast(){
+  if(state.casting || state.done) return;
+  var idx = state.castValues.length; // 0-based, bottom up
+  if(idx>=6) return;
+  state.casting=true;
+  castBtn.disabled=true;
+  cueEl.style.opacity="0";
+  var v = pickValue(state.model);
+  var meta = valueMeta(v);
+  readoutEl.classList.remove("on");
+  animateCoins(meta, function(){
+    state.castValues.push(meta);
+    fillLine(idx, meta);
+    readoutEl.innerHTML = '<span class="k">Line '+(idx+1)+' · </span><span class="v">'+v+'</span> <span class="k">·</span> '+meta.name+' <span class="k">('+meta.note+')</span>';
+    readoutEl.classList.add("on");
+    state.casting=false;
+    if(state.castValues.length>=6){
+      state.done=true;
+      castBtn.disabled=true;
+      castLabel.textContent="The hexagram is complete";
+      setTimeout(revealReading, noAnim?60:620);
+    } else {
+      castBtn.disabled=false;
+      updateCastLabel();
+    }
+  });
+}
+
+/* ---- reading ---- */
+function trigOf(idx){ return TRIGRAMS[idx]; }
+function ordinalLine(i){ // i 0..5 bottom->top -> Chinese line position label
+  var names=["Bottom line","Second line","Third line","Fourth line","Fifth line","Top line"];
+  var cn=["初","二","三","四","五","上"];
+  return {en:names[i], cn:cn[i]};
+}
+
+function renderReading(values){
+  var key = keyFromValues(values);
+  var present = BY_KEY[key];
+  if(!present){ return; } // safety
+  // big hex figure
+  $("#rdBigHex").innerHTML = hexHTML(values);
+  // meta
+  var up = trigOf(present.up), lo = trigOf(present.lo);
+  var glyph = String.fromCodePoint(0x4DC0 + (present.n-1));
+  $("#rdMeta").innerHTML =
+    '<div class="num">Hexagram '+present.n+' of 64</div>'+
+    '<div class="glyph">'+glyph+'</div>'+
+    '<div class="name">'+present.zh+'<span class="py">'+present.py+'</span></div>'+
+    '<div class="en">'+present.en+'</div>'+
+    '<div class="trig"><span class="tgc">'+up.sym+'</span> <b>'+up.en+'</b> over <span class="tgc">'+lo.sym+'</span> <b>'+lo.en+'</b>'+
+      ' &nbsp;·&nbsp; '+up.zh+' / '+lo.zh+'</div>';
+  $("#rdJudg").textContent = present.judg;
+  $("#rdImg").textContent = present.img;
+
+  // changing lines
+  var moving=[];
+  values.forEach(function(v,i){ if(v.moving) moving.push(i); });
+  var ch = $("#rdChanging");
+  if(moving.length===0){
+    ch.innerHTML =
+      '<div class="ch-lbl">No changing lines</div>'+
+      '<p class="no-change">All six lines are still. The situation is <b>'+present.en+'</b>, entire and unmoving — read the judgment as it stands, and let it rest.</p>';
+  } else {
+    var future = BY_KEY[keyFromValues(transformValues(values))];
+    var mvHTML='';
+    moving.forEach(function(i){
+      var o=ordinalLine(i);
+      var kindZH = values[i].yang ? "九" : "六"; // 9 for yang, 6 for yin moving
+      mvHTML +=
+        '<div class="mv-item"><div class="pos"><span class="cn">'+kindZH+o.cn.replace("初","").replace("上","")+
+          (i===0?" · 初":i===5?" · 上":"")+'</span><br>'+o.en+'</div>'+
+          '<p>'+present.lines[i]+'</p></div>';
+    });
+    var fglyph = String.fromCodePoint(0x4DC0 + (future.n-1));
+    ch.innerHTML =
+      '<div class="ch-lbl">'+(moving.length===1?"One changing line":moving.length+" changing lines")+' &nbsp;·&nbsp; 爻辭</div>'+
+      '<div class="mv-list">'+mvHTML+'</div>'+
+      '<div class="transform">'+
+        '<div class="tf-col"><div class="cap">The Present</div>'+
+          '<div class="tf-hex">'+hexHTML(values)+'</div>'+
+          '<div class="tf-name"><span class="num">No. '+present.n+' · '+present.zh+'</span>'+present.zh+'</div>'+
+          '<div class="tf-en">'+present.en+'</div>'+
+        '</div>'+
+        '<div class="tf-arrow"><span class="a">→</span><span class="t">changes into</span></div>'+
+        '<div class="tf-col"><div class="cap">The Future</div>'+
+          '<div class="tf-hex">'+hexHTML(transformValues(values).map(function(v){return {yang:v.yang,moving:false};}))+'</div>'+
+          '<div class="tf-name"><span class="num">No. '+future.n+' · '+future.zh+'</span>'+future.zh+'</div>'+
+          '<div class="tf-en">'+future.en+'</div>'+
+        '</div>'+
+      '</div>';
+  }
+  // topkicker with question
+  var q = $("#question").value.trim();
+  $("#rdTopKicker").textContent = q ? "In answer to: "+q : "The coins have spoken";
+}
+
+function revealReading(){
+  renderReading(state.castValues);
+  readingEl.classList.add("open");
+  resetBtn.hidden=false;
+  hintEl.textContent = "The reading is cast below";
+  cueEl.style.opacity="0";
+  if(!noAnim){
+    setTimeout(function(){ readingEl.scrollIntoView({behavior:"smooth",block:"start"}); }, 120);
+  } else {
+    readingEl.scrollIntoView({block:"start"});
+  }
+  // update share URL
+  updateShareURL();
+}
+
+function updateShareURL(){
+  var pattern = state.castValues.map(function(m){return m.value;}).join("");
+  var url = new URL(window.location.href);
+  url.searchParams.set("lines", pattern);
+  var q=$("#question").value.trim();
+  if(q) url.searchParams.set("q", q); else url.searchParams.delete("q");
+  url.searchParams.delete("hex"); url.searchParams.delete("move");
+  history.replaceState(null,"",url.toString());
+}
+
+function resetAll(){
+  state.castValues=[]; state.casting=false; state.done=false;
+  buildCoins(); resetBuild();
+  readoutEl.classList.remove("on"); readoutEl.innerHTML="";
+  readingEl.classList.remove("open");
+  castBtn.disabled=false;
+  castLabel.textContent="Cast the First Line";
+  resetBtn.hidden=true;
+  hintEl.textContent = state.model==="coins"
+    ? "Three bronze coins · six casts · bottom line first"
+    : "Fifty yarrow stalks · six casts · bottom line first";
+  cueEl.style.opacity="";
+  var url=new URL(window.location.href);
+  url.searchParams.delete("lines"); url.searchParams.delete("hex"); url.searchParams.delete("move"); url.searchParams.delete("q");
+  history.replaceState(null,"",url.pathname);
+  window.scrollTo({top:0,behavior:noAnim?"auto":"smooth"});
+}
+
+/* ---- render sixty-four grid ---- */
+function renderGrid(){
+  var g=$("#hxGrid"); var html="";
+  HEX.forEach(function(h){
+    // mini figure from key: key = lowerBits(3)+upperBits(3), bottom->top
+    var bits=h.key; var mini="";
+    for(var i=5;i>=0;i--){
+      var yang = bits.charAt(i)==="1";
+      mini += lineHTML(yang,false,"");
+    }
+    html +=
+      '<button class="hx-cell" data-n="'+h.n+'" aria-label="Hexagram '+h.n+', '+h.zh+' '+h.en+'">'+
+        '<div class="mini">'+mini+'</div>'+
+        '<div class="cn">'+h.zh+'</div>'+
+        '<div class="no">'+h.n+'</div>'+
+      '</button>';
+  });
+  g.innerHTML=html;
+}
+function showDetail(n){
+  var h=HEX[n-1]; if(!h) return;
+  var up=trigOf(h.up), lo=trigOf(h.lo);
+  var bits=h.key; var fig="";
+  for(var i=5;i>=0;i--){ fig+=lineHTML(bits.charAt(i)==="1",false,""); }
+  var glyph=String.fromCodePoint(0x4DC0+(h.n-1));
+  var d=$("#hxDetail");
+  d.hidden=false;
+  d.innerHTML =
+    '<div class="d-hex">'+fig+'</div>'+
+    '<div><div class="d-num">Hexagram '+h.n+' &nbsp; '+glyph+'</div>'+
+      '<div class="d-name">'+h.zh+'<span class="py">'+h.py+'</span></div>'+
+      '<div class="d-en">'+h.en+'</div>'+
+      '<div class="d-jud">'+h.judg+'</div>'+
+      '<div class="d-trig"><b>'+up.en+'</b> over <b>'+lo.en+'</b> &nbsp;·&nbsp; '+up.sym+' '+up.zh+' / '+lo.sym+' '+lo.zh+'</div>'+
+    '</div>';
+  requestAnimationFrame(function(){ d.classList.add("on"); });
+}
+
+/* ---- trigrams section ---- */
+function renderTrigrams(){
+  var g=$("#tgGrid"); var html="";
+  TRIGRAMS.forEach(function(t){
+    html +=
+      '<div class="tg-card">'+
+        '<div class="sym">'+t.sym+'</div>'+
+        '<div class="zh">'+t.zh+'</div>'+
+        '<div class="py">'+t.py+' · '+t.en+'</div>'+
+        '<div class="el">'+t.el+'</div>'+
+      '</div>';
+  });
+  g.innerHTML=html;
+}
+
+/* ---- bagua glyphs positioned ---- */
+function renderBagua(){
+  var spin=$("#baguaSpin");
+  var order=[0,1,2,3,7,6,5,4]; // arrangement around ring
+  var R=48; // percent radius
+  order.forEach(function(idx,i){
+    var ang=(i/8)*Math.PI*2 - Math.PI/2;
+    var x=50 + R*Math.cos(ang);
+    var y=50 + R*Math.sin(ang);
+    var el=document.createElement("div");
+    el.className="tg";
+    el.style.left=x+"%"; el.style.top=y+"%";
+    el.style.transform="translate(-50%,-50%)";
+    el.textContent=TRIGRAMS[idx].sym;
+    spin.appendChild(el);
+  });
+}
+
+/* ============================================================
+   INIT + wiring
+   ============================================================ */
+buildCoins(); resetBuild(); renderGrid(); renderTrigrams(); renderBagua();
+
+castBtn.addEventListener("click", doCast);
+resetBtn.addEventListener("click", resetAll);
+$("#againBtn").addEventListener("click", resetAll);
+
+$("#toggle").addEventListener("click", function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  var m=b.dataset.m; if(!m||m===state.model) return;
+  state.model=m;
+  $$("#toggle button").forEach(function(x){ x.classList.toggle("act", x.dataset.m===m); });
+  if(!state.done && state.castValues.length===0){
+    hintEl.textContent = m==="coins"
+      ? "Three bronze coins · six casts · bottom line first"
+      : "Fifty yarrow stalks · six casts · bottom line first";
+  }
+});
+
+// grid detail
+$("#hxGrid").addEventListener("click", function(e){
+  var c=e.target.closest(".hx-cell"); if(!c) return;
+  showDetail(+c.dataset.n);
+  var d=$("#hxDetail");
+  if(!noAnim) d.scrollIntoView({behavior:"smooth",block:"nearest"});
+});
+
+// save/share
+$("#saveBtn").addEventListener("click", function(){
+  updateShareURL();
+  var t=$("#toast");
+  var doToast=function(){ t.classList.add("on"); setTimeout(function(){t.classList.remove("on");},1900); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(window.location.href).then(doToast, doToast);
+  } else { doToast(); }
+});
+
+/* ---- scroll progress ---- */
+var prog=$("#prog"), ticking=false;
+window.addEventListener("scroll", function(){
+  if(ticking) return; ticking=true;
+  requestAnimationFrame(function(){
+    var h=document.documentElement;
+    var sc=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    prog.style.width=(sc*100)+"%";
+    ticking=false;
+  });
+}, {passive:true});
+
+/* ---- cursor (fine pointers only) ---- */
+if(window.matchMedia && window.matchMedia("(pointer:fine)").matches && !noAnim){
+  var cur=$("#cur"); document.body.classList.add("cur-live");
+  var cx=0,cy=0,tx=0,ty=0,raf=null,idle=null;
+  function loop(){
+    cx+=(tx-cx)*.28; cy+=(ty-cy)*.28;
+    cur.style.transform="translate("+cx+"px,"+cy+"px) translate(-50%,-50%)";
+    if(Math.abs(tx-cx)>.1||Math.abs(ty-cy)>.1){ raf=requestAnimationFrame(loop); } else { raf=null; }
+  }
+  window.addEventListener("mousemove", function(e){
+    tx=e.clientX; ty=e.clientY; cur.classList.add("on");
+    if(!raf) raf=requestAnimationFrame(loop);
+  });
+  document.addEventListener("mouseover", function(e){
+    cur.classList.toggle("hov", !!e.target.closest("button,a,input,.hx-cell,.tg-card"));
+  });
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden && raf){ cancelAnimationFrame(raf); raf=null; }
+  });
+}
+
+/* ============================================================
+   URL PARAMS — deterministic completed reading for screenshots/share
+   ?lines=NNNNNN (each digit 6/7/8/9, bottom->top)
+   ?hex=N[&move=k]  -> build hexagram N with line k (1..6) moving
+   ============================================================ */
+function valuesFromLineDigits(str){
+  var vals=[];
+  for(var i=0;i<6;i++){
+    var d=parseInt(str.charAt(i),10);
+    if(d<6||d>9||isNaN(d)) return null;
+    vals.push(valueMeta(d));
+  }
+  return vals;
+}
+function valuesFromHex(n, moveLine){
+  var h=HEX[n-1]; if(!h) return null;
+  var bits=h.key; // bottom->top yang bits
+  var vals=[];
+  for(var i=0;i<6;i++){
+    var yang = bits.charAt(i)==="1";
+    var moving = (moveLine!=null && (i===(moveLine-1)));
+    var v = moving ? (yang?9:6) : (yang?7:8);
+    vals.push(valueMeta(v));
+  }
+  return vals;
+}
+function loadFromParams(){
+  var p=new URLSearchParams(window.location.search);
+  var q=p.get("q"); if(q) $("#question").value=q;
+
+  // partial mid-cast demo: ?cast=DIGITS (1-5 digits, e.g. ?cast=796)
+  var castParam=p.get("cast");
+  if(castParam && /^[6789]{1,5}$/.test(castParam)){
+    for(var c=0;c<castParam.length;c++){
+      var mm=valueMeta(parseInt(castParam.charAt(c),10));
+      state.castValues.push(mm); fillLine(c,mm);
+    }
+    var last=state.castValues[state.castValues.length-1];
+    $("#readout").classList.add("on");
+    $("#readout").innerHTML='<span class="k">Line '+state.castValues.length+' · </span><span class="v">'+last.value+'</span> <span class="k">·</span> '+last.name+' <span class="k">('+last.note+')</span>';
+    castLabel.textContent="Cast the "+CAST_ORD[state.castValues.length]+" Line";
+    cueEl.style.opacity="0";
+    return true;
+  }
+
+  var vals=null;
+  if(p.get("lines")){ vals=valuesFromLineDigits(p.get("lines")); }
+  else if(p.get("hex")){
+    var n=parseInt(p.get("hex"),10);
+    var mv=p.get("move")?parseInt(p.get("move"),10):5; // default: 5th line moving
+    if(!isNaN(n)&&n>=1&&n<=64) vals=valuesFromHex(n, (mv>=1&&mv<=6)?mv:5);
+  }
+  if(vals){
+    state.castValues=vals; state.done=true;
+    vals.forEach(function(m,i){ fillLine(i,m); });
+    castBtn.disabled=true; castLabel.textContent="The hexagram is complete";
+    renderReading(vals);
+    readingEl.classList.add("open");
+    resetBtn.hidden=false;
+    cueEl.style.opacity="0";
+    var rl=$("#readout");
+    rl.classList.add("on");
+    rl.innerHTML='<span class="k">A completed reading</span>';
+    // bring the reading panel into view (skip if ?view=altar)
+    if(p.get("view")!=="altar"){
+      requestAnimationFrame(function(){ readingEl.scrollIntoView({block:"start"}); });
+    }
+    return true;
+  }
+  return false;
+}
+loadFromParams();
+</script>
+</body>
+</html>

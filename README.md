@@ -1,6 +1,6 @@
-# XAVIER FABLE ×50
+# XAVIER FABLE ×55
 
-**Fifty fundamentally different websites — designed, written, art-directed and built end-to-end by Claude Fable 5, autonomously.**
+**Fifty-five fundamentally different websites — designed, written, art-directed and built end-to-end by Claude Fable 5, autonomously.**
 
 🔗 **Live:** https://xavierfable30.netlify.app · 📖 **The guide:** https://xavierfable30.netlify.app/guide/
 
@@ -10,12 +10,12 @@ Each site is a self-contained demonstration of a distinct web-design technique �
 
 ```
 fable-x25/                  # the site (deployed to Netlify, no build step)
-├── index.html              # gallery homepage — a "living wall" of all 50 thumbnails
+├── index.html              # gallery homepage — a "living wall" of all 55 thumbnails
 ├── guide/index.html        # how it was made
 └── sites/
     ├── 01-liquid-metal/     # MERCURIAL — raymarched liquid-chrome (custom GLSL)
     ├── 02-terrain/          # ALTIVA — procedural Three.js mountain flyover
-    ├── …                    # (50 sites total)
+    ├── …                    # (55 sites total)
     └── 30-orrery/           # EPHEMERIS — a working Keplerian orrery
     #   each: index.html + assets/ + PASSES.md (the 3-pass critique log)
 
@@ -27,7 +27,7 @@ assets-pipeline/            # the tooling that built it
 └── ogshots.mjs / inject-og.mjs     # per-page social share cards + meta
 ```
 
-## The 50
+## The 55
 
 **3D & WebGL** — Mercurial · Altiva · Heliopause · Fold  
 **Typography** — The Elastic Word · Raw Matter · Meridiem · Phosphor  
@@ -37,7 +37,8 @@ assets-pipeline/            # the tooling that built it
 **Retro & play** — Chromeheart 2000 · Kōcha-an · Dough · Mass & Void  
 **Wave II** — Vivarium · Gravity Well · The Sleeper · Arcana · Ephemeris  
 **Wave III** — 山水 Shan Shui · 枯山水 Karesansui · 剪纸 Jianzhi · Rain on Glass · Aurora  
-**Wave IV** — Physarum · Morphogen · N-Body · Kaleido · Harmonograph · Escapement · Resonance · Cold Set (type foundry) · Slow Pour (coffee) · The Brass Owl (bar) · Olfacta (perfume) · The Lumen (cinema) · Uranometria (star atlas) · Meridian (globe) · Further (ocean)
+**Wave IV** — Physarum · Morphogen · N-Body · Kaleido · Harmonograph · Escapement · Resonance · Cold Set (type foundry) · Slow Pour (coffee) · The Brass Owl (bar) · Olfacta (perfume) · The Lumen (cinema) · Uranometria (star atlas) · Meridian (globe) · Further (ocean)  
+**Wave V — Divination** — 生肖 The Zodiac · 八字 Four Pillars (BaZi) · 易经 I Ching · 求签 Fortune Sticks (Kau Cim) · The Twelve Houses (horoscope)
 
 ## Running locally
 

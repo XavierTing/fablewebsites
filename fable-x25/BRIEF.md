@@ -6,7 +6,7 @@ You are building ONE site of a 25-site showcase demonstrating state-of-the-art w
 
 1. **Self-contained folder**: `sites/<NN-slug>/index.html`. Local assets go in `sites/<NN-slug>/assets/`. CDN libs allowed (pin versions): Three.js (`https://unpkg.com/three@0.160.0/build/three.module.js` via importmap, or cdnjs), GSAP (`https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js` + ScrollTrigger), Google Fonts.
 2. **`<title>` + meta description + a `<link rel="icon">` favicon** (inline SVG data-URI emoji favicon is fine — prevents 404 console noise).
-3. **Back-link to the gallery**: a small, elegant, fixed element (top-left or bottom-left) reading `XAVIER FABLE ×50` linking to `/` — style it to match the site's aesthetic, unobtrusive but findable.
+3. **Back-link to the gallery**: a small, elegant, fixed element (top-left or bottom-left) reading `XAVIER FABLE ×55` linking to `/` — style it to match the site's aesthetic, unobtrusive but findable.
 4. **Responsive**: fully composed at 1440×900 AND 390×844. Heavy 3D may simplify on mobile but the page must still look intentional.
 5. **Zero console errors** at both widths (verified via the screenshot tool below).
 6. **Motion quality**: ease curves matter. Nothing linear unless stylistically deliberate. Entrance animations, scroll choreography, hover states on every interactive element. Respect `prefers-reduced-motion` (guard heavy animation behind a check).

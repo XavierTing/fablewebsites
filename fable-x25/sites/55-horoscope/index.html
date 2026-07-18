@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE TWELVE HOUSES — a celestial almanac</title>
+<meta name="description" content="THE TWELVE HOUSES is a gilded almanac of the zodiac: an engraved circular chart wheel, the twelve signs with their elements and rulers, and a fresh daily reading — written for reflection, drawn each night by the sky.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×55">
+<meta property="og:title" content="THE TWELVE HOUSES — a celestial almanac">
+<meta property="og:description" content="An engraved zodiac wheel and a reading for the day. Turn the dial to your sign.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/55-horoscope/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/55-horoscope/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="THE TWELVE HOUSES — a celestial almanac">
+<meta name="twitter:description" content="An engraved zodiac wheel and a reading for the day. Turn the dial to your sign.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b1026'/%3E%3Cg fill='none' stroke='%23d9b45b' stroke-width='3.5'%3E%3Ccircle cx='50' cy='50' r='34'/%3E%3Ccircle cx='50' cy='50' r='22'/%3E%3C/g%3E%3Ctext x='50' y='50' font-size='30' fill='%23f0d38a' text-anchor='middle' dominant-baseline='central'%3E%E2%98%89%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#0b1026;
+  --void2:#080b1e;
+  --panel:#101838;
+  --panel2:#0d1430;
+  --gold:#d9b45b;
+  --gold-hi:#f0d38a;
+  --gold-deep:#a9863c;
+  --gold-dim:rgba(217,180,91,.42);
+  --hair:rgba(217,180,91,.20);
+  --hair2:rgba(217,180,91,.12);
+  --star:#eef1ff;
+  --ink:#e8e6f4;
+  --dim:rgba(232,230,244,.62);
+  --faint:rgba(232,230,244,.36);
+  --fire:#dd8a5c;
+  --earth:#a6b06b;
+  --air:#a9c3e2;
+  --water:#69a7c0;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --sans:"Space Grotesk",system-ui,sans-serif;
+  --maxw:1280px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--void)}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:300;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--gold);color:#0a0d1f}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:var(--void2)}
+::-webkit-scrollbar-thumb{background:#26315a;border-radius:6px;border:2px solid var(--void2)}
+::-webkit-scrollbar-thumb:hover{background:#33406e}
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
+a{color:var(--gold);text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+img,svg{display:block}
+h1,h2,h3{font-weight:400}
+
+/* ── atmosphere ── */
+.stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+.nebula{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 62% 52% at 22% 8%,rgba(86,74,168,.22),transparent 60%),
+    radial-gradient(ellipse 60% 55% at 84% 22%,rgba(46,86,140,.20),transparent 62%),
+    radial-gradient(ellipse 90% 70% at 50% 108%,rgba(120,92,52,.16),transparent 60%),
+    radial-gradient(ellipse 120% 90% at 50% 40%,transparent 58%,rgba(4,6,18,.6) 100%)}
+.grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:2;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.78 0 0 0 0 0.55 0 0 0 0.028 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 92% 82% at 50% 44%,transparent 56%,rgba(3,4,14,.66) 100%)}
+@keyframes tw{0%,100%{opacity:.25}50%{opacity:1}}
+.stars .tw{animation:tw 4s ease-in-out infinite}
+
+/* ── cursor ── */
+.cursor{position:fixed;left:0;top:0;width:7px;height:7px;border-radius:50%;
+  background:var(--gold-hi);z-index:200;pointer-events:none;opacity:0;
+  transform:translate(-50%,-50%);box-shadow:0 0 9px rgba(240,211,138,.8);
+  transition:width .25s,height .25s,opacity .3s,background .25s}
+.cursor.on{opacity:.9}
+.cursor.hover{width:16px;height:16px;background:transparent;border:1px solid var(--gold-hi)}
+@media(pointer:fine){body.cursor-live,body.cursor-live a,body.cursor-live button,body.cursor-live [role=button]{cursor:none}}
+
+/* ── back-link ── */
+.backlink{position:fixed;top:20px;left:22px;z-index:100;
+  font-family:var(--sans);font-size:10px;letter-spacing:.34em;color:var(--gold-dim);
+  padding:8px 2px;transition:color .35s}
+.backlink:hover{color:var(--gold-hi)}
+
+/* ── layout ── */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,64px);position:relative;z-index:3}
+section{position:relative;z-index:3}
+
+/* ── hero ── */
+.hero{min-height:100svh;display:flex;flex-direction:column;padding:clamp(46px,6vh,70px) 0 clamp(40px,6vh,64px)}
+.masthead{text-align:center;margin-bottom:clamp(14px,2.2vh,26px)}
+.eyebrow{font-size:10.5px;letter-spacing:.46em;text-indent:.46em;color:var(--gold-dim);margin-bottom:16px}
+h1.title{font-family:var(--serif);font-weight:500;font-size:clamp(38px,6.4vw,84px);
+  line-height:.98;letter-spacing:.01em;color:var(--gold-hi)}
+h1.title .amp{font-style:italic;font-weight:400;color:var(--gold)}
+.subtitle{margin-top:14px;color:var(--dim);font-weight:300;
+  font-family:var(--serif);font-style:italic;letter-spacing:.02em;font-size:clamp(16px,1.8vw,20px)}
+
+/* date picker pill */
+.pick{margin:22px auto 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+.pick .lab{font-size:10px;letter-spacing:.3em;color:var(--faint);text-transform:uppercase}
+.datefield{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--hair);
+  background:rgba(16,24,56,.5);border-radius:100px;padding:8px 8px 8px 16px;transition:border-color .3s}
+.datefield:focus-within{border-color:var(--gold-dim)}
+.datefield input{background:transparent;border:none;color:var(--ink);font-family:var(--sans);
+  font-size:12.5px;letter-spacing:.04em;color-scheme:dark;width:150px}
+.datefield input::-webkit-calendar-picker-indicator{filter:invert(.7) sepia(1) saturate(3) hue-rotate(5deg);cursor:pointer}
+.datefield button{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#0a0d1f;
+  background:var(--gold);border-radius:100px;padding:8px 15px;transition:background .3s,transform .3s}
+.datefield button:hover{background:var(--gold-hi);transform:translateY(-1px)}
+
+/* stage: wheel + reading */
+.stage{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(26px,4vw,60px);align-items:start;margin-top:clamp(10px,1.6vh,22px)}
+.wheelwrap{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.wheelbox{position:relative;width:min(90vw,500px);aspect-ratio:1;
+  filter:drop-shadow(0 24px 60px rgba(0,0,0,.55))}
+.wheelbox svg{width:100%;height:100%;overflow:visible}
+#wheelRot{transform-box:fill-box;transform-origin:center;
+  transition:transform 1.25s cubic-bezier(.6,.02,.16,1)}
+.seg-hit{fill:rgba(0,0,0,0);cursor:pointer;outline:none}
+.seg-fill{transition:opacity .45s ease,fill .45s ease}
+.seg-glyph{transition:opacity .45s ease,fill .45s ease;transform-box:fill-box;transform-origin:center;transform:scale(1)}
+.seg-div{stroke:var(--hair);stroke-width:1}
+.ring{fill:none;stroke:var(--gold);vector-effect:non-scaling-stroke}
+.tick{stroke:var(--gold);vector-effect:non-scaling-stroke}
+.house-num{fill:var(--gold-dim);font-family:var(--sans);font-weight:400;letter-spacing:.04em}
+.planet{fill:var(--gold-dim);transition:fill .4s}
+.medglyph{fill:var(--gold-hi);font-family:var(--serif);font-weight:500;transition:fill .5s}
+.medname{fill:var(--gold);font-family:var(--sans);letter-spacing:.28em}
+.medrange{fill:var(--faint);font-family:var(--sans);letter-spacing:.14em}
+.medsun{fill:var(--faint);font-family:var(--sans);letter-spacing:.3em}
+.meridian{fill:var(--gold-hi)}
+/* entrance */
+.wheelbox #wheelAll{opacity:0;transform:scale(.94);transform-box:fill-box;transform-origin:center;
+  transition:opacity 1.1s ease,transform 1.3s cubic-bezier(.2,.7,.2,1)}
+.wheelbox.ready #wheelAll{opacity:1;transform:scale(1)}
+
+.wheelcap{margin-top:20px;text-align:center;min-height:40px}
+.wheelcap .cn{font-family:var(--serif);font-size:20px;color:var(--gold-hi);letter-spacing:.02em}
+.wheelcap .cd{font-size:10.5px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase;margin-top:3px}
+.wheelcap .hint{font-size:10px;letter-spacing:.26em;color:var(--gold-dim);text-transform:uppercase}
+
+/* reading card */
+.reading{opacity:0;transform:translateY(16px);transition:opacity .9s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+.reading.in{opacity:1;transform:none}
+.card{border:1px solid var(--hair);border-radius:6px;background:
+  linear-gradient(180deg,rgba(18,26,60,.66),rgba(11,16,40,.72));
+  padding:clamp(24px,3vw,38px);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(217,180,91,.08),inset 0 0 60px rgba(217,180,91,.05)}
+.rhead{display:flex;align-items:center;gap:18px;padding-bottom:20px;border-bottom:1px solid var(--hair2)}
+.rglyph{font-family:var(--serif);font-size:52px;line-height:1;color:var(--gold-hi);flex:none;
+  width:66px;height:66px;display:grid;place-items:center;border:1px solid var(--hair);border-radius:50%;
+  background:radial-gradient(circle,rgba(217,180,91,.10),transparent 72%)}
+.rtitle{flex:1;min-width:0}
+.rname{font-family:var(--serif);font-size:clamp(26px,3vw,36px);font-weight:500;color:var(--gold-hi);line-height:1.02}
+.rrange{font-size:10.5px;letter-spacing:.22em;color:var(--dim);text-transform:uppercase;margin-top:5px}
+.relem{flex:none;text-align:right}
+.relem .el{font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.relem .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+.rmeta{display:flex;flex-wrap:wrap;gap:8px 10px;margin:20px 0 4px}
+.chip{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  border:1px solid var(--hair);border-radius:100px;padding:6px 12px;white-space:nowrap}
+.chip b{color:var(--gold-hi);font-weight:500}
+.chip .g{color:var(--gold);font-size:12px}
+
+.essence{font-family:var(--serif);font-style:italic;font-size:clamp(17px,1.7vw,21px);
+  color:var(--ink);line-height:1.5;margin:20px 0 4px}
+
+.rrow{margin-top:20px}
+.rlab{font-size:9.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;
+  display:flex;align-items:center;gap:10px}
+.rlab::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--hair),transparent)}
+.rtext{font-size:13.5px;color:var(--dim);line-height:1.72}
+.traits{display:flex;flex-wrap:wrap;gap:7px}
+.trait{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);
+  border:1px solid var(--hair2);border-radius:2px;padding:5px 10px;background:rgba(217,180,91,.04)}
+
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+@media(max-width:520px){.twocol{grid-template-columns:1fr;gap:16px}}
+
+/* daily block */
+.daily{margin-top:22px;border:1px solid var(--hair);border-radius:5px;padding:20px;
+  background:linear-gradient(180deg,rgba(217,180,91,.05),rgba(217,180,91,.01))}
+.daily .dhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.daily .dh-l{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-hi)}
+.daily .dh-r{font-size:9.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.daily .dread{font-family:var(--serif);font-size:clamp(16px,1.6vw,19px);font-style:italic;
+  color:var(--ink);line-height:1.55}
+.lwm{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.lwm .cell{text-align:center}
+.lwm .k{font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.lwm .v{font-size:12px;color:var(--dim);line-height:1.4;font-weight:300}
+.lwm .cell+.cell{border-left:1px solid var(--hair2)}
+
+.lucky{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.lstat{flex:1;min-width:96px;border:1px solid var(--hair2);border-radius:4px;padding:12px 14px;text-align:center}
+.lstat .lk{font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.lstat .lv{font-family:var(--serif);font-size:18px;color:var(--gold-hi)}
+.match{display:flex;flex-wrap:wrap;gap:8px}
+.mbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--hair);border-radius:100px;
+  padding:6px 13px 6px 10px;transition:border-color .3s,background .3s;cursor:pointer}
+.mbtn:hover{border-color:var(--gold-dim);background:rgba(217,180,91,.06)}
+.mbtn .mg{font-size:15px;color:var(--gold)}
+.mbtn .mn{font-size:10.5px;letter-spacing:.1em;color:var(--ink);text-transform:uppercase}
+
+/* ── section frame ── */
+.sec{padding:clamp(72px,11vh,124px) 0}
+.sechead{text-align:center;margin-bottom:clamp(40px,6vh,66px)}
+.sec-kicker{font-size:10px;letter-spacing:.42em;text-indent:.42em;color:var(--gold-dim);margin-bottom:14px}
+.sec-title{font-family:var(--serif);font-weight:500;font-size:clamp(26px,3.6vw,44px);color:var(--gold-hi);line-height:1.05}
+.sec-note{max-width:56ch;margin:16px auto 0;font-size:14px;color:var(--dim);line-height:1.75}
+.hr-orn{width:64px;height:1px;margin:20px auto 0;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);position:relative}
+.hr-orn::after{content:"✦";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  color:var(--gold);font-size:11px;background:var(--void);padding:0 8px}
+
+/* twelve strip */
+.twelve{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.tcard{border:1px solid var(--hair2);border-radius:5px;padding:18px 12px;text-align:center;cursor:pointer;
+  background:rgba(16,24,56,.34);transition:border-color .35s,background .35s,transform .35s;position:relative}
+.tcard:hover,.tcard.active{border-color:var(--gold-dim);background:rgba(217,180,91,.06);transform:translateY(-3px)}
+.tcard.active{box-shadow:inset 0 0 0 1px rgba(217,180,91,.25)}
+.tcard .tg{font-family:var(--serif);font-size:32px;line-height:1;margin-bottom:8px}
+.tcard .tn{font-family:var(--serif);font-size:18px;color:var(--gold-hi);letter-spacing:.01em}
+.tcard .tr{font-size:9px;letter-spacing:.13em;color:var(--faint);text-transform:uppercase;margin-top:4px}
+.tcard .te{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:5px}
+.tcard .te .d{width:6px;height:6px;border-radius:50%}
+
+/* elements & modalities */
+.elems{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.ecard{border:1px solid var(--hair2);border-radius:6px;padding:26px 22px;background:rgba(16,24,56,.34);
+  transition:border-color .35s,transform .35s}
+.ecard:hover{border-color:var(--gold-dim);transform:translateY(-4px)}
+.ecard .esym{font-size:26px;line-height:1;margin-bottom:16px}
+.ecard .ename{font-family:var(--serif);font-size:23px;color:var(--gold-hi);margin-bottom:3px}
+.ecard .esign{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.ecard .ebody{font-size:13px;color:var(--dim);line-height:1.7}
+.mods{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:34px;
+  border-top:1px solid var(--hair2);padding-top:34px}
+.mod .mname{font-family:var(--serif);font-size:20px;color:var(--gold-hi);margin-bottom:6px}
+.mod .mname small{font-family:var(--sans);font-size:9.5px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase;margin-left:8px}
+.mod .mbody{font-size:12.5px;color:var(--dim);line-height:1.65}
+
+/* houses + aspect */
+.houserow{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,64px);align-items:start}
+.houses{display:grid;grid-template-columns:repeat(3,1fr);gap:2px 16px}
+.hrow{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--hair2)}
+.hrow .hn{font-family:var(--serif);font-size:16px;color:var(--gold);width:34px;flex:none;font-style:italic}
+.hrow .hk{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.aspect{border:1px solid var(--hair);border-radius:6px;padding:clamp(26px,3.4vw,40px);
+  background:linear-gradient(180deg,rgba(217,180,91,.06),rgba(217,180,91,.01));text-align:center;position:relative}
+.aspect .ak{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.aspect .aglyphs{font-size:38px;color:var(--gold-hi);letter-spacing:.14em;margin-bottom:16px}
+.aspect .aline{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.2vw,26px);color:var(--ink);line-height:1.4}
+.aspect .adate{margin-top:20px;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+
+/* footer */
+footer{padding:clamp(60px,9vh,96px) 0 56px;border-top:1px solid var(--hair2);text-align:center;position:relative;z-index:3}
+.fmark{font-family:var(--serif);font-size:22px;letter-spacing:.06em;color:var(--gold-hi);margin-bottom:16px}
+.fline{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--dim);line-height:1.7;max-width:48ch;margin:0 auto}
+.fdis{margin-top:22px;font-size:10px;letter-spacing:.16em;color:var(--faint);line-height:1.9;text-transform:uppercase}
+.fsig{margin-top:20px;font-size:9.5px;letter-spacing:.3em;color:rgba(232,230,244,.24);text-transform:uppercase}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px)}
+.rv.in{opacity:1;transform:none;transition:opacity .9s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+
+/* ── responsive ── */
+@media(max-width:900px){
+  .stage{grid-template-columns:1fr;gap:30px}
+  .wheelwrap{order:1}
+  .reading{order:2}
+  .wheelbox{width:min(86vw,460px)}
+  .twelve{grid-template-columns:repeat(4,1fr)}
+  .elems{grid-template-columns:repeat(2,1fr)}
+  .houserow{grid-template-columns:1fr;gap:40px}
+}
+@media(max-width:560px){
+  .backlink{top:15px;left:15px}
+  .twelve{grid-template-columns:repeat(2,1fr)}
+  .elems{grid-template-columns:1fr}
+  .mods{grid-template-columns:1fr;gap:22px}
+  .houses{grid-template-columns:1fr 1fr}
+  .rhead{flex-wrap:wrap;gap:14px}
+  .relem{text-align:left;width:100%}
+  .lwm .cell+.cell{border-left:none}
+  .lwm{gap:14px}
+}
+
+/* ── reduced motion ── */
+html.no-anim *,html.no-anim *::before,html.no-anim *::after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important}
+  #wheelRot{transition:none!important;transform:none!important}
+  .stars .tw{animation:none}
+  .reading,.rv{transition:none}
+  .wheelbox #wheelAll{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="nebula" aria-hidden="true"></div>
+<svg class="stars" id="stars" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<a class="backlink" href="/">XAVIER FABLE ×55</a>
+
+<main>
+  <!-- ═══════ HERO ═══════ -->
+  <section class="hero wrap">
+    <header class="masthead">
+      <p class="eyebrow">A CELESTIAL ALMANAC · ANNO MMXXVI</p>
+      <h1 class="title">The Twelve Houses</h1>
+      <p class="subtitle">An engraved wheel of the zodiac, and a reading for the day. Turn the dial to your sign.</p>
+      <form class="pick" id="dateForm">
+        <span class="lab">Enter a birth date</span>
+        <span class="datefield">
+          <input type="date" id="birthDate" aria-label="Birth date" min="1900-01-01" max="2026-12-31">
+          <button type="submit">Read</button>
+        </span>
+      </form>
+    </header>
+
+    <div class="stage">
+      <div class="wheelwrap">
+        <div class="wheelbox" id="wheelbox">
+          <svg viewBox="0 0 800 800" role="img" aria-label="An engraved circular zodiac wheel.">
+            <defs>
+              <radialGradient id="plate" cx="50%" cy="46%" r="62%">
+                <stop offset="0%" stop-color="#131b3e"/>
+                <stop offset="62%" stop-color="#0c1230"/>
+                <stop offset="100%" stop-color="#070a1c"/>
+              </radialGradient>
+              <radialGradient id="med" cx="50%" cy="44%" r="60%">
+                <stop offset="0%" stop-color="#141c42"/>
+                <stop offset="100%" stop-color="#080b1e"/>
+              </radialGradient>
+              <filter id="goldglow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <g id="wheelAll">
+              <circle cx="400" cy="400" r="396" fill="url(#plate)"/>
+              <g id="wheelRot"></g>
+              <g id="medallion"></g>
+              <g id="meridian"></g>
+            </g>
+          </svg>
+        </div>
+        <div class="wheelcap" id="wheelcap" aria-live="polite">
+          <div class="cn" id="capName">—</div>
+          <div class="cd" id="capRange"></div>
+        </div>
+      </div>
+
+      <div class="reading" id="reading">
+        <article class="card">
+          <div class="rhead">
+            <div class="rglyph" id="rGlyph">♈</div>
+            <div class="rtitle">
+              <h2 class="rname" id="rName">Aries</h2>
+              <div class="rrange" id="rRange">March 21 – April 19</div>
+            </div>
+            <div class="relem" id="rElem"></div>
+          </div>
+
+          <div class="rmeta" id="rMeta"></div>
+          <p class="essence" id="rEssence"></p>
+
+          <div class="daily">
+            <div class="dhead">
+              <span class="dh-l">Today's Reading</span>
+              <span class="dh-r" id="dDate"></span>
+            </div>
+            <p class="dread" id="dRead"></p>
+            <div class="lwm">
+              <div class="cell"><div class="k">Love</div><div class="v" id="dLove"></div></div>
+              <div class="cell"><div class="k">Work</div><div class="v" id="dWork"></div></div>
+              <div class="cell"><div class="k">Mood</div><div class="v" id="dMood"></div></div>
+            </div>
+          </div>
+
+          <div class="twocol">
+            <div class="rrow">
+              <div class="rlab">Strengths</div>
+              <p class="rtext" id="rStr"></p>
+            </div>
+            <div class="rrow">
+              <div class="rlab">Shadows</div>
+              <p class="rtext" id="rSha"></p>
+            </div>
+          </div>
+
+          <div class="rrow">
+            <div class="rlab">Traits</div>
+            <div class="traits" id="rTraits"></div>
+          </div>
+
+          <div class="twocol">
+            <div class="rrow">
+              <div class="rlab">Best Matches</div>
+              <div class="match" id="rMatch"></div>
+            </div>
+            <div class="rrow">
+              <div class="rlab">Fortune</div>
+              <div class="lucky" id="rLucky"></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ THE TWELVE AT A GLANCE ═══════ -->
+  <section class="sec wrap" id="s-twelve">
+    <div class="sechead rv">
+      <p class="sec-kicker">CHOOSE YOUR SIGN</p>
+      <h2 class="sec-title">The Twelve at a Glance</h2>
+      <div class="hr-orn"></div>
+    </div>
+    <div class="twelve rv" id="twelve"></div>
+  </section>
+
+  <!-- ═══════ ELEMENTS & MODALITIES ═══════ -->
+  <section class="sec wrap" id="s-elements">
+    <div class="sechead rv">
+      <p class="sec-kicker">THE FOUR & THE THREE</p>
+      <h2 class="sec-title">Elements & Modalities</h2>
+      <p class="sec-note">Every sign is woven from two threads: an <em>element</em> — the substance of its temperament — and a <em>modality</em>, the manner in which it moves through the year.</p>
+    </div>
+    <div class="elems rv">
+      <div class="ecard">
+        <div class="esym" style="color:var(--fire)">△</div>
+        <div class="ename">Fire</div>
+        <div class="esign">Aries · Leo · Sagittarius</div>
+        <p class="ebody">The kindling signs — warmth, will and appetite. Fire begins things, believes in things, and carries a room without meaning to.</p>
+      </div>
+      <div class="ecard">
+        <div class="esym" style="color:var(--earth)">▽</div>
+        <div class="ename">Earth</div>
+        <div class="esign">Taurus · Virgo · Capricorn</div>
+        <p class="ebody">The steady signs — hand, harvest and hour. Earth tends what fire lights, and trusts only what it can hold, build or grow.</p>
+      </div>
+      <div class="ecard">
+        <div class="esym" style="color:var(--air)">△</div>
+        <div class="ename">Air</div>
+        <div class="esign">Gemini · Libra · Aquarius</div>
+        <p class="ebody">The wandering signs — word, weather and thought. Air carries ideas between people like pollen, and keeps the mind from settling too soon.</p>
+      </div>
+      <div class="ecard">
+        <div class="esym" style="color:var(--water)">▽</div>
+        <div class="ename">Water</div>
+        <div class="esign">Cancer · Scorpio · Pisces</div>
+        <p class="ebody">The deep signs — tide, memory and dream. Water remembers everything, feels before it thinks, and finds the low quiet places in every room.</p>
+      </div>
+    </div>
+    <div class="mods rv">
+      <div class="mod"><div class="mname">Cardinal<small>The Openers</small></div><p class="mbody">Aries, Cancer, Libra, Capricorn — the signs that begin each season. They initiate, instigate and set the wheel turning.</p></div>
+      <div class="mod"><div class="mname">Fixed<small>The Keepers</small></div><p class="mbody">Taurus, Leo, Scorpio, Aquarius — the signs at each season's heart. They hold, deepen and refuse to be hurried.</p></div>
+      <div class="mod"><div class="mname">Mutable<small>The Changers</small></div><p class="mbody">Gemini, Virgo, Sagittarius, Pisces — the signs that close each season. They adapt, dissolve and prepare the ground for what comes next.</p></div>
+    </div>
+  </section>
+
+  <!-- ═══════ THE HOUSES + ASPECT ═══════ -->
+  <section class="sec wrap" id="s-houses">
+    <div class="sechead rv">
+      <p class="sec-kicker">READING THE WHEEL</p>
+      <h2 class="sec-title">The Twelve Houses</h2>
+      <p class="sec-note">The outer ring holds the signs; the inner ring holds the houses — twelve rooms of a life, from the self at the first threshold to the quiet of the twelfth.</p>
+    </div>
+    <div class="houserow rv">
+      <div class="houses" id="houses"></div>
+      <div class="aspect">
+        <div class="ak">Aspect of the Day</div>
+        <div class="aglyphs" id="aGlyphs">☉ △ ☽</div>
+        <p class="aline" id="aLine">—</p>
+        <div class="adate" id="aDate"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap">
+    <p class="fmark">The Twelve Houses</p>
+    <p class="fline">The sky keeps an old, patient calendar. We only borrow a page of it each night, and read by the light it already gives.</p>
+    <p class="fdis">Written for wonder and reflection — never medical, legal, or financial counsel.<br>Set nightly by the wheel · no two days alike</p>
+    <p class="fsig">A CELESTIAL ALMANAC · TYPE: CORMORANT GARAMOND & SPACE GROTESK · MMXXVI</p>
+  </footer>
+</main>
+
+<script>
+"use strict";
+/* ══════════════ DATA ══════════════ */
+const SIGNS = [
+ {i:0,key:"aries",name:"Aries",glyph:"♈",range:"March 21 – April 19",start:[3,21],end:[4,19],
+  element:"Fire",modality:"Cardinal",ruler:"Mars",rg:"♂",
+  essence:"The first spark — the will to begin before the reasons arrive.",
+  traits:["Bold","Pioneering","Candid","Restless"],
+  str:"A courage that does not wait for permission, a gift for beginnings, and a warmth that pulls others into motion behind you.",
+  sha:"Impatience, a temper quick to strike and quicker to forget, and a habit of lighting more fires than one hand can tend.",
+  match:["Leo","Sagittarius","Gemini"],day:"Tuesday",colour:"Scarlet",stone:"Bloodstone"},
+ {i:1,key:"taurus",name:"Taurus",glyph:"♉",range:"April 20 – May 20",start:[4,20],end:[5,20],
+  element:"Earth",modality:"Fixed",ruler:"Venus",rg:"♀",
+  essence:"The steady hand — pleasure taken slowly, and kept.",
+  traits:["Grounded","Sensuous","Loyal","Unhurried"],
+  str:"Endurance that outlasts every storm, a love of real and lasting things, and a calm that others come to stand near.",
+  sha:"A stubbornness dressed as principle, a resistance to change even when change is kind, and a slow slide into comfort.",
+  match:["Virgo","Capricorn","Cancer"],day:"Friday",colour:"Emerald",stone:"Emerald"},
+ {i:2,key:"gemini",name:"Gemini",glyph:"♊",range:"May 21 – June 20",start:[5,21],end:[6,20],
+  element:"Air",modality:"Mutable",ruler:"Mercury",rg:"☿",
+  essence:"The quick mind — two hands, two truths, one restless curiosity.",
+  traits:["Curious","Quick-witted","Versatile","Mercurial"],
+  str:"A mind that connects everything to everything, a wit that lightens any room, and a genius for beginnings and conversation.",
+  sha:"Scattered attention, a tongue faster than its promises, and a habit of leaving before the interesting part gets difficult.",
+  match:["Libra","Aquarius","Aries"],day:"Wednesday",colour:"Citrine Yellow",stone:"Agate"},
+ {i:3,key:"cancer",name:"Cancer",glyph:"♋",range:"June 21 – July 22",start:[6,21],end:[7,22],
+  element:"Water",modality:"Cardinal",ruler:"Moon",rg:"☽",
+  essence:"The keeper of the hearth — feeling first, and remembering always.",
+  traits:["Tender","Intuitive","Protective","Nostalgic"],
+  str:"A tenderness that makes a home of any room, an intuition that reads what is unspoken, and a fierce care for its own.",
+  sha:"Moods that pull like tides, a tendency to retreat into the shell, and a grip that mistakes holding on for love.",
+  match:["Scorpio","Pisces","Taurus"],day:"Monday",colour:"Silver",stone:"Moonstone"},
+ {i:4,key:"leo",name:"Leo",glyph:"♌",range:"July 23 – August 22",start:[7,23],end:[8,22],
+  element:"Fire",modality:"Fixed",ruler:"Sun",rg:"☉",
+  essence:"The warm heart of the sky — generous, radiant, made to be seen.",
+  traits:["Radiant","Generous","Proud","Loyal"],
+  str:"A generosity as wide as the sun, a loyalty that never wavers, and a warmth that gives others permission to shine.",
+  sha:"A hunger for the spotlight, a pride bruised too easily, and a habit of mistaking attention for affection.",
+  match:["Aries","Sagittarius","Libra"],day:"Sunday",colour:"Gold",stone:"Ruby"},
+ {i:5,key:"virgo",name:"Virgo",glyph:"♍",range:"August 23 – September 22",start:[8,23],end:[9,22],
+  element:"Earth",modality:"Mutable",ruler:"Mercury",rg:"☿",
+  essence:"The quiet craftsman — devotion expressed in small, exact acts.",
+  traits:["Precise","Devoted","Analytical","Modest"],
+  str:"An eye that misses nothing, a devotion shown in useful hands, and a patience for the small work that makes things whole.",
+  sha:"A critic that turns inward and cuts, worry mistaken for care, and a perfection that forgets the good is already here.",
+  match:["Taurus","Capricorn","Cancer"],day:"Wednesday",colour:"Navy",stone:"Sapphire"},
+ {i:6,key:"libra",name:"Libra",glyph:"♎",range:"September 23 – October 22",start:[9,23],end:[10,22],
+  element:"Air",modality:"Cardinal",ruler:"Venus",rg:"♀",
+  essence:"The keeper of balance — beauty, fairness, and the space between two people.",
+  traits:["Gracious","Fair-minded","Diplomatic","Aesthetic"],
+  str:"A gift for harmony, an instinct for fairness, and a charm that makes the difficult conversation feel gentle.",
+  sha:"Indecision dressed as open-mindedness, a fear of conflict that avoids the truth, and a self that dissolves to please.",
+  match:["Gemini","Aquarius","Leo"],day:"Friday",colour:"Rose",stone:"Opal"},
+ {i:7,key:"scorpio",name:"Scorpio",glyph:"♏",range:"October 23 – November 21",start:[10,23],end:[11,21],
+  element:"Water",modality:"Fixed",ruler:"Pluto",rg:"♇",
+  essence:"The deep water — intensity, secrecy, and the courage to look beneath.",
+  traits:["Intense","Magnetic","Loyal","Penetrating"],
+  str:"A depth that fears nothing, a loyalty forged in the dark, and the rare courage to face what others look away from.",
+  sha:"A memory that keeps every wound, a jealousy that guards too fiercely, and a control that mistakes secrecy for safety.",
+  match:["Cancer","Pisces","Virgo"],day:"Tuesday",colour:"Crimson",stone:"Topaz"},
+ {i:8,key:"sagittarius",name:"Sagittarius",glyph:"♐",range:"November 22 – December 21",start:[11,22],end:[12,21],
+  element:"Fire",modality:"Mutable",ruler:"Jupiter",rg:"♃",
+  essence:"The far-seeing archer — aimed always at the next horizon.",
+  traits:["Adventurous","Candid","Optimistic","Free"],
+  str:"A hunger for horizons, an honesty that clears the air, and a faith that tomorrow is worth the journey toward it.",
+  sha:"A restlessness that flees the ordinary, a bluntness that wounds by accident, and promises made larger than the day.",
+  match:["Aries","Leo","Libra"],day:"Thursday",colour:"Royal Purple",stone:"Turquoise"},
+ {i:9,key:"capricorn",name:"Capricorn",glyph:"♑",range:"December 22 – January 19",start:[12,22],end:[1,19],
+  element:"Earth",modality:"Cardinal",ruler:"Saturn",rg:"♄",
+  essence:"The patient summit — the long climb, taken one sure step at a time.",
+  traits:["Disciplined","Ambitious","Enduring","Dry-witted"],
+  str:"A discipline that moves mountains slowly, an ambition with a long memory, and a spine that carries more than its share.",
+  sha:"A coldness worn as armour, a worth measured only in work, and a summit reached with no one left to share it.",
+  match:["Taurus","Virgo","Scorpio"],day:"Saturday",colour:"Charcoal",stone:"Garnet"},
+ {i:10,key:"aquarius",name:"Aquarius",glyph:"♒",range:"January 20 – February 18",start:[1,20],end:[2,18],
+  element:"Air",modality:"Fixed",ruler:"Uranus",rg:"♅",
+  essence:"The bright outsider — the future imagined a little ahead of its time.",
+  traits:["Original","Independent","Humane","Detached"],
+  str:"A mind years ahead of the room, a devotion to the many, and the nerve to imagine a world that does not yet exist.",
+  sha:"A distance kept from feeling, a contrarian streak for its own sake, and ideals held closer than the people near them.",
+  match:["Gemini","Libra","Sagittarius"],day:"Saturday",colour:"Electric Blue",stone:"Amethyst"},
+ {i:11,key:"pisces",name:"Pisces",glyph:"♓",range:"February 19 – March 20",start:[2,19],end:[3,20],
+  element:"Water",modality:"Mutable",ruler:"Neptune",rg:"♆",
+  essence:"The dreaming sea — where every feeling flows into every other.",
+  traits:["Dreamy","Compassionate","Artistic","Boundless"],
+  str:"A compassion without borders, an imagination that colours the grey, and an ear for the music running beneath the world.",
+  sha:"A self that dissolves too easily, an escape into dream when the day turns hard, and boundaries drawn in water.",
+  match:["Cancer","Scorpio","Taurus"],day:"Thursday",colour:"Sea-Green",stone:"Aquamarine"},
+];
+const BYKEY = Object.fromEntries(SIGNS.map(s=>[s.key,s]));
+const BYNAME = Object.fromEntries(SIGNS.map(s=>[s.name.toLowerCase(),s]));
+const ELEM_COLOR = {Fire:"var(--fire)",Earth:"var(--earth)",Air:"var(--air)",Water:"var(--water)"};
+const ELEM_HEX = {Fire:"#dd8a5c",Earth:"#a6b06b",Air:"#a9c3e2",Water:"#69a7c0"};
+const HOUSES = [
+ ["I","The Self"],["II","Worth"],["III","The Mind"],["IV","Home"],
+ ["V","Joy"],["VI","Craft"],["VII","Union"],["VIII","Depth"],
+ ["IX","The Journey"],["X","The Calling"],["XI","Kinship"],["XII","The Quiet"]];
+const PLANETS = ["☉","☽","☿","♀","♂","♃","♄"];
+const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+
+/* ══════════════ SETUP / RNG ══════════════ */
+const params = new URLSearchParams(location.search);
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const NS = "http://www.w3.org/2000/svg";
+function el(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+const TS=String.fromCharCode(0xFE0E);const tp=g=>g+TS; /* force monochrome text presentation (no emoji) */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hash(str){let h=2166136261>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+
+/* geometry: angle in degrees, clockwise from top (12 o'clock) */
+const CX=400,CY=400;
+function polar(r,deg){const t=(deg-90)*Math.PI/180;return[CX+r*Math.cos(t),CY+r*Math.sin(t)];}
+function annulus(r1,r2,a1,a2){
+  const[o1x,o1y]=polar(r2,a1),[o2x,o2y]=polar(r2,a2),[i2x,i2y]=polar(r1,a2),[i1x,i1y]=polar(r1,a1);
+  const large=(a2-a1)%360>180?1:0;
+  return`M${o1x.toFixed(2)} ${o1y.toFixed(2)} A${r2} ${r2} 0 ${large} 1 ${o2x.toFixed(2)} ${o2y.toFixed(2)} L${i2x.toFixed(2)} ${i2y.toFixed(2)} A${r1} ${r1} 0 ${large} 0 ${i1x.toFixed(2)} ${i1y.toFixed(2)} Z`;
+}
+
+/* ══════════════ STARFIELD ══════════════ */
+(function starfield(){
+  const svg=document.getElementById("stars");
+  svg.setAttribute("viewBox","0 0 1440 900");
+  const r=mulberry32(20260718);
+  const frag=document.createDocumentFragment();
+  for(let i=0;i<150;i++){
+    const x=(r()*1440).toFixed(1),y=(r()*900).toFixed(1);
+    const rad=(r()*1.3+0.3).toFixed(2);
+    const op=(r()*0.6+0.15).toFixed(2);
+    const c=el("circle",{cx:x,cy:y,r:rad,fill:"#eef1ff","fill-opacity":op});
+    if(r()>0.86){c.setAttribute("class","tw");c.style.animationDelay=(r()*4).toFixed(2)+"s";}
+    frag.appendChild(c);
+  }
+  // a few gold stars
+  for(let i=0;i<10;i++){
+    const x=(r()*1440).toFixed(1),y=(r()*900).toFixed(1);
+    frag.appendChild(el("circle",{cx:x,cy:y,r:(r()*1.1+0.6).toFixed(2),fill:"#f0d38a","fill-opacity":(r()*0.4+0.2).toFixed(2)}));
+  }
+  svg.appendChild(frag);
+})();
+
+/* ══════════════ BUILD THE WHEEL ══════════════ */
+const wheelRot=document.getElementById("wheelRot");
+const medallion=document.getElementById("medallion");
+const meridianG=document.getElementById("meridian");
+const segFills=[],segGlyphs=[],hitPaths=[];
+
+(function buildWheel(){
+  const zOut=389,zIn=318,glyphR=353;
+  const tOut=318;
+  const hOut=298,hIn=200,houseNumR=250;
+  const planetR=176,medR=148;
+
+  // element sector fills
+  SIGNS.forEach(s=>{
+    const a1=s.i*30-15,a2=s.i*30+15;
+    const f=el("path",{d:annulus(zIn,zOut,a1,a2),class:"seg-fill",fill:ELEM_HEX[s.element],"fill-opacity":"0.07"});
+    wheelRot.appendChild(f);segFills.push(f);
+  });
+  // zodiac ring circles
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:zOut,class:"ring","stroke-width":"1.5"}));
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:zOut+7,class:"ring","stroke-width":"1","stroke-opacity":"0.5"}));
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:zIn,class:"ring","stroke-width":"1"}));
+  // sector dividers (cusps)
+  for(let i=0;i<12;i++){
+    const a=i*30-15;
+    const[x1,y1]=polar(zIn,a),[x2,y2]=polar(zOut,a);
+    wheelRot.appendChild(el("line",{x1,y1,x2,y2,class:"seg-div"}));
+  }
+  // degree ticks (fine engraving)
+  for(let d=0;d<360;d++){
+    let len,op,w;
+    if(d%30===0){len=15;op=.85;w=1.4;}
+    else if(d%10===0){len=10;op=.55;w=1;}
+    else if(d%5===0){len=6;op=.4;w=.8;}
+    else{len=3.5;op=.24;w=.6;}
+    const[x1,y1]=polar(tOut,d),[x2,y2]=polar(tOut-len,d);
+    wheelRot.appendChild(el("line",{x1,y1,x2,y2,class:"tick","stroke-width":w,"stroke-opacity":op}));
+  }
+  // zodiac glyphs
+  SIGNS.forEach(s=>{
+    const[gx,gy]=polar(glyphR,s.i*30);
+    const t=el("text",{x:gx,y:gy,class:"seg-glyph","text-anchor":"middle","dominant-baseline":"central",
+      "font-size":"30",fill:ELEM_HEX[s.element],"fill-opacity":"0.9","font-family":"'Cormorant Garamond',serif"});
+    t.textContent=tp(s.glyph);
+    wheelRot.appendChild(t);segGlyphs.push(t);
+  });
+
+  // house ring
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:hOut,class:"ring","stroke-width":"1"}));
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:hIn,class:"ring","stroke-width":"1"}));
+  for(let i=0;i<12;i++){
+    const a=i*30-15;
+    const[x1,y1]=polar(hIn,a),[x2,y2]=polar(hOut,a);
+    wheelRot.appendChild(el("line",{x1,y1,x2,y2,class:"seg-div","stroke-opacity":"0.7"}));
+  }
+  // house numerals
+  for(let i=0;i<12;i++){
+    const[nx,ny]=polar(houseNumR,i*30);
+    const t=el("text",{x:nx,y:ny,class:"house-num","text-anchor":"middle","dominant-baseline":"central","font-size":"15"});
+    t.textContent=ROMAN[i];
+    wheelRot.appendChild(t);
+  }
+  // planet ring + planets
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:planetR,class:"ring","stroke-width":"1","stroke-opacity":"0.6"}));
+  wheelRot.appendChild(el("circle",{cx:CX,cy:CY,r:planetR-1,class:"ring","stroke-width":"0.6","stroke-opacity":"0.28"}));
+  PLANETS.forEach((p,k)=>{
+    const ang=k*(360/7)+8;
+    const[px,py]=polar(planetR-16,ang);
+    const t=el("text",{x:px,y:py,class:"planet","text-anchor":"middle","dominant-baseline":"central","font-size":"18","font-family":"'Cormorant Garamond',serif"});
+    t.textContent=tp(p);
+    wheelRot.appendChild(t);
+  });
+
+  // interaction hit wedges (rotate with wheel so they map to sectors)
+  SIGNS.forEach(s=>{
+    const a1=s.i*30-15,a2=s.i*30+15;
+    const h=el("path",{d:annulus(medR,396,a1,a2),class:"seg-hit",role:"button",tabindex:"0",
+      "aria-label":`${s.name}, ${s.range}`});
+    h.dataset.i=s.i;
+    wheelRot.appendChild(h);hitPaths.push(h);
+  });
+
+  // ── center medallion (static) ──
+  medallion.appendChild(el("circle",{cx:CX,cy:CY,r:medR,fill:"url(#med)"}));
+  medallion.appendChild(el("circle",{cx:CX,cy:CY,r:medR,class:"ring","stroke-width":"1.5"}));
+  medallion.appendChild(el("circle",{cx:CX,cy:CY,r:medR-9,class:"ring","stroke-width":"0.8","stroke-opacity":"0.5"}));
+  // decorative rays behind glyph
+  const rays=el("g",{"stroke":"var(--gold)","stroke-width":"0.7","stroke-opacity":"0.22"});
+  for(let a=0;a<360;a+=30){const[rx1,ry1]=polar(medR-9,a),[rx2,ry2]=polar(medR-22,a);rays.appendChild(el("line",{x1:rx1,y1:ry1,x2:rx2,y2:ry2}));}
+  medallion.appendChild(rays);
+  const sunlbl=el("text",{x:CX,y:CY-88,class:"medsun","text-anchor":"middle","dominant-baseline":"central","font-size":"9"});
+  sunlbl.id="medSun";medallion.appendChild(sunlbl);
+  const big=el("text",{x:CX,y:CY-6,class:"medglyph","text-anchor":"middle","dominant-baseline":"central","font-size":"118",filter:"url(#goldglow)"});
+  big.id="medGlyph";big.textContent=tp("♈");medallion.appendChild(big);
+  const nm=el("text",{x:CX,y:CY+74,class:"medname","text-anchor":"middle","dominant-baseline":"central","font-size":"15"});
+  nm.id="medName";nm.textContent="ARIES";medallion.appendChild(nm);
+  const rg=el("text",{x:CX,y:CY+96,class:"medrange","text-anchor":"middle","dominant-baseline":"central","font-size":"8.5"});
+  rg.id="medRange";medallion.appendChild(rg);
+
+  // ── meridian pointer (static, top) ──
+  const[mx,my]=polar(zOut,0);
+  const pt=el("path",{d:`M${CX-11} ${my-24} L${CX+11} ${my-24} L${CX} ${my-4} Z`,class:"meridian","fill-opacity":"0.92"});
+  meridianG.appendChild(pt);
+  meridianG.appendChild(el("circle",{cx:CX,cy:my-32,r:2.2,class:"meridian"}));
+  const st=el("text",{x:CX,y:my-46,class:"meridian","text-anchor":"middle","dominant-baseline":"central","font-size":"13"});
+  st.textContent="✦";meridianG.appendChild(st);
+})();
+
+/* ══════════════ DAILY READING GENERATOR ══════════════ */
+const OPENERS=[
+ "With {ruler} holding a gentle station, the day leans toward the unhurried.",
+ "As the Moon crosses the {element} quarter of the sky, small things carry unusual weight.",
+ "Morning finds {sign} favoured by a soft and generous light.",
+ "A quiet aspect gathers overhead, and nothing today needs to be forced.",
+ "{ruler} turns your way, and the hours arrange themselves kindly.",
+ "The wheel rests with your house lifted toward the sun.",
+ "There is a clarity in the air that suits the {element} in you.",
+ "Today the sky keeps its own slow counsel, and asks you to keep yours.",
+ "A long, level light moves along your side of the wheel.",
+ "The season tilts a degree in your favour, so quietly you may miss it.",
+];
+const LOVE_LONG=[
+ "In matters of the heart, let tenderness be the first language and the last.",
+ "Someone speaks in half-sentences today; listen closely to the half they leave unsaid.",
+ "Affection asks only for your attention, not your certainty.",
+ "An old warmth returns by a side door — leave it open a while.",
+ "Love today is less a declaration than a small, steady kindness.",
+ "Say the plain, warm thing you keep rehearsing into something clever.",
+ "Nearness matters more than being understood; sit closer than usual.",
+];
+const WORK_LONG=[
+ "In your work, the patient hand finishes what the eager one begins.",
+ "A task you have circled for days will yield to a single honest hour.",
+ "Let craft, not haste, set the pace of the afternoon.",
+ "The useful move is small and unglamorous; make it anyway.",
+ "Progress hides in the dull middle of things today — keep going.",
+ "One clear decision now spares you three vague ones later.",
+ "Tend the work in front of you and let the ambition keep for a day.",
+];
+const CLOSE_LONG=[
+ "Move gently with yourself; the stars are in no hurry, and neither are you.",
+ "Rest is not idleness today — it is the work the season quietly asks of you.",
+ "Keep one window open for wonder, and the day will return the favour.",
+ "Trust the slow answer over the loud one.",
+ "Let the evening be smaller than the morning promised; that is a mercy.",
+ "Carry less than you think you must, and the road lightens to meet you.",
+ "Whatever you decide, decide it kindly.",
+];
+const LOVE_MICRO=["a door left ajar","tenderness, freely given","an unhurried yes","warmth without conditions","the courage of a small confession","closeness over cleverness","listening as devotion","an old fondness, renewed"];
+const WORK_MICRO=["patience over speed","one task, seen through","quiet craft, rewarded","a useful, honest hour","the long way, done well","order from small effort","finish before beginning again","steady hands win"];
+const MOOD_MICRO=["luminous and calm","gently expectant","clear-eyed","softly restless","at ease in your weather","quietly hopeful","tender and awake","steady as candlelight"];
+
+function todayKey(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+function todayLabel(){return new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});}
+
+function reading(sign,dateKey){
+  const r=mulberry32(hash(dateKey+"|"+sign.i+"|read"));
+  const pick=a=>a[Math.floor(r()*a.length)];
+  const opener=pick(OPENERS).replace("{ruler}",sign.ruler).replace("{element}",sign.element).replace("{sign}",sign.name);
+  const mid=r()<0.5?pick(LOVE_LONG):pick(WORK_LONG);
+  const close=pick(CLOSE_LONG);
+  return{
+    text:opener+" "+mid+" "+close,
+    love:pick(LOVE_MICRO),work:pick(WORK_MICRO),mood:pick(MOOD_MICRO)
+  };
+}
+
+/* aspect of the day (date only) */
+const ASP=[{n:"trine",g:"△"},{n:"sextile",g:"⚹"},{n:"conjunct",g:"☌"},{n:"square",g:"□"},{n:"opposition",g:"☍"}];
+const APLANETS=[["Sun","☉"],["Moon","☽"],["Mercury","☿"],["Venus","♀"],["Mars","♂"],["Jupiter","♃"],["Saturn","♄"]];
+const AGLOSS=[
+ "a small mercy in the day's arithmetic.","an invitation to soften.","tension that has something to teach.",
+ "a bright and brief accord.","the year turning a quiet page.","permission to begin again.",
+ "a note held longer than expected.","two natures learning one language.","a window where there was a wall.",
+ "old business, gently closed."];
+function aspectOfDay(dateKey){
+  const r=mulberry32(hash(dateKey+"|aspect"));
+  let a=Math.floor(r()*7),b;do{b=Math.floor(r()*7);}while(b===a);
+  const asp=ASP[Math.floor(r()*ASP.length)];
+  return{p1:APLANETS[a],p2:APLANETS[b],asp,gloss:AGLOSS[Math.floor(r()*AGLOSS.length)]};
+}
+
+/* ══════════════ RENDER READING ══════════════ */
+const $=id=>document.getElementById(id);
+function elemDot(elm){return`<span class="dot" style="background:${ELEM_COLOR[elm]}"></span>`;}
+let activeIndex=-1;
+
+function renderReading(s){
+  const dk=todayKey();
+  $("rGlyph").textContent=tp(s.glyph);
+  $("rName").textContent=s.name;
+  $("rRange").textContent=s.range;
+  $("rElem").innerHTML=`<div class="el" style="color:${ELEM_COLOR[s.element]}">${elemDot(s.element)}${s.element}</div>`;
+  $("rMeta").innerHTML=
+    `<span class="chip"><b>${s.element}</b></span>`+
+    `<span class="chip"><b>${s.modality}</b></span>`+
+    `<span class="chip"><span class="g">${tp(s.rg)}</span> Ruled by <b>${s.ruler}</b></span>`;
+  $("rEssence").textContent="“"+s.essence+"”";
+  $("rStr").textContent=s.str;
+  $("rSha").textContent=s.sha;
+  $("rTraits").innerHTML=s.traits.map(t=>`<span class="trait">${t}</span>`).join("");
+  $("rMatch").innerHTML=s.match.map(m=>{const t=BYNAME[m.toLowerCase()];
+    return`<button class="mbtn" data-key="${t.key}"><span class="mg">${tp(t.glyph)}</span><span class="mn">${t.name}</span></button>`;}).join("");
+  $("rLucky").innerHTML=
+    `<div class="lstat"><div class="lk">Lucky Day</div><div class="lv">${s.day}</div></div>`+
+    `<div class="lstat"><div class="lk">Colour</div><div class="lv">${s.colour}</div></div>`+
+    `<div class="lstat"><div class="lk">Stone</div><div class="lv">${s.stone}</div></div>`;
+  const rd=reading(s,dk);
+  $("dDate").textContent=todayLabel();
+  $("dRead").textContent=rd.text;
+  $("dLove").textContent=rd.love;
+  $("dWork").textContent=rd.work;
+  $("dMood").textContent=rd.mood;
+  $("rMatch").querySelectorAll(".mbtn").forEach(b=>b.addEventListener("click",()=>select(BYKEY[b.dataset.key].i)));
+}
+
+/* ══════════════ SELECT ══════════════ */
+function setCaption(s){$("capName").textContent=s.name;$("capRange").textContent=s.range;}
+function updateMedallion(s){
+  $("medGlyph").textContent=tp(s.glyph);
+  $("medGlyph").setAttribute("fill","#f0d38a");
+  $("medGlyph").style.filter="drop-shadow(0 0 14px "+ELEM_HEX[s.element]+"88)";
+  $("medName").textContent=s.name.toUpperCase();
+  $("medRange").textContent=s.range.replace(/ – /," — ");
+  const curSun=signForDate(new Date().getMonth()+1,new Date().getDate());
+  $("medSun").textContent=(s.i===curSun)?"☉ THE SUN IS HERE":"";
+}
+function highlightSector(i){
+  segFills.forEach((f,k)=>f.setAttribute("fill-opacity",k===i?"0.24":"0.07"));
+  segGlyphs.forEach((g,k)=>{
+    g.setAttribute("fill-opacity",k===i?"1":"0.9");
+    g.style.transform=k===i?"scale(1.22)":"scale(1)";
+    g.setAttribute("fill",k===i?"#f0d38a":ELEM_HEX[SIGNS[k].element]);
+    if(k===i)g.setAttribute("filter","url(#goldglow)");else g.removeAttribute("filter");
+  });
+}
+function select(i,opts){
+  opts=opts||{};
+  const s=SIGNS[i];
+  activeIndex=i;
+  if(!reduced){wheelRot.style.transform="rotate("+(-i*30)+"deg)";}
+  highlightSector(i);
+  updateMedallion(s);
+  setCaption(s);
+  renderReading(s);
+  document.querySelectorAll(".tcard").forEach(c=>c.classList.toggle("active",+c.dataset.i===i));
+  hitPaths.forEach((h,k)=>h.setAttribute("aria-pressed",k===i?"true":"false"));
+  const rc=$("reading");
+  if(reduced){rc.classList.add("in");}
+  else if(!rc.classList.contains("in")){requestAnimationFrame(()=>rc.classList.add("in"));}
+}
+
+/* hover preview */
+function previewSector(i){highlightSector(i);const s=SIGNS[i];$("capName").textContent=s.name;$("capRange").textContent=s.range+" · "+s.element;}
+function clearPreview(){if(activeIndex>=0){highlightSector(activeIndex);setCaption(SIGNS[activeIndex]);}}
+
+hitPaths.forEach(h=>{
+  const i=+h.dataset.i;
+  h.addEventListener("click",()=>select(i));
+  h.addEventListener("mouseenter",()=>previewSector(i));
+  h.addEventListener("mouseleave",clearPreview);
+  h.addEventListener("focus",()=>previewSector(i));
+  h.addEventListener("blur",clearPreview);
+  h.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(i);}});
+});
+
+/* ══════════════ TWELVE STRIP + HOUSES ══════════════ */
+(function buildTwelve(){
+  const wrap=$("twelve");
+  SIGNS.forEach(s=>{
+    const c=document.createElement("button");
+    c.className="tcard";c.dataset.i=s.i;c.type="button";
+    c.setAttribute("aria-label",`${s.name}, ${s.range}, ${s.element} sign`);
+    c.innerHTML=`<div class="tg" style="color:${ELEM_COLOR[s.element]}">${tp(s.glyph)}</div>`+
+      `<div class="tn">${s.name}</div>`+
+      `<div class="tr">${s.range.replace(/ – /,"–")}</div>`+
+      `<div class="te" style="color:${ELEM_COLOR[s.element]}">${elemDot(s.element)}${s.element}</div>`;
+    c.addEventListener("click",()=>{select(s.i);document.querySelector(".hero").scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"});});
+    wrap.appendChild(c);
+  });
+  const hb=$("houses");
+  HOUSES.forEach(([n,k])=>{
+    const d=document.createElement("div");d.className="hrow";
+    d.innerHTML=`<span class="hn">${n}</span><span class="hk">${k}</span>`;
+    hb.appendChild(d);
+  });
+})();
+
+/* aspect of the day */
+(function renderAspect(){
+  const a=aspectOfDay(todayKey());
+  $("aGlyphs").textContent=`${tp(a.p1[1])}  ${a.asp.g}  ${tp(a.p2[1])}`;
+  $("aLine").textContent=`${a.p1[0]} ${a.asp.n} ${a.p2[0]} — ${a.gloss}`;
+  $("aDate").textContent=todayLabel();
+})();
+
+/* ══════════════ DATE FORM ══════════════ */
+function signForDate(m,d){
+  for(const s of SIGNS){
+    const[sm,sd]=s.start,[em,ed]=s.end;
+    if(sm<=em){if((m>sm||(m===sm&&d>=sd))&&(m<em||(m===em&&d<=ed)))return s.i;}
+    else{if((m>sm||(m===sm&&d>=sd))||(m<em||(m===em&&d<=ed)))return s.i;}
+  }
+  return 0;
+}
+$("dateForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const v=$("birthDate").value;
+  if(!v)return;
+  const[y,m,d]=v.split("-").map(Number);
+  select(signForDate(m,d));
+});
+
+/* ══════════════ INITIAL SELECTION ══════════════ */
+(function init(){
+  let idx=null;
+  const sp=params.get("sign");
+  const dp=params.get("date");
+  if(sp&&BYNAME[sp.toLowerCase()])idx=BYNAME[sp.toLowerCase()].i;
+  else if(sp&&BYKEY[sp.toLowerCase()])idx=BYKEY[sp.toLowerCase()].i;
+  else if(dp){
+    let m,d;const parts=dp.split("-").map(Number);
+    if(parts.length===3){m=parts[1];d=parts[2];}else if(parts.length===2){m=parts[0];d=parts[1];}
+    if(m&&d)idx=signForDate(m,d);
+  }
+  if(idx===null)idx=signForDate(new Date().getMonth()+1,new Date().getDate()); // default: current sun sign
+  // entrance
+  const box=$("wheelbox");
+  if(reduced){box.classList.add("ready");select(idx);}
+  else{
+    // start dial offset so it visibly turns to the chosen sign
+    wheelRot.style.transition="none";
+    wheelRot.style.transform="rotate("+(-idx*30+42)+"deg)";
+    highlightSector(idx);updateMedallion(SIGNS[idx]);setCaption(SIGNS[idx]);renderReading(SIGNS[idx]);
+    activeIndex=idx;
+    document.querySelectorAll(".tcard").forEach(c=>c.classList.toggle("active",+c.dataset.i===idx));
+    requestAnimationFrame(()=>{
+      box.classList.add("ready");
+      requestAnimationFrame(()=>{
+        wheelRot.style.transition="";
+        select(idx);
+      });
+    });
+  }
+})();
+
+/* ══════════════ VIEW SCROLL (deep-link / screenshots) ══════════════ */
+(function viewScroll(){
+  const v=params.get("view")||(location.hash?location.hash.slice(1):null);
+  if(!v)return;
+  const t=document.getElementById(v);
+  if(t)requestAnimationFrame(()=>requestAnimationFrame(()=>t.scrollIntoView({behavior:"auto",block:"start"})));
+})();
+
+/* ══════════════ SCROLL REVEALS ══════════════ */
+if(!reduced){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.12,rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll(".rv").forEach(x=>io.observe(x));
+}else{document.querySelectorAll(".rv").forEach(x=>x.classList.add("in"));}
+
+/* ══════════════ CURSOR ══════════════ */
+(function cursor(){
+  if(!matchMedia("(pointer:fine)").matches)return;
+  const dot=$("cursor");document.body.classList.add("cursor-live");
+  let tx=innerWidth/2,ty=innerHeight/2,x=tx,y=ty,raf=null,run=false;
+  function loop(){x+=(tx-x)*.3;y+=(ty-y)*.3;dot.style.transform=`translate(${x}px,${y}px)`;
+    if(Math.abs(tx-x)>.2||Math.abs(ty-y)>.2)raf=requestAnimationFrame(loop);else run=false;}
+  function kick(){if(!run&&!document.hidden){run=true;raf=requestAnimationFrame(loop);}}
+  addEventListener("mousemove",e=>{tx=e.clientX;ty=e.clientY;dot.classList.add("on");
+    dot.classList.toggle("hover",!!e.target.closest("button,a,[role=button],input"));kick();},{passive:true});
+  addEventListener("mouseleave",()=>dot.classList.remove("on"));
+  document.addEventListener("visibilitychange",()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);run=false;}});
+})();
+</script>
+</body>
+</html>
