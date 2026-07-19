@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六爻 · SIX LINES — the practitioner's oracle</title>
+<meta name="description" content="A working 六爻 (Liu Yao) casting board. Hold one concrete question, toss three bronze coins six times, then watch the full 納甲 machinery assemble — 地支 · 五行 · 六親 · 六神 · 世應 · 動爻 · 變卦 — and read a plain verdict with an 應期 timing hint.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="六爻 · SIX LINES — the practitioner's oracle">
+<meta property="og:description" content="Cast three coins six times; the board dresses your hexagram with 地支 · 五行 · 六親 · 六神 · 世應 and reads a concrete answer.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="六爻 · SIX LINES — the practitioner's oracle">
+<meta name="twitter:description" content="A street-master's casting board: 納甲 · 六親 · 六神 · 世應 · 變卦, and a plain verdict.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2288%22>☰</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F1E8;
+  --paper-2:#EFE9DA;
+  --paper-3:#E7DECB;
+  --card:#FBF8F0;
+  --ink:#241E17;
+  --ink-2:#3A322A;
+  --ink-3:#6A6152;
+  --ink-f:#8C8271;
+  --jade:#2F6D5E;
+  --jade-d:#245A4C;
+  --cinnabar:#AC3E2C;
+  --cinnabar-d:#8F3122;
+  --brass:#9A7A34;
+  --brass-b:#B8963F;
+  --brass-f:rgba(154,122,52,.16);
+  --hair:rgba(58,50,42,.14);
+  --hair-2:rgba(58,50,42,.09);
+  --seal:#8F3122;
+  /* wu xing */
+  --w-mu:#2F6D5E;    /* 木 wood */
+  --w-huo:#AC3E2C;   /* 火 fire */
+  --w-tu:#9A7A34;    /* 土 earth */
+  --w-jin:#6E6960;   /* 金 metal */
+  --w-shui:#35506B;  /* 水 water */
+  /* bronze coin */
+  --bz-0:#4a3418;--bz-1:#7c5a2c;--bz-2:#b28a45;--bz-3:#dcb96f;
+  --serif-sc:"Noto Serif SC",serif;
+  --serif:"Spectral",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-o:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--cinnabar);color:#F5F1E8}
+::-webkit-scrollbar{width:12px}
+::-webkit-scrollbar-track{background:var(--paper-2)}
+::-webkit-scrollbar-thumb{background:#cbbfa4;border-radius:7px;border:3px solid var(--paper-2)}
+::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+:focus{outline:none}
+:focus-visible{outline:1.5px solid var(--jade);outline-offset:3px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input{font:inherit;color:inherit}
+a{color:var(--jade);text-decoration:none}
+h1,h2,h3{font-weight:500;line-height:1.05}
+
+/* ---------- atmosphere ---------- */
+.bg-field{position:fixed;inset:0;z-index:-3;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -6%, #FBF7EC 0%, var(--paper) 44%, #EDE6D5 100%);}
+.bg-field::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 48% at 50% 42%, rgba(154,122,52,.05), transparent 66%);}
+.grain{position:fixed;inset:-30%;width:160%;height:160%;pointer-events:none;z-index:70;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.22 0 0 0 0 0.18 0 0 0 0 0.12 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:69;
+  background:radial-gradient(ellipse 96% 88% at 50% 44%,transparent 60%,rgba(74,52,24,.10) 100%)}
+/* faint luopan watermark */
+.luopan{position:fixed;right:-16vmin;top:50%;width:78vmin;height:78vmin;transform:translateY(-50%);
+  pointer-events:none;z-index:-2;opacity:.5}
+.luopan .ring{position:absolute;inset:0;border:1px solid rgba(58,50,42,.10);border-radius:50%}
+.luopan .ring.r2{inset:11%;border-color:rgba(58,50,42,.07)}
+.luopan .ring.r3{inset:24%;border-style:dashed;border-color:rgba(154,122,52,.16)}
+.luopan .ring.r4{inset:38%;border-color:rgba(58,50,42,.06)}
+.luopan .spin{position:absolute;inset:0;animation:spin 220s linear infinite}
+.luopan .tk{position:absolute;left:50%;top:50%;font-family:var(--serif-sc);font-size:clamp(11px,1.5vmin,16px);
+  color:rgba(58,50,42,.22);transform-origin:0 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- cursor ---------- */
+.cur{position:fixed;left:0;top:0;width:7px;height:7px;border-radius:50%;background:var(--cinnabar);
+  z-index:300;pointer-events:none;opacity:0;transform:translate(-50%,-50%);
+  transition:width .25s var(--ease),height .25s var(--ease),opacity .3s,background .25s}
+.cur.on{opacity:.85}
+.cur.hov{width:24px;height:24px;background:transparent;border:1.5px solid rgba(172,62,44,.6)}
+@media(pointer:fine){body.cur-live,body.cur-live a,body.cur-live button,body.cur-live input,body.cur-live .seg-b{cursor:none}}
+
+/* ---------- chrome ---------- */
+.backlink{position:fixed;bottom:18px;left:20px;z-index:200;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink-f);padding:7px 4px;transition:color .4s var(--ease)}
+.backlink .mk{font-family:var(--serif-sc);font-size:15px;letter-spacing:0;color:var(--brass);transition:color .4s}
+.backlink:hover{color:var(--ink-2)}
+.backlink:hover .mk{color:var(--cinnabar)}
+.langtog{position:fixed;top:18px;right:20px;z-index:200;display:inline-flex;
+  border:1px solid var(--hair);border-radius:20px;overflow:hidden;background:rgba(251,248,240,.7);backdrop-filter:blur(3px)}
+.langtog button{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;padding:6px 12px;color:var(--ink-f);transition:.3s var(--ease)}
+.langtog button.on{background:var(--ink);color:var(--paper)}
+.prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+  background:linear-gradient(90deg,var(--brass),var(--cinnabar));opacity:.8}
+
+/* ---------- layout ---------- */
+section{position:relative}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--brass)}
+.kicker .dot{color:var(--ink-f);margin:0 .5em}
+.zh-label{font-family:var(--serif-sc);letter-spacing:.14em}
+
+/* ======== CAST / hero ======== */
+#cast{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:clamp(40px,5vh,66px) 20px clamp(30px,4vh,48px);overflow:hidden}
+.altar{position:relative;z-index:2;width:100%;max-width:940px;margin:0 auto;text-align:center;
+  display:flex;flex-direction:column;align-items:center}
+.altar .kicker{margin-bottom:clamp(10px,1.6vh,16px)}
+.title-sc{font-family:var(--serif-sc);font-weight:900;
+  font-size:clamp(56px,11vw,116px);letter-spacing:.02em;line-height:.82;color:var(--ink);
+  position:relative}
+.title-sc .seal{position:absolute;right:-4px;top:-6px;font-size:.16em;font-weight:600;color:#fff;
+  background:var(--seal);border-radius:5px;padding:.5em .55em;letter-spacing:.1em;transform:rotate(3deg);
+  box-shadow:0 3px 10px rgba(143,49,34,.28)}
+.title-en{margin-top:11px;font-family:var(--mono);font-weight:400;
+  font-size:clamp(11px,1.4vw,14px);letter-spacing:.42em;text-transform:uppercase;color:var(--ink-3)}
+.subtitle{margin-top:9px;font-family:var(--serif);font-style:italic;font-weight:400;
+  font-size:clamp(16px,2.1vw,23px);color:var(--jade)}
+.lede{margin-top:10px;max-width:52ch;font-size:clamp(12.5px,1.3vw,14.5px);color:var(--ink-3);font-weight:400;line-height:1.58}
+
+/* question + type */
+.ask{margin-top:clamp(14px,2vh,24px);width:100%;max-width:560px;display:flex;flex-direction:column;gap:11px}
+.qfield{position:relative}
+.qfield input{width:100%;background:var(--card);border:1px solid var(--hair);border-radius:3px;
+  padding:14px 16px 14px 40px;font-family:var(--serif);font-size:15px;color:var(--ink);
+  box-shadow:inset 0 1px 3px rgba(58,50,42,.05);transition:border-color .3s var(--ease),box-shadow .3s}
+.qfield input::placeholder{color:var(--ink-f);font-style:italic}
+.qfield input:focus{border-color:var(--jade);box-shadow:inset 0 1px 3px rgba(58,50,42,.05),0 0 0 3px rgba(47,109,94,.1)}
+.qfield .qic{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-family:var(--serif-sc);color:var(--brass);font-size:16px;pointer-events:none}
+.seg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.seg-b{flex:1 1 auto;min-width:86px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--hair);border-radius:3px;padding:9px 6px;color:var(--ink-3);background:var(--card);
+  transition:.28s var(--ease);line-height:1.35}
+.seg-b .zh{display:block;font-family:var(--serif-sc);font-size:13px;letter-spacing:.08em;color:var(--ink-2);margin-bottom:1px}
+.seg-b:hover{border-color:var(--brass);color:var(--ink)}
+.seg-b.on{background:var(--jade);border-color:var(--jade);color:#F5F1E8}
+.seg-b.on .zh{color:#F5F1E8}
+
+/* stage */
+.stage{margin-top:clamp(18px,3vh,30px);display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2.4vh,22px)}
+.cast-row{display:flex;align-items:center;justify-content:center;gap:clamp(26px,4.8vw,58px)}
+.coins{display:flex;gap:clamp(18px,3vw,34px);align-items:center;justify-content:center;height:clamp(56px,7vw,78px)}
+.coin-w{width:clamp(52px,7vw,74px);height:clamp(52px,7vw,74px);perspective:640px}
+.coin{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s var(--ease)}
+.cface{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 14px rgba(74,52,24,.32), inset 0 2px 4px rgba(255,235,190,.5), inset 0 -5px 10px rgba(48,32,10,.5);
+  background:radial-gradient(circle at 34% 28%, var(--bz-3) 0%, var(--bz-2) 32%, var(--bz-1) 68%, var(--bz-0) 100%);
+  border:1px solid rgba(74,52,24,.85)}
+.cface.back{transform:rotateY(180deg);
+  background:radial-gradient(circle at 66% 72%, #c19a54 0%, #93692f 36%, #654a24 72%, #34260f 100%)}
+.cface .hole{position:absolute;left:50%;top:50%;width:28%;height:28%;transform:translate(-50%,-50%);
+  background:var(--paper-3);border-radius:2px;box-shadow:inset 0 2px 4px rgba(48,32,10,.75), 0 1px 0 rgba(255,235,190,.3)}
+.cface .yang{position:absolute;font-family:var(--serif-sc);font-weight:700;color:#3a2a10;font-size:clamp(9px,1.2vw,12px);
+  text-shadow:0 1px 0 rgba(255,235,190,.3);line-height:1}
+.cface .t{top:8%;left:50%;transform:translateX(-50%)} .cface .b{bottom:8%;left:50%;transform:translateX(-50%)}
+.cface .l{left:7%;top:50%;transform:translateY(-50%)} .cface .r{right:7%;top:50%;transform:translateY(-50%)}
+.cface.back .yin{width:56%;height:56%;border:1.5px solid rgba(58,42,16,.55);border-radius:50%;opacity:.6}
+.coin.spin{animation:tumble .62s var(--ease)}
+@keyframes tumble{0%{transform:rotateX(0) translateY(0)}45%{transform:rotateX(720deg) translateY(-26px)}100%{transform:rotateX(1080deg) translateY(0)}}
+
+.toss-read{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ink-3);min-height:1.4em}
+.toss-read b{color:var(--cinnabar);font-weight:600}
+.toss-read .ln{color:var(--jade)}
+
+.controls{display:flex;gap:12px;align-items:center;justify-content:center}
+.btn{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  padding:12px 26px;border-radius:3px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);
+  transition:.3s var(--ease);display:inline-flex;align-items:center;gap:9px}
+.btn .zh{font-family:var(--serif-sc);font-size:13px;letter-spacing:.1em}
+.btn:hover{background:var(--cinnabar);border-color:var(--cinnabar);transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--ink-2);border-color:var(--hair)}
+.btn.ghost:hover{background:transparent;color:var(--cinnabar);border-color:var(--cinnabar)}
+.tosscount{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-f)}
+
+/* hexagram builder */
+.hexbuild{display:flex;flex-direction:column-reverse;gap:clamp(6px,1vh,9px);width:clamp(180px,22vw,232px);margin-top:2px}
+.bl{height:clamp(15px,1.9vw,20px);display:flex;align-items:center;justify-content:center;gap:16%;position:relative}
+.bl .seg-bar{height:100%;border-radius:2px;flex:1;
+  background:linear-gradient(180deg,var(--ink-2),var(--ink) 60%,#191410);
+  opacity:0;transform:translateY(7px) scaleX(.72);transform-origin:center}
+.bl.show .seg-bar{animation:blin .55s var(--ease-o) forwards}
+@keyframes blin{to{opacity:1;transform:none}}
+.bl.yin .seg-bar{flex:0 0 40%}
+.bl .ghost{position:absolute;inset:0;border-radius:2px;border:1px dashed var(--hair);opacity:.7}
+.bl .mv{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:12px;color:var(--cinnabar);font-weight:600}
+.hint{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-f);margin-top:4px}
+
+/* ======== BOARD ======== */
+#board{padding:clamp(40px,7vh,96px) 0 clamp(30px,5vh,60px);opacity:0;transform:translateY(16px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease)}
+#board.reveal{opacity:1;transform:none}
+#board.hidden-empty{display:none}
+.board-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;
+  border-bottom:1px solid var(--hair);padding-bottom:18px;margin-bottom:26px}
+.bh-l .kicker{margin-bottom:8px}
+.bh-title{font-family:var(--serif-sc);font-weight:700;font-size:clamp(26px,4vw,40px);color:var(--ink);letter-spacing:.03em;line-height:1}
+.bh-title .py{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.42em;color:var(--jade);margin-left:.5em;letter-spacing:0}
+.bh-sub{margin-top:6px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3)}
+.bh-r{display:flex;gap:22px;flex-wrap:wrap}
+.meta{text-align:left}
+.meta .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-f);margin-bottom:3px}
+.meta .v{font-family:var(--serif-sc);font-size:17px;color:var(--ink);letter-spacing:.04em}
+.meta .v .em{color:var(--cinnabar)}
+
+.board-grid{display:grid;grid-template-columns:minmax(230px,300px) 1fr;gap:clamp(20px,3vw,42px);align-items:start}
+
+/* figures column */
+.figs{position:sticky;top:24px;background:var(--card);border:1px solid var(--hair);border-radius:5px;
+  padding:22px 20px;box-shadow:0 12px 34px -22px rgba(74,52,24,.5)}
+.figs-row{display:flex;align-items:center;justify-content:center;gap:14px}
+.figblock{text-align:center;flex:0 0 auto}
+.figblock .cap{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-f);margin-bottom:10px}
+.figlines{display:flex;flex-direction:column-reverse;gap:6px;width:96px;margin:0 auto}
+.fl{height:14px;display:flex;gap:16%;position:relative}
+.fl .fb{height:100%;flex:1;border-radius:2px;background:linear-gradient(180deg,var(--ink-2),var(--ink))}
+.fl.yin .fb{flex:0 0 38%}
+.fl.moving .fb{background:linear-gradient(180deg,var(--cinnabar),var(--cinnabar-d))}
+.fl .dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;
+  background:var(--paper);border:1.5px solid var(--cinnabar);z-index:2}
+.fl.moving.yang .dot{background:transparent}
+.figname{margin-top:12px;font-family:var(--serif-sc);font-weight:600;font-size:19px;color:var(--ink)}
+.figname .py{display:block;font-family:var(--serif);font-style:italic;font-size:12px;color:var(--jade);font-weight:400;margin-top:1px}
+.figarrow{font-family:var(--mono);color:var(--brass);font-size:20px;align-self:center;padding-top:20px}
+.figs-note{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair);font-family:var(--serif);
+  font-size:12.5px;font-style:italic;color:var(--ink-3);line-height:1.5;text-align:center}
+
+/* the data grid (卦盘) */
+.pan{background:var(--card);border:1px solid var(--hair);border-radius:5px;overflow:hidden;
+  box-shadow:0 12px 34px -24px rgba(74,52,24,.5)}
+.pan table{width:100%;border-collapse:collapse;font-family:var(--mono)}
+.pan thead th{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-f);font-weight:500;
+  padding:11px 8px;background:var(--paper-2);border-bottom:1px solid var(--hair);text-align:center}
+.pan thead th .zh{display:block;font-family:var(--serif-sc);font-size:12px;letter-spacing:.1em;color:var(--ink-3);margin-bottom:1px}
+.pan tbody tr{border-bottom:1px solid var(--hair-2);transition:background .25s var(--ease)}
+.pan tbody tr:last-child{border-bottom:none}
+.pan tbody tr:hover{background:var(--paper-2)}
+.pan tbody tr.is-yong{background:rgba(47,109,94,.07)}
+.pan tbody tr.is-yong:hover{background:rgba(47,109,94,.11)}
+.pan td{padding:10px 8px;text-align:center;vertical-align:middle;font-size:12px}
+.pan td.shen{color:var(--ink-3);font-family:var(--serif-sc);font-size:13px;letter-spacing:.04em}
+.pan td.qin{font-family:var(--serif-sc);font-size:15px;font-weight:600;color:var(--ink);letter-spacing:.04em}
+.pan tr.is-yong td.qin{color:var(--jade-d)}
+.pan td.gz{font-family:var(--serif-sc);font-size:14px;letter-spacing:.02em;white-space:nowrap}
+.pan td.gz .wx{display:inline-block;margin-left:3px;font-size:12px}
+/* wuxing colors */
+.wx-mu{color:var(--w-mu)} .wx-huo{color:var(--w-huo)} .wx-tu{color:var(--w-tu)} .wx-jin{color:var(--w-jin)} .wx-shui{color:var(--w-shui)}
+.pan td.glyph{width:88px}
+.gg{display:flex;gap:16%;height:13px;width:64px;margin:0 auto;position:relative;align-items:center}
+.gg .gb{height:100%;flex:1;border-radius:2px;background:linear-gradient(180deg,var(--ink-2),var(--ink))}
+.gg.yin .gb{flex:0 0 38%}
+.gg.moving .gb{background:linear-gradient(180deg,var(--cinnabar),var(--cinnabar-d))}
+.gg .m{position:absolute;left:calc(100% + 6px);top:50%;transform:translateY(-50%);color:var(--cinnabar);font-size:12px;font-weight:600}
+.pan td.mk{width:40px;font-family:var(--serif-sc);font-size:14px;font-weight:600}
+.mk .shi{color:var(--cinnabar)} .mk .ying{color:var(--jade)}
+.pan td.bian{font-family:var(--serif-sc);font-size:13px;color:var(--ink-f);white-space:nowrap}
+.pan td.bian .on{color:var(--ink-2)}
+.pan td.bian .q{font-size:12px;color:var(--brass);margin-left:2px}
+
+/* reading */
+.reading{margin-top:28px;background:var(--card);border:1px solid var(--hair);border-radius:5px;
+  padding:clamp(22px,3vw,34px);box-shadow:0 12px 34px -26px rgba(74,52,24,.5)}
+.rd-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.verdict{display:inline-flex;align-items:center;gap:14px}
+.tier{font-family:var(--serif-sc);font-weight:700;font-size:clamp(30px,5vw,50px);line-height:1;letter-spacing:.06em}
+.tier.t-good{color:var(--jade)} .tier.t-mid{color:var(--brass)} .tier.t-bad{color:var(--cinnabar)}
+.tier-en{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-f);display:block;margin-top:6px}
+.yong-chip{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--jade);color:var(--jade-d);border-radius:20px;padding:6px 14px;background:rgba(47,109,94,.06)}
+.yong-chip .zh{font-family:var(--serif-sc);font-size:13px}
+.rd-body{font-family:var(--serif);font-size:clamp(14px,1.5vw,16.5px);line-height:1.68;color:var(--ink-2);max-width:64ch}
+.rd-body .zh-read{font-family:var(--serif-sc);color:var(--ink);line-height:1.9}
+.rd-sig{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.sig{display:flex;align-items:baseline;gap:11px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);line-height:1.5}
+.sig .b{flex:0 0 auto;width:20px;text-align:center;font-weight:600}
+.sig.pos .b{color:var(--jade)} .sig.neg .b{color:var(--cinnabar)} .sig.neu .b{color:var(--ink-f)}
+.sig .tx{flex:1}
+.rd-timing{margin-top:20px;padding-top:16px;border-top:1px solid var(--hair);display:flex;align-items:flex-start;gap:12px}
+.rd-timing .lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cinnabar);flex:0 0 auto;padding-top:2px}
+.rd-timing .txt{font-family:var(--serif);font-size:14px;color:var(--ink-2);line-height:1.55}
+.rd-timing .txt .zh{font-family:var(--serif-sc)}
+.rd-actions{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* ======== generic content sections ======== */
+.sec{padding:clamp(64px,10vh,120px) 0;border-top:1px solid var(--hair)}
+.sec-head{max-width:720px;margin-bottom:clamp(30px,5vh,52px)}
+.sec-head .kicker{margin-bottom:14px}
+.sec-h2{font-family:var(--serif-sc);font-weight:700;font-size:clamp(28px,4.6vw,50px);color:var(--ink);letter-spacing:.02em;line-height:1.04}
+.sec-h2 .en{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:.44em;color:var(--jade);letter-spacing:0;margin-top:8px}
+.sec-lede{margin-top:16px;font-size:clamp(14px,1.5vw,16.5px);color:var(--ink-3);line-height:1.66;max-width:60ch}
+
+/* method cards */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.mcard{background:var(--card);border:1px solid var(--hair);border-radius:5px;padding:24px 22px;
+  transition:.4s var(--ease);opacity:0;transform:translateY(14px)}
+.mcard.in{opacity:1;transform:none}
+.mcard:hover{border-color:var(--brass);transform:translateY(-3px)}
+.mcard .no{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--brass);margin-bottom:14px}
+.mcard h3{font-family:var(--serif-sc);font-weight:600;font-size:21px;color:var(--ink);margin-bottom:3px}
+.mcard h3 .py{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.6em;color:var(--jade);margin-left:.4em}
+.mcard p{font-size:13.5px;color:var(--ink-3);line-height:1.6;margin-top:8px}
+.mcard .fx{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:4px 9px;border-radius:3px;border:1px solid var(--hair);color:var(--ink-3)}
+.chip .zh{font-family:var(--serif-sc);font-size:12px}
+
+/* wuxing legend */
+.wx-legend{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+.wxl{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  border:1px solid var(--hair);border-radius:20px;padding:6px 14px;background:var(--card)}
+.wxl .d{width:9px;height:9px;border-radius:50%}
+.wxl .zh{font-family:var(--serif-sc);font-size:13px;color:var(--ink-2)}
+
+/* palaces */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.pcard{background:var(--card);border:1px solid var(--hair);border-radius:5px;padding:18px 16px;
+  transition:.35s var(--ease);opacity:0;transform:translateY(12px)}
+.pcard.in{opacity:1;transform:none}
+.pcard:hover{border-color:var(--brass);transform:translateY(-3px)}
+.pcard .top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.pcard .glyph8{font-family:var(--serif-sc);font-size:30px;font-weight:700;color:var(--ink);line-height:1}
+.pcard .elbadge{font-family:var(--serif-sc);font-size:13px;padding:3px 9px;border-radius:3px}
+.pcard .trg{font-family:var(--mono);font-size:14px;color:var(--brass);letter-spacing:.1em}
+.pcard .plist{margin-top:10px;font-family:var(--serif-sc);font-size:12.5px;color:var(--ink-3);line-height:1.7}
+.pcard .plist .b{color:var(--ink);font-weight:500}
+
+/* footer */
+footer{border-top:1px solid var(--hair);padding:clamp(48px,7vh,84px) 0 clamp(70px,9vh,110px);text-align:center}
+.foot-mark{font-family:var(--serif-sc);font-weight:900;font-size:clamp(40px,7vw,74px);color:var(--ink);letter-spacing:.04em;line-height:1}
+.foot-en{margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-f)}
+.foot-line{margin:22px auto 0;max-width:52ch;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--ink-3);line-height:1.6}
+.foot-meta{margin-top:26px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-f)}
+.foot-meta a{color:var(--brass)} .foot-meta a:hover{color:var(--cinnabar)}
+
+/* ======== responsive ======== */
+@media(max-width:860px){
+  .board-grid{grid-template-columns:1fr}
+  .figs{position:static}
+  .figs-row{gap:20px}
+  .bh-r{gap:16px}
+  .pan td.bian{display:none} .pan th.bian-h{display:none}
+}
+@media(max-width:560px){
+  .cast-row{flex-direction:column;gap:clamp(12px,2.4vh,18px)}
+  .seg-b{min-width:0;flex:1 1 30%;padding:8px 4px}
+  .seg-b .zh{font-size:12px}
+  .pan td.shen{display:none} .pan th.shen-h{display:none}
+  .pan td{padding:9px 5px;font-size:11px}
+  .pan td.qin{font-size:14px} .pan td.gz{font-size:13px}
+  .coins{gap:14px}
+  .bh-title{font-size:clamp(24px,7vw,34px)}
+  .figs-row{flex-direction:column}
+  .figarrow{padding-top:0;transform:rotate(90deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  html{scroll-behavior:auto}
+  .luopan .spin{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="bg-field"></div>
+<div class="luopan" aria-hidden="true"><div class="spin" id="luopanSpin"></div><div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cur" id="cur" aria-hidden="true"></div>
+<div class="prog" id="prog" aria-hidden="true"></div>
+
+<a class="backlink" href="/" aria-label="Back to XAVIER FABLE gallery"><span class="mk">爻</span><span>XAVIER FABLE ×65</span></a>
+<div class="langtog" role="group" aria-label="Language">
+  <button id="lang-en" class="on" data-set="en">EN</button>
+  <button id="lang-zh" data-set="zh">中</button>
+</div>
+
+<!-- ============ CAST ============ -->
+<section id="cast">
+  <div class="altar">
+    <span class="kicker">六爻 <span class="dot">·</span> 納甲 ORACLE <span class="dot">·</span> NA JIA</span>
+    <h1 class="title-sc">六爻<span class="seal">卜</span></h1>
+    <div class="title-en">S · I · X&nbsp;&nbsp;L · I · N · E · S</div>
+    <p class="subtitle" data-en="the practitioner's oracle" data-zh="街頭卦師的占盤">the practitioner's oracle</p>
+    <p class="lede" data-en="The philosopher reads the judgment; the diviner reads the board. Hold one concrete question, toss three bronze coins six times, and watch the full apparatus assemble — branch, element, kin, spirit — until the answer has a name and an hour." data-zh="哲人讀卦辭，卦師讀卦盤。心懷一事，銅錢三枚、搖擲六次，看地支、五行、六親、六神一一裝上——直到答案有名有時。">The philosopher reads the judgment; the diviner reads the board. Hold one concrete question, toss three bronze coins six times, and watch the full apparatus assemble — branch, element, kin, spirit — until the answer has a name and an hour.</p>
+
+    <div class="ask">
+      <div class="qfield">
+        <span class="qic">問</span>
+        <input id="qinput" type="text" maxlength="80" placeholder="What do you seek to know?" aria-label="Your question">
+      </div>
+      <div class="seg" id="typeSeg" role="tablist" aria-label="Question type — selects the 用神">
+        <button class="seg-b on" data-type="career" role="tab"><span class="zh">事業</span>Career · 官鬼</button>
+        <button class="seg-b" data-type="wealth" role="tab"><span class="zh">求財</span>Wealth · 妻財</button>
+        <button class="seg-b" data-type="health" role="tab"><span class="zh">疾病</span>Health · 子孫</button>
+        <button class="seg-b" data-type="love" role="tab"><span class="zh">婚戀</span>Love · 妻財</button>
+        <button class="seg-b" data-type="general" role="tab"><span class="zh">綜合</span>General · 世爻</button>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="cast-row">
+        <div class="coins" id="coins" aria-hidden="true"></div>
+        <div class="hexbuild" id="hexbuild" aria-hidden="true"></div>
+      </div>
+      <div class="toss-read" id="tossRead"></div>
+      <div class="controls">
+        <button class="btn" id="tossBtn"><span class="zh">搖卦</span><span data-en="Toss the coins" data-zh="搖擲銅錢">Toss the coins</span></button>
+        <button class="btn ghost" id="resetBtn" style="display:none"><span data-en="Cast anew" data-zh="重新起卦">Cast anew</span></button>
+      </div>
+      <div class="tosscount" id="tossCount">Toss 0 / 6 — 尚未起卦</div>
+      <p class="hint" data-en="Three coins · six tosses · bottom line first" data-zh="三錢六擲 · 自初爻而上">Three coins · six tosses · bottom line first</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BOARD ============ -->
+<section id="board" class="hidden-empty">
+  <div class="wrap">
+    <div class="board-head">
+      <div class="bh-l">
+        <span class="kicker" data-en="THE BOARD · 卦盤" data-zh="卦盤 · THE BOARD">THE BOARD · 卦盤</span>
+        <div class="bh-title" id="bhName">—</div>
+        <div class="bh-sub" id="bhQuestion"></div>
+      </div>
+      <div class="bh-r" id="bhMeta"></div>
+    </div>
+
+    <div class="board-grid">
+      <aside class="figs">
+        <div class="figs-row" id="figsRow"></div>
+        <div class="figs-note" id="figsNote"></div>
+      </aside>
+
+      <div class="pan">
+        <table>
+          <thead>
+            <tr>
+              <th class="shen-h"><span class="zh">六神</span>Spirit</th>
+              <th><span class="zh">六親</span>Kin</th>
+              <th><span class="zh">干支</span>Branch</th>
+              <th><span class="zh">卦爻</span>Line</th>
+              <th><span class="zh">世應</span>Pos</th>
+              <th class="bian-h"><span class="zh">變爻</span>Changes to</th>
+            </tr>
+          </thead>
+          <tbody id="panBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="reading" id="reading">
+          <div class="rd-top">
+            <div class="verdict">
+              <div class="tier" id="tierZh">—</div>
+              <div><span class="tier-en" id="tierEn"></span></div>
+            </div>
+            <div class="yong-chip" id="yongChip"></div>
+          </div>
+          <div class="rd-body">
+            <p id="rdEn" data-role="en"></p>
+            <p class="zh-read" id="rdZh" data-role="zh" style="display:none"></p>
+          </div>
+          <div class="rd-sig" id="rdSig"></div>
+          <div class="rd-timing">
+            <span class="lbl">應期<br>Timing</span>
+            <span class="txt" id="rdTiming"></span>
+          </div>
+          <div class="rd-actions">
+            <button class="btn ghost" id="copyBtn"><span data-en="Copy this reading's link" data-zh="複製此卦鏈接">Copy this reading's link</span></button>
+            <button class="btn ghost" id="againBtn"><span data-en="Ask again" data-zh="再占一卦">Ask again</span></button>
+          </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section class="sec" id="method">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker" data-en="THE APPARATUS · 裝卦" data-zh="裝卦 · THE APPARATUS">THE APPARATUS · 裝卦</span>
+      <h2 class="sec-h2">納甲之法<span class="en">how a bare hexagram becomes a board</span></h2>
+      <p class="sec-lede" data-en="Six coin-tosses give only six lines — yin, yang, and which of them are moving. Everything else is dressed on by rule. Nothing here is invented for you; it is the same machinery a street diviner runs by hand." data-zh="六擲只給出六爻——陰、陽、以及哪幾爻在動。其餘皆依法裝上。此處無一杜撰，全是卦師手中日日推演的那套機關。">Six coin-tosses give only six lines — yin, yang, and which of them are moving. Everything else is dressed on by rule. Nothing here is invented for you; it is the same machinery a street diviner runs by hand.</p>
+    </div>
+    <div class="mgrid">
+      <div class="mcard"><div class="no">01</div><h3>納甲 <span class="py">nà jiǎ</span></h3><p data-en="Each of the eight trigrams carries a fixed run of earthly branches. Read the lower trigram up the first three lines, the upper trigram up the last three — and every line inherits a 地支 and, through it, one of the five elements." data-zh="八卦各配一組地支。下卦順裝初、二、三爻，上卦順裝四、五、上爻——每爻由此得一地支，並隨之得一五行。">Each of the eight trigrams carries a fixed run of earthly branches. Read the lower trigram up the first three lines, the upper trigram up the last three — and every line inherits a 地支 and, through it, one of the five elements.</p><div class="fx"><span class="chip"><span class="zh">乾</span> 子寅辰午申戌</span><span class="chip"><span class="zh">坎</span> 寅辰午申戌子</span></div></div>
+      <div class="mcard"><div class="no">02</div><h3>六親 <span class="py">liù qīn</span></h3><p data-en="The hexagram belongs to a palace, and the palace has an element — the self. Compare each line's element to it by generation and control: same is Sibling, what feeds the self is Parent, what the self feeds is Offspring, what conquers the self is Officer, what the self conquers is Wealth." data-zh="卦有所屬之宮，宮有五行，是為「我」。以生克論之：同我者兄弟，生我者父母，我生者子孫，克我者官鬼，我克者妻財。">The hexagram belongs to a palace, and the palace has an element — the self. Compare each line's element to it by generation and control: same is Sibling, what feeds the self is Parent, what the self feeds is Offspring, what conquers the self is Officer, what the self conquers is Wealth.</p><div class="fx"><span class="chip"><span class="zh">妻財</span> money</span><span class="chip"><span class="zh">官鬼</span> office</span><span class="chip"><span class="zh">子孫</span> health</span></div></div>
+      <div class="mcard"><div class="no">03</div><h3>世應 <span class="py">shì yìng</span></h3><p data-en="Which of the sixty-four you hold fixes the palace and its rank — original, first-world through fifth, wandering-soul, returning-soul. The rank plants the 世 line (you, the querent) and, three lines away, the 應 (the other party, the outcome)." data-zh="六十四卦各歸八宮，宮中又分本宮、一世至五世、游魂、歸魂。其序定出世爻（占者自身）與相隔三位的應爻（他方、結局）。">Which of the sixty-four you hold fixes the palace and its rank — original, first-world through fifth, wandering-soul, returning-soul. The rank plants the 世 line (you, the querent) and, three lines away, the 應 (the other party, the outcome).</p><div class="fx"><span class="chip shi-x" style="color:var(--cinnabar)"><span class="zh">世</span> self</span><span class="chip" style="color:var(--jade)"><span class="zh">應</span> other</span></div></div>
+      <div class="mcard"><div class="no">04</div><h3>六神 <span class="py">liù shén</span></h3><p data-en="The day's heavenly stem sets which of the six spirits sits on the bottom line; the rest stack upward — Azure Dragon, Vermilion Bird, Hook, Coiling Snake, White Tiger, Black Tortoise. They colour the tone of each line's affair." data-zh="以占日之天干起初爻之神，餘者依次上排——青龍、朱雀、勾陳、螣蛇、白虎、玄武，各染一爻之氣。">The day's heavenly stem sets which of the six spirits sits on the bottom line; the rest stack upward — Azure Dragon, Vermilion Bird, Hook, Coiling Snake, White Tiger, Black Tortoise. They colour the tone of each line's affair.</p><div class="fx"><span class="chip"><span class="zh">青龍</span> joy</span><span class="chip"><span class="zh">白虎</span> harm</span><span class="chip"><span class="zh">玄武</span> hidden</span></div></div>
+      <div class="mcard"><div class="no">05</div><h3>動爻 · 變卦 <span class="py">dòng · biàn</span></h3><p data-en="Three heads or three tails make a line old — a moving line, marked ○ or ×. Every moving line flips to its opposite, and the six lines re-read as a second hexagram: the 變卦, where the matter is heading. The moving line's changed branch is dressed on beside it." data-zh="三背或三字，其爻為老，是為動爻，記以○或×。動爻皆變其反，六爻重讀成一卦，是為變卦——事之所往。動爻所化之地支，並列其側。">Three heads or three tails make a line old — a moving line, marked ○ or ×. Every moving line flips to its opposite, and the six lines re-read as a second hexagram: the 變卦, where the matter is heading. The moving line's changed branch is dressed on beside it.</p><div class="fx"><span class="chip">○ <span class="zh">老陽</span></span><span class="chip">× <span class="zh">老陰</span></span></div></div>
+      <div class="mcard"><div class="no">06</div><h3>用神 · 應期 <span class="py">yòng · qī</span></h3><p data-en="The question chooses one kin as the 用神 — the line that answers. Read whether it is present, strong on the day, moving, and how it stands to your 世 line; that is the verdict. Its branch names the hour: a month, a day, a season when it comes ripe." data-zh="所問擇一六親為用神——應事之爻。觀其上卦否、當日旺衰、動靜、及其與世之向背，斷吉凶。其地支即應期——某月、某日、某季而事成。">The question chooses one kin as the 用神 — the line that answers. Read whether it is present, strong on the day, moving, and how it stands to your 世 line; that is the verdict. Its branch names the hour: a month, a day, a season when it comes ripe.</p><div class="fx"><span class="chip"><span class="zh">用神</span> the answer-line</span></div></div>
+    </div>
+    <div class="wx-legend">
+      <span class="wxl"><span class="d" style="background:var(--w-mu)"></span><span class="zh">木</span> Wood</span>
+      <span class="wxl"><span class="d" style="background:var(--w-huo)"></span><span class="zh">火</span> Fire</span>
+      <span class="wxl"><span class="d" style="background:var(--w-tu)"></span><span class="zh">土</span> Earth</span>
+      <span class="wxl"><span class="d" style="background:var(--w-jin)"></span><span class="zh">金</span> Metal</span>
+      <span class="wxl"><span class="d" style="background:var(--w-shui)"></span><span class="zh">水</span> Water</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PALACES ============ -->
+<section class="sec" id="palaces">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker" data-en="THE EIGHT PALACES · 八宮" data-zh="八宮 · THE EIGHT PALACES">THE EIGHT PALACES · 八宮</span>
+      <h2 class="sec-h2">六十四卦 · 分歸八宮<span class="en">every hexagram has a home and an element</span></h2>
+      <p class="sec-lede" data-en="京房's arrangement files all sixty-four under eight rulers — the doubled trigrams. From each ruler, flip the lines in a fixed order and eight hexagrams unfold, ending in a wandering soul and a soul returned. The ruler's element is the self against which every kin is measured." data-zh="京房之法，六十四卦分歸八宮，各以純卦為首。自首卦依序翻爻，衍出八卦，終於游魂、歸魂。宮主之五行，即衡量六親之「我」。">京房's arrangement files all sixty-four under eight rulers — the doubled trigrams. From each ruler, flip the lines in a fixed order and eight hexagrams unfold, ending in a wandering soul and a soul returned. The ruler's element is the self against which every kin is measured.</p>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-mark">六爻</div>
+    <div class="foot-en">SIX LINES · THE PRACTITIONER'S ORACLE</div>
+    <p class="foot-line" data-en="A hexagram is only a frame. The branches, the kin, and the day fill it in — and the answer that was always in your question steps forward with an hour attached." data-zh="卦者，框也。地支、六親、日辰填之——那早已藏於問中的答案，遂帶著時辰上前一步。">A hexagram is only a frame. The branches, the kin, and the day fill it in — and the answer that was always in your question steps forward with an hour attached.</p>
+    <div class="foot-meta">XAVIER FABLE ×65 <span style="color:var(--ink-f)">·</span> №57 六爻 <span style="color:var(--ink-f)">·</span> for study &amp; delight <span style="color:var(--ink-f)">·</span> <a href="/">back to the gallery →</a></div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ============================================================
+   NA JIA ENGINE  (verified vs 乾為天 / 天火同人 / 節)
+   ============================================================ */
+const TRI = [
+ {zh:"乾",py:"Qián",el:"金",bits:"111",inner:["子","寅","辰"],outer:["午","申","戌"]},
+ {zh:"兌",py:"Duì", el:"金",bits:"110",inner:["巳","卯","丑"],outer:["亥","酉","未"]},
+ {zh:"離",py:"Lí",  el:"火",bits:"101",inner:["卯","丑","亥"],outer:["酉","未","巳"]},
+ {zh:"震",py:"Zhèn",el:"木",bits:"100",inner:["子","寅","辰"],outer:["午","申","戌"]},
+ {zh:"巽",py:"Xùn", el:"木",bits:"011",inner:["丑","亥","酉"],outer:["未","巳","卯"]},
+ {zh:"坎",py:"Kǎn", el:"水",bits:"010",inner:["寅","辰","午"],outer:["申","戌","子"]},
+ {zh:"艮",py:"Gèn", el:"土",bits:"001",inner:["辰","午","申"],outer:["戌","子","寅"]},
+ {zh:"坤",py:"Kūn", el:"土",bits:"000",inner:["未","巳","卯"],outer:["丑","亥","酉"]}
+];
+const bitsIdx={}; TRI.forEach((t,i)=>bitsIdx[t.bits]=i);
+const BR={子:{el:"水",zod:"鼠",an:"Rat",mon:11},丑:{el:"土",zod:"牛",an:"Ox",mon:12},寅:{el:"木",zod:"虎",an:"Tiger",mon:1},卯:{el:"木",zod:"兔",an:"Rabbit",mon:2},辰:{el:"土",zod:"龍",an:"Dragon",mon:3},巳:{el:"火",zod:"蛇",an:"Snake",mon:4},午:{el:"火",zod:"馬",an:"Horse",mon:5},未:{el:"土",zod:"羊",an:"Goat",mon:6},申:{el:"金",zod:"猴",an:"Monkey",mon:7},酉:{el:"金",zod:"雞",an:"Rooster",mon:8},戌:{el:"土",zod:"狗",an:"Dog",mon:9},亥:{el:"水",zod:"豬",an:"Pig",mon:10}};
+const gen={木:"火",火:"土",土:"金",金:"水",水:"木"};
+const ke ={木:"土",火:"金",土:"水",金:"木",水:"火"};
+const revGen={火:"木",土:"火",金:"土",水:"金",木:"水"};   // who generates X
+const revKe ={土:"木",金:"火",水:"土",木:"金",火:"水"};    // who controls X
+const WXCLASS={木:"wx-mu",火:"wx-huo",土:"wx-tu",金:"wx-jin",水:"wx-shui"};
+const WXEN={木:"Wood",火:"Fire",土:"Earth",金:"Metal",水:"Water"};
+const SEASON={木:{en:"spring",zh:"春"},火:{en:"summer",zh:"夏"},土:{en:"the earth months",zh:"四季土月"},金:{en:"autumn",zh:"秋"},水:{en:"winter",zh:"冬"}};
+function liuqin(le,pe){ if(le===pe)return"兄弟"; if(gen[le]===pe)return"父母"; if(gen[pe]===le)return"子孫"; if(ke[le]===pe)return"官鬼"; if(ke[pe]===le)return"妻財"; return"?"; }
+const QIN_EN={父母:"Parent",兄弟:"Sibling",官鬼:"Officer",妻財:"Wealth",子孫:"Offspring"};
+function elemOfQin(qin,pe){ if(qin==="兄弟")return pe; if(qin==="父母")return revGen[pe]; if(qin==="子孫")return gen[pe]; if(qin==="官鬼")return revKe[pe]; if(qin==="妻財")return ke[pe]; return null; }
+
+/* 64 hexagram names, keyed up*8+lo (index order 乾0兌1離2震3巽4坎5艮6坤7) */
+const HN=[[1,0,0,"乾","Qián","The Creative"],[2,7,7,"坤","Kūn","The Receptive"],[3,5,3,"屯","Zhūn","Difficulty at the Beginning"],[4,6,5,"蒙","Méng","Youthful Folly"],[5,5,0,"需","Xū","Waiting"],[6,0,5,"訟","Sòng","Conflict"],[7,7,5,"師","Shī","The Army"],[8,5,7,"比","Bǐ","Holding Together"],[9,4,0,"小畜","Xiǎo Chù","Taming by the Small"],[10,0,1,"履","Lǚ","Treading"],[11,7,0,"泰","Tài","Peace"],[12,0,7,"否","Pǐ","Standstill"],[13,0,2,"同人","Tóng Rén","Fellowship"],[14,2,0,"大有","Dà Yǒu","Great Possession"],[15,7,6,"謙","Qiān","Modesty"],[16,3,7,"豫","Yù","Enthusiasm"],[17,1,3,"隨","Suí","Following"],[18,6,4,"蠱","Gǔ","Work on the Decayed"],[19,7,1,"臨","Lín","Approach"],[20,4,7,"觀","Guān","Contemplation"],[21,2,3,"噬嗑","Shì Kè","Biting Through"],[22,6,2,"賁","Bì","Grace"],[23,6,7,"剝","Bō","Splitting Apart"],[24,7,3,"復","Fù","Return"],[25,0,3,"無妄","Wú Wàng","Innocence"],[26,6,0,"大畜","Dà Chù","Taming by the Great"],[27,6,3,"頤","Yí","Nourishment"],[28,1,4,"大過","Dà Guò","Great Preponderance"],[29,5,5,"坎","Kǎn","The Abysmal"],[30,2,2,"離","Lí","The Clinging"],[31,1,6,"咸","Xián","Influence"],[32,3,4,"恆","Héng","Duration"],[33,0,6,"遯","Dùn","Retreat"],[34,3,0,"大壯","Dà Zhuàng","Great Power"],[35,2,7,"晉","Jìn","Progress"],[36,7,2,"明夷","Míng Yí","Darkening of the Light"],[37,4,2,"家人","Jiā Rén","The Family"],[38,2,1,"睽","Kuí","Opposition"],[39,5,6,"蹇","Jiǎn","Obstruction"],[40,3,5,"解","Xiè","Deliverance"],[41,6,1,"損","Sǔn","Decrease"],[42,4,3,"益","Yì","Increase"],[43,1,0,"夬","Guài","Breakthrough"],[44,0,4,"姤","Gòu","Coming to Meet"],[45,1,7,"萃","Cuì","Gathering Together"],[46,7,4,"升","Shēng","Pushing Upward"],[47,1,5,"困","Kùn","Oppression"],[48,5,4,"井","Jǐng","The Well"],[49,1,2,"革","Gé","Revolution"],[50,2,4,"鼎","Dǐng","The Cauldron"],[51,3,3,"震","Zhèn","The Arousing"],[52,6,6,"艮","Gèn","Keeping Still"],[53,4,6,"漸","Jiàn","Development"],[54,3,1,"歸妹","Guī Mèi","The Marrying Maiden"],[55,3,2,"豐","Fēng","Abundance"],[56,2,6,"旅","Lǚ","The Wanderer"],[57,4,4,"巽","Xùn","The Gentle"],[58,1,1,"兌","Duì","The Joyous"],[59,4,5,"渙","Huàn","Dispersion"],[60,5,1,"節","Jié","Limitation"],[61,4,1,"中孚","Zhōng Fú","Inner Truth"],[62,3,6,"小過","Xiǎo Guò","Small Preponderance"],[63,5,2,"既濟","Jì Jì","After Completion"],[64,2,5,"未濟","Wèi Jì","Before Completion"]];
+const NAME={}; HN.forEach(h=>{ NAME[h[1]*8+h[2]]={n:h[0],zh:h[3],py:h[4],en:h[5]}; });
+
+/* palace table */
+const flipSets=[[],[1],[1,2],[1,2,3],[1,2,3,4],[1,2,3,4,5],[1,2,3,5],[5]];
+const worldLine=[6,1,2,3,4,5,4,3];
+const typeZh=["本宮","一世","二世","三世","四世","五世","游魂","歸魂"];
+const typeEn=["Original","1st World","2nd World","3rd World","4th World","5th World","Wandering Soul","Returning Soul"];
+const palaceOf={};
+for(let p=0;p<8;p++){
+  const base=(TRI[p].bits+TRI[p].bits).split("");
+  for(let s=0;s<8;s++){
+    const b=base.slice();
+    flipSets[s].forEach(ln=>{ b[ln-1]= b[ln-1]==="1"?"0":"1"; });
+    const lo=bitsIdx[b.slice(0,3).join("")], up=bitsIdx[b.slice(3,6).join("")];
+    const w=worldLine[s], r=w<=3?w+3:w-3;
+    palaceOf[up*8+lo]={palace:p,el:TRI[p].el,world:w,resp:r,type:s};
+  }
+}
+
+/* day ganzhi */
+const STEMS=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const STEM_PY=["Jiǎ","Yǐ","Bǐng","Dīng","Wù","Jǐ","Gēng","Xīn","Rén","Guǐ"];
+const STEM_EL=["木","木","火","火","土","土","金","金","水","水"];
+const BRS=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const SHEN=["青龍","朱雀","勾陳","螣蛇","白虎","玄武"];
+const SHEN_EN=["Azure Dragon","Vermilion Bird","Hook Snake","Coiling Snake","White Tiger","Black Tortoise"];
+const startSpirit=[0,0,1,1,2,3,4,4,5,5];
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function dayGZ(dt){const g=(jdn(dt.getFullYear(),dt.getMonth()+1,dt.getDate())+49)%60;const st=g%10,br=g%12;return{stem:st,branch:br,zh:STEMS[st]+BRS[br]};}
+
+/* build the full board model */
+function buildBoard(lineVals,day){
+  const bits=lineVals.map(v=>(v===7||v===9)?"1":"0");
+  const lo=bitsIdx[bits.slice(0,3).join("")], up=bitsIdx[bits.slice(3,6).join("")];
+  const pinf=palaceOf[up*8+lo];
+  const name=NAME[up*8+lo];
+  const branches=[]; for(let i=0;i<3;i++)branches[i]=TRI[lo].inner[i]; for(let i=0;i<3;i++)branches[3+i]=TRI[up].outer[i];
+  const spBase=startSpirit[day.stem];
+  // transformed hexagram
+  const bbits=bits.slice(); lineVals.forEach((v,i)=>{ if(v===6||v===9) bbits[i]= bbits[i]==="1"?"0":"1"; });
+  const blo=bitsIdx[bbits.slice(0,3).join("")], bup=bitsIdx[bbits.slice(3,6).join("")];
+  const bname=NAME[bup*8+blo];
+  const bbranches=[]; for(let i=0;i<3;i++)bbranches[i]=TRI[blo].inner[i]; for(let i=0;i<3;i++)bbranches[3+i]=TRI[bup].outer[i];
+  const anyMoving=lineVals.some(v=>v===6||v===9);
+  const rows=lineVals.map((v,i)=>{
+    const br=branches[i], el=BR[br].el, moving=(v===6||v===9), yang=(v===7||v===9);
+    const row={pos:i+1,val:v,br,el,yang,moving,qin:liuqin(el,pinf.el),
+      shen:(spBase+i)%6,
+      isShi:(i+1)===pinf.world, isYing:(i+1)===pinf.resp};
+    if(moving){ const bbr=bbranches[i], bel=BR[bbr].el; row.bBr=bbr; row.bEl=bel; row.bQin=liuqin(bel,pinf.el); }
+    return row;
+  });
+  return {lineVals,lo,up,pinf,name,rows,palEl:pinf.el,
+    world:pinf.world,resp:pinf.resp,anyMoving,
+    bian:anyMoving?{name:bname,lo:blo,up:bup,bits:bbits}:null,day};
+}
+
+/* strength of an element vs day branch */
+function dayStrength(el,day){
+  const dEl=BR[BRS[day.branch]].el;
+  if(dEl===el) return {s:2,key:"临日"};
+  if(gen[dEl]===el) return {s:2,key:"日生"};
+  if(ke[dEl]===el) return {s:-2,key:"日克"};
+  if(gen[el]===dEl) return {s:-1,key:"泄日"};
+  return {s:0,key:"克日"}; // el ke dEl
+}
+
+/* ============================================================
+   VERDICT
+   ============================================================ */
+const TYPE_QIN={career:"官鬼",wealth:"妻財",health:"子孫",love:"妻財",general:null};
+const TYPE_LABEL={career:{zh:"事業功名",en:"Career & Ambition"},wealth:{zh:"求財",en:"Wealth"},health:{zh:"疾病健康",en:"Health"},love:{zh:"婚戀姻緣",en:"Love"},general:{zh:"綜合運勢",en:"General Fortune"}};
+
+function reading(model,type){
+  const pe=model.palEl, day=model.day;
+  let yongQin = TYPE_QIN[type];
+  if(type==="general"){ yongQin = model.rows[model.world-1].qin; }
+  const yongEl = elemOfQin(yongQin,pe);
+  const bearers = model.rows.filter(r=>r.qin===yongQin);
+  const present = bearers.length>0;
+  const sigs=[];
+  let score=0;
+
+  // 1 presence
+  if(present){ score+=1; sigs.push({s:1,zh:`用神${yongQin}上卦，事有落處。`,en:`The ${QIN_EN[yongQin]} line (用神) is present on the board — the matter has a place to stand.`}); }
+  else { score-=2; sigs.push({s:-2,zh:`用神${yongQin}不上卦，伏而未現。`,en:`The ${QIN_EN[yongQin]} line is absent (伏藏) — the matter is not yet formed; read it as latent.`}); }
+
+  // pick primary yong line
+  let prim=null;
+  if(present){
+    prim = bearers.find(r=>r.moving) || bearers.find(r=>r.isShi) || bearers.find(r=>r.isYing) || bearers[bearers.length-1];
+  }
+
+  // 2 day strength
+  const ds=dayStrength(yongEl,day);
+  score+=ds.s;
+  const dz={临日:{zh:`用神${yongEl}與日辰比和，臨日得氣，旺。`,en:`On this ${model.day.zh} day the 用神 (${WXEN[yongEl]}) shares the day's element — it holds its strength.`},
+    日生:{zh:`日辰生用神${yongEl}，得生而旺相。`,en:`The day feeds the 用神 (${WXEN[yongEl]}) — it is strong and well-supported.`},
+    日克:{zh:`日辰克用神${yongEl}，受制而衰。`,en:`The day controls the 用神 (${WXEN[yongEl]}) — it is pressed and weakened.`},
+    泄日:{zh:`用神${yongEl}生日辰，泄氣稍弱。`,en:`The 用神 (${WXEN[yongEl]}) spends itself on the day — mildly drained.`},
+    克日:{zh:`用神${yongEl}克日辰，力尚可。`,en:`The 用神 (${WXEN[yongEl]}) overcomes the day — its footing is workable.`}};
+  sigs.push(Object.assign({},dz[ds.key]));
+
+  // 3 movement / transform
+  if(prim && prim.moving){
+    if(prim.bEl){
+      if(gen[prim.bEl]===yongEl){ score+=2; sigs.push({s:2,zh:`用神發動，化${prim.bBr}回頭相生，愈動愈吉。`,en:`The 用神 is moving and changes into ${prim.bBr} which feeds it back (回頭生) — motion improves the outcome.`}); }
+      else if(ke[prim.bEl]===yongEl){ score-=2; sigs.push({s:-2,zh:`用神發動，化${prim.bBr}回頭克制，動而生悔。`,en:`The 用神 is moving but changes into ${prim.bBr} which turns back to control it (回頭克) — action breeds regret.`}); }
+      else if(prim.bEl===yongEl){ score+=1; sigs.push({s:1,zh:`用神發動，化進神${prim.bBr}，其氣益進。`,en:`The 用神 moves and advances into ${prim.bBr} of the same nature (化進神) — its force gathers.`}); }
+      else { score+=0; sigs.push({s:0,zh:`用神發動，化${prim.bBr}，氣象流轉。`,en:`The 用神 is moving, changing into ${prim.bBr} — the situation is in flux.`}); }
+    }
+  } else if(prim){
+    sigs.push({s:0,zh:`用神安靜，守成之象，宜待時而非強求。`,en:`The 用神 is still — a picture of holding, not forcing. Wait on the timing rather than push.`});
+  }
+
+  // 4 world relation
+  if(prim){
+    if(prim.isShi){ score+=1; sigs.push({s:1,zh:`用神持世，事在己身，可自作主。`,en:`The 用神 sits on your 世 line — the matter is in your own hands to hold.`}); }
+    else if(prim.isYing){ sigs.push({s:0,zh:`用神臨應，須假他人之力成事。`,en:`The 用神 sits on the 應 line — it turns on another party, not on you alone.`}); }
+    else {
+      const shiEl=model.rows[model.world-1].el;
+      if(gen[yongEl]===shiEl){ score+=1; sigs.push({s:1,zh:`用神生世，其來就我，於我有情。`,en:`The 用神 generates your 世 line — it comes toward you; the matter inclines your way.`}); }
+      else if(ke[yongEl]===shiEl){ score-=1; sigs.push({s:-1,zh:`用神克世，其勢逼我，需防其擾。`,en:`The 用神 controls your 世 line — its force presses on you; guard against strain.`}); }
+      else { sigs.push({s:0,zh:`用神與世無生克之直應，各安其位。`,en:`The 用神 neither feeds nor conquers your 世 line — the two keep their own places.`}); }
+    }
+  }
+
+  // 5 health special: illness = 官鬼
+  if(type==="health"){
+    const gui=model.rows.filter(r=>r.qin==="官鬼");
+    const guiMoving=gui.some(r=>r.moving);
+    const guiOnShi=gui.some(r=>r.isShi);
+    if(guiMoving){ score-=1; sigs.push({s:-1,zh:`官鬼(病氣)發動，病勢仍動，未可即安。`,en:`The Officer line (官鬼 — the illness) is moving: the sickness is still active; recovery is not yet settled.`}); }
+    else if(guiOnShi){ score-=1; sigs.push({s:-1,zh:`官鬼持世，病附其身，宜靜養。`,en:`The Officer line sits on the 世 — the illness clings to the self; rest and quiet are advised.`}); }
+    else { score+=1; sigs.push({s:1,zh:`官鬼不動不持世，病無根蒂，子孫可制之。`,en:`The Officer line neither moves nor holds the 世 — the illness is shallow, and the Offspring line can subdue it.`}); }
+  }
+
+  // tier
+  let tierZh,tierEn,tierClass;
+  if(score>=3){tierZh="大吉";tierEn="Highly Favourable";tierClass="t-good";}
+  else if(score>=1){tierZh="吉";tierEn="Favourable";tierClass="t-good";}
+  else if(score===0){tierZh="平";tierEn="Mixed";tierClass="t-mid";}
+  else if(score>=-2){tierZh="不利";tierEn="Unfavourable";tierClass="t-bad";}
+  else {tierZh="凶";tierEn="Adverse";tierClass="t-bad";}
+
+  // prose
+  const tl=TYPE_LABEL[type];
+  const strong = score>=1, weak = score<=-1;
+  let en,zh;
+  const verb={career:{q:"the post you seek",zh:"所謀之事"},wealth:{q:"the money in question",zh:"所求之財"},health:{q:"the recovery",zh:"病體康復"},love:{q:"the union",zh:"這段姻緣"},general:{q:"the matter",zh:"所占之事"}}[type];
+  if(!present){
+    en=`For ${tl.en.toLowerCase()}, the ${QIN_EN[yongQin]} line that ought to answer does not appear on the board. The oracle's reply is that ${verb.q} is not yet ripe or not yet real — it waits behind the visible lines. Do not force a conclusion; return when the ground has shifted.`;
+    zh=`就${tl.zh}而言，本應應事之${yongQin}未上卦。卦意謂：${verb.zh}尚未成形、時機未到，伏於顯爻之後。不宜強斷，待局面轉動再占。`;
+  } else if(strong){
+    en=`For ${tl.en.toLowerCase()}, the reading leans toward yes. The ${QIN_EN[yongQin]} line stands ${prim.moving?"in motion":"quietly"} on the board${prim.isShi?", seated on your own 世 line":""}, and on this ${model.day.zh} day it keeps its strength. Move with the grain of it — ${verb.q} is workable, and the closing signals point the same way.`;
+    zh=`就${tl.zh}論，卦象偏吉。${yongQin}${prim.moving?"發動":"安靜"}上卦${prim.isShi?"，且臨世爻":""}，值${model.day.zh}之日而得氣。順其勢而行，${verb.zh}可成，諸爻所指略同。`;
+  } else if(weak){
+    en=`For ${tl.en.toLowerCase()}, the board is cautious. The ${QIN_EN[yongQin]} line is present but hard-pressed — ${ds.key==="日克"?"the day controls it":"its footing is thin"}${prim.moving&&prim.bEl&&ke[prim.bEl]===yongEl?", and its own movement turns back against it":""}. ${verb.q.charAt(0).toUpperCase()+verb.q.slice(1)} meets friction; hold, protect the line, and do not commit on a weak day.`;
+    zh=`就${tl.zh}論，卦象宜慎。${yongQin}雖上卦而受制——${ds.key==="日克"?"日辰克之":"根氣不厚"}${prim.moving&&prim.bEl&&ke[prim.bEl]===yongEl?"，且動而回頭自克":""}。${verb.zh}多阻，宜守宜護，弱日勿輕舉。`;
+  } else {
+    en=`For ${tl.en.toLowerCase()}, the reading is balanced. The ${QIN_EN[yongQin]} line is on the board and neither clearly strong nor clearly broken; the outcome tips on small things — the day, one moving line, a single choice. ${verb.q.charAt(0).toUpperCase()+verb.q.slice(1)} is possible but unresolved; act with care and watch the timing below.`;
+    zh=`就${tl.zh}論，吉凶參半。${yongQin}上卦而未見大旺大衰，成敗繫於細微——日辰、一動爻、一抉擇之間。${verb.zh}可為而未定，宜謹慎行事，並觀下方應期。`;
+  }
+
+  // timing
+  let timeEn,timeZh;
+  if(present){
+    const b=prim.br, info=BR[b], se=SEASON[yongEl];
+    timeEn=`The 用神 rests in ${b} (${info.an}). Look to the ${info.an.toLowerCase()} month (~lunar month ${info.mon}) or an ${info.an.toLowerCase()} day — or the turn when ${WXEN[yongEl]} runs strong, that is, ${se.en}.`;
+    timeZh=`用神坐${b}（${info.zod}）。應期宜看${b}月（約農曆${info.mon}月）或${b}日，亦或${yongEl}氣當令之時，即${se.zh}令。`;
+  } else {
+    const se=SEASON[yongEl];
+    timeEn=`With the 用神 hidden, the hour is unclear. Watch for the season when ${WXEN[yongEl]} rises — ${se.en} — to draw the latent line into the open.`;
+    timeZh=`用神伏藏，時未可定。俟${yongEl}氣萌動之${se.zh}令，伏神出而事乃可期。`;
+  }
+
+  return {yongQin,yongEl,present,prim,score,tierZh,tierEn,tierClass,en,zh,sigs,timeEn,timeZh,typeLabel:tl};
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+let LANG = document.documentElement.dataset.lang || "en";
+let curType="career", curModel=null, curLines=null;
+
+function glyphLine(r,cls){
+  const yin=!r.yang;
+  const mv = r.moving ? `<span class="m">${r.yang?"○":"×"}</span>` : "";
+  return `<div class="${cls} ${yin?"yin":"yang"} ${r.moving?"moving":""}">`+
+    (yin?`<span class="gb"></span><span class="gb"></span>`:`<span class="gb"></span>`)+mv+`</div>`;
+}
+function figLines(lineVals,movingFlags){
+  let h="";
+  for(let i=0;i<6;i++){
+    const yang=(lineVals[i]===1); const mv=movingFlags[i];
+    h+=`<div class="fl ${yang?"yang":"yin"} ${mv?"moving":""}">`+
+       (yang?`<span class="fb"></span>`:`<span class="fb"></span><span class="fb"></span>`)+
+       (mv?`<span class="dot"></span>`:``)+`</div>`;
+  }
+  return h;
+}
+
+function renderBoard(model){
+  const board=$("#board"); board.classList.remove("hidden-empty");
+  const nm=model.name, pinf=model.pinf;
+  // head
+  $("#bhName").innerHTML=`${nm.zh} <span class="py">${nm.py}</span>`;
+  const day=model.day;
+  const shiRow=model.rows[model.world-1];
+  $("#bhMeta").innerHTML=
+    metaBox("卦宮 · Palace",`${TRI[pinf.palace].zh}宮<span class="em"> ${TRI[pinf.palace].el}</span> · ${LANG==="zh"?typeZh[pinf.type]:typeEn[pinf.type]}`)+
+    metaBox("日辰 · Day",`${day.zh}<span class="em"> ${STEM_EL[day.stem]}</span>`)+
+    metaBox("六神起 · Spirit from",`${SHEN[startSpirit[day.stem]]}`);
+  // figures
+  const movingFlags=model.rows.map(r=>r.moving);
+  const benBits=model.rows.map(r=>r.yang?1:0);
+  let figHtml=`<div class="figblock"><div class="cap">本卦 · cast</div><div class="figlines">${figLines(benBits,movingFlags)}</div><div class="figname">${nm.zh}<span class="py">${nm.py}</span></div></div>`;
+  if(model.bian){
+    const bbits=model.bian.bits.map(b=>b==="1"?1:0);
+    figHtml+=`<div class="figarrow">→</div>`+
+      `<div class="figblock"><div class="cap">變卦 · becomes</div><div class="figlines">${figLines(bbits,[0,0,0,0,0,0])}</div><div class="figname">${model.bian.name.zh}<span class="py">${model.bian.name.py}</span></div></div>`;
+  }
+  $("#figsRow").innerHTML=figHtml;
+  const nMov=movingFlags.filter(Boolean).length;
+  $("#figsNote").innerHTML = model.bian
+    ? (LANG==="zh"?`${nMov}爻發動，本卦「${nm.zh}」變為「${model.bian.name.zh}」——事之所往。`:`${nMov} line${nMov>1?"s":""} moving: <em>${nm.en}</em> is turning into <em>${model.bian.name.en}</em> — where the matter is headed.`)
+    : (LANG==="zh"?`六爻皆靜，無變卦，事體安定守常。`:`All six lines still — no transformation. The matter holds its present shape.`);
+  // pan rows top->bottom = line6..line1
+  const tbody=$("#panBody"); tbody.innerHTML="";
+  for(let i=5;i>=0;i--){
+    const r=model.rows[i];
+    const tr=document.createElement("tr");
+    tr.dataset.pos=r.pos;
+    const gzHtml=`${r.br}<span class="wx ${WXCLASS[r.el]}">${r.el}</span>`;
+    let bian="";
+    if(r.moving){ bian=`<span class="on">${r.bBr}<span class="q ${WXCLASS[r.bEl]}">${r.bEl}</span></span> ${r.bQin}`; }
+    else bian=`<span style="opacity:.3">—</span>`;
+    tr.innerHTML=
+      `<td class="shen">${SHEN[r.shen]}</td>`+
+      `<td class="qin">${r.qin}</td>`+
+      `<td class="gz">${gzHtml}</td>`+
+      `<td class="glyph">${glyphLine(r,"gg")}</td>`+
+      `<td class="mk">${r.isShi?'<span class="shi">世</span>':''}${r.isYing?'<span class="ying">應</span>':''}</td>`+
+      `<td class="bian">${bian}</td>`;
+    tbody.appendChild(tr);
+  }
+  renderReading(model);
+}
+
+function metaBox(k,v){ return `<div class="meta"><div class="k">${k}</div><div class="v">${v}</div></div>`; }
+
+function renderReading(model){
+  const rd=reading(model,curType);
+  // highlight yong rows
+  $$("#panBody tr").forEach(tr=>{
+    const pos=+tr.dataset.pos, r=model.rows[pos-1];
+    tr.classList.toggle("is-yong", r.qin===rd.yongQin);
+  });
+  $("#tierZh").textContent=rd.tierZh;
+  $("#tierZh").className="tier "+rd.tierClass;
+  $("#tierEn").textContent=rd.tierEn;
+  $("#yongChip").innerHTML=`用神 <span class="zh">${rd.yongQin}</span> · ${QIN_EN[rd.yongQin]} · ${WXEN[rd.yongEl]}`;
+  $("#rdEn").textContent=rd.en;
+  $("#rdZh").textContent=rd.zh;
+  $("#rdEn").style.display = LANG==="zh"?"none":"block";
+  $("#rdZh").style.display = LANG==="zh"?"block":"none";
+  const sigWrap=$("#rdSig"); sigWrap.innerHTML="";
+  rd.sigs.forEach(s=>{
+    const cls = s.s>0?"pos":(s.s<0?"neg":"neu");
+    const mark = s.s>0?"＋":(s.s<0?"－":"·");
+    const div=document.createElement("div"); div.className="sig "+cls;
+    div.innerHTML=`<span class="b">${mark}</span><span class="tx">${LANG==="zh"?s.zh:s.en}</span>`;
+    sigWrap.appendChild(div);
+  });
+  $("#rdTiming").innerHTML = LANG==="zh"?`<span class="zh">${rd.timeZh}</span>`:rd.timeEn;
+}
+
+/* ============================================================
+   PALACES section
+   ============================================================ */
+function renderPalaces(){
+  const grid=$("#pgrid"); if(!grid) return;
+  const ELBG={金:"var(--w-jin)",木:"var(--w-mu)",水:"var(--w-shui)",火:"var(--w-huo)",土:"var(--w-tu)"};
+  // gather hexagrams per palace in rank order
+  const byPalace={};
+  Object.keys(palaceOf).forEach(k=>{const info=palaceOf[k];(byPalace[info.palace]=byPalace[info.palace]||[])[info.type]=NAME[k];});
+  for(let p=0;p<8;p++){
+    const list=byPalace[p]||[];
+    const first=list[0], head=list.slice(0,4).map(x=>x?x.zh:"·").join(" ");
+    const rest=list.slice(4,8).map(x=>x?x.zh:"·").join(" ");
+    const card=document.createElement("div"); card.className="pcard";
+    card.innerHTML=`<div class="top"><div class="glyph8">${TRI[p].zh}</div><div class="elbadge" style="background:${ELBG[TRI[p].el]};color:#F5F1E8">${TRI[p].el}</div></div>`+
+      `<div class="trg">${TRI[p].py} · ${WXEN[TRI[p].el]}</div>`+
+      `<div class="plist"><span class="b">${head}</span><br>${rest}</div>`;
+    grid.appendChild(card);
+  }
+}
+
+/* ============================================================
+   CASTING interaction
+   ============================================================ */
+const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let tossState=[]; // line values collected
+let coinEls=[];
+const NOW = getDay();
+function getDay(){
+  const u=new URLSearchParams(location.search);
+  const d=u.get("day");
+  if(d){ const m=d.match(/(\d{4})-(\d{1,2})-(\d{1,2})/); if(m) return dayGZ(new Date(+m[1],+m[2]-1,+m[3])); }
+  return dayGZ(new Date());
+}
+
+function buildCoins(){
+  const c=$("#coins"); c.innerHTML="";
+  coinEls=[];
+  for(let i=0;i<3;i++){
+    const w=document.createElement("div"); w.className="coin-w";
+    w.innerHTML=`<div class="coin"><div class="cface front"><span class="hole"></span><span class="yang t">乾</span><span class="yang b">坤</span><span class="yang l">坎</span><span class="yang r">離</span></div><div class="cface back"><span class="hole"></span><span class="yin"></span></div></div>`;
+    c.appendChild(w); coinEls.push(w.querySelector(".coin"));
+  }
+}
+function setCoinFace(coin,yang){ coin.style.transform = yang?"rotateY(0deg)":"rotateY(180deg)"; }
+
+function buildHexFrame(){
+  const f=$("#hexbuild"); f.innerHTML="";
+  for(let i=0;i<6;i++){
+    const d=document.createElement("div"); d.className="bl"; d.dataset.i=i;
+    d.innerHTML=`<span class="ghost"></span>`;
+    f.appendChild(d);
+  }
+}
+function showLine(i,val){
+  const els=$$("#hexbuild .bl"); const el=els[i];
+  const yang=(val===7||val===9), moving=(val===6||val===9);
+  el.classList.add(yang?"yang":"yin");
+  el.innerHTML=`<span class="ghost"></span>`+(yang?`<span class="seg-bar"></span>`:`<span class="seg-bar"></span><span class="seg-bar" style="flex:0 0 40%;margin-left:16%"></span>`)+(moving?`<span class="mv">${yang?"○":"×"}</span>`:``);
+  // fix yin rendering: use two bars
+  if(!yang){ el.innerHTML=`<span class="ghost"></span><span class="seg-bar"></span><span class="seg-bar"></span>`+(moving?`<span class="mv">×</span>`:``); }
+  else { el.innerHTML=`<span class="ghost"></span><span class="seg-bar"></span>`+(moving?`<span class="mv">○</span>`:``); }
+  if(REDUCE) el.classList.add("show"); else { requestAnimationFrame(()=>el.classList.add("show")); }
+}
+
+const LINE_LABEL={6:{zh:"老陰",en:"old yin",face:[2,2,2]},7:{zh:"少陽",en:"young yang",face:[2,2,3]},8:{zh:"少陰",en:"young yin",face:[2,3,3]},9:{zh:"老陽",en:"young yang → old yang",face:[3,3,3]}};
+function faceFor(val){ // 2 or 3 per coin, sum determined
+  return LINE_LABEL[val].face.slice();
+}
+function tossValue(rng){
+  let s=0; const faces=[];
+  for(let i=0;i<3;i++){ const f=(rng()<0.5)?2:3; faces.push(f); s+=f; }
+  return {val:s,faces};
+}
+
+let tossing=false;
+function doToss(){
+  if(tossing) return;
+  if(tossState.length>=6) return;
+  tossing=true;
+  const {val,faces}=tossValue(Math.random);
+  const idx=tossState.length;
+  // animate coins
+  coinEls.forEach((coin,ci)=>{
+    if(!REDUCE){ coin.classList.remove("spin"); void coin.offsetWidth; coin.classList.add("spin"); }
+    setTimeout(()=>setCoinFace(coin,faces[ci]===3), REDUCE?0:310);
+  });
+  const finish=()=>{
+    tossState.push(val);
+    showLine(idx,val);
+    const lab=LINE_LABEL[val];
+    $("#tossRead").innerHTML=`${faces.join(" · ")} = <b>${val}</b> <span class="ln">${lab.zh} ${lab.en}</span>`;
+    $("#tossCount").textContent=`Toss ${tossState.length} / 6 — ${tossState.length<6?"第"+["零","一","二","三","四","五","六"][tossState.length]+"爻已得":"六爻已成"}`;
+    tossing=false;
+    if(tossState.length>=6){ $("#tossBtn").disabled=true; $("#tossBtn").querySelector("[data-en]").textContent=LANG==="zh"?"卦成":"Hexagram complete"; setTimeout(finishCast,520); }
+  };
+  if(REDUCE) finish(); else setTimeout(finish,640);
+}
+
+function finishCast(){
+  curLines=tossState.slice();
+  curModel=buildBoard(curLines,NOW);
+  renderBoard(curModel);
+  const q=$("#qinput").value.trim();
+  $("#bhQuestion").textContent = q ? (LANG==="zh"?`所問：「${q}」`:`asking — “${q}”`) : "";
+  $("#resetBtn").style.display="inline-flex";
+  const board=$("#board");
+  requestAnimationFrame(()=>board.classList.add("reveal"));
+  setTimeout(()=>{ board.scrollIntoView({behavior:REDUCE?"auto":"smooth",block:"start"}); }, REDUCE?0:120);
+  // write share url
+  writeURL();
+}
+function writeURL(){
+  const q=$("#qinput").value.trim();
+  const params=new URLSearchParams();
+  params.set("lines",curLines.join(""));
+  params.set("type",curType);
+  if(q) params.set("q",q);
+  history.replaceState(null,"","?"+params.toString());
+}
+
+function resetCast(){
+  tossState=[]; tossing=false;
+  buildCoins(); buildHexFrame();
+  $("#tossRead").innerHTML="";
+  $("#tossCount").textContent="Toss 0 / 6 — 尚未起卦";
+  $("#tossBtn").disabled=false;
+  $("#tossBtn").querySelector("[data-en]").textContent=LANG==="zh"?"搖擲銅錢":"Toss the coins";
+  $("#resetBtn").style.display="none";
+  const board=$("#board"); board.classList.remove("reveal"); board.classList.add("hidden-empty");
+  history.replaceState(null,"",location.pathname);
+  $("#cast").scrollIntoView({behavior:REDUCE?"auto":"smooth"});
+}
+
+/* deterministic load from params */
+function loadFromParams(){
+  const u=new URLSearchParams(location.search);
+  const t=u.get("type"); if(t&&TYPE_QIN.hasOwnProperty(t)){ setType(t,true); }
+  const q=u.get("q"); if(q){ $("#qinput").value=q; }
+  const cast=u.get("cast"); // partial mid-ritual
+  const lines=u.get("lines");
+  const seed=u.get("seed");
+  if(lines && /^[6789]{6}$/.test(lines)){
+    tossState=lines.split("").map(Number);
+    // fill frame + coins to final
+    buildCoins(); buildHexFrame();
+    tossState.forEach((v,i)=>showLine(i,v));
+    const lastFaces=faceFor(tossState[5]);
+    coinEls.forEach((c,ci)=>setCoinFace(c,lastFaces[ci]===3));
+    const lab=LINE_LABEL[tossState[5]];
+    $("#tossRead").innerHTML=`${lastFaces.join(" · ")} = <b>${tossState[5]}</b> <span class="ln">${lab.zh} ${lab.en}</span>`;
+    $("#tossCount").textContent="Toss 6 / 6 — 六爻已成";
+    $("#tossBtn").disabled=true;
+    $("#tossBtn").querySelector("[data-en]").textContent=LANG==="zh"?"卦成":"Hexagram complete";
+    curLines=tossState.slice(); curModel=buildBoard(curLines,NOW);
+    renderBoard(curModel);
+    $("#bhQuestion").textContent = q ? (LANG==="zh"?`所問：「${q}」`:`asking — “${q}”`) : "";
+    $("#resetBtn").style.display="inline-flex";
+    const board=$("#board"); board.classList.remove("hidden-empty"); board.classList.add("reveal");
+    setTimeout(()=>board.scrollIntoView({behavior:"auto",block:"start"}),60);
+    return true;
+  }
+  if(seed && /^\d+$/.test(seed)){
+    const rng=mulberry32(parseInt(seed,10)>>>0);
+    tossState=[]; for(let i=0;i<6;i++){ tossState.push(tossValue(rng).val); }
+    buildCoins(); buildHexFrame();
+    tossState.forEach((v,i)=>showLine(i,v));
+    $("#tossCount").textContent="Toss 6 / 6 — 六爻已成";
+    $("#tossBtn").disabled=true;
+    curLines=tossState.slice(); curModel=buildBoard(curLines,NOW);
+    renderBoard(curModel);
+    if(q)$("#bhQuestion").textContent=(LANG==="zh"?`所問：「${q}」`:`asking — “${q}”`);
+    $("#resetBtn").style.display="inline-flex";
+    const board=$("#board"); board.classList.remove("hidden-empty"); board.classList.add("reveal");
+    setTimeout(()=>board.scrollIntoView({behavior:"auto",block:"start"}),60);
+    return true;
+  }
+  if(cast && /^[6789]{1,5}$/.test(cast)){
+    tossState=cast.split("").map(Number);
+    buildCoins(); buildHexFrame();
+    tossState.forEach((v,i)=>showLine(i,v));
+    const lf=faceFor(tossState[tossState.length-1]);
+    coinEls.forEach((c,ci)=>setCoinFace(c,lf[ci]===3));
+    const lab=LINE_LABEL[tossState[tossState.length-1]];
+    $("#tossRead").innerHTML=`${lf.join(" · ")} = <b>${tossState[tossState.length-1]}</b> <span class="ln">${lab.zh} ${lab.en}</span>`;
+    $("#tossCount").textContent=`Toss ${tossState.length} / 6 — 第${["零","一","二","三","四","五"][tossState.length]}爻已得`;
+    return true;
+  }
+  return false;
+}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* type selector */
+function setType(t,silent){
+  curType=t;
+  $$("#typeSeg .seg-b").forEach(b=>b.classList.toggle("on",b.dataset.type===t));
+  if(!silent && curModel){ renderReading(curModel); writeURL(); }
+}
+
+/* ============================================================
+   LANG toggle
+   ============================================================ */
+function applyLang(){
+  document.documentElement.dataset.lang=LANG;
+  $$("[data-en]").forEach(el=>{ el.textContent = LANG==="zh" ? (el.dataset.zh||el.dataset.en) : el.dataset.en; });
+  $("#lang-en").classList.toggle("on",LANG==="en");
+  $("#lang-zh").classList.toggle("on",LANG==="zh");
+  if(curModel) renderBoard(curModel);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  if(REDUCE) document.documentElement.classList.add("no-anim");
+  renderPalaces();
+  buildCoins(); buildHexFrame();
+  applyLang();
+
+  $("#tossBtn").addEventListener("click",doToss);
+  $("#resetBtn").addEventListener("click",resetCast);
+  $("#againBtn").addEventListener("click",resetCast);
+  $("#typeSeg").addEventListener("click",e=>{const b=e.target.closest(".seg-b"); if(b)setType(b.dataset.type);});
+  $("#copyBtn").addEventListener("click",()=>{
+    writeURL();
+    const url=location.href;
+    navigator.clipboard&&navigator.clipboard.writeText(url).then(()=>{
+      const btn=$("#copyBtn").querySelector("[data-en]"); const old={en:btn.dataset.en,zh:btn.dataset.zh};
+      btn.dataset.en="Link copied ✓"; btn.dataset.zh="已複製 ✓"; btn.textContent=LANG==="zh"?"已複製 ✓":"Link copied ✓";
+      setTimeout(()=>{btn.dataset.en=old.en;btn.dataset.zh=old.zh;btn.textContent=LANG==="zh"?old.zh:old.en;},1600);
+    });
+  });
+  $("#lang-en").addEventListener("click",()=>{LANG="en";applyLang();});
+  $("#lang-zh").addEventListener("click",()=>{LANG="zh";applyLang();});
+  $("#qinput").addEventListener("keydown",e=>{ if(e.key==="Enter" && tossState.length<6) doToss(); });
+
+  loadFromParams();
+
+  // reveal-on-scroll
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{threshold:.14});
+  $$(".mcard,.pcard").forEach(el=>{ if(REDUCE) el.classList.add("in"); else io.observe(el); });
+
+  // luopan text ticks
+  const spin=$("#luopanSpin"); if(spin){ const marks="乾兌離震巽坎艮坤".split(""); const R=44;
+    marks.forEach((m,i)=>{ const a=i/marks.length*Math.PI*2; const s=document.createElement("span"); s.className="tk";
+      s.textContent=m; s.style.transform=`translate(${Math.cos(a)*R}%,${Math.sin(a)*R}%)`; spin.appendChild(s); }); }
+
+  // progress bar (throttled via rAF)
+  let ticking=false;
+  function updProg(){ ticking=false; const h=document.documentElement; const sc=h.scrollTop/(h.scrollHeight-h.clientHeight||1); $("#prog").style.width=(sc*100)+"%"; }
+  window.addEventListener("scroll",()=>{ if(!ticking){ticking=true; requestAnimationFrame(updProg);} },{passive:true});
+
+  // custom cursor (fine pointers only, self-terminating)
+  if(matchMedia("(pointer:fine)").matches && !REDUCE){
+    const cur=$("#cur"); let cx=0,cy=0,tx=0,ty=0,raf=0,alive=false;
+    document.body.classList.add("cur-live");
+    function loop(){ cx+=(tx-cx)*.28; cy+=(ty-cy)*.28; cur.style.transform=`translate(${cx}px,${cy}px)`;
+      if(Math.abs(tx-cx)>.4||Math.abs(ty-cy)>.4){ raf=requestAnimationFrame(loop);} else {alive=false;} }
+    window.addEventListener("mousemove",e=>{ tx=e.clientX;ty=e.clientY; cur.classList.add("on"); if(!alive){alive=true;raf=requestAnimationFrame(loop);} });
+    document.addEventListener("mouseover",e=>{ cur.classList.toggle("hov", !!e.target.closest("a,button,input,.seg-b")); });
+    document.addEventListener("visibilitychange",()=>{ if(document.hidden){cancelAnimationFrame(raf);alive=false;} });
+    window.addEventListener("mouseleave",()=>cur.classList.remove("on"));
+  }
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
+</script>
+</body>
+</html>

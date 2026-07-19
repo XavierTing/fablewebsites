@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>紫微斗數 · Purple Star — A Twelve-Room Map of a Life</title>
+<meta name="description" content="Enter a birth date, hour and gender; a real Zǐwēi Dǒushù chart is cast in your browser — the classic twelve-palace grid, the Five-Element Class, and the fourteen major stars placed room by room, with a reading for reflection.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="紫微斗數 · Purple Star — A Twelve-Room Map of a Life">
+<meta property="og:description" content="A real Zǐwēi Dǒushù birth chart, cast in code: the twelve-palace grid, the Five-Element Class, and the fourteen major stars — computed the way a fortune-master's almanac would.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="紫微斗數 · Purple Star">
+<meta name="twitter:description" content="Enter a birth date; the twelve-palace 命盤 is cast in real time, the fourteen major stars placed room by room.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%232f6d5e'/%3E%3Cg fill='none' stroke='%23f5f1e8' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M24 30 L40 44 L34 62 L54 66 L70 52 L78 70'/%3E%3C/g%3E%3Cg fill='%23f5f1e8'%3E%3Ccircle cx='24' cy='30' r='4.4'/%3E%3Ccircle cx='40' cy='44' r='3.6'/%3E%3Ccircle cx='34' cy='62' r='3.6'/%3E%3Ccircle cx='54' cy='66' r='3.6'/%3E%3Ccircle cx='70' cy='52' r='3.6'/%3E%3Ccircle cx='78' cy='70' r='4.4'/%3E%3C/g%3E%3Ccircle cx='54' cy='66' r='8' fill='none' stroke='%23ac3e2c' stroke-width='2.6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F1E8; --paper2:#efe9da; --paper3:#faf6ee; --paper-d:#e7dfcb; --edge:#ddd2ba;
+    --ink:#22252E; --ink2:#3a3d47; --ink-d:rgba(34,37,46,.66); --ink-f:rgba(34,37,46,.44); --ink-ff:rgba(34,37,46,.24); --ink-fff:rgba(34,37,46,.12);
+    --jade:#2F6D5E; --jade-d:#255649; --jade-line:rgba(47,109,94,.34); --jade-faint:rgba(47,109,94,.14);
+    --cin:#AC3E2C; --cin-d:#8f3122; --cin-faint:rgba(172,62,44,.12);
+    --brass:#9A7A34; --brass-hi:#b5923f; --brass-line:rgba(154,122,52,.4); --brass-faint:rgba(154,122,52,.16);
+    --slate:#3a5a7a;
+    --serif:'Spectral',Georgia,serif;
+    --han:'Noto Serif SC',serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-weight:400; font-size:16px;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden; position:relative; min-height:100vh;
+  }
+  /* paper texture / vignette */
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -6%, rgba(250,246,238,.9), transparent 55%),
+      radial-gradient(ellipse 130% 120% at 50% 118%, rgba(47,109,94,.07), transparent 60%),
+      radial-gradient(ellipse 90% 90% at 84% 12%, rgba(154,122,52,.06), transparent 55%);}
+  body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+    box-shadow:inset 0 0 220px rgba(34,37,46,.14), inset 0 0 70px rgba(34,37,46,.08);}
+  .watermark{position:fixed;z-index:0;pointer-events:none;user-select:none;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:var(--han);font-weight:900;font-size:min(82vh,780px);line-height:1;
+    color:rgba(34,37,46,.028);letter-spacing:-.04em;white-space:nowrap;}
+
+  ::selection{background:var(--jade);color:var(--paper3)}
+  ::-webkit-scrollbar{width:12px;height:12px;background:var(--paper)}
+  ::-webkit-scrollbar-thumb{background:var(--brass-line);border:3px solid var(--paper);border-radius:8px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+  :focus{outline:none}
+  :focus-visible{outline:1.5px solid var(--jade);outline-offset:3px;border-radius:2px}
+  a{color:inherit;text-decoration:none}
+
+  /* scroll progress */
+  .progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:80;
+    background:linear-gradient(90deg,var(--jade),var(--brass),var(--cin));transition:width .1s linear}
+
+  /* back-link */
+  .backlink{position:fixed;left:24px;bottom:22px;z-index:60;
+    font-family:var(--mono);font-size:10px;letter-spacing:.3em;font-weight:400;text-transform:uppercase;
+    color:var(--jade-d);border:1px solid var(--jade-line);padding:8px 13px 7px;border-radius:2px;
+    background:rgba(250,246,238,.72);backdrop-filter:blur(6px);
+    transition:color .45s cubic-bezier(.22,1,.36,1),background .45s cubic-bezier(.22,1,.36,1),border-color .45s}
+  .backlink:hover{color:var(--paper3);background:var(--jade);border-color:var(--jade)}
+
+  .wrap{position:relative;z-index:5;max-width:1160px;margin:0 auto;padding:0 clamp(20px,4vw,54px)}
+
+  /* masthead */
+  header.top{padding-top:clamp(28px,5vh,54px)}
+  .rule-x{display:flex;align-items:center;gap:16px;color:var(--ink-f);
+    font-family:var(--mono);font-size:10px;letter-spacing:.4em;text-transform:uppercase}
+  .rule-x::before,.rule-x::after{content:'';height:1px;background:var(--brass-line);flex:1}
+  .rule-x .seal-mini{width:7px;height:7px;background:var(--cin);border-radius:1px;flex:0 0 auto;transform:rotate(45deg)}
+
+  .hero{padding:clamp(28px,5vh,58px) 0 clamp(20px,3vh,34px);position:relative}
+  .constell{position:absolute;top:-14px;right:-10px;width:min(46%,420px);height:auto;z-index:-1;opacity:.9;pointer-events:none}
+  .kicker{font-family:var(--mono);font-size:clamp(10px,1.1vw,12px);letter-spacing:.44em;text-transform:uppercase;
+    color:var(--cin);font-weight:500;margin-bottom:clamp(16px,3vh,26px);
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .kicker .zh{font-family:var(--han);font-weight:600;letter-spacing:.24em;font-size:1.22em;color:var(--ink)}
+  h1.mark{font-family:var(--han);font-weight:900;line-height:.9;letter-spacing:.02em;
+    font-size:clamp(54px,13vw,164px);color:var(--ink);position:relative;
+    display:flex;align-items:flex-start;gap:clamp(14px,3vw,44px)}
+  h1.mark .en{font-family:var(--serif);font-weight:500;font-size:clamp(14px,1.7vw,22px);
+    letter-spacing:.01em;line-height:1.2;color:var(--ink2);align-self:flex-end;
+    max-width:17ch;padding-bottom:clamp(6px,1.4vw,20px);font-style:italic}
+  h1.mark .en em{font-style:normal;color:var(--cin);display:block;font-family:var(--mono);
+    font-size:.58em;letter-spacing:.32em;text-transform:uppercase;margin-top:9px}
+  .lede{font-family:var(--serif);font-weight:400;font-size:clamp(16px,2vw,21px);line-height:1.74;
+    color:var(--ink2);max-width:62ch;margin-top:clamp(22px,4vh,34px)}
+  .lede b{font-weight:600;color:var(--ink)}
+  .lede .h{font-family:var(--han);font-weight:600;color:var(--ink)}
+
+  /* input console */
+  .console{margin-top:clamp(28px,5vh,44px);border:1px solid var(--brass-line);border-radius:4px;
+    background:linear-gradient(180deg,rgba(250,246,238,.8),rgba(239,233,218,.55));
+    box-shadow:0 1px 0 rgba(255,252,246,.7) inset, 0 22px 54px -34px rgba(34,37,46,.4);
+    padding:clamp(20px,3vw,30px) clamp(20px,3vw,34px);position:relative;overflow:hidden}
+  .console::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--cin),var(--cin-d))}
+  .console-grid{display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,2.4vw,26px)}
+  .field{display:flex;flex-direction:column;gap:9px}
+  .field label{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-d);
+    display:flex;align-items:center;gap:8px}
+  .field label .zh{font-family:var(--han);font-weight:600;font-size:1.32em;letter-spacing:.1em;color:var(--ink)}
+  .field input[type=date],.field input[type=time]{
+    font-family:var(--mono);font-size:15px;letter-spacing:.03em;color:var(--ink);
+    background:var(--paper3);border:1px solid var(--edge);border-radius:3px;padding:11px 13px;
+    min-width:168px;transition:border-color .35s,box-shadow .35s;color-scheme:light}
+  .field input:hover{border-color:var(--brass)}
+  .field input:focus-visible{border-color:var(--jade);box-shadow:0 0 0 2px rgba(47,109,94,.15);outline:none}
+  .field input::-webkit-calendar-picker-indicator{filter:sepia(.4) saturate(1.1) hue-rotate(110deg);opacity:.55;cursor:pointer}
+  .seg{display:inline-flex;border:1px solid var(--edge);border-radius:3px;overflow:hidden;background:var(--paper3)}
+  .seg button{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-d);
+    background:transparent;border:none;padding:11px 15px;cursor:pointer;transition:background .3s,color .3s;display:flex;align-items:center;gap:7px}
+  .seg button .zh{font-family:var(--han);font-weight:600;font-size:1.3em;letter-spacing:.06em}
+  .seg button + button{border-left:1px solid var(--edge)}
+  .seg button[aria-pressed=true]{background:var(--jade);color:var(--paper3)}
+  .seg button:not([aria-pressed=true]):hover{background:var(--paper-d);color:var(--ink)}
+  .cast{margin-left:auto;font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;
+    color:var(--paper3);background:var(--ink);border:1px solid var(--ink);border-radius:3px;
+    padding:14px 26px;cursor:pointer;display:inline-flex;align-items:center;gap:12px;
+    transition:background .4s cubic-bezier(.22,1,.36,1),transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s}
+  .cast .zh{font-family:var(--han);font-weight:600;font-size:1.42em;letter-spacing:.14em}
+  .cast:hover{background:var(--cin);border-color:var(--cin);transform:translateY(-2px);box-shadow:0 14px 28px -16px rgba(172,62,44,.6)}
+  .cast:active{transform:translateY(0)}
+  .note-ex{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-f);margin-top:16px;
+    display:flex;align-items:center;gap:8px}
+  .note-ex .dot{width:5px;height:5px;background:var(--brass);border-radius:50%}
+  .note-ex.hide{display:none}
+
+  /* section scaffolding */
+  section.block{padding:clamp(46px,8vh,92px) 0 0}
+  .sec-h{display:flex;align-items:baseline;gap:16px;margin-bottom:clamp(24px,4vh,38px);flex-wrap:wrap}
+  .sec-h .idx{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--cin);font-weight:500}
+  .sec-h .zh{font-family:var(--han);font-weight:700;font-size:clamp(24px,3.4vw,38px);letter-spacing:.06em;color:var(--ink)}
+  .sec-h .en{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-f)}
+  .sec-h .en::before{content:'· '}
+
+  /* ============ THE 12-PALACE CHART ============ */
+  .chart-wrap{border:1px solid var(--brass-line);border-radius:6px;padding:clamp(10px,1.5vw,16px);
+    background:linear-gradient(160deg,rgba(250,246,238,.7),rgba(239,233,218,.4));
+    box-shadow:0 28px 66px -46px rgba(34,37,46,.5)}
+  .chart-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(146px,auto));
+    gap:0;position:relative}
+  .palace{position:relative;display:flex;flex-direction:column;text-align:left;
+    background:rgba(250,246,238,.5);border:1px solid transparent;
+    border-right:1px solid var(--brass-faint);border-bottom:1px solid var(--brass-faint);
+    padding:11px 11px 9px;cursor:pointer;font:inherit;color:inherit;
+    transition:background .5s cubic-bezier(.22,1,.36,1),box-shadow .5s,transform .5s cubic-bezier(.22,1,.36,1),border-color .4s;
+    opacity:0}
+  .palace.in{opacity:1}
+  .chart-grid .palace:nth-child(4n+1),.palace.col1{border-left:1px solid var(--brass-faint)}
+  .palace .stars{flex:1;display:flex;flex-direction:column;gap:5px;align-items:flex-start;min-height:0}
+  .st{font-family:var(--han);display:inline-flex;align-items:flex-start;line-height:1;position:relative}
+  .st.main{font-weight:600;font-size:clamp(17px,2.05vw,22px);color:var(--ink);letter-spacing:.04em}
+  .st.emperor{color:var(--brass);}
+  .st.emperor::after{content:'帝';font-family:var(--han);font-size:.42em;font-weight:600;color:var(--cin);
+    margin-left:3px;align-self:flex-start;letter-spacing:0;transform:translateY(1px)}
+  .st.aux{font-weight:500;font-size:clamp(12px,1.4vw,14px);color:var(--jade-d);letter-spacing:.03em}
+  .st .sh{font-family:var(--mono);font-size:.44em;font-weight:500;line-height:1;margin-left:2px;
+    padding:2px 3px 1px;border-radius:2px;align-self:flex-start;transform:translateY(1px);letter-spacing:0}
+  .sh.lu{background:var(--jade);color:var(--paper3)}
+  .sh.quan{background:var(--brass);color:var(--paper3)}
+  .sh.ke{background:var(--slate);color:var(--paper3)}
+  .sh.ji{background:var(--cin);color:var(--paper3)}
+  .aux-row{display:flex;flex-wrap:wrap;gap:5px 9px;margin-top:1px}
+  .p-empty{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-ff)}
+
+  .pfoot{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin-top:8px;
+    padding-top:7px;border-top:1px dotted var(--brass-line)}
+  .pname{display:flex;flex-direction:column;gap:2px}
+  .pname .zh{font-family:var(--han);font-weight:700;font-size:clamp(13px,1.55vw,15px);letter-spacing:.08em;color:var(--ink)}
+  .pname .en{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-f)}
+  .pmeta{text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
+  .pmeta .gz{font-family:var(--han);font-weight:500;font-size:12px;letter-spacing:.06em;color:var(--jade-d)}
+  .pmeta .da{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:var(--ink-f)}
+  .pbadges{display:flex;gap:5px;align-items:center;margin-bottom:6px}
+  .body-mark{font-family:var(--han);font-weight:600;font-size:11px;line-height:1;
+    color:var(--paper3);background:var(--cin);width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
+    box-shadow:0 2px 6px -2px rgba(172,62,44,.6)}
+  .life-badge{font-family:var(--han);font-weight:600;font-size:10px;letter-spacing:.04em;line-height:1.3;
+    color:var(--cin-d);border:1px solid var(--cin);border-radius:2px;padding:2px 6px 1px;background:rgba(172,62,44,.07)}
+
+  .palace:hover{background:rgba(255,252,246,.9);transform:translateY(-2px);box-shadow:0 12px 26px -18px rgba(34,37,46,.4);z-index:3}
+  .palace.active{background:var(--paper3);border-color:var(--jade)!important;box-shadow:0 0 0 1px var(--jade),0 16px 34px -20px rgba(47,109,94,.5);z-index:4}
+  .palace.active .pname .zh{color:var(--jade-d)}
+  .palace.tri{background:rgba(47,109,94,.06)}
+  .palace.tri::after{content:'';position:absolute;inset:3px;border:1px dashed var(--jade-line);border-radius:3px;pointer-events:none}
+  .palace.oppo::before{content:'對';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+    font-family:var(--han);font-size:9px;color:var(--jade);opacity:.5}
+
+  /* center panel */
+  .center{grid-column:2 / 4;grid-row:2 / 4;position:relative;display:flex;flex-direction:column;
+    background:linear-gradient(155deg,rgba(34,37,46,.97),rgba(41,44,54,.97));color:var(--paper);
+    border:1px solid var(--ink);padding:clamp(16px,2.2vw,26px);overflow:hidden}
+  .center::before{content:'';position:absolute;inset:6px;border:1px solid rgba(245,241,232,.14);pointer-events:none;border-radius:2px}
+  .center .ctitle{display:flex;align-items:baseline;justify-content:space-between;gap:10px;position:relative;z-index:1}
+  .center .ctitle .zh{font-family:var(--han);font-weight:700;font-size:clamp(19px,2.4vw,26px);letter-spacing:.12em;color:var(--paper3)}
+  .center .ctitle .en{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:rgba(245,241,232,.5)}
+  .center .cdate{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:rgba(245,241,232,.72);margin-top:12px;line-height:1.7;position:relative;z-index:1}
+  .center .cdate .h{font-family:var(--han);font-weight:500;font-size:1.15em;color:var(--paper3)}
+  .cstats{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:auto;padding-top:16px;position:relative;z-index:1}
+  .cstat{display:flex;flex-direction:column;gap:3px}
+  .cstat .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,241,232,.45)}
+  .cstat .v{font-family:var(--han);font-weight:600;font-size:clamp(15px,1.9vw,19px);color:var(--paper3);letter-spacing:.04em;display:flex;align-items:baseline;gap:6px}
+  .cstat .v .sm{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.08em;color:rgba(245,241,232,.55)}
+  .csihua{margin-top:14px;padding-top:14px;border-top:1px solid rgba(245,241,232,.14);position:relative;z-index:1}
+  .csihua .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(245,241,232,.45);margin-bottom:8px}
+  .csihua .row{display:flex;flex-wrap:wrap;gap:7px}
+  .csihua .sh4{font-family:var(--han);font-weight:600;font-size:13px;letter-spacing:.03em;color:var(--paper3);
+    display:inline-flex;align-items:center;gap:3px;border:1px solid rgba(245,241,232,.18);border-radius:3px;padding:4px 7px 3px}
+  .csihua .sh4 .t{font-family:var(--mono);font-size:9px;padding:2px 3px 1px;border-radius:2px;line-height:1}
+  .center .cnote{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:rgba(245,241,232,.34);margin-top:12px;line-height:1.6;position:relative;z-index:1}
+  .center .dipper{position:absolute;top:10px;right:12px;width:74px;height:60px;opacity:.5;z-index:0}
+
+  /* selected palace detail */
+  .detail{border:1px solid var(--brass-line);border-radius:6px;background:rgba(250,246,238,.55);
+    padding:clamp(22px,3vw,34px);position:relative;overflow:hidden;min-height:220px}
+  .detail::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--jade)}
+  .dhead{display:flex;align-items:flex-start;gap:clamp(16px,2.6vw,26px);flex-wrap:wrap}
+  .dseal{flex:0 0 auto;width:clamp(76px,10vw,104px);height:clamp(76px,10vw,104px);border-radius:5px;
+    background:var(--jade);color:var(--paper3);display:grid;place-items:center;text-align:center;position:relative;
+    box-shadow:0 14px 30px -20px rgba(47,109,94,.8);transform:rotate(-2deg)}
+  .dseal::before{content:'';position:absolute;inset:6px;border:1px solid rgba(245,241,232,.45);border-radius:3px}
+  .dseal .big{font-family:var(--han);font-weight:700;font-size:clamp(28px,3.6vw,40px);line-height:1;letter-spacing:.04em}
+  .dseal .tag{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+  .dinfo{flex:1;min-width:220px}
+  .dinfo .lab{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--cin);margin-bottom:8px}
+  .dinfo h3{font-family:var(--han);font-weight:700;font-size:clamp(22px,3vw,30px);line-height:1.1;color:var(--ink);letter-spacing:.06em}
+  .dinfo h3 .en{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:15px;letter-spacing:.01em;color:var(--ink-d);margin-top:7px}
+  .dstars{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .dstar{font-family:var(--han);font-weight:600;font-size:15px;letter-spacing:.04em;color:var(--ink);
+    border:1px solid var(--brass-line);border-radius:20px;padding:6px 13px 5px;display:inline-flex;align-items:center;gap:6px;background:var(--paper3)}
+  .dstar.aux{color:var(--jade-d);font-weight:500}
+  .dstar .py{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.06em;color:var(--ink-f);text-transform:none}
+  .dstar .t{font-family:var(--mono);font-size:9px;padding:2px 4px 1px;border-radius:2px;line-height:1}
+  .dbody{font-family:var(--serif);font-size:clamp(15px,1.8vw,18px);line-height:1.75;color:var(--ink2);margin-top:20px;
+    padding-top:20px;border-top:1px solid var(--brass-faint);max-width:74ch}
+  .dbody b{font-weight:600;color:var(--ink)}
+  .dbody .h{font-family:var(--han);font-weight:600;color:var(--ink)}
+  .dhint{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-f);margin-top:16px;display:flex;align-items:center;gap:8px}
+  .dhint .dot{width:5px;height:5px;border-radius:50%;background:var(--jade)}
+
+  /* how computed */
+  .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;background:var(--brass-faint);
+    border:1px solid var(--brass-line);border-radius:6px;overflow:hidden}
+  .how .cell{background:var(--paper2);padding:22px 22px 24px}
+  .how .cell .n{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--cin);margin-bottom:11px}
+  .how .cell h4{font-family:var(--han);font-weight:600;font-size:16px;color:var(--ink);margin-bottom:9px;letter-spacing:.04em}
+  .how .cell h4 .en{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.82em;color:var(--ink-d);margin-left:6px}
+  .how .cell p{font-family:var(--serif);font-size:14px;line-height:1.7;color:var(--ink-d)}
+  .how .cell p .h{font-family:var(--han);font-weight:500;color:var(--ink2)}
+  .how-note{font-family:var(--mono);font-size:11px;line-height:1.75;letter-spacing:.02em;color:var(--ink-f);margin-top:18px;max-width:86ch}
+  .how-note b{color:var(--ink-d);font-weight:500}
+
+  /* legend */
+  .legend{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:16px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-d)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .legend .sw{width:16px;height:16px;border-radius:3px;display:grid;place-items:center;font-family:var(--han);font-size:10px;font-weight:600;color:var(--paper3)}
+
+  /* footer */
+  footer{position:relative;z-index:5;margin-top:clamp(56px,10vh,104px);
+    border-top:1px solid var(--brass-line);background:rgba(34,37,46,.03)}
+  .foot-in{max-width:1160px;margin:0 auto;padding:clamp(44px,7vh,72px) clamp(20px,4vw,54px) clamp(52px,8vh,86px);
+    display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+  footer .fmark{font-family:var(--han);font-weight:700;font-size:clamp(26px,4vw,42px);letter-spacing:.16em;color:var(--ink)}
+  footer .fsub{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-f)}
+  footer .flink{margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--jade-d);border-bottom:1px solid var(--jade-line);padding-bottom:4px;transition:color .35s,border-color .35s}
+  footer .flink:hover{color:var(--jade);border-color:var(--jade)}
+  footer .cred{margin-top:20px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-ff);line-height:1.85;max-width:64ch}
+
+  /* responsive */
+  @media (max-width:900px){
+    h1.mark{flex-direction:column;gap:14px}
+    h1.mark .en{align-self:flex-start;padding-bottom:0;max-width:36ch}
+    .constell{opacity:.55;width:58%;top:-6px}
+  }
+  @media (max-width:720px){
+    .console-grid{flex-direction:column;align-items:stretch}
+    .cast{margin-left:0;justify-content:center}
+    .field input[type=date],.field input[type=time]{min-width:0;width:100%}
+    .seg{width:100%}.seg button{flex:1;justify-content:center}
+    /* stacked palaces */
+    .chart-grid{display:flex;flex-direction:column;gap:0}
+    .chart-grid .palace{grid-row:auto!important;grid-column:auto!important;border:1px solid var(--brass-faint);
+      border-bottom:none;min-height:0;flex-direction:row;align-items:center;justify-content:space-between;padding:13px 14px}
+    .chart-grid .palace:last-of-type{border-bottom:1px solid var(--brass-faint)}
+    .palace .stars{flex-direction:row;flex-wrap:wrap;align-items:center;gap:5px 12px;order:2;justify-content:flex-end}
+    .palace .aux-row{margin-top:0}
+    .pfoot{order:1;margin-top:0;padding-top:0;border-top:none;flex-direction:column;align-items:flex-start;flex:0 0 auto;min-width:96px}
+    .pmeta{text-align:left;align-items:flex-start;flex-direction:row;gap:10px}
+    .pbadges{order:0;margin-bottom:0;margin-right:2px;flex:0 0 auto}
+    .center{order:-1;grid-row:auto!important;grid-column:auto!important;border-radius:5px;margin-bottom:10px}
+    .cstats{grid-template-columns:1fr 1fr}
+    .palace.tri::after,.palace.oppo::before{display:none}
+  }
+  @media (max-width:430px){
+    .backlink{left:13px;bottom:13px}
+    .cstats{grid-template-columns:1fr 1fr}
+    .dhead{gap:14px}
+    .dseal{width:66px;height:66px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .palace,.cast,.backlink,.st,.progress{transition:none!important}
+    .palace{opacity:1!important}
+    .twinkle{animation:none!important}
+  }
+  .twinkle{animation:tw 4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.9}50%{opacity:.35}}
+  .noscript{max-width:60ch;margin:80px auto;padding:0 24px;text-align:center;font-family:var(--serif);font-size:19px;line-height:1.7;color:var(--ink2)}
+</style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <div class="vignette"></div>
+  <div class="watermark" aria-hidden="true">紫</div>
+  <a class="backlink" href="/">XAVIER FABLE ×65</a>
+
+  <div class="wrap">
+    <header class="top">
+      <div class="rule-x"><span>斗數堂 · The Dǒushù Desk</span><span class="seal-mini"></span><span>命盤 · Anno MMXXVI</span></div>
+
+      <div class="hero">
+        <svg class="constell" viewBox="0 0 400 300" fill="none" aria-hidden="true">
+          <g stroke="rgba(47,109,94,.34)" stroke-width="1.2" stroke-linecap="round">
+            <path d="M40 60 L110 92 L96 150 L172 168 L250 130 L286 196 L358 176"/>
+            <path d="M172 168 L210 232 M250 130 L232 66"/>
+          </g>
+          <g fill="var(--brass)">
+            <circle class="twinkle" cx="40" cy="60" r="3.4" style="animation-delay:0s"/>
+            <circle class="twinkle" cx="110" cy="92" r="2.6" style="animation-delay:.5s"/>
+            <circle class="twinkle" cx="96" cy="150" r="2.6" style="animation-delay:1s"/>
+            <circle class="twinkle" cx="250" cy="130" r="2.6" style="animation-delay:1.8s"/>
+            <circle class="twinkle" cx="286" cy="196" r="2.6" style="animation-delay:2.4s"/>
+            <circle class="twinkle" cx="358" cy="176" r="3.4" style="animation-delay:2.9s"/>
+            <circle class="twinkle" cx="210" cy="232" r="2.2" style="animation-delay:3.3s"/>
+            <circle class="twinkle" cx="232" cy="66" r="2.2" style="animation-delay:1.4s"/>
+          </g>
+          <circle cx="172" cy="168" r="7" fill="none" stroke="var(--cin)" stroke-width="1.8"/>
+          <circle class="twinkle" cx="172" cy="168" r="3.4" fill="var(--cin)" style="animation-delay:.2s"/>
+        </svg>
+        <div class="kicker"><span class="zh">紫微斗數</span> Zǐwēi Dǒushù · Purple Star Astrology</div>
+        <h1 class="mark">
+          <span>紫微</span>
+          <span class="en">A life read as twelve rooms, and the stars that keep them.<em>Enter a birth &amp; cast the 命盤</em></span>
+        </h1>
+        <p class="lede">A thousand years ago the star-masters drew a life as a house of <b>twelve palaces</b> <span class="h">十二宮</span> — Life and Wealth, Career and Spouse, Travel and Fortune — and set the wandering stars into their rooms. <span class="h">紫微斗數</span> begins at the <b>Purple Star</b> <span class="h">紫微</span>, the emperor of the northern sky, and arranges the rest around it. Enter a birth and the chart is cast in real time: the lunar date resolved, the <span class="h">五行局</span> derived, and the fourteen major stars placed room by room — the way a fortune-master would draw it on parchment.</p>
+
+        <form class="console" id="form" autocomplete="off">
+          <div class="console-grid">
+            <div class="field">
+              <label for="d"><span class="zh">生辰</span> Birth date</label>
+              <input type="date" id="d" name="d" min="1920-01-01" max="2040-12-31" value="1990-05-20">
+            </div>
+            <div class="field">
+              <label for="t"><span class="zh">時辰</span> Birth hour</label>
+              <input type="time" id="t" name="t" value="14:30">
+            </div>
+            <div class="field">
+              <label><span class="zh">性別</span> Gender <span style="opacity:.55">— for 大限</span></label>
+              <div class="seg" id="seg" role="group" aria-label="Gender">
+                <button type="button" data-sex="m" aria-pressed="false"><span class="zh">乾</span>Male</button>
+                <button type="button" data-sex="f" aria-pressed="true"><span class="zh">坤</span>Female</button>
+              </div>
+            </div>
+            <button type="submit" class="cast"><span class="zh">排盤</span> Cast the chart</button>
+          </div>
+          <div class="note-ex" id="noteEx"><span class="dot"></span>An example chart — enter your own birth above and cast again.</div>
+        </form>
+      </div>
+    </header>
+
+    <!-- ============ THE 12-PALACE CHART ============ -->
+    <section class="block" id="chart">
+      <div class="sec-h"><span class="idx">I</span><span class="zh">命盤 · 十二宮</span><span class="en">The Twelve-Palace Chart</span></div>
+      <div class="chart-wrap">
+        <div class="chart-grid" id="grid"><!-- injected --></div>
+      </div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--ink)">主</span>14 major stars</span>
+        <span><span class="sw" style="background:var(--jade)">輔</span>helper stars 左右昌曲</span>
+        <span><span class="sw lu" style="background:var(--jade)">祿</span>fortune</span>
+        <span><span class="sw quan" style="background:var(--brass)">權</span>power</span>
+        <span><span class="sw ke" style="background:var(--slate)">科</span>merit</span>
+        <span><span class="sw ji" style="background:var(--cin)">忌</span>friction</span>
+        <span><span class="sw" style="background:var(--cin)">身</span>Body palace</span>
+      </div>
+      <p class="how-note" style="margin-top:14px">Tap any palace to light it — the chart marks its <span style="color:var(--jade-d)">三方四正</span> (opposite palace &amp; the two in trine, the classical field of influence) and reads the stars within.</p>
+    </section>
+
+    <!-- ============ SELECTED PALACE DETAIL ============ -->
+    <section class="block" id="read">
+      <div class="sec-h"><span class="idx">II</span><span class="zh">宮位詳解</span><span class="en">The Room, Read</span></div>
+      <div class="detail" id="detail"><!-- injected --></div>
+      <p class="how-note" style="margin-top:16px">This read is generated from the chart by rule — a diviner would weigh the stars' brightness <span class="h" style="font-family:var(--han)">廟旺</span>, their combinations, and the moving periods too. It is offered for reflection and delight, not prediction.</p>
+    </section>
+
+    <!-- ============ HOW COMPUTED ============ -->
+    <section class="block" id="how">
+      <div class="sec-h"><span class="idx">III</span><span class="zh">推盤之法</span><span class="en">How This Chart Is Cast</span></div>
+      <div class="how">
+        <div class="cell"><div class="n">① 農曆 · Lunar date</div><h4>Solar → lunar<span class="en">the moon's month</span></h4><p>The Gregorian date is converted to the Chinese lunar calendar with a bundled month-length table (<span class="h">1920–2040</span>), giving the lunar <b>month</b> and <b>day</b> — and the year's Heavenly-Stem &amp; Branch <span class="h">干支</span>.</p></div>
+        <div class="cell"><div class="n">② 命宮 · Life Palace</div><h4>Month &amp; hour<span class="en">the anchor</span></h4><p>From <span class="h">寅</span> count forward by lunar month, then back by the birth hour — the palace you land on is <span class="h">命宮</span>. Counting the other way fixes <span class="h">身宮</span>, the Body palace.</p></div>
+        <div class="cell"><div class="n">③ 五行局 · Element Class</div><h4>Nà-yīn<span class="en">2·3·4·5·6</span></h4><p>The Life Palace's stem-branch gives its <span class="h">納音</span> element — Water-2, Wood-3, Metal-4, Earth-5, or Fire-6 — the divisor that sets where the Purple Star begins.</p></div>
+        <div class="cell"><div class="n">④ 紫微 · Purple Star</div><h4>Class &amp; day<span class="en">the emperor</span></h4><p>The lunar day divided by the Element Class, adjusted by the classical <span class="h">起紫微訣</span>, seats <span class="h">紫微</span>. Its mirror across the <span class="h">寅–申</span> axis seats <span class="h">天府</span>.</p></div>
+        <div class="cell"><div class="n">⑤ 十四主星 · Main stars</div><h4>Fixed offsets<span class="en">two families</span></h4><p>The <span class="h">紫微系</span> (six) fall back from 紫微 by fixed steps; the <span class="h">天府系</span> (eight) run forward from 天府. Twelve palaces are then laid counter-clockwise from <span class="h">命宮</span>.</p></div>
+        <div class="cell"><div class="n">⑥ 四化 · Transformations</div><h4>Year stem<span class="en">祿權科忌</span></h4><p>The birth-year stem grants four stars their <span class="h">化祿·權·科·忌</span> — fortune, power, merit, friction — and the Element Class sets the <span class="h">大限</span> decades, their direction by stem-polarity &amp; gender.</p></div>
+      </div>
+      <p class="how-note">A note on honesty, in the spirit of the almanac: the <b>lunar conversion, the twelve palaces, the Five-Element Class, and all fourteen major stars plus 左輔右弼文昌文曲 and the four 四化 are computed faithfully</b> from the classical rules and verified against a known chart. What a full reading adds — the hundred-odd minor stars <span class="h">雜曜</span>, each star's brightness <span class="h">廟旺利陷</span>, the flowing yearly &amp; monthly charts — is <b>summarised here, not exhaustively drawn</b>. The lunar year turns at 正月初一 (not 立春); a leap month is read as its base month; the hour uses clock time without longitude correction. Where schools differ (the 庚-year 四化 especially), one common table is used.</p>
+    </section>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div class="fmark">紫微斗數</div>
+      <div class="fsub">Purple Star · A Twelve-Room Map of a Life</div>
+      <a class="flink" href="/">↑ Return to the gallery · XAVIER FABLE ×65</a>
+      <div class="cred">A real Zǐwēi Dǒushù engine, cast in code — lunar conversion, the twelve palaces, the Five-Element Class, and the fourteen major stars.<br>Drawn after the manner of the star-masters' parchment charts, at the Dǒushù Desk · MMXXVI</div>
+    </div>
+  </footer>
+
+  <noscript><div class="noscript">The twelve-palace chart 命盤 is cast in your browser from the birth you enter. Please enable JavaScript to compute and read it.</div></noscript>
+
+<script>
+"use strict";
+/* ============================================================
+   紫微斗數 · ZǏWĒI DǑUSHÙ — a real twelve-palace engine
+   Lunar conversion + 命宮/身宮 + 五行局 + 紫微 + 14 主星 + 四化.
+   Verified against a known chart (1990-05-20 未時 → 命宮丙戌·土五局·
+   紫微在亥, all star-pairs in their canonical twin branches).
+   ============================================================ */
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const STEM_PY = ['jiǎ','yǐ','bǐng','dīng','wù','jǐ','gēng','xīn','rén','guǐ'];
+const BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const BR_PY = ['zǐ','chǒu','yín','mǎo','chén','sì','wǔ','wèi','shēn','yǒu','xū','hài'];
+const mod = (n,m)=>((n%m)+m)%m;
+
+/* ---- lunar table (1900–2100); base 1900-01-31 = 农历 1900 正月初一 ---- */
+const lunarInfo=[0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,
+0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,
+0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,
+0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,
+0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
+0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,
+0x0d520];
+function leapMonth(y){ return lunarInfo[y-1900] & 0xf; }
+function leapDays(y){ if(leapMonth(y)) return (lunarInfo[y-1900] & 0x10000) ? 30 : 29; return 0; }
+function monthDays(y,m){ return (lunarInfo[y-1900] & (0x10000 >> m)) ? 30 : 29; }
+function lYearDays(y){ let s=348; for(let i=0x8000;i>0x8;i>>=1) s+=(lunarInfo[y-1900]&i)?1:0; return s+leapDays(y); }
+function solarToLunar(y,m,d){
+  let offset = Math.round((Date.UTC(y,m-1,d) - Date.UTC(1900,0,31))/86400000);
+  let temp=0, ly;
+  for(ly=1900; ly<2101 && offset>0; ly++){ temp=lYearDays(ly); offset-=temp; }
+  if(offset<0){ offset+=temp; ly--; }
+  const leap=leapMonth(ly); let isLeap=false, lm;
+  for(lm=1; lm<13 && offset>0; lm++){
+    if(leap>0 && lm===(leap+1) && !isLeap){ lm--; isLeap=true; temp=leapDays(ly); }
+    else { temp=monthDays(ly,lm); }
+    if(isLeap && lm===(leap+1)) isLeap=false;
+    offset-=temp;
+  }
+  if(offset===0 && leap>0 && lm===leap+1){ if(isLeap){ isLeap=false; } else { isLeap=true; lm--; } }
+  if(offset<0){ offset+=temp; lm--; }
+  return { year:ly, month:lm, day:offset+1, isLeap };
+}
+
+/* ---- ganzhi + 五行局 ---- */
+function stemOfBranch(yearStem, b){ const yin=mod((yearStem%5)*2+2,10); return mod(yin+mod(b-2,12),10); }
+function ganzhiIndex(stem, branch){ for(let k=0;k<6;k++){ const x=stem+10*k; if(x%12===branch) return x; } return -1; }
+const NAYIN_PAIR=['金','火','木','土','金','火','水','土','金','木','水','土','火','木','水','金','火','木','土','金','火','水','土','金','木','水','土','火','木','水'];
+const NAYIN_JU={'水':2,'木':3,'金':4,'土':5,'火':6};
+const JU_NAME={2:'水二局',3:'木三局',4:'金四局',5:'土五局',6:'火六局'};
+const JU_EN={2:'Water · 2',3:'Wood · 3',4:'Metal · 4',5:'Earth · 5',6:'Fire · 6'};
+function fiveElementClass(cmdStem, cmdBranch){ const gz=ganzhiIndex(cmdStem,cmdBranch); const el=NAYIN_PAIR[Math.floor(gz/2)]; return {ju:NAYIN_JU[el], el, gz}; }
+
+/* ---- 紫微 ---- */
+function ziweiBranch(ju, day){ const q=Math.ceil(day/ju); const r=q*ju-day; const off=(r%2===0)?r:-r; return mod((2+q-1)+off,12); }
+
+/* ---- star systems ---- */
+const MAIN_ZI=[['紫微',0],['天機',-1],['太陽',-3],['武曲',-4],['天同',-5],['廉貞',-8]];
+const MAIN_FU=[['天府',0],['太陰',1],['貪狼',2],['巨門',3],['天相',4],['天梁',5],['七殺',6],['破軍',10]];
+const MAIN_SET=new Set([...MAIN_ZI,...MAIN_FU].map(a=>a[0]));
+
+/* 四化 by year stem: [祿,權,科,忌] */
+const SIHUA=[['廉貞','破軍','武曲','太陽'],['天機','天梁','紫微','太陰'],['天同','天機','文昌','廉貞'],
+['太陰','天同','天機','巨門'],['貪狼','太陰','右弼','天機'],['武曲','貪狼','天梁','文曲'],
+['太陽','武曲','太陰','天同'],['巨門','太陽','文曲','文昌'],['天梁','紫微','左輔','武曲'],['破軍','巨門','太陰','貪狼']];
+const SH_LABEL=['祿','權','科','忌'], SH_CLASS=['lu','quan','ke','ji'], SH_EN=['Fortune','Power','Merit','Friction'];
+
+/* 命主 by 命宮 branch, 身主 by year branch */
+const LORD_LIFE=['貪狼','巨門','祿存','文曲','廉貞','武曲','破軍','武曲','廉貞','文曲','祿存','巨門'];
+const LORD_BODY=['火星','天相','天梁','天同','文昌','天機','火星','天相','天梁','天同','文昌','天機'];
+
+const PALACES=[['命宮','Life'],['兄弟','Siblings'],['夫妻','Spouse'],['子女','Children'],['財帛','Wealth'],
+['疾厄','Health'],['遷移','Travel'],['交友','Friends'],['官祿','Career'],['田宅','Property'],['福德','Fortune'],['父母','Parents']];
+
+/* branch -> grid cell [row,col] (1-indexed) */
+const CELL={5:[1,1],6:[1,2],7:[1,3],8:[1,4],9:[2,4],10:[3,4],11:[4,4],0:[4,3],1:[4,2],2:[4,1],3:[3,1],4:[2,1]};
+
+/* star metadata: pinyin, EN name, mid-sentence gloss */
+const STAR={
+  '紫微':['zǐwēi','The Emperor','the poise and quiet authority of a natural sovereign'],
+  '天機':['tiānjī','The Strategist','a quick, restless, ever-turning mind'],
+  '太陽':['tàiyáng','The Sun','radiance, generosity, and a public-facing warmth'],
+  '武曲':['wǔqǔ','The General','resolve, a head for money, and a will to act'],
+  '天同':['tiāntóng','The Innocent','ease, gentleness, and a gift for contentment'],
+  '廉貞':['liánzhēn','The Reformer','principle, intensity, and a reformer’s edge'],
+  '天府':['tiānfǔ','The Treasurer','stewardship, stability, and a talent for keeping'],
+  '太陰':['tàiyīn','The Moon','sensitivity, quiet accumulation, and lunar depth'],
+  '貪狼':['tānláng','The Wolf','appetite, charm, and many-sided talent'],
+  '巨門':['jùmén','The Gate','a probing tongue, scrutiny, and the power of speech'],
+  '天相':['tiānxiàng','The Minister','service, fairness, and a minister’s grace'],
+  '天梁':['tiānliáng','The Elder','protection, seniority, and relief from harm'],
+  '七殺':['qīshā','The Commander','decisiveness, independence, and command'],
+  '破軍':['pòjūn','The Vanguard','upheaval, pioneering, and renewal through change'],
+  '左輔':['zuǒfǔ','Left Aide','steady help arriving from the side'],
+  '右弼':['yòubì','Right Aide','timely allies and resourceful support'],
+  '文昌':['wénchāng','The Scholar','letters, examinations, and refinement'],
+  '文曲':['wénqǔ','The Muse','eloquence, the arts, and quicksilver talent']
+};
+const PAL_THEME={
+  '命宮':'the keynote of the whole life — temperament, bearing, the self at the centre of the house',
+  '兄弟':'siblings and close peers, and the give-and-take of cooperation',
+  '夫妻':'marriage and the intimate partner — how you pair, bond, and are met',
+  '子女':'children and students, and whatever you create and leave behind',
+  '財帛':'money and income — the way value flows through your hands',
+  '疾厄':'the body and its weather — vitality, strain, and the places you hold stress',
+  '遷移':'movement and travel, and the world that meets you outside the door',
+  '交友':'friends, allies, and the company you keep',
+  '官祿':'vocation and office — how your work is known, and how far it reaches',
+  '田宅':'home and land, and the family base you build and hold',
+  '福德':'the inner life — blessings, pleasures, and the spirit at rest',
+  '父母':'parents and elders, and the heritage handed down to you'
+};
+
+/* ---- compute full chart ---- */
+function computeChart(y,mo,d,hour,sex){
+  const L=solarToLunar(y,mo,d);
+  const yStem=mod(L.year-4,10), yBranch=mod(L.year-4,12);
+  const lm=L.month, ld=L.day;
+  const life=mod(lm+1-hour,12);
+  const body=mod(lm+1+hour,12);
+  const cmdStem=stemOfBranch(yStem,life);
+  const fe=fiveElementClass(cmdStem,life);
+  const zw=ziweiBranch(fe.ju,ld);
+  const tf=mod(4-zw,12);
+
+  const stars={}; for(let b=0;b<12;b++) stars[b]=[];
+  MAIN_ZI.forEach(([n,o])=>stars[mod(zw+o,12)].push(n));
+  MAIN_FU.forEach(([n,o])=>stars[mod(tf+o,12)].push(n));
+  stars[mod(4+(lm-1),12)].push('左輔');
+  stars[mod(10-(lm-1),12)].push('右弼');
+  stars[mod(10-hour,12)].push('文昌');
+  stars[mod(4+hour,12)].push('文曲');
+
+  // 四化 map: star -> index 0..3
+  const sh={}; SIHUA[yStem].forEach((star,i)=>{ sh[star]=i; });
+
+  // 大限 direction: 陽男陰女順, 陰男陽女逆
+  const yang = (yStem%2===0);
+  const forward = (yang && sex==='m') || (!yang && sex==='f');
+
+  const palaces=[];
+  for(let b=0;b<12;b++){
+    const pIdx=mod(life-b,12);
+    const decIdx = forward ? mod(b-life,12) : mod(life-b,12);
+    const ageStart = fe.ju + decIdx*10;
+    palaces.push({
+      branch:b, cell:CELL[b],
+      pIdx, name:PALACES[pIdx][0], nameEn:PALACES[pIdx][1],
+      stem:stemOfBranch(yStem,b),
+      stars:stars[b],
+      isLife:b===life, isBody:b===body,
+      dec:[ageStart, ageStart+9]
+    });
+  }
+  return { L, yStem, yBranch, lm, ld, life, body, cmdStem, fe, zw, tf, palaces, sh, sex, forward,
+           lifeLord:LORD_LIFE[life], bodyLord:LORD_BODY[yBranch] };
+}
+
+/* ---- render ---- */
+let CHART=null, SELECTED=0;
+
+function starHTML(name, sh, big){
+  const isMain=MAIN_SET.has(name);
+  const emperor = name==='紫微';
+  let cls='st '+(isMain?'main':'aux')+(emperor?' emperor':'');
+  let tag='';
+  if(sh[name]!==undefined){ const i=sh[name]; tag=`<sup class="sh ${SH_CLASS[i]}">${SH_LABEL[i]}</sup>`; }
+  return `<span class="${cls}">${name}${tag}</span>`;
+}
+
+function renderGrid(){
+  const g=document.getElementById('grid');
+  let html='';
+  // center panel
+  const c=CHART;
+  const solar=`${$d.value}`, t=$t.value;
+  const yGZ=STEMS[c.yStem]+BRANCHES[c.yBranch];
+  const cmdGZ=STEMS[c.cmdStem]+BRANCHES[c.life];
+  const shRow=SIHUA[c.yStem].map((star,i)=>`<span class="sh4">${star}<span class="t ${SH_CLASS[i]}" style="background:var(--${SH_CLASS[i]==='lu'?'jade':SH_CLASS[i]==='quan'?'brass':SH_CLASS[i]==='ke'?'slate':'cin'});color:var(--paper3)">${SH_LABEL[i]}</span></span>`).join('');
+  html+=`<div class="center">
+    <svg class="dipper" viewBox="0 0 100 80" fill="none" aria-hidden="true">
+      <path d="M8 20 L30 32 L26 52 L52 58 L78 44 L92 66" stroke="rgba(245,241,232,.4)" stroke-width="1.4" stroke-linecap="round"/>
+      <g fill="rgba(245,241,232,.8)"><circle cx="8" cy="20" r="2.4"/><circle cx="30" cy="32" r="1.8"/><circle cx="26" cy="52" r="1.8"/><circle cx="52" cy="58" r="1.8"/><circle cx="78" cy="44" r="1.8"/><circle cx="92" cy="66" r="2.4"/></g>
+    </svg>
+    <div class="ctitle"><span class="zh">命盤</span><span class="en">Natal Chart</span></div>
+    <div class="cdate">${solar} · ${t} · ${c.sex==='m'?'乾造 male':'坤造 female'}<br>
+      <span class="h">農曆 ${c.L.year}年${c.L.isLeap?'閏':''}${c.lm}月${c.ld}日</span> · ${yGZ}年</div>
+    <div class="cstats">
+      <div class="cstat"><div class="k">五行局 Class</div><div class="v">${JU_NAME[c.fe.ju]}<span class="sm">${JU_EN[c.fe.ju]}</span></div></div>
+      <div class="cstat"><div class="k">命宮 Life</div><div class="v">${cmdGZ}<span class="sm">${BRANCHES[c.life]}宮</span></div></div>
+      <div class="cstat"><div class="k">命主 Life lord</div><div class="v">${c.lifeLord}</div></div>
+      <div class="cstat"><div class="k">身主 Body lord</div><div class="v">${c.bodyLord}</div></div>
+    </div>
+    <div class="csihua"><div class="k">生年四化 · Birth-year transformations</div><div class="row">${shRow}</div></div>
+    <div class="cnote">大限 direction: ${c.forward?'順行 forward':'逆行 reverse'} · ${(c.yStem%2===0?'陽':'陰')}年 ${c.sex==='m'?'男':'女'}</div>
+  </div>`;
+
+  // palaces
+  c.palaces.forEach((p)=>{
+    const [r,cc]=p.cell;
+    const starsMain=p.stars.filter(s=>MAIN_SET.has(s));
+    const starsAux=p.stars.filter(s=>!MAIN_SET.has(s));
+    let starsHTML = starsMain.map(s=>starHTML(s,c.sh)).join('');
+    if(starsAux.length) starsHTML += `<span class="aux-row">${starsAux.map(s=>starHTML(s,c.sh)).join('')}</span>`;
+    if(!p.stars.length) starsHTML = `<span class="p-empty">空宮 · empty</span>`;
+    html+=`<button class="palace" data-b="${p.branch}" data-i="${p.pIdx}"
+        style="grid-row:${r};grid-column:${cc};order:${p.pIdx+1}"
+        aria-label="${p.name} palace, branch ${BRANCHES[p.branch]}">
+      ${(p.isLife||p.isBody)?`<div class="pbadges">${p.isLife?'<span class="life-badge">命宮</span>':''}${p.isBody?'<span class="body-mark">身</span>':''}</div>`:''}
+      <div class="stars">${starsHTML}</div>
+      <div class="pfoot">
+        <div class="pname"><span class="zh">${p.name}</span><span class="en">${p.nameEn}</span></div>
+        <div class="pmeta"><span class="gz">${STEMS[p.stem]}${BRANCHES[p.branch]}</span><span class="da">大限 ${p.dec[0]}–${p.dec[1]}</span></div>
+      </div>
+    </button>`;
+  });
+  g.innerHTML=html;
+
+  // wire palaces
+  g.querySelectorAll('.palace').forEach(el=>{
+    el.addEventListener('click',()=>selectPalace(+el.dataset.b));
+  });
+
+  // stagger entrance
+  const cells=[...g.querySelectorAll('.palace')];
+  if(RM){ cells.forEach(el=>el.classList.add('in')); }
+  else {
+    // order of appearance = spiral by branch position around the ring
+    cells.sort((a,b)=>(+a.dataset.i)-(+b.dataset.i));
+    cells.forEach((el,i)=>{
+      el.style.transition='opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1), background .5s, box-shadow .5s';
+      el.style.transform='translateY(14px)';
+      setTimeout(()=>{ el.classList.add('in'); el.style.transform='none'; }, 120+i*55);
+    });
+  }
+}
+
+function selectPalace(branch){
+  SELECTED=branch;
+  const c=CHART;
+  const grid=document.getElementById('grid');
+  const opp=mod(branch+6,12), t1=mod(branch+4,12), t2=mod(branch-4,12);
+  grid.querySelectorAll('.palace').forEach(el=>{
+    const b=+el.dataset.b;
+    el.classList.toggle('active', b===branch);
+    el.classList.toggle('oppo', b===opp);
+    el.classList.toggle('tri', b===t1||b===t2);
+  });
+  renderDetail(branch);
+}
+
+function readingFor(p, c){
+  const theme=PAL_THEME[p.name];
+  const mains=p.stars.filter(s=>MAIN_SET.has(s));
+  const aux=p.stars.filter(s=>!MAIN_SET.has(s));
+  let body='';
+  if(mains.length){
+    const lead=mains[0];
+    const g=STAR[lead];
+    let s=`<span class="h">${p.name}</span> <b>${p.nameEn}</b> keeps ${theme}. `;
+    if(mains.length===1){
+      s+=`Its ruling star is <span class="h">${lead}</span> <b>${g[1]}</b> — ${g[2]}. So this room takes on ${g[2].split(',')[0]}: read it as where that quality does its work in the life.`;
+    } else {
+      const second=mains[1], g2=STAR[second];
+      s+=`Here <span class="h">${lead}</span> <b>${g[1]}</b> sits with <span class="h">${second}</span> <b>${g2[1]}</b> — ${g[2]}, tempered by ${g2[2]}. Two major stars in one room make it a busy, defining palace.`;
+    }
+    if(aux.length){ s+=` The helper star${aux.length>1?'s':''} <span class="h">${aux.join('、')}</span> add${aux.length>1?'':'s'} ${STAR[aux[0]][2]}.`; }
+    // 四化 note
+    const shHere=p.stars.filter(st=>c.sh[st]!==undefined);
+    if(shHere.length){
+      const parts=shHere.map(st=>{ const i=c.sh[st]; return `<span class="h">${st}</span> carries <b>化${SH_LABEL[i]}</b> (${SH_EN[i].toLowerCase()})`; });
+      s+=` This birth-year, ${parts.join(', and ')} — a current the palace runs especially strongly.`;
+    }
+    body=s;
+  } else {
+    const oppP=c.palaces.find(x=>x.branch===mod(p.branch+6,12));
+    const oppMains=oppP.stars.filter(s=>MAIN_SET.has(s));
+    let s=`<span class="h">${p.name}</span> <b>${p.nameEn}</b> keeps ${theme}. `;
+    s+=`This room stands <b>empty</b> <span class="h">空宮</span> — no major star sits here. By tradition it borrows the light of its opposite palace, <span class="h">${oppP.name}</span> <b>${oppP.nameEn}</b>`;
+    if(oppMains.length){ s+=`, where <span class="h">${oppMains.join('、')}</span> sit; read the two rooms together, this one taking its colour across the axis.`; }
+    else { s+=`; both this palace and its opposite lean on the stars in trine.`; }
+    body=s;
+  }
+  return { mains, aux, body };
+}
+
+function renderDetail(branch){
+  const c=CHART;
+  const p=c.palaces.find(x=>x.branch===branch);
+  const r=readingFor(p,c);
+  const badges=[];
+  if(p.isLife) badges.push('<span class="dstar" style="border-color:var(--cin);color:var(--cin-d)">命宮 · Life Palace</span>');
+  if(p.isBody) badges.push('<span class="dstar" style="border-color:var(--cin);color:var(--cin-d)">身宮 · Body Palace</span>');
+  const starChips = p.stars.length ? p.stars.map(st=>{
+    const g=STAR[st]; const isAux=!MAIN_SET.has(st);
+    let tag=''; if(c.sh[st]!==undefined){ const i=c.sh[st]; const col=SH_CLASS[i]==='lu'?'jade':SH_CLASS[i]==='quan'?'brass':SH_CLASS[i]==='ke'?'slate':'cin'; tag=`<span class="t" style="background:var(--${col});color:var(--paper3)">${SH_LABEL[i]}</span>`; }
+    return `<span class="dstar${isAux?' aux':''}">${st}<span class="py">${g[0]}</span>${tag}</span>`;
+  }).join('') : '<span class="dstar aux">空宮 — no major star</span>';
+
+  document.getElementById('detail').innerHTML=`
+    <div class="dhead">
+      <div class="dseal"><div><div class="big">${p.name.charAt(0)}</div><div class="tag">${p.nameEn}</div></div></div>
+      <div class="dinfo">
+        <div class="lab">${STEMS[p.stem]}${BRANCHES[p.branch]}宮 · ${BR_PY[p.branch]} · 大限 ${p.dec[0]}–${p.dec[1]}</div>
+        <h3>${p.name}<span class="en">${p.nameEn} Palace</span></h3>
+        <div class="dstars">${badges.join('')}${starChips}</div>
+      </div>
+    </div>
+    <div class="dbody">${r.body}</div>
+    <div class="dhint"><span class="dot"></span>Tap another palace to read a different room · lit palace shows its 三方四正</div>`;
+}
+
+/* ---- cast ---- */
+function cast(isExample){
+  const v=$d.value; if(!v) return;
+  const [y,m,d]=v.split('-').map(Number); if(!y||!m||!d) return;
+  let hh=12; if($t.value){ const [h]=$t.value.split(':').map(Number); if(!isNaN(h)) hh=h; }
+  const hour=Math.floor((hh+1)/2)%12;
+  CHART=computeChart(y,m,d,hour,SEX);
+  renderGrid();
+  selectPalace(PRESEL!=null ? PRESEL : CHART.life); // default to Life palace
+  PRESEL=null;
+  document.getElementById('noteEx').classList.toggle('hide', !isExample);
+}
+
+/* ---- wiring ---- */
+const $d=document.getElementById('d'), $t=document.getElementById('t'), $seg=document.getElementById('seg');
+let SEX='f', PRESEL=null;
+$seg.querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    SEX=btn.dataset.sex;
+    $seg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b===btn?'true':'false'));
+    cast(false);
+  });
+});
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault(); cast(false);});
+$d.addEventListener('change',()=>cast(false));
+$t.addEventListener('change',()=>cast(false));
+
+/* ---- scroll progress ---- */
+const prog=document.getElementById('progress');
+let ticking=false;
+function onScroll(){ if(ticking) return; ticking=true; requestAnimationFrame(()=>{
+  const h=document.documentElement; const max=h.scrollHeight-h.clientHeight;
+  prog.style.width=(max>0?(h.scrollTop/max*100):0)+'%'; ticking=false;
+});}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+/* ---- init from ?date=&time=&sex= ---- */
+(function init(){
+  const q=new URLSearchParams(location.search);
+  const qd=q.get('date'), qt=q.get('time'), qs=q.get('sex');
+  let isExample=true;
+  if(qs==='m'||qs==='f'){ SEX=qs; $seg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.sex===SEX?'true':'false')); }
+  if(qd && /^\d{4}-\d{2}-\d{2}$/.test(qd)){ $d.value=qd; isExample=false;
+    if(qt && /^\d{2}:\d{2}$/.test(qt)) $t.value=qt; }
+  const qsel=q.get('sel'); if(qsel!=null && /^\d{1,2}$/.test(qsel) && +qsel>=0 && +qsel<12) PRESEL=+qsel;
+  cast(isExample);
+  onScroll();
+})();
+</script>
+</body>
+</html>

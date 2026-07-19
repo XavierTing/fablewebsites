@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>奇門遁甲 · THE STRATEGIST'S BOARD — choosing when and where to act</title>
+<meta name="description" content="Qi Men Dun Jia — the cosmic chessboard of tactical timing. Choose a moment and the nine-palace plate renders its four layers: the Eight Gates, Nine Stars, Eight Deities, and heaven-and-earth stems — then reads the auspicious direction to act.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="奇門遁甲 · THE STRATEGIST'S BOARD">
+<meta property="og:description" content="The nine-palace cosmic chessboard of Qi Men Dun Jia. Pick a moment; read the auspicious gate, star, deity, and direction to act.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="奇門遁甲 · THE STRATEGIST'S BOARD">
+<meta name="twitter:description" content="Qi Men Dun Jia — choose when and where to act. A living nine-palace plate.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2288%22>奇</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lacquer:#15110B;
+  --lacquer-2:#1D1810;
+  --lacquer-3:#241D13;
+  --paper:#F5F1E8;
+  --paper-2:#ECE5D4;
+  --paper-3:#E2D9C2;
+  --ink:#241F17;
+  --ink-2:#3A3225;
+  --ink-soft:#6B5E45;
+  --ink-faint:rgba(36,31,23,.42);
+  --brass:#9A7A34;
+  --brass-b:#C7A155;
+  --brass-bb:#E4C983;
+  --brass-d:rgba(154,122,52,.55);
+  --brass-f:rgba(154,122,52,.24);
+  --jade:#2F6D5E;
+  --jade-b:#3E9179;
+  --cinnabar:#AC3E2C;
+  --cinnabar-b:#C8503A;
+  --hair:rgba(196,161,85,.18);
+  --hair-p:rgba(36,31,23,.14);
+  --serif-sc:"Noto Serif SC",serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-o:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--lacquer);
+  color:var(--paper);
+  font-family:var(--serif);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--brass);color:#140f04}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:#100c07}
+::-webkit-scrollbar-thumb{background:#2a2114;border-radius:6px;border:2px solid #100c07}
+::-webkit-scrollbar-thumb:hover{background:#3a2f1b}
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--brass-b);outline-offset:3px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--brass-b);text-decoration:none}
+h1,h2,h3{font-weight:400;line-height:1.05}
+
+/* ---------- atmosphere ---------- */
+.bg-field{position:fixed;inset:0;z-index:-3;
+  background:
+    radial-gradient(ellipse 130% 100% at 50% -6%, #241c11 0%, #17120c 46%, #100c07 100%),
+    var(--lacquer);}
+.bg-field::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 46% at 50% 40%, rgba(199,161,85,.05), transparent 64%);}
+.grain{position:fixed;inset:-40%;width:180%;height:180%;pointer-events:none;z-index:90;opacity:.4;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.78 0 0 0 0 0.66 0 0 0 0 0.42 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:89;
+  background:radial-gradient(ellipse 94% 84% at 50% 42%,transparent 50%,rgba(4,2,0,.66) 100%)}
+.lamp{position:fixed;left:50%;top:26%;width:150vmin;height:150vmin;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:-2;
+  background:radial-gradient(circle,rgba(228,201,131,.09) 0%,rgba(154,122,52,.04) 32%,transparent 62%);
+  animation:flicker 7.5s ease-in-out infinite alternate}
+@keyframes flicker{0%{opacity:.82}35%{opacity:1}60%{opacity:.76}100%{opacity:.9}}
+
+/* compass rose behind hero board */
+.rose{position:absolute;left:50%;top:50%;width:min(120vh,1160px);height:min(120vh,1160px);
+  transform:translate(-50%,-50%);pointer-events:none;z-index:0;opacity:.5}
+.rose svg{width:100%;height:100%;overflow:visible}
+.rose .spin{transform-origin:center;animation:spin 220s linear infinite}
+.rose .spin-r{transform-origin:center;animation:spin 150s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- cursor ---------- */
+.cur{position:fixed;left:0;top:0;width:7px;height:7px;border-radius:50%;background:var(--brass-bb);
+  z-index:300;pointer-events:none;opacity:0;transform:translate(-50%,-50%);
+  box-shadow:0 0 10px rgba(228,201,131,.7);transition:width .25s var(--ease),height .25s var(--ease),opacity .3s,background .25s}
+.cur.on{opacity:.92}
+.cur.hov{width:26px;height:26px;background:transparent;border:1px solid var(--brass-d)}
+@media(pointer:fine){body.cur-live,body.cur-live a,body.cur-live button,body.cur-live input,body.cur-live select{cursor:none}}
+
+/* ---------- back-link ---------- */
+.backlink{position:fixed;top:18px;left:20px;z-index:200;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--brass-d);padding:8px 4px;transition:color .4s var(--ease)}
+.backlink .qi{font-family:var(--serif-sc);font-weight:600;font-size:15px;letter-spacing:0;color:var(--brass-d);transition:color .4s}
+.backlink:hover,.backlink:hover .qi{color:var(--brass-bb)}
+
+/* progress */
+.prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+  background:linear-gradient(90deg,var(--brass-d),var(--brass-bb));box-shadow:0 0 8px rgba(154,122,52,.5)}
+
+/* ---------- layout ---------- */
+section{position:relative}
+.wrap{max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--brass-b)}
+.kicker .dot{color:var(--brass-d);margin:0 .55em}
+.sec-head{text-align:center;margin-bottom:clamp(34px,5vh,56px)}
+.sec-head .kicker{margin-bottom:15px;display:inline-block}
+.sec-head h2{font-family:var(--serif-sc);font-weight:600;font-size:clamp(28px,4.6vw,46px);color:var(--paper);letter-spacing:.04em}
+.sec-head h2 .en{display:block;font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(16px,2.1vw,23px);color:var(--brass-b);margin-top:8px;letter-spacing:.01em}
+.sec-head p{max-width:58ch;margin:15px auto 0;font-family:var(--serif);font-size:clamp(14px,1.5vw,17px);color:var(--paper-3);opacity:.82;line-height:1.55}
+
+/* ============ HERO / BOARD ============ */
+#board{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding:clamp(52px,6vh,80px) 18px clamp(40px,6vh,72px);overflow:hidden}
+.board-head{position:relative;z-index:2;text-align:center;max-width:760px;margin:0 auto clamp(16px,2.4vh,28px)}
+.board-head .kicker{margin-bottom:12px;display:inline-block}
+.title-sc{font-family:var(--serif-sc);font-weight:900;
+  font-size:clamp(42px,7.4vw,80px);letter-spacing:.08em;line-height:.94;
+  color:transparent;background:linear-gradient(172deg,#f6eccf 0%,var(--brass-bb) 38%,var(--brass-b) 68%,#8a6c2c 100%);
+  -webkit-background-clip:text;background-clip:text;
+  text-shadow:0 0 46px rgba(154,122,52,.16)}
+.title-en{margin-top:12px;font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(17px,2.2vw,25px);color:var(--paper);letter-spacing:.01em;line-height:1.3}
+.title-en em{color:var(--brass-bb);font-style:italic}
+.lede{margin-top:9px;max-width:56ch;margin-left:auto;margin-right:auto;font-size:clamp(13px,1.4vw,15.5px);color:var(--paper-3);opacity:.78;line-height:1.5}
+
+/* stage: board + reading */
+.stage{position:relative;z-index:2;width:100%;max-width:1080px;margin:0 auto;
+  display:grid;grid-template-columns:minmax(0,auto) minmax(300px,1fr);gap:clamp(24px,3.4vw,52px);align-items:start;
+  justify-content:center}
+@media(max-width:1000px){.stage{grid-template-columns:1fr;justify-items:center;gap:26px}}
+
+/* ---- the plate ---- */
+.plate-col{display:flex;flex-direction:column;align-items:center;gap:16px}
+.plate-frame{position:relative;padding:clamp(12px,1.6vw,20px);
+  background:
+    linear-gradient(150deg,#2a2113,#1a140c 60%,#221a0f);
+  border-radius:6px;
+  box-shadow:0 30px 70px rgba(0,0,0,.55), 0 0 0 1px rgba(199,161,85,.14), inset 0 1px 0 rgba(228,201,131,.14);
+}
+.plate-frame::before{content:"";position:absolute;inset:6px;border:1px solid var(--brass-f);border-radius:3px;pointer-events:none}
+.plate{position:relative;width:min(86vw,540px);aspect-ratio:1;
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
+  gap:1px;background:var(--brass);
+  border:1px solid var(--brass-b);border-radius:2px;overflow:hidden}
+
+/* compass ticks around board (corners) */
+.plate-tick{position:absolute;font-family:var(--serif-sc);font-size:12px;color:var(--brass-d);z-index:3;pointer-events:none}
+
+/* palace cell */
+.cell{position:relative;background:var(--paper);color:var(--ink);
+  display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto minmax(0,1fr) auto;
+  grid-template-areas:"deity dir star" "gate gate gate" "hstem sep estem";
+  padding:clamp(6px,1vw,11px) clamp(5px,.8vw,9px);gap:2px 3px;
+  align-items:center;justify-items:center;
+  transition:background .5s var(--ease),box-shadow .5s var(--ease)}
+.cell:nth-child(even){background:var(--paper-2)}
+.cell.center{background:#efe8d6}
+.cell.ausp{background:linear-gradient(160deg,#f3f4e8,#eef1e0)}
+.cell.ausp::after{content:"";position:absolute;inset:2px;border:1px solid rgba(47,109,94,.42);border-radius:2px;
+  box-shadow:0 0 0 1px rgba(47,109,94,.12), inset 0 0 20px rgba(47,109,94,.08);pointer-events:none}
+.cell.dim{opacity:.97}
+
+/* entrance */
+.cell{opacity:0;transform:scale(.9)}
+.plate.in .cell{animation:cellIn .6s var(--ease-o) forwards}
+@keyframes cellIn{to{opacity:1;transform:none}}
+
+/* cell layers */
+.c-deity{grid-area:deity;justify-self:start;align-self:start;
+  font-family:var(--serif-sc);font-weight:500;font-size:clamp(10px,1.35vw,13px);line-height:1;
+  color:var(--ink-soft);letter-spacing:.02em}
+.c-deity.j-ji{color:var(--jade)}
+.c-deity.j-xiong{color:var(--cinnabar)}
+.c-star{grid-area:star;justify-self:end;align-self:start;text-align:right;
+  font-family:var(--serif-sc);font-weight:500;font-size:clamp(10px,1.35vw,13px);line-height:1;color:var(--ink-2);letter-spacing:.02em}
+.c-star .st-en{display:none}
+.c-dir{grid-area:dir;align-self:start;text-align:center;
+  font-family:var(--mono);font-size:8px;letter-spacing:.05em;color:var(--ink-faint);line-height:1.15}
+.c-dir b{display:block;font-family:var(--serif-sc);font-weight:600;font-size:11px;color:var(--brass);letter-spacing:0}
+.c-gate{grid-area:gate;align-self:center;text-align:center;line-height:.98}
+.c-gate .g-zh{font-family:var(--serif-sc);font-weight:700;font-size:clamp(24px,4.6vw,42px);letter-spacing:.04em}
+.c-gate .g-en{font-family:var(--serif);font-style:italic;font-size:clamp(9px,1.15vw,12px);color:var(--ink-soft);margin-top:1px;letter-spacing:.02em}
+.g-ji .g-zh{color:var(--jade)}
+.g-xiong .g-zh{color:var(--cinnabar)}
+.g-ping .g-zh{color:var(--brass)}
+.g-bi .g-zh{color:var(--ink-2)}
+.c-hstem{grid-area:hstem;justify-self:start;align-self:end}
+.c-estem{grid-area:estem;justify-self:end;align-self:end;text-align:right}
+.stem{display:flex;flex-direction:column;line-height:1}
+.c-estem .stem{align-items:flex-end}
+.stem .s-lab{font-family:var(--mono);font-size:7.5px;letter-spacing:.08em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:1px}
+.stem .s-zh{font-family:var(--serif-sc);font-weight:600;font-size:clamp(13px,1.9vw,18px);color:var(--ink);line-height:1}
+.stem .s-zh.marvel{color:var(--jade)}
+.c-num{position:absolute;left:50%;bottom:3px;transform:translateX(-50%);
+  font-family:var(--mono);font-size:8px;color:var(--ink-faint);z-index:2}
+.center .c-num{bottom:6px}
+
+/* center palace special */
+.center .c-core{grid-column:1/-1;grid-row:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
+.center .cc-ls{font-family:var(--serif-sc);font-weight:600;font-size:clamp(11px,1.5vw,14px);color:var(--brass);letter-spacing:.1em}
+.center .cc-stem{font-family:var(--serif-sc);font-weight:700;font-size:clamp(20px,3.2vw,30px);color:var(--ink);line-height:1}
+.center .cc-stem.marvel{color:var(--jade)}
+.center .cc-note{font-family:var(--mono);font-size:7.5px;letter-spacing:.06em;color:var(--ink-faint);line-height:1.2}
+.center .cc-rose{width:clamp(30px,4.4vw,44px);height:clamp(30px,4.4vw,44px);opacity:.5;margin-bottom:1px}
+.center .cc-rose svg{width:100%;height:100%}
+
+/* duty badges */
+.badge{position:absolute;z-index:4;font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:2px 5px;border-radius:2px;line-height:1;white-space:nowrap}
+.badge.fu{top:-1px;left:-1px;border-bottom-right-radius:5px;border-top-left-radius:2px;
+  color:#1c1405;background:linear-gradient(180deg,var(--brass-bb),var(--brass-b));box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.badge.shi{bottom:-1px;right:-1px;border-top-left-radius:5px;border-bottom-right-radius:2px;
+  color:var(--paper);background:linear-gradient(180deg,var(--jade-b),var(--jade));box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.badge .zh{font-family:var(--serif-sc);font-weight:600;letter-spacing:0}
+
+/* plate caption */
+.plate-cap{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:center;align-items:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-3);opacity:.78}
+.plate-cap b{color:var(--brass-bb);font-weight:500}
+.plate-cap .zh{font-family:var(--serif-sc);font-weight:500;letter-spacing:.04em}
+.plate-cap .sep{color:var(--brass-d)}
+
+/* legend under plate */
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--paper-3);opacity:.7}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+.legend i.g-jade{background:var(--jade-b)}
+.legend i.g-cin{background:var(--cinnabar-b)}
+.legend i.g-brass{background:var(--brass-b)}
+
+/* ---- controls ---- */
+.controls{width:100%;max-width:440px;display:flex;flex-direction:column;gap:14px}
+.ctl-card{background:linear-gradient(180deg,rgba(38,30,18,.5),rgba(24,19,12,.35));
+  border:1px solid var(--hair);border-radius:5px;padding:clamp(16px,2vw,22px)}
+.ctl-card .ctl-kick{font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--brass-d);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ctl-card .ctl-kick .zh{font-family:var(--serif-sc);font-size:13px;color:var(--brass-b);letter-spacing:.06em}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-3);opacity:.7;margin-bottom:7px}
+.field input,.field select{width:100%;background:rgba(16,12,7,.6);border:1px solid var(--hair);border-radius:3px;
+  color:var(--paper);font-family:var(--serif);font-size:16px;padding:11px 13px;transition:border-color .35s,background .35s;
+  color-scheme:dark}
+.field input::placeholder{color:rgba(226,217,194,.4);font-style:italic}
+.field input:focus,.field select:focus{border-color:var(--brass-d);background:rgba(24,18,11,.75)}
+.field input[type=text]{font-style:italic}
+.now-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.txt-btn{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-3);opacity:.75;
+  padding:6px 2px;border-bottom:1px solid transparent;transition:color .3s,border-color .3s,opacity .3s}
+.txt-btn:hover{color:var(--brass-bb);opacity:1;border-color:var(--brass-d)}
+.btn-cast{position:relative;width:100%;font-family:var(--serif-sc);font-weight:600;font-size:16px;letter-spacing:.14em;
+  color:#160f04;padding:15px 20px;border-radius:3px;overflow:hidden;margin-top:2px;
+  background:linear-gradient(180deg,var(--brass-bb),var(--brass-b) 58%,#8f6f2e);
+  box-shadow:0 10px 28px rgba(154,122,52,.26), inset 0 1px 0 rgba(255,244,214,.5);
+  transition:transform .3s var(--ease),box-shadow .3s,filter .3s}
+.btn-cast .en{font-family:var(--serif);font-style:italic;font-weight:500;font-size:13px;letter-spacing:0;margin-left:8px;opacity:.8}
+.btn-cast:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(154,122,52,.36);filter:brightness(1.05)}
+.btn-cast:active{transform:translateY(0)}
+
+/* ---- reading panel ---- */
+.reading{background:linear-gradient(180deg,rgba(38,30,18,.5),rgba(22,17,11,.4));
+  border:1px solid var(--hair);border-radius:5px;padding:clamp(18px,2.2vw,26px);
+  opacity:0;transform:translateY(10px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reading.on{opacity:1;transform:none}
+.rd-kick{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass-d);
+  display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.rd-kick .zh{font-family:var(--serif-sc);font-size:13px;color:var(--brass-b);letter-spacing:.06em}
+.verdict{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.verdict .dir-zh{font-family:var(--serif-sc);font-weight:900;font-size:clamp(34px,5vw,52px);
+  color:transparent;background:linear-gradient(170deg,#f6eccf,var(--jade-b) 60%,var(--jade));
+  -webkit-background-clip:text;background-clip:text;line-height:.9;letter-spacing:.04em}
+.verdict .dir-en{font-family:var(--serif);font-style:italic;font-size:clamp(18px,2.3vw,24px);color:var(--brass-bb)}
+.verdict .compass{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--paper-3);opacity:.75;
+  padding:3px 9px;border:1px solid var(--hair);border-radius:2px}
+.rd-tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--jade-b);margin-bottom:14px}
+.rd-body{font-family:var(--serif);font-size:clamp(15px,1.7vw,18px);line-height:1.56;color:var(--paper);margin-bottom:6px}
+.rd-body b{color:var(--brass-bb);font-weight:500}
+.rd-body .zh{font-family:var(--serif-sc);color:var(--jade-b);font-weight:500}
+.rd-when{margin-top:14px;padding-top:14px;border-top:1px solid var(--hair);
+  font-family:var(--serif);font-size:clamp(14px,1.55vw,16px);line-height:1.5;color:var(--paper-3)}
+.rd-when .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass-d);display:block;margin-bottom:6px}
+.rd-when b{color:var(--brass-bb);font-weight:500}
+.rd-when .zh{font-family:var(--serif-sc);color:var(--jade-b);font-weight:500}
+
+/* gates row in reading */
+.gates-3{margin-top:16px;padding-top:16px;border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g3{text-align:center;background:rgba(16,12,7,.4);border:1px solid var(--hair);border-radius:3px;padding:9px 4px}
+.g3 .g3-zh{font-family:var(--serif-sc);font-weight:700;font-size:20px;color:var(--jade-b);line-height:1}
+.g3 .g3-dir{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--paper-3);opacity:.8;margin-top:5px}
+.g3 .g3-en{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--brass-b);margin-top:1px}
+.g3.off .g3-zh{color:var(--ink-soft)}
+
+/* meta strip under stage */
+.moment{margin-top:clamp(22px,3vh,34px);display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;align-items:center;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-3);opacity:.8;position:relative;z-index:2}
+.moment .m{display:inline-flex;align-items:center;gap:7px}
+.moment .m .zh{font-family:var(--serif-sc);font-size:14px;color:var(--brass-bb);letter-spacing:.04em;text-transform:none}
+.moment .m b{color:var(--paper);font-weight:400}
+.moment .sep{color:var(--brass-d)}
+
+/* ============ EXPLAINER SECTIONS ============ */
+#nine{padding:clamp(70px,11vh,130px) 0}
+.nine-grid{display:grid;grid-template-columns:auto 1fr;gap:clamp(28px,4.5vw,60px);align-items:center}
+@media(max-width:820px){.nine-grid{grid-template-columns:1fr;justify-items:center;text-align:center;gap:34px}}
+.luoshu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(74vw,320px);flex:none}
+.ls-cell{position:relative;aspect-ratio:1;border:1px solid var(--hair);border-radius:4px;
+  background:linear-gradient(180deg,rgba(38,30,18,.5),rgba(20,15,10,.4));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  transition:border-color .35s,transform .35s var(--ease),background .35s}
+.ls-cell:hover{border-color:var(--brass-d);transform:translateY(-3px)}
+.ls-cell .num{font-family:var(--serif-sc);font-weight:700;font-size:clamp(24px,3.4vw,34px);color:var(--brass-bb);line-height:1}
+.ls-cell .tg{font-family:var(--serif-sc);font-size:clamp(13px,1.6vw,16px);color:var(--paper)}
+.ls-cell .dir{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--paper-3);opacity:.7}
+.ls-cell.mid{background:linear-gradient(180deg,rgba(47,109,94,.24),rgba(20,15,10,.4))}
+.ls-cell.mid .num{color:var(--jade-b)}
+.nine-copy .kicker{margin-bottom:14px;display:inline-block}
+.nine-copy h2{font-family:var(--serif-sc);font-weight:600;font-size:clamp(26px,4vw,40px);color:var(--paper);letter-spacing:.03em;margin-bottom:6px}
+.nine-copy h2 .en{display:block;font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(15px,2vw,21px);color:var(--brass-b);margin-top:6px}
+.nine-copy p{font-family:var(--serif);font-size:clamp(14px,1.55vw,17px);color:var(--paper-3);line-height:1.6;margin-top:14px;max-width:52ch}
+.nine-copy p b{color:var(--brass-bb);font-weight:500}
+.nine-copy p .zh{font-family:var(--serif-sc);color:var(--jade-b);font-weight:500}
+.layer-list{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.layer{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline}
+.layer .lz{font-family:var(--serif-sc);font-weight:600;font-size:clamp(16px,2vw,20px);color:var(--brass-bb);white-space:nowrap}
+.layer .lt{font-family:var(--serif);font-size:clamp(13.5px,1.5vw,15.5px);color:var(--paper-3);line-height:1.5}
+.layer .lt b{color:var(--paper);font-weight:500}
+
+/* gates reference */
+#gates{padding:clamp(70px,11vh,130px) 0;background:linear-gradient(180deg,transparent,rgba(10,7,4,.55) 50%,transparent)}
+.gate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.4vw,16px)}
+@media(max-width:820px){.gate-grid{grid-template-columns:repeat(2,1fr)}}
+.gate-card{position:relative;border:1px solid var(--hair);border-radius:5px;padding:clamp(16px,2vw,24px) clamp(12px,1.6vw,18px);
+  background:linear-gradient(180deg,rgba(38,30,18,.5),rgba(20,15,10,.38));text-align:center;
+  transition:border-color .35s,transform .35s var(--ease),background .35s}
+.gate-card:hover{border-color:var(--brass-d);transform:translateY(-4px);background:linear-gradient(180deg,rgba(46,37,22,.6),rgba(26,20,13,.45))}
+.gate-card .gz{font-family:var(--serif-sc);font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1;letter-spacing:.04em}
+.gate-card .gpy{font-family:var(--serif);font-style:italic;font-size:clamp(13px,1.5vw,16px);color:var(--brass-b);margin-top:4px}
+.gate-card .gen{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper-3);opacity:.7;margin-top:6px}
+.gate-card .guse{font-family:var(--serif);font-size:clamp(12.5px,1.4vw,14px);color:var(--paper-3);line-height:1.45;margin-top:10px;min-height:2.9em}
+.gate-card .glk{position:absolute;top:9px;right:11px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase}
+.gate-card.ji .gz{color:var(--jade-b)}
+.gate-card.ji .glk{color:var(--jade-b)}
+.gate-card.xiong .gz{color:var(--cinnabar-b)}
+.gate-card.xiong .glk{color:var(--cinnabar-b)}
+.gate-card.ping .gz{color:var(--brass-bb)}
+.gate-card.ping .glk{color:var(--brass-b)}
+.gate-card.bi .gz{color:var(--paper-2)}
+.gate-card.bi .glk{color:var(--paper-3)}
+
+/* method */
+#method{padding:clamp(70px,11vh,130px) 0}
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,42px)}
+@media(max-width:820px){.method-grid{grid-template-columns:1fr;gap:30px}}
+.m-col .n{font-family:var(--serif);font-style:italic;font-size:clamp(30px,4vw,46px);color:var(--brass-d);line-height:1}
+.m-col h3{font-family:var(--serif-sc);font-weight:600;font-size:clamp(18px,2vw,23px);color:var(--paper);margin:12px 0 12px}
+.m-col p{font-family:var(--serif);font-size:clamp(14px,1.5vw,16px);color:var(--paper-3);line-height:1.62}
+.m-col p b{color:var(--brass-bb);font-weight:500}
+.m-col p .zh{font-family:var(--serif-sc);color:var(--jade-b);font-weight:500}
+.note{margin-top:clamp(34px,5vh,52px);border:1px solid var(--hair);border-radius:5px;padding:clamp(20px,2.6vw,30px);
+  background:linear-gradient(180deg,rgba(38,30,18,.4),rgba(20,15,10,.3));max-width:820px;margin-left:auto;margin-right:auto}
+.note .nl{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--brass-d);margin-bottom:12px}
+.note p{font-family:var(--serif);font-size:clamp(13.5px,1.5vw,15.5px);color:var(--paper-3);line-height:1.62}
+.note p+p{margin-top:12px}
+.note b{color:var(--brass-bb);font-weight:500}
+.note .zh{font-family:var(--serif-sc);color:var(--jade-b);font-weight:500}
+
+/* footer */
+footer{padding:clamp(56px,8vh,90px) 0 clamp(40px,6vh,60px);border-top:1px solid var(--hair);text-align:center}
+footer .seal{font-family:var(--serif-sc);font-weight:700;font-size:clamp(30px,5vw,46px);color:var(--brass-bb);letter-spacing:.16em}
+footer .lg{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.2vw,23px);color:var(--paper);margin-top:14px}
+footer .fn{margin-top:22px;max-width:60ch;margin-left:auto;margin-right:auto;
+  font-family:var(--serif);font-size:clamp(12.5px,1.4vw,14px);color:var(--paper-3);opacity:.72;line-height:1.55}
+footer .fn b{color:var(--brass-b);font-weight:500}
+footer .fn .zh{font-family:var(--serif-sc);color:var(--jade-b);font-weight:500}
+footer .meta{margin-top:26px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(226,217,194,.5);
+  display:flex;gap:22px;justify-content:center;flex-wrap:wrap;align-items:center}
+footer .meta a{color:var(--brass-d);transition:color .3s}
+footer .meta a:hover{color:var(--brass-bb)}
+footer .copy{margin-top:18px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:rgba(226,217,194,.42)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);z-index:300;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#160f04;
+  background:linear-gradient(180deg,var(--brass-bb),var(--brass-b));padding:12px 22px;border-radius:2px;
+  opacity:0;pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media(max-width:1000px){
+  .stage{max-width:600px}
+  .controls,.reading{max-width:564px;width:100%}
+}
+@media(max-width:520px){
+  .plate{width:min(94vw,420px)}
+  .moment{gap:8px 16px;font-size:10px}
+  .c-gate .g-en{display:none}
+  .gates-3{gap:6px}
+}
+@media(max-width:380px){
+  .stem .s-lab{display:none}
+}
+
+/* reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+  .lamp,.rose .spin,.rose .spin-r{animation:none}
+  .cell{opacity:1;transform:none}
+}
+html.no-anim .lamp,html.no-anim .rose .spin,html.no-anim .rose .spin-r{animation:none}
+html.no-anim .cell{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="bg-field"></div>
+<div class="lamp"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="prog" id="prog"></div>
+<div class="cur" id="cur"></div>
+
+<a class="backlink" href="/"><span class="qi">奇</span>XAVIER FABLE ×65</a>
+
+<!-- ============ BOARD / HERO ============ -->
+<header id="board">
+  <div class="rose" aria-hidden="true">
+    <svg viewBox="0 0 400 400">
+      <g class="spin">
+        <circle cx="200" cy="200" r="196" fill="none" stroke="rgba(199,161,85,.16)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="170" fill="none" stroke="rgba(199,161,85,.10)" stroke-width="1"/>
+        <g id="roseTicks"></g>
+      </g>
+      <g class="spin-r">
+        <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(199,161,85,.12)" stroke-width="1" stroke-dasharray="2 7"/>
+        <circle cx="200" cy="200" r="92" fill="none" stroke="rgba(47,109,94,.16)" stroke-width="1"/>
+        <g id="roseTri"></g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="board-head">
+    <span class="kicker">奇門遁甲<span class="dot">·</span>QÍ MÉN DÙN JIǍ<span class="dot">·</span>THE STRATEGIST'S BOARD</span>
+    <h1 class="title-sc">奇門遁甲</h1>
+    <p class="title-en">Choose the <em>moment</em>. The cosmos lays out its board —<br>and shows you where, and when, to act.</p>
+    <p class="lede">Nine palaces in the pattern of the Luo Shu, each loaded with a gate, a star, a deity, and its heaven-and-earth stems. A campaign table for reading the auspicious direction of any hour.</p>
+  </div>
+
+  <div class="stage">
+    <div class="plate-col">
+      <div class="plate-frame">
+        <div class="plate" id="plate" aria-label="The nine-palace Qi Men Dun Jia plate"></div>
+      </div>
+      <div class="plate-cap" id="plateCap"></div>
+      <div class="legend" aria-hidden="true">
+        <span><i class="g-jade"></i>吉門 / 三奇 auspicious</span>
+        <span><i class="g-cin"></i>凶門 inauspicious</span>
+        <span><i class="g-brass"></i>值符 · 值使 duty</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl-card">
+        <div class="ctl-kick"><span class="zh">起局</span> Cast a moment</div>
+        <div class="field">
+          <label for="dtInput">Date &amp; hour</label>
+          <input type="datetime-local" id="dtInput" aria-label="Date and time to cast">
+          <div class="now-row"><button class="txt-btn" id="nowBtn">↺ Use this moment</button></div>
+        </div>
+        <div class="field">
+          <label for="qInput">Your question or intent <span style="opacity:.6">(optional)</span></label>
+          <input type="text" id="qInput" maxlength="90" placeholder="Should I make the approach today?" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="btn-cast" id="castBtn">排盤 <span class="en">— lay the board</span></button>
+      </div>
+
+      <div class="reading" id="reading" aria-live="polite">
+        <div class="rd-kick"><span class="zh">用神</span> The reading</div>
+        <div class="verdict" id="rdVerdict"></div>
+        <div class="rd-tag" id="rdTag"></div>
+        <div class="rd-body" id="rdBody"></div>
+        <div class="gates-3" id="rdGates3"></div>
+        <div class="rd-when" id="rdWhen"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="moment" id="moment"></div>
+</header>
+
+<!-- ============ NINE PALACES ============ -->
+<section id="nine">
+  <div class="wrap">
+    <div class="nine-grid">
+      <div class="luoshu" id="luoshu" aria-label="The Luo Shu magic square"></div>
+      <div class="nine-copy">
+        <span class="kicker">九宮 · 洛書<span class="dot">·</span>THE NINE PALACES</span>
+        <h2>The board is a magic square<span class="en">four-nine-two, three-five-seven, eight-one-six</span></h2>
+        <p>Legend says a turtle rose from the River Luo with a diagram on its shell — the <span class="zh">洛書</span>, where every row, column, and diagonal sums to fifteen. That grid is the floor of the Qi Men board. South sits at the top, as on an old Chinese map; the centre is the pivot, its star <span class="zh">天禽</span> lodging in the Kūn palace.</p>
+        <div class="layer-list">
+          <div class="layer"><span class="lz">八門</span><span class="lt"><b>Eight Gates</b> — 休生傷杜景死驚開. The doorway of each direction: which are open to you, which are shut.</span></div>
+          <div class="layer"><span class="lz">九星</span><span class="lt"><b>Nine Stars</b> — 蓬芮沖輔禽心柱任英. The quality of heaven's light falling on each palace.</span></div>
+          <div class="layer"><span class="lz">八神</span><span class="lt"><b>Eight Deities</b> — 值符螣蛇太陰六合白虎玄武九地九天. The spirit presiding, benevolent or treacherous.</span></div>
+          <div class="layer"><span class="lz">天地盤</span><span class="lt"><b>Heaven &amp; Earth stems</b> — the three marvels <span class="zh">乙丙丁</span> and six rites <span class="zh">戊己庚辛壬癸</span>, one turning, one fixed.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EIGHT GATES ============ -->
+<section id="gates">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">八門<span class="dot">·</span>THE EIGHT GATES</span>
+      <h2>Which doors are open<span class="en">bā mén — the gates of action</span></h2>
+      <p>Every direction on the board carries a gate. Three are auspicious — <b style="color:var(--jade-b)">開 休 生</b>, the doors of opening, rest, and life. Face them; move through them. The others counsel patience.</p>
+    </div>
+    <div class="gate-grid" id="gateGrid"></div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">起局之法<span class="dot">·</span>THE METHOD</span>
+      <h2>How the board is drawn<span class="en">on solar terms, the hidden Jiǎ, and the turning plate</span></h2>
+    </div>
+    <div class="method-grid">
+      <div class="m-col">
+        <div class="n">壹</div>
+        <h3>Yin, yang &amp; the jú number</h3>
+        <p>The season sets the frame. From the <b>winter solstice</b> to <span class="zh">芒種</span> the board runs <b>Yáng Dùn</b> 陽遁; from the <b>summer solstice</b> to <span class="zh">大雪</span>, <b>Yīn Dùn</b> 陰遁. Each of the twenty-four solar terms, split into three five-day <b>yuán</b>, fixes a <b>jú</b> number 局 — the seat where the earth-plate stems begin.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">貳</div>
+        <h3>The hidden Jiǎ</h3>
+        <p>Six <b>rites</b> 六儀 — <span class="zh">戊己庚辛壬癸</span> — and three <b>marvels</b> 三奇 — <span class="zh">乙丙丁</span> — are laid into the palaces by the jú. The chief <span class="zh">甲</span> hides beneath a rite (<b>遁甲</b>, "escaping Jiǎ"); where its rite sits names the duty-star <b>值符</b> and duty-gate <b>值使</b> of the hour.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">參</div>
+        <h3>The turning plate</h3>
+        <p>Then the heavens turn. The <b>值符</b> star rides to the palace of the hour's stem, carrying the whole star-disk with it; the <b>值使</b> gate steps round by the hours since the rite began; the deities wheel from the chief — forward in Yáng, backward in Yīn. The board that results is <b>this exact hour's</b>.</p>
+      </div>
+    </div>
+    <div class="note">
+      <div class="nl">On method &amp; honesty</div>
+      <p>This board is cast by the <b>時家奇門 转盘</b> method — hour-based Qi Men, rotating-plate school. The day and hour pillars 干支 are computed exactly (Julian-day day-pillar, 五鼠遁 hour-stem); the <b>阴阳遁 &amp; 局数</b> are read from <b>approximate</b> solar-term dates (±1 day near a boundary) with the yuán fixed by the <span class="zh">符頭</span> lead-day — the classic simplification, without the 拆補/置閏 leap-term correction. It is a faithful, well-structured plate for reading the shape of a moment, not an ephemeris.</p>
+      <p>Its rarer cousin is <b>大六壬</b> Dà Liù Rén — the "great six yang-waters," a heaven-plate-over-earth-plate oracle read from the hour and the position of the moon-general 月將. Where Qi Men is the strategist's map of <em>space</em>, Liu Ren is the diviner's clock of <em>time</em>; together with 太乙 Tài Yǐ they are the <span class="zh">三式</span>, the Three Cosmic Boards.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="seal">奇</div>
+    <div class="lg">Know the ground, and choose the hour.</div>
+    <p class="fn">Qi Men Dun Jia was the general's art — <span class="zh">諸葛亮</span>'s campaign table, they say, and the almanac of court astronomers. Not fortune but <b>timing</b>: the discipline of acting where the board is open and waiting where it is shut.</p>
+    <div class="meta">
+      <a href="/">← XAVIER FABLE ×65</a>
+      <span>奇門遁甲 · Qí Mén Dùn Jiǎ · The Strategist's Board</span>
+    </div>
+    <div class="copy">時家奇門 转盘法 · faithful-in-structure · built for the showcase</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Board link copied</div>
+
+<script>
+"use strict";
+/* ============================================================
+   奇門遁甲 · 時家奇門 转盘法 (hour-based Qi Men, rotating plate)
+   ============================================================ */
+var $=function(s,r){return (r||document).querySelector(s);};
+var noAnim=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+if(noAnim) document.documentElement.classList.add("no-anim");
+
+/* ---- core symbol tables ---- */
+var STEMS=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+var STEMS_PY=["Jiǎ","Yǐ","Bǐng","Dīng","Wù","Jǐ","Gēng","Xīn","Rén","Guǐ"];
+var BRANCHES=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+var BRANCH_PY=["Zǐ","Chǒu","Yín","Mǎo","Chén","Sì","Wǔ","Wèi","Shēn","Yǒu","Xū","Hài"];
+var MARVELS=["乙","丙","丁"]; // 三奇
+
+/* palaces in Luo Shu — grid render order is south-up: 4,9,2 / 3,5,7 / 8,1,6 */
+var GRID_ORDER=[4,9,2,3,5,7,8,1,6];
+var PALACE={
+  1:{tg:"坎",py:"Kǎn",dir:"N",dirZh:"北"},
+  2:{tg:"坤",py:"Kūn",dir:"SW",dirZh:"西南"},
+  3:{tg:"震",py:"Zhèn",dir:"E",dirZh:"東"},
+  4:{tg:"巽",py:"Xùn",dir:"SE",dirZh:"東南"},
+  5:{tg:"中",py:"Zhōng",dir:"·",dirZh:"中"},
+  6:{tg:"乾",py:"Qián",dir:"NW",dirZh:"西北"},
+  7:{tg:"兌",py:"Duì",dir:"W",dirZh:"西"},
+  8:{tg:"艮",py:"Gèn",dir:"NE",dirZh:"東北"},
+  9:{tg:"離",py:"Lí",dir:"S",dirZh:"南"}
+};
+var DIR_FULL={N:"North",S:"South",E:"East",W:"West",NE:"Northeast",NW:"Northwest",SE:"Southeast",SW:"Southwest"};
+
+/* physical Luo Shu ring, clockwise from North */
+var RING=[1,8,3,4,9,2,7,6];
+var RING_STARS=["天蓬","天任","天沖","天輔","天英","天芮","天柱","天心"];
+var RING_GATES=["休","生","傷","杜","景","死","驚","開"];
+
+var STAR_NATIVE={1:"天蓬",2:"天芮",3:"天沖",4:"天輔",5:"天禽",6:"天心",7:"天柱",8:"天任",9:"天英"};
+var GATE_NATIVE={1:"休",8:"生",3:"傷",4:"杜",9:"景",2:"死",7:"驚",6:"開"};
+
+var GATES={
+  "休":{en:"Rest",py:"Xiū",luck:"ji",use:"rest, alliance, seeking aid, marriage, recovery"},
+  "生":{en:"Life",py:"Shēng",luck:"ji",use:"growth, wealth, new ventures, health, gain"},
+  "傷":{en:"Harm",py:"Shāng",luck:"xiong",use:"debt-collection, hunting, contests — else avoid"},
+  "杜":{en:"Block",py:"Dù",luck:"bi",use:"concealment, escape, guarding, staying hidden"},
+  "景":{en:"Vision",py:"Jǐng",luck:"ping",use:"plans, exams, documents, persuasion, display"},
+  "死":{en:"Death",py:"Sǐ",luck:"xiong",use:"burials, ending things — else stay still"},
+  "驚":{en:"Fright",py:"Jīng",luck:"xiong",use:"lawsuits, alarms — brace, do not begin"},
+  "開":{en:"Open",py:"Kāi",luck:"ji",use:"beginnings, office, authority, opening doors"}
+};
+var THREE_JI=["開","休","生"];
+
+var STARS={
+  "天蓬":{en:"Ruinous",luck:"xiong",el:"Water"},"天芮":{en:"Illness",luck:"xiong",el:"Earth"},
+  "天沖":{en:"Charging",luck:"ji",el:"Wood"},"天輔":{en:"Assisting",luck:"ji",el:"Wood"},
+  "天禽":{en:"Pivot",luck:"ji",el:"Earth"},"天心":{en:"Heart",luck:"ji",el:"Metal"},
+  "天柱":{en:"Pillar",luck:"xiong",el:"Metal"},"天任":{en:"Bearing",luck:"ji",el:"Earth"},
+  "天英":{en:"Radiant",luck:"ping",el:"Fire"}
+};
+var DEITIES_ORDER=["值符","螣蛇","太陰","六合","白虎","玄武","九地","九天"];
+var DEITIES={
+  "值符":{en:"Chief",luck:"ji"},"螣蛇":{en:"Serpent",luck:"xiong"},"太陰":{en:"Shade",luck:"ji"},
+  "六合":{en:"Union",luck:"ji"},"白虎":{en:"Tiger",luck:"xiong"},"玄武":{en:"Tortoise",luck:"xiong"},
+  "九地":{en:"Earth",luck:"ji"},"九天":{en:"Heaven",luck:"ji"}
+};
+
+/* solar terms (approx dates), calendar order; dun + jú triple [upper,mid,lower] */
+var TERMS=[
+  {zh:"小寒",py:"Xiǎohán",m:1,d:6,dun:"yang",ju:[2,8,5]},
+  {zh:"大寒",py:"Dàhán",m:1,d:20,dun:"yang",ju:[3,9,6]},
+  {zh:"立春",py:"Lìchūn",m:2,d:4,dun:"yang",ju:[8,5,2]},
+  {zh:"雨水",py:"Yǔshuǐ",m:2,d:19,dun:"yang",ju:[9,6,3]},
+  {zh:"驚蟄",py:"Jīngzhé",m:3,d:6,dun:"yang",ju:[1,7,4]},
+  {zh:"春分",py:"Chūnfēn",m:3,d:21,dun:"yang",ju:[3,9,6]},
+  {zh:"清明",py:"Qīngmíng",m:4,d:5,dun:"yang",ju:[4,1,7]},
+  {zh:"穀雨",py:"Gǔyǔ",m:4,d:20,dun:"yang",ju:[5,2,8]},
+  {zh:"立夏",py:"Lìxià",m:5,d:6,dun:"yang",ju:[4,1,7]},
+  {zh:"小滿",py:"Xiǎomǎn",m:5,d:21,dun:"yang",ju:[5,2,8]},
+  {zh:"芒種",py:"Mángzhòng",m:6,d:6,dun:"yang",ju:[6,3,9]},
+  {zh:"夏至",py:"Xiàzhì",m:6,d:21,dun:"yin",ju:[9,3,6]},
+  {zh:"小暑",py:"Xiǎoshǔ",m:7,d:7,dun:"yin",ju:[8,2,5]},
+  {zh:"大暑",py:"Dàshǔ",m:7,d:23,dun:"yin",ju:[7,1,4]},
+  {zh:"立秋",py:"Lìqiū",m:8,d:8,dun:"yin",ju:[2,5,8]},
+  {zh:"處暑",py:"Chǔshǔ",m:8,d:23,dun:"yin",ju:[1,4,7]},
+  {zh:"白露",py:"Báilù",m:9,d:8,dun:"yin",ju:[9,3,6]},
+  {zh:"秋分",py:"Qiūfēn",m:9,d:23,dun:"yin",ju:[7,1,4]},
+  {zh:"寒露",py:"Hánlù",m:10,d:8,dun:"yin",ju:[6,9,3]},
+  {zh:"霜降",py:"Shuāngjiàng",m:10,d:24,dun:"yin",ju:[5,8,2]},
+  {zh:"立冬",py:"Lìdōng",m:11,d:8,dun:"yin",ju:[6,9,3]},
+  {zh:"小雪",py:"Xiǎoxuě",m:11,d:22,dun:"yin",ju:[5,8,2]},
+  {zh:"大雪",py:"Dàxuě",m:12,d:7,dun:"yin",ju:[4,7,1]},
+  {zh:"冬至",py:"Dōngzhì",m:12,d:22,dun:"yang",ju:[1,7,4]}
+];
+var YUAN_ZH=["上元","中元","下元"];
+
+/* ---------- date math ---------- */
+function jdn(y,m,d){
+  var a=Math.floor((14-m)/12), yy=y+4800-a, mm=m+12*a-3;
+  return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;
+}
+function mod(n,m){return ((n%m)+m)%m;}
+function ganzhiIndex(stem,branch){ // 0..59 from stem 0..9, branch 0..11
+  for(var g=0;g<60;g++) if(g%10===stem&&g%12===branch) return g;
+  return 0;
+}
+function termFor(y,m,d){
+  // most recent term boundary <= date; if before first (小寒 Jan6) use 冬至
+  var best=null;
+  for(var i=0;i<TERMS.length;i++){
+    var t=TERMS[i];
+    if(m>t.m||(m===t.m&&d>=t.d)) best=t;
+  }
+  if(!best) best=TERMS[TERMS.length-1]; // 冬至 (previous Dec)
+  return best;
+}
+
+function compute(dt){
+  var Y=dt.getFullYear(),M=dt.getMonth()+1,D=dt.getDate(),H=dt.getHours(),Min=dt.getMinutes();
+  // day pillar
+  var dIdx=mod(jdn(Y,M,D)+49,60);
+  var dStem=dIdx%10,dBranch=dIdx%12;
+  // hour pillar (五鼠遁)
+  var hBranch=Math.floor((H+1)/2)%12;
+  var hStem=((dStem%5)*2+hBranch)%10;
+  var hIdx=ganzhiIndex(hStem,hBranch);
+  // 旬 & 旬首仪
+  var n=hStem;                 // ordinal in the 旬 (甲=0)
+  var xunHead=hIdx-hStem;      // 60-index of 甲X leader: 0,10,20,30,40,50
+  var yiIndex=xunHead/10;      // 0..5
+  var xunYiStemIdx=yiIndex+4;  // 戊4 己5 庚6 辛7 壬8 癸9
+  // term / dun / jú via 符頭 yuan
+  var term=termFor(Y,M,D);
+  var futouIdx=mod(dIdx-(dStem%5),60); // most recent 甲/己 day
+  var futouBranch=futouIdx%12;
+  var yuan; // 0 upper,1 mid,2 lower
+  if([0,6,3,9].indexOf(futouBranch)>=0) yuan=0;
+  else if([2,8,5,11].indexOf(futouBranch)>=0) yuan=1;
+  else yuan=2;
+  var ju=term.ju[yuan];
+  var dun=term.dun;
+
+  // ---- earth plate (地盤三奇六儀) ----
+  var seq=[4,5,6,7,8,9,3,2,1]; // 戊己庚辛壬癸丁丙乙 as stem indices
+  var earthByPal={},palByStem={};
+  for(var k=0;k<9;k++){
+    var pal=dun==="yang"? (mod(ju-1+k,9)+1) : (mod(ju-1-k,9)+1);
+    earthByPal[pal]=seq[k];
+    palByStem[seq[k]]=pal;
+  }
+  // ---- 值符 / 值使 home ----
+  var P0=palByStem[xunYiStemIdx];
+  var effP0=(P0===5)?2:P0;
+  var fuStar=(P0===5)?"天禽":STAR_NATIVE[P0];
+  var shiGate=(P0===5)?"死":GATE_NATIVE[effP0];
+  // ---- 時干's earth palace ----
+  var P1=(hStem===0)?P0:palByStem[hStem];
+  var effP1=(P1===5)?2:P1;
+
+  // ---- rotate stars (天盤九星 + 天盤stems) ----
+  var h0=RING.indexOf(effP0), tS=RING.indexOf(effP1);
+  var starShift=mod(tS-h0,8);
+  var starByPal={},heavenByPal={};
+  for(var i=0;i<8;i++){
+    var np=RING[mod(i+starShift,8)];
+    starByPal[np]=RING_STARS[i];
+    heavenByPal[np]=earthByPal[RING[i]];
+  }
+  var fuPalace=RING[mod(h0+starShift,8)]; // 值符 lands here
+
+  // ---- rotate gates (八門) ----
+  var gateHome=RING.indexOf(effP0);
+  var gateShift=mod((dun==="yang"?n:-n),8);
+  var gateByPal={};
+  for(i=0;i<8;i++){ gateByPal[RING[mod(i+gateShift,8)]]=RING_GATES[i]; }
+  var shiPalace=RING[mod(gateHome+gateShift,8)]; // 值使 lands here
+
+  // ---- deities (八神) ----
+  var anchor=RING.indexOf(fuPalace);
+  var dstep=(dun==="yang")?1:-1;
+  var deityByPal={};
+  for(var j=0;j<8;j++){ deityByPal[RING[mod(anchor+dstep*j,8)]]=DEITIES_ORDER[j]; }
+
+  return {
+    Y:Y,M:M,D:D,H:H,Min:Min,
+    dIdx:dIdx,dStem:dStem,dBranch:dBranch,hIdx:hIdx,hStem:hStem,hBranch:hBranch,
+    term:term,yuan:yuan,ju:ju,dun:dun,
+    xunHead:xunHead,xunYiStemIdx:xunYiStemIdx,
+    earthByPal:earthByPal,heavenByPal:heavenByPal,starByPal:starByPal,gateByPal:gateByPal,deityByPal:deityByPal,
+    fuStar:fuStar,shiGate:shiGate,fuPalace:fuPalace,shiPalace:shiPalace,P0:P0
+  };
+}
+
+/* ---------- auspicious scoring ---------- */
+function scorePalace(p,B){
+  var g=B.gateByPal[p], s=B.starByPal[p], de=B.deityByPal[p];
+  var hs=B.heavenByPal[p], es=B.earthByPal[p];
+  var sc=0, marv=[];
+  var gl=GATES[g].luck;
+  sc += gl==="ji"?3 : gl==="ping"?1 : gl==="bi"?0.5 : 0;
+  [hs,es].forEach(function(st){ if(st!=null&&MARVELS.indexOf(STEMS[st])>=0){ sc+=2; marv.push(STEMS[st]); } });
+  sc += STARS[s].luck==="ji"?1 : STARS[s].luck==="ping"?0 : -0.5;
+  sc += DEITIES[de].luck==="ji"?1 : -1;
+  return {p:p,score:sc,gate:g,star:s,deity:de,hs:hs,es:es,marv:marv,gateJi:(gl==="ji")};
+}
+
+/* ---------- render ---------- */
+function stemHTML(idx){
+  if(idx==null) return "";
+  var ch=STEMS[idx], mv=MARVELS.indexOf(ch)>=0?" marvel":"";
+  return '<span class="s-zh'+mv+'">'+ch+'</span>';
+}
+function renderPlate(B){
+  var plate=$("#plate");
+  var html="";
+  for(var gi=0;gi<9;gi++){
+    var p=GRID_ORDER[gi], P=PALACE[p];
+    if(p===5){
+      var es=B.earthByPal[5];
+      var mv=(es!=null&&MARVELS.indexOf(STEMS[es])>=0)?" marvel":"";
+      html+='<div class="cell center" style="--i:'+gi+'">'
+        +'<div class="c-core">'
+        +'<div class="cc-rose"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(154,122,52,.5)" stroke-width="1"/><circle cx="20" cy="20" r="11" fill="none" stroke="rgba(47,109,94,.5)" stroke-width="1"/><path d="M20 2V38M2 20H38M7 7L33 33M33 7L7 33" stroke="rgba(154,122,52,.35)" stroke-width="1"/></svg></div>'
+        +'<div class="cc-ls">中 五</div>'
+        +'<div class="cc-stem'+mv+'">'+(es!=null?STEMS[es]:"")+'</div>'
+        +'<div class="cc-note">天禽寄坤 · pivot</div>'
+        +'</div>'
+        +'<div class="c-num">5</div>'
+        +'</div>';
+      continue;
+    }
+    var g=B.gateByPal[p], s=B.starByPal[p], de=B.deityByPal[p];
+    var gm=GATES[g], sm=STARS[s], dm=DEITIES[de];
+    var isAusp=(THREE_JI.indexOf(g)>=0);
+    var isFu=(p===B.fuPalace), isShi=(p===B.shiPalace);
+    var deClass=dm.luck==="ji"?"j-ji":dm.luck==="xiong"?"j-xiong":"";
+    var gClass=gm.luck==="ji"?"g-ji":gm.luck==="xiong"?"g-xiong":gm.luck==="ping"?"g-ping":"g-bi";
+    html+='<div class="cell '+(isAusp?"ausp":"")+'" style="--i:'+gi+'">';
+    if(isFu) html+='<span class="badge fu"><span class="zh">值符</span></span>';
+    if(isShi) html+='<span class="badge shi"><span class="zh">值使</span></span>';
+    html+='<div class="c-deity '+deClass+'">'+de+'</div>';
+    html+='<div class="c-dir"><b>'+P.tg+'</b>'+P.dir+'</div>';
+    html+='<div class="c-star">'+s+'</div>';
+    html+='<div class="c-gate '+gClass+'"><div class="g-zh">'+g+'</div><div class="g-en">'+gm.py+' · '+gm.en+'</div></div>';
+    html+='<div class="c-hstem"><span class="stem"><span class="s-lab">天</span>'+stemHTML(B.heavenByPal[p])+'</span></div>';
+    html+='<div class="c-estem"><span class="stem"><span class="s-lab">地</span>'+stemHTML(B.earthByPal[p])+'</span></div>';
+    html+='<div class="c-num">'+p+'</div>';
+    html+='</div>';
+  }
+  plate.innerHTML=html;
+  // stagger entrance
+  if(!noAnim){
+    plate.classList.remove("in");
+    var cells=plate.querySelectorAll(".cell");
+    cells.forEach(function(c,idx){ c.style.animationDelay=(idx*0.045)+"s"; });
+    void plate.offsetWidth;
+    plate.classList.add("in");
+  }else{
+    plate.classList.add("in");
+  }
+}
+
+function fmtGanzhi(idx){ return STEMS[idx%10]+BRANCHES[idx%12]; }
+function hourRange(b){
+  var start=(b*2+23)%24;
+  var end=(start+2)%24;
+  function pad(n){return (n<10?"0":"")+n;}
+  return pad(start)+":00–"+pad(end)+":00";
+}
+
+function renderCaption(B){
+  var cap=$("#plateCap");
+  var dunZh=B.dun==="yang"?"陽遁":"陰遁";
+  cap.innerHTML=
+    '<span class="zh">'+B.term.zh+'</span> <b>'+B.term.py+'</b>'
+    +'<span class="sep">·</span>'
+    +'<span class="zh">'+dunZh+' '+B.ju+'局</span> <b>'+(B.dun==="yang"?"Yáng":"Yīn")+' Dùn · Jú '+B.ju+'</b>'
+    +'<span class="sep">·</span>'
+    +'<span class="zh">'+YUAN_ZH[B.yuan]+'</span>'
+    +'<span class="sep">·</span>'
+    +'<b>值符</b> <span class="zh">'+B.fuStar+'</span>'
+    +'<span class="sep">·</span>'
+    +'<b>值使</b> <span class="zh">'+B.shiGate+'門</span>';
+}
+
+function renderMoment(B){
+  var m=$("#moment");
+  var dun=B.dun==="yang"?"陽遁":"陰遁";
+  m.innerHTML=
+    '<span class="m"><b>'+B.Y+'.'+("0"+B.M).slice(-2)+'.'+("0"+B.D).slice(-2)+'</b> '+("0"+B.H).slice(-2)+':'+("0"+B.Min).slice(-2)+'</span>'
+    +'<span class="sep">/</span>'
+    +'<span class="m">DAY <span class="zh">'+fmtGanzhi(B.dIdx)+'</span></span>'
+    +'<span class="sep">/</span>'
+    +'<span class="m">HOUR <span class="zh">'+fmtGanzhi(B.hIdx)+'</span> ('+BRANCH_PY[B.hBranch]+')</span>'
+    +'<span class="sep">/</span>'
+    +'<span class="m"><span class="zh">'+B.term.zh+'</span> '+dun+' '+B.ju+'局</span>';
+}
+
+function renderReading(B,q){
+  // score outer palaces
+  var scores=[];
+  for(var p=1;p<=9;p++){ if(p!==5) scores.push(scorePalace(p,B)); }
+  scores.sort(function(a,b){ return b.score-a.score; });
+  var best=null;
+  for(var i=0;i<scores.length;i++){ if(scores[i].gateJi){ best=scores[i]; break; } }
+  if(!best) best=scores[0];
+
+  var P=PALACE[best.p], gm=GATES[best.gate], dm=DEITIES[best.deity], sm=STARS[best.star];
+  var dirWord=DIR_FULL[P.dir]||P.py;
+
+  // verdict
+  $("#rdVerdict").innerHTML=
+    '<span class="dir-zh">'+P.dirZh+'</span>'
+    +'<span class="dir-en">'+dirWord+'</span>'
+    +'<span class="compass">'+P.dir+' · <span style="font-family:var(--serif-sc)">'+P.tg+'宮</span></span>';
+
+  // tag
+  var marvTxt=best.marv.length? "with the "+best.marv.join(" & ")+" marvel"+(best.marv.length>1?"s":"") : "";
+  $("#rdTag").textContent=(best.gateJi?"AUSPICIOUS GATE":"BEST AVAILABLE")+" · "+best.gate+"門 "+gm.py+" ("+gm.en+")"+(marvTxt?" · "+best.marv.join("")+"奇":"");
+
+  // body
+  var qLine = q ? 'For <b>“'+escapeHTML(q)+'”</b> — ' : '';
+  var deityClause = dm.luck==="ji" ? ', shielded by the <span class="zh">'+best.deity+'</span> ('+dm.en+')' :
+                    ', though the <span class="zh">'+best.deity+'</span> ('+dm.en+') watches — move with care';
+  var marvClause = best.marv.length ? ' It carries the <span class="zh">'+best.marv.join("")+'</span> marvel'+(best.marv.length>1?"s":"")+', a bright omen' : ' No marvel rests here, but the gate itself is open';
+  $("#rdBody").innerHTML=
+    qLine+'the board opens toward the <b>'+dirWord.toLowerCase()+'</b> — the <span class="zh">'+P.tg+'</span> palace, where the <b>'+best.gate+'門</b> <span class="zh">'+gm.py+'</span> gate stands open for <b>'+gm.use+'</b>'+deityClause+'.'+marvClause+', over the <span class="zh">'+best.star+'</span> star.';
+
+  // three gates row
+  var g3="";
+  THREE_JI.forEach(function(gname){
+    var found=null;
+    for(var p=1;p<=9;p++){ if(p!==5&&B.gateByPal[p]===gname){ found=p; break; } }
+    if(found){
+      var PP=PALACE[found];
+      g3+='<div class="g3"><div class="g3-zh">'+gname+'</div><div class="g3-dir">'+PP.dir+' · '+PP.dirZh+'</div><div class="g3-en">'+GATES[gname].en+'</div></div>';
+    }else{
+      g3+='<div class="g3 off"><div class="g3-zh">'+gname+'</div><div class="g3-dir">—</div><div class="g3-en">'+GATES[gname].en+'</div></div>';
+    }
+  });
+  $("#rdGates3").innerHTML=g3;
+
+  // when
+  var sg=B.shiGate, sgm=GATES[sg], shiP=PALACE[B.shiPalace];
+  var shiJi=(THREE_JI.indexOf(sg)>=0);
+  var whenNote = shiJi
+    ? 'an open current — the hour itself favours action.'
+    : 'a guarded current — for '+BRANCHES[B.hBranch]+'時 the ambient gate counsels small, careful moves. Face the '+dirWord.toLowerCase()+' for support.';
+  $("#rdWhen").innerHTML=
+    '<span class="lbl">When to act</span>'
+    +'This is the hour of <b>'+BRANCHES[B.hBranch]+'時</b> '+BRANCH_PY[B.hBranch]+' ('+hourRange(B.hBranch)+'). Its duty-gate <span class="zh">值使</span> is the <b>'+sg+'門</b> <span class="zh">'+sgm.py+'</span>, seated in the '+(DIR_FULL[shiP.dir]||shiP.py).toLowerCase()+' — '+whenNote;
+
+  $("#reading").classList.add("on");
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+/* ---------- static reference renders ---------- */
+function renderLuoshu(){
+  var g=$("#luoshu"),html="";
+  GRID_ORDER.forEach(function(p){
+    var P=PALACE[p];
+    html+='<div class="ls-cell'+(p===5?" mid":"")+'"><div class="num">'+p+'</div><div class="tg">'+P.tg+'</div><div class="dir">'+P.dir+(p!==5?' · '+P.dirZh:'')+'</div></div>';
+  });
+  g.innerHTML=html;
+}
+function renderGateGrid(){
+  var order=["開","休","生","景","杜","傷","驚","死"];
+  var g=$("#gateGrid"),html="";
+  order.forEach(function(name){
+    var gm=GATES[name];
+    var cls=gm.luck;
+    var lk=gm.luck==="ji"?"吉 · auspicious":gm.luck==="xiong"?"凶 · avoid":gm.luck==="ping"?"平 · neutral":"閉 · closed";
+    html+='<div class="gate-card '+cls+'"><span class="glk">'+lk+'</span><div class="gz">'+name+'</div><div class="gpy">'+gm.py+'</div><div class="gen">'+gm.en+' Gate</div><div class="guse">'+gm.use+'</div></div>';
+  });
+  g.innerHTML=html;
+}
+function renderRose(){
+  var t=$("#roseTicks"),tri=$("#roseTri"),cx=200,cy=200;
+  var s="";
+  for(var i=0;i<24;i++){
+    var a=(i/24)*Math.PI*2-Math.PI/2;
+    var r1=170,r2=(i%3===0)?150:160;
+    s+='<line x1="'+(cx+r1*Math.cos(a)).toFixed(1)+'" y1="'+(cy+r1*Math.sin(a)).toFixed(1)+'" x2="'+(cx+r2*Math.cos(a)).toFixed(1)+'" y2="'+(cy+r2*Math.sin(a)).toFixed(1)+'" stroke="rgba(199,161,85,'+(i%3===0?".28":".16")+')" stroke-width="1"/>';
+  }
+  t.innerHTML=s;
+  var tg=["坎","艮","震","巽","離","坤","兌","乾"],ts="";
+  for(i=0;i<8;i++){
+    var ang=(i/8)*Math.PI*2-Math.PI/2, rr=92;
+    ts+='<text x="'+(cx+rr*Math.cos(ang)).toFixed(1)+'" y="'+(cy+rr*Math.sin(ang)+4).toFixed(1)+'" text-anchor="middle" font-family="Noto Serif SC,serif" font-size="13" fill="rgba(199,161,85,.34)">'+tg[i]+'</text>';
+  }
+  tri.innerHTML=ts;
+}
+
+/* ---------- controls / state ---------- */
+var current=null;
+function toLocalInput(dt){
+  function pad(n){return (n<10?"0":"")+n;}
+  return dt.getFullYear()+"-"+pad(dt.getMonth()+1)+"-"+pad(dt.getDate())+"T"+pad(dt.getHours())+":"+pad(dt.getMinutes());
+}
+function cast(dt,q,scroll){
+  current={dt:dt,q:q};
+  var B=compute(dt);
+  renderPlate(B);
+  renderCaption(B);
+  renderMoment(B);
+  renderReading(B,q);
+}
+function readInputs(){
+  var v=$("#dtInput").value;
+  var dt=v?new Date(v):new Date();
+  if(isNaN(dt.getTime())) dt=new Date();
+  return {dt:dt,q:$("#qInput").value.trim()};
+}
+
+/* init */
+renderLuoshu(); renderGateGrid(); renderRose();
+
+(function boot(){
+  var params=new URLSearchParams(location.search);
+  var dtParam=params.get("datetime"), qParam=params.get("q")||params.get("question")||"";
+  var dt;
+  if(dtParam){ dt=new Date(dtParam); if(isNaN(dt.getTime())) dt=new Date(); }
+  else dt=new Date();
+  $("#dtInput").value=toLocalInput(dt);
+  if(qParam) $("#qInput").value=qParam;
+  cast(dt,qParam);
+})();
+
+$("#castBtn").addEventListener("click",function(){
+  var v=readInputs();
+  cast(v.dt,v.q,true);
+});
+$("#nowBtn").addEventListener("click",function(){
+  var now=new Date();
+  $("#dtInput").value=toLocalInput(now);
+  cast(now,$("#qInput").value.trim());
+});
+$("#qInput").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var v=readInputs(); cast(v.dt,v.q,true); } });
+
+/* ---- scroll progress ---- */
+var prog=$("#prog"),ticking=false;
+window.addEventListener("scroll",function(){
+  if(ticking) return; ticking=true;
+  requestAnimationFrame(function(){
+    var h=document.documentElement;
+    prog.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight||1))*100)+"%";
+    ticking=false;
+  });
+},{passive:true});
+
+/* ---- cursor (fine pointers, motion allowed) ---- */
+if(window.matchMedia&&window.matchMedia("(pointer:fine)").matches&&!noAnim){
+  var cur=$("#cur"); document.body.classList.add("cur-live");
+  var cx=0,cy=0,tx=0,ty=0,raf=null;
+  function loop(){
+    cx+=(tx-cx)*.28; cy+=(ty-cy)*.28;
+    cur.style.transform="translate("+cx+"px,"+cy+"px) translate(-50%,-50%)";
+    if(Math.abs(tx-cx)>.1||Math.abs(ty-cy)>.1){ raf=requestAnimationFrame(loop); } else { raf=null; }
+  }
+  window.addEventListener("mousemove",function(e){
+    tx=e.clientX; ty=e.clientY; cur.classList.add("on");
+    if(!raf) raf=requestAnimationFrame(loop);
+  });
+  document.addEventListener("mouseover",function(e){
+    cur.classList.toggle("hov",!!e.target.closest("button,a,input,select,.ls-cell,.gate-card,.cell"));
+  });
+  document.addEventListener("visibilitychange",function(){
+    if(document.hidden&&raf){ cancelAnimationFrame(raf); raf=null; }
+  });
+}
+</script>
+</body>
+</html>

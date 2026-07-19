@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>梅花易數 · PLUM BLOSSOM — divination from anything</title>
+<meta name="description" content="Méi Huā Yì Shù — the plum-blossom oracle. Turn anything into a hexagram: this very moment, two numbers, a single word, or one spontaneous tap. Read the ti/yong self-and-situation and the five-element verdict in seconds.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="梅花易數 · PLUM BLOSSOM — divination from anything">
+<meta property="og:description" content="Turn anything into a hexagram — a moment, two numbers, a word, a tap. Read the ti/yong self-and-situation and the five-element verdict in seconds.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="梅花易數 · PLUM BLOSSOM">
+<meta name="twitter:description" content="The plum-blossom number oracle. Anything becomes a hexagram.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%23C1352A'><circle cx='50' cy='28' r='15'/><circle cx='71' cy='43' r='15'/><circle cx='63' cy='68' r='15'/><circle cx='37' cy='68' r='15'/><circle cx='29' cy='43' r='15'/></g><circle cx='50' cy='50' r='8.5' fill='%23C6A15A'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F1E8;
+  --paper-2:#EFE9DA;
+  --paper-3:#E7DFCC;
+  --paper-in:#FBF8F1;
+  --ink:#22201B;
+  --ink-2:#3A362E;
+  --ink-3:#5C564B;
+  --ink-f:#8A8172;
+  --line:rgba(34,32,27,.14);
+  --line-2:rgba(34,32,27,.08);
+  --jade:#2E6B5E;
+  --jade-l:#3F8B79;
+  --jade-f:rgba(46,107,94,.12);
+  --cinnabar:#C1352A;
+  --cinnabar-l:#D9573F;
+  --cinnabar-f:rgba(193,53,42,.10);
+  --brass:#A8813C;
+  --brass-l:#C6A15A;
+  --brass-f:rgba(168,129,60,.14);
+  --wood:#4E7C59;
+  --fire:#C1352A;
+  --earth:#A8813C;
+  --metal:#9A8862;
+  --water:#3C6478;
+  --serif:"Spectral",Georgia,serif;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sc:"Noto Serif SC",serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-o:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--cinnabar);color:#FBF3EC}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:var(--paper-2)}
+::-webkit-scrollbar-thumb{background:var(--paper-3);border-radius:6px;border:2px solid var(--paper-2)}
+::-webkit-scrollbar-thumb:hover{background:#D6CBB3}
+:focus{outline:none}
+:focus-visible{outline:1.5px solid var(--cinnabar);outline-offset:3px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input{font:inherit}
+a{color:var(--jade);text-decoration:none}
+h1,h2,h3{font-weight:500;line-height:1.05}
+
+/* ---------- atmosphere ---------- */
+.bg{position:fixed;inset:0;z-index:-3;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -6%, #FBF7EE 0%, var(--paper) 44%, #EFE8D8 100%);}
+.bg::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 84% 8%, rgba(193,53,42,.05), transparent 60%),
+             radial-gradient(ellipse 55% 45% at 10% 96%, rgba(46,107,94,.05), transparent 60%);}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.12 0 0 0 0 0.10 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:59;
+  background:radial-gradient(ellipse 96% 90% at 50% 42%,transparent 60%,rgba(90,74,44,.09) 100%)}
+
+/* petals */
+.petals{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.petal{position:absolute;top:-8vh;opacity:0;will-change:transform,opacity;
+  animation:fall linear infinite}
+.petal svg{display:block}
+@keyframes fall{
+  0%{transform:translate3d(0,-10vh,0) rotate(0deg);opacity:0}
+  8%{opacity:.5}
+  92%{opacity:.42}
+  100%{transform:translate3d(var(--drift,40px),112vh,0) rotate(var(--spin,320deg));opacity:0}
+}
+
+/* cursor */
+.cur{position:fixed;left:0;top:0;width:8px;height:8px;border-radius:50%;background:var(--cinnabar);
+  z-index:300;pointer-events:none;opacity:0;transform:translate(-50%,-50%);mix-blend-mode:multiply;
+  transition:width .28s var(--ease),height .28s var(--ease),opacity .3s,background .25s}
+.cur.on{opacity:.85}
+.cur.hov{width:30px;height:30px;background:transparent;border:1.5px solid var(--cinnabar);opacity:.6}
+@media(pointer:fine){body.cur-live,body.cur-live a,body.cur-live button,body.cur-live input{cursor:none}}
+
+/* progress */
+.prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+  background:linear-gradient(90deg,var(--cinnabar),var(--brass));box-shadow:0 0 8px rgba(193,53,42,.3)}
+
+/* back-link */
+.backlink{position:fixed;top:18px;left:22px;z-index:200;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink-f);padding:8px 4px;transition:color .4s var(--ease)}
+.backlink .mk{font-family:var(--sc);font-size:15px;letter-spacing:0;color:var(--cinnabar);opacity:.72;transition:opacity .4s}
+.backlink:hover{color:var(--ink-2)}
+.backlink:hover .mk{opacity:1}
+
+/* ---------- layout ---------- */
+section{position:relative}
+.wrap{max-width:1120px;margin:0 auto;padding:0 clamp(20px,5vw,56px)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--jade)}
+.kicker .dot{color:var(--brass);margin:0 .5em}
+
+/* ---------- ORACLE / hero ---------- */
+#oracle{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(72px,10vh,110px) 0 clamp(40px,6vh,72px);overflow:hidden}
+.hero-motif{position:absolute;right:-6vw;top:-4vh;width:min(60vh,560px);height:min(60vh,560px);
+  pointer-events:none;z-index:0;opacity:.9}
+.hero-motif .branch{opacity:.5}
+.altar{position:relative;z-index:2;width:100%;max-width:940px;margin:0 auto;text-align:center;
+  display:flex;flex-direction:column;align-items:center}
+.reveal{opacity:0;transform:translateY(16px)}
+.reveal.in{opacity:1;transform:none;transition:opacity 1s var(--ease-o),transform 1s var(--ease-o)}
+.altar .kicker{margin-bottom:clamp(16px,2.4vh,26px)}
+.title-sc{position:relative;font-family:var(--sc);font-weight:900;
+  font-size:clamp(64px,15vw,168px);letter-spacing:.02em;line-height:.86;color:var(--ink);
+  display:inline-flex;align-items:flex-start}
+.title-sc .mei{color:var(--cinnabar);position:relative}
+.title-sc .mei::after{content:"";position:absolute;right:-.06em;top:.04em;width:.16em;height:.16em;border-radius:50%;
+  background:var(--brass-l);opacity:.7}
+.title-en{margin-top:clamp(16px,2.6vh,26px);font-family:var(--display);font-style:italic;font-weight:500;
+  font-size:clamp(20px,2.9vw,32px);color:var(--ink-2);letter-spacing:.01em;line-height:1.24}
+.title-en em{color:var(--cinnabar);font-style:italic}
+.lede{margin-top:14px;max-width:52ch;font-size:clamp(13.5px,1.4vw,15.5px);color:var(--ink-3);font-weight:400;line-height:1.66}
+.lede b{color:var(--jade);font-weight:500}
+
+/* source picker */
+.sourcebar{margin-top:clamp(28px,4vh,44px);display:inline-flex;flex-wrap:wrap;justify-content:center;gap:6px;
+  background:var(--paper-in);border:1px solid var(--line);border-radius:3px;padding:6px;
+  box-shadow:0 12px 34px -22px rgba(60,48,24,.4)}
+.src-tab{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:12px clamp(14px,2.4vw,26px);border-radius:2px;color:var(--ink-3);
+  transition:color .35s var(--ease),background .35s var(--ease)}
+.src-tab .zh{font-family:var(--sc);font-size:16px;font-weight:500;letter-spacing:.05em}
+.src-tab .en{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-f);transition:color .35s}
+.src-tab:hover{color:var(--ink)}
+.src-tab.act{background:var(--ink);color:var(--paper-in)}
+.src-tab.act .en{color:var(--brass-l)}
+.src-tab.act .zh{color:var(--paper-in)}
+
+/* source panels */
+.panel-host{margin-top:clamp(22px,3vh,32px);width:min(600px,92vw);min-height:118px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.panel{display:none;flex-direction:column;align-items:center;gap:14px;width:100%;
+  opacity:0;transform:translateY(8px)}
+.panel.on{display:flex;animation:panelIn .5s var(--ease-o) forwards}
+@keyframes panelIn{to{opacity:1;transform:none}}
+.p-hint{font-family:var(--serif);font-style:italic;font-size:clamp(13.5px,1.5vw,15.5px);color:var(--ink-3);max-width:46ch;line-height:1.5}
+
+/* number inputs */
+.num-row{display:flex;align-items:flex-end;gap:clamp(14px,3vw,30px);flex-wrap:wrap;justify-content:center}
+.num-field{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px}
+.num-field label{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-f)}
+.num-field label b{color:var(--jade);font-weight:500}
+.num-field input{width:clamp(110px,20vw,150px);background:var(--paper-in);border:1px solid var(--line);border-radius:2px;
+  color:var(--ink);font-family:var(--mono);font-size:clamp(22px,3vw,30px);font-weight:500;
+  padding:12px 10px;text-align:center;letter-spacing:.06em;transition:border-color .35s,background .35s}
+.num-field input:focus{border-color:var(--cinnabar);background:#fff}
+.num-plus{font-family:var(--display);font-size:28px;color:var(--brass);padding-bottom:14px}
+
+/* word */
+.word-field{width:min(440px,88vw)}
+.word-field input{width:100%;background:var(--paper-in);border:1px solid var(--line);border-radius:2px;
+  color:var(--ink);font-family:var(--sc);font-size:clamp(20px,2.6vw,26px);font-weight:500;
+  padding:13px 16px;text-align:center;transition:border-color .35s,background .35s}
+.word-field input::placeholder{color:var(--ink-f);font-weight:400}
+.word-field input:focus{border-color:var(--cinnabar);background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
+.chip{font-family:var(--sc);font-size:18px;font-weight:500;color:var(--ink-2);
+  border:1px solid var(--line);border-radius:2px;padding:6px 13px;background:var(--paper-in);
+  transition:border-color .3s,color .3s,transform .3s var(--ease)}
+.chip:hover{border-color:var(--cinnabar);color:var(--cinnabar);transform:translateY(-2px)}
+
+/* moment */
+.moment{display:flex;flex-direction:column;align-items:center;gap:12px}
+.moment-cols{display:flex;gap:clamp(12px,3vw,30px);align-items:flex-end}
+.mcol{display:flex;flex-direction:column;align-items:center;gap:5px}
+.mcol .zh{font-family:var(--sc);font-size:clamp(26px,3.4vw,34px);font-weight:600;color:var(--ink);line-height:1}
+.mcol .zh b{color:var(--cinnabar);font-weight:600}
+.mcol .lb{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f)}
+.mcol .nv{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.05em}
+
+/* tap */
+.tap-zone{position:relative;width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);background:var(--paper-in);transition:transform .4s var(--ease),border-color .35s}
+.tap-zone svg{width:66px;height:66px;transition:transform .5s var(--ease)}
+.tap-zone .pulse{position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--cinnabar);opacity:0}
+.tap-zone:hover{border-color:var(--cinnabar);transform:scale(1.04)}
+.tap-zone:hover svg{transform:rotate(18deg) scale(1.05)}
+.tap-zone:hover .pulse{animation:pulse 1.8s var(--ease) infinite}
+@keyframes pulse{0%{opacity:.5;transform:scale(1)}100%{opacity:0;transform:scale(1.28)}}
+
+/* cast button */
+.controls{margin-top:clamp(24px,3.4vh,36px);display:flex;flex-direction:column;align-items:center;gap:15px}
+.btn-cast{position:relative;font-family:var(--sc);font-weight:500;font-size:16px;letter-spacing:.14em;
+  color:var(--paper-in);padding:15px 46px;border-radius:2px;overflow:hidden;
+  background:var(--cinnabar);
+  box-shadow:0 12px 30px -14px rgba(193,53,42,.6);
+  transition:transform .32s var(--ease),box-shadow .32s,background .32s}
+.btn-cast .en{font-family:var(--mono);font-size:9.5px;letter-spacing:.28em;margin-left:.7em;opacity:.72}
+.btn-cast:hover{transform:translateY(-2px);background:var(--cinnabar-l);box-shadow:0 18px 40px -14px rgba(193,53,42,.7)}
+.btn-cast:active{transform:translateY(0)}
+.btn-cast:disabled{opacity:.5;cursor:default;filter:grayscale(.3)}
+.btn-cast .glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 130%,rgba(255,255,255,.5),transparent 60%);opacity:0;transition:opacity .3s}
+.btn-cast:hover .glow{opacity:.4}
+.recast{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f);
+  padding:7px 4px;border-bottom:1px solid transparent;transition:color .3s,border-color .3s}
+.recast:hover{color:var(--cinnabar);border-color:var(--cinnabar-f)}
+
+.cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-f);
+  transition:opacity .6s}
+.cue .ln{width:1px;height:32px;background:linear-gradient(var(--brass),transparent);animation:cueMove 2.6s var(--ease) infinite}
+@keyframes cueMove{0%{transform:scaleY(.3);transform-origin:top;opacity:0}40%{opacity:1}100%{transform:scaleY(1);transform-origin:top;opacity:0}}
+
+/* ---------- READING ---------- */
+#reading{max-height:0;overflow:hidden;opacity:0;transition:opacity .7s var(--ease)}
+#reading.open{max-height:none;opacity:1;padding:clamp(46px,7vh,90px) 0 clamp(30px,5vh,60px)}
+.rd-inner{max-width:980px;margin:0 auto;padding:0 clamp(20px,5vw,56px)}
+.rd-rule{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--line) 24%,var(--line) 76%,transparent);margin-bottom:clamp(34px,5vh,54px)}
+.rd-top{text-align:center;margin-bottom:clamp(26px,3.6vh,38px)}
+.rd-top .k{font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--brass)}
+.rd-top .src{font-family:var(--display);font-style:italic;font-size:clamp(16px,2vw,20px);color:var(--ink-3);margin-top:8px}
+
+/* verdict banner */
+.verdict{position:relative;border:1px solid var(--line);border-radius:4px;overflow:hidden;
+  background:var(--paper-in);padding:clamp(22px,3.4vw,34px);text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:clamp(30px,4.4vh,46px)}
+.verdict::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+.verdict.good::before{background:var(--jade)}
+.verdict.fair::before{background:var(--brass)}
+.verdict.warn::before{background:var(--cinnabar)}
+.v-rel{display:flex;align-items:center;gap:clamp(14px,2.6vw,24px);flex-wrap:wrap;justify-content:center}
+.v-node{display:flex;flex-direction:column;align-items:center;gap:3px}
+.v-node .role{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase}
+.v-node .el{font-family:var(--sc);font-size:clamp(30px,4.4vw,42px);font-weight:600;line-height:1}
+.v-node .tg{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-f);text-transform:uppercase}
+.v-node.ti .role{color:var(--jade)}
+.v-node.ti .el{color:var(--jade)}
+.v-node.yong .role{color:var(--cinnabar)}
+.v-node.yong .el{color:var(--cinnabar)}
+.v-op{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--sc);color:var(--ink-2)}
+.v-op .rel{font-size:clamp(22px,3vw,30px);font-weight:600;letter-spacing:.08em}
+.v-op .rel.sheng{color:var(--jade)}
+.v-op .rel.ke{color:var(--cinnabar)}
+.v-op .rel.he{color:var(--brass)}
+.v-op .arrow{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-f)}
+.v-title{font-family:var(--sc);font-size:clamp(18px,2.2vw,23px);font-weight:600;color:var(--ink);letter-spacing:.04em}
+.v-en{font-family:var(--display);font-style:italic;font-size:clamp(18px,2.3vw,25px);color:var(--ink-2);line-height:1.34;max-width:40ch}
+.v-note{font-family:var(--serif);font-size:clamp(13px,1.5vw,15px);color:var(--ink-3);max-width:52ch;line-height:1.6}
+.v-note b{color:var(--jade);font-weight:500}
+
+/* triptych */
+.triptych{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:start;gap:clamp(8px,1.6vw,20px);
+  margin-bottom:clamp(30px,4.6vh,48px)}
+.tp-col{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.tp-lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass)}
+.tp-lbl b{display:block;font-family:var(--sc);font-size:15px;letter-spacing:.08em;color:var(--ink-2);margin-bottom:3px;font-weight:500}
+.tp-name{font-family:var(--sc);font-size:clamp(19px,2.4vw,26px);font-weight:600;color:var(--ink);line-height:1.1}
+.tp-name .py{display:block;font-family:var(--display);font-style:italic;font-size:.62em;color:var(--brass);font-weight:500;margin-top:3px;letter-spacing:0}
+.tp-en{font-family:var(--serif);font-size:clamp(12px,1.4vw,14px);color:var(--ink-3);font-style:italic}
+.tp-arrow{align-self:center;padding-top:26px;font-family:var(--mono);font-size:16px;color:var(--brass);display:flex;flex-direction:column;align-items:center;gap:5px}
+.tp-arrow .t{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-f)}
+
+/* hexagram figure */
+.fig{display:flex;flex-direction:column;gap:3px;width:clamp(96px,13vw,128px)}
+.fig .tri{position:relative;display:flex;flex-direction:column;gap:6px;padding:8px 0;border-radius:3px}
+.fig .tri.role-ti{background:var(--jade-f)}
+.fig .tri.role-yong{background:var(--cinnabar-f)}
+.fig .tri-tag{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;text-align:left;line-height:1.3}
+.fig .tri-tag .r{font-weight:500}
+.fig .tri.role-ti .tri-tag .r{color:var(--jade)}
+.fig .tri.role-yong .tri-tag .r{color:var(--cinnabar)}
+.fig .tri-tag .g{font-family:var(--sc);font-size:12px;letter-spacing:0;color:var(--ink-2);display:block}
+.fig .row{height:clamp(9px,1.2vw,12px);display:flex;align-items:center;justify-content:center;gap:15%;position:relative}
+.fig .seg{height:100%;border-radius:2px;background:var(--ink-2);flex:1;
+  transform:scaleX(0);transform-origin:center;animation:brush .6s var(--ease-o) forwards}
+.fig .row.yin .seg{flex:0 0 40%}
+@keyframes brush{to{transform:scaleX(1)}}
+.fig .row.mv .seg{background:var(--cinnabar)}
+.fig .row.mv::after{content:"";position:absolute;left:calc(100% + 5px);top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-radius:50%;background:var(--cinnabar);box-shadow:0 0 0 3px var(--cinnabar-f)}
+.fig.mini{width:clamp(78px,10vw,104px)}
+.fig.mini .tri.role-ti,.fig.mini .tri.role-yong{background:none;padding:6px 0}
+
+/* imagery + five element */
+.rd-lower{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,44px);align-items:center;
+  border-top:1px solid var(--line);padding-top:clamp(30px,4.4vh,44px)}
+.wux{display:flex;flex-direction:column;align-items:center;gap:12px}
+.wux .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--brass)}
+.wux svg{width:min(240px,72vw);height:auto}
+.imagery{display:flex;flex-direction:column;gap:16px}
+.img-block{display:flex;align-items:center;gap:16px}
+.img-block .stack{display:flex;flex-direction:column;gap:2px;flex:none}
+.img-block .stack .u,.img-block .stack .l{font-family:var(--sc);font-size:clamp(24px,3vw,32px);font-weight:600;line-height:1.1}
+.img-block .stack .u{color:var(--ink)}
+.img-block .stack .l{color:var(--ink-2)}
+.img-block .stack .div{height:1px;background:var(--line);margin:4px 0}
+.img-block .txt .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-f)}
+.img-block .txt .zh{font-family:var(--sc);font-size:clamp(16px,2vw,20px);font-weight:500;color:var(--ink);margin-top:2px}
+.img-block .txt .en{font-family:var(--display);font-style:italic;font-size:clamp(15px,1.9vw,19px);color:var(--ink-3);margin-top:2px}
+.poem{font-family:var(--display);font-style:italic;font-size:clamp(17px,2.2vw,22px);color:var(--ink-2);line-height:1.4;
+  border-left:2px solid var(--cinnabar-f);padding-left:16px}
+
+/* ---------- sections ---------- */
+.sec-head{text-align:center;margin-bottom:clamp(40px,6vh,64px)}
+.sec-head .kicker{margin-bottom:14px;display:block}
+.sec-head h2{font-family:var(--sc);font-weight:600;font-size:clamp(30px,5vw,50px);color:var(--ink);letter-spacing:.03em}
+.sec-head h2 .en{display:block;font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(17px,2.2vw,25px);color:var(--brass);margin-top:9px;letter-spacing:.01em}
+.sec-head p{max-width:56ch;margin:15px auto 0;font-size:clamp(13.5px,1.4vw,15px);color:var(--ink-3);line-height:1.66}
+
+/* eight trigrams */
+#trigrams{padding:clamp(70px,11vh,128px) 0}
+.tg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.4vw,18px)}
+.tg-card{position:relative;border:1px solid var(--line);border-radius:4px;padding:clamp(18px,2.4vw,28px) clamp(12px,1.6vw,20px);
+  text-align:center;background:var(--paper-in);transition:border-color .35s,transform .35s var(--ease),box-shadow .35s}
+.tg-card:hover{border-color:var(--cinnabar-f);transform:translateY(-4px);box-shadow:0 18px 36px -22px rgba(60,48,24,.5)}
+.tg-card .no{position:absolute;top:11px;left:13px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--brass)}
+.tg-card .sym{font-size:clamp(30px,4vw,44px);color:var(--ink);line-height:1;margin-bottom:9px}
+.tg-card .zh{font-family:var(--sc);font-weight:600;font-size:clamp(22px,2.8vw,30px);color:var(--ink)}
+.tg-card .py{font-family:var(--display);font-style:italic;font-size:clamp(14px,1.7vw,18px);color:var(--brass);margin-top:1px}
+.tg-card .meta{margin-top:11px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tg-card .meta .im{color:var(--ink-2)}
+.tg-card .meta .el{color:var(--jade)}
+
+/* method */
+#method{padding:clamp(70px,11vh,128px) 0;background:linear-gradient(180deg,transparent,rgba(231,223,204,.5) 50%,transparent)}
+.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(20px,3vw,40px);max-width:900px;margin:0 auto}
+.m-col{border:1px solid var(--line);border-radius:4px;padding:clamp(22px,2.8vw,32px);background:var(--paper-in)}
+.m-col .n{font-family:var(--sc);font-weight:600;font-size:clamp(26px,3.4vw,38px);color:var(--cinnabar);line-height:1}
+.m-col h3{font-family:var(--sc);font-weight:600;font-size:clamp(17px,2vw,21px);color:var(--ink);margin:11px 0 10px}
+.m-col h3 .en{font-family:var(--display);font-style:italic;font-weight:500;color:var(--brass);margin-left:.4em;font-size:.9em}
+.m-col p{font-size:clamp(13px,1.4vw,14.5px);color:var(--ink-3);line-height:1.7}
+.m-col p b{color:var(--jade);font-weight:500}
+.m-col p code{font-family:var(--mono);font-size:.86em;color:var(--cinnabar);background:var(--cinnabar-f);padding:1px 6px;border-radius:2px}
+
+/* tiyong explainer */
+#tiyong{padding:clamp(60px,9vh,110px) 0}
+.ty-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,1.2vw,14px);max-width:960px;margin:0 auto}
+.ty-card{border:1px solid var(--line);border-radius:4px;padding:clamp(16px,2vw,22px) clamp(10px,1.3vw,16px);
+  background:var(--paper-in);text-align:center;display:flex;flex-direction:column;gap:9px;transition:transform .35s var(--ease),border-color .35s}
+.ty-card:hover{transform:translateY(-3px)}
+.ty-card.g:hover{border-color:var(--jade)}
+.ty-card.f:hover{border-color:var(--brass)}
+.ty-card.w:hover{border-color:var(--cinnabar)}
+.ty-card .rel{font-family:var(--sc);font-size:clamp(17px,2.2vw,22px);font-weight:600;letter-spacing:.05em}
+.ty-card.g .rel{color:var(--jade)}
+.ty-card.f .rel{color:var(--brass)}
+.ty-card.w .rel{color:var(--cinnabar)}
+.ty-card .verd{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-f)}
+.ty-card .txt{font-family:var(--serif);font-size:clamp(12px,1.4vw,13.5px);color:var(--ink-3);line-height:1.5}
+
+/* origin note */
+.origin{max-width:640px;margin:clamp(44px,6vh,68px) auto 0;text-align:center;
+  border-top:1px solid var(--line);padding-top:clamp(30px,4.4vh,44px)}
+.origin .mark{font-family:var(--sc);font-size:clamp(30px,5vw,46px);color:var(--cinnabar);line-height:1}
+.origin p{font-family:var(--display);font-style:italic;font-size:clamp(16px,2vw,21px);color:var(--ink-2);margin-top:14px;line-height:1.5}
+.origin .who{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f);margin-top:16px}
+
+/* footer */
+footer{padding:clamp(56px,8vh,90px) 0 clamp(40px,6vh,58px);border-top:1px solid var(--line);text-align:center}
+footer .mk{font-family:var(--sc);font-weight:600;font-size:clamp(30px,5vw,46px);color:var(--cinnabar);letter-spacing:.1em}
+footer .lg{font-family:var(--display);font-style:italic;font-size:clamp(17px,2.2vw,23px);color:var(--ink-2);margin-top:12px}
+footer .meta{margin-top:24px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-f);
+  display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+footer .meta a{color:var(--jade);transition:color .3s}
+footer .meta a:hover{color:var(--cinnabar)}
+footer .copy{margin-top:18px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--ink-f);opacity:.75}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,18px);z-index:300;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-in);
+  background:var(--ink);padding:12px 22px;border-radius:2px;opacity:0;pointer-events:none;
+  transition:opacity .4s var(--ease),transform .4s var(--ease);box-shadow:0 12px 30px -14px rgba(0,0,0,.5)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media(max-width:860px){
+  .triptych{grid-template-columns:1fr;gap:20px;justify-items:center}
+  .tp-arrow{padding-top:0;flex-direction:row;gap:8px}
+  .tp-arrow .g{transform:rotate(90deg)}
+  .rd-lower{grid-template-columns:1fr;gap:30px}
+  .tg-grid{grid-template-columns:repeat(2,1fr)}
+  .method-grid{grid-template-columns:1fr}
+  .ty-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .hero-motif{width:min(42vh,340px);right:-14vw;top:-6vh;opacity:.4}
+}
+@media(max-width:520px){
+  .src-tab{padding:10px 12px}
+  .src-tab .en{display:none}
+  .num-plus{display:none}
+  .verdict{padding:20px 16px}
+  .ty-grid{grid-template-columns:1fr}
+  .moment-cols{gap:12px}
+  .hero-motif{width:min(34vh,240px);right:-16vw;top:-7vh;opacity:.3}
+  #oracle{padding-top:clamp(84px,12vh,120px)}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+  .petal{display:none}
+  .fig .seg{transform:none}
+  .reveal{opacity:1;transform:none}
+}
+html.no-anim .petal{display:none}
+html.no-anim .fig .seg{transform:none;animation:none}
+html.no-anim .reveal{opacity:1;transform:none}
+html.no-anim .cue .ln,html.no-anim .tap-zone:hover .pulse{animation:none}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="petals" id="petals" aria-hidden="true"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="prog" id="prog"></div>
+<div class="cur" id="cur"></div>
+
+<a class="backlink" href="/"><span class="mk">梅</span>XAVIER FABLE ×65</a>
+
+<!-- ================= ORACLE ================= -->
+<header id="oracle">
+  <svg class="hero-motif" viewBox="0 0 400 400" aria-hidden="true" id="heroMotif"></svg>
+  <div class="altar wrap">
+    <div class="kicker reveal">梅花易數<span class="dot">·</span>MÉI HUĀ YÌ SHÙ<span class="dot">·</span>THE NUMBER ORACLE</div>
+    <h1 class="title-sc reveal"><span class="mei">梅</span>花</h1>
+    <p class="title-en reveal">Anything can become a hexagram.<br>A <em>moment</em>. Two numbers. A single word.</p>
+    <p class="lede reveal">No coins, no yarrow — only the pattern already in front of you. Shao Yong's plum-blossom method turns a number, a time, a word into an <b>upper</b> and a <b>lower</b> trigram, finds the <b>moving line</b>, and reads what the moment is and what it becomes.</p>
+
+    <div class="sourcebar reveal" role="tablist" aria-label="Divination source" id="sourcebar">
+      <button class="src-tab act" data-src="moment" role="tab" aria-selected="true"><span class="zh">此刻</span><span class="en">The Moment</span></button>
+      <button class="src-tab" data-src="numbers" role="tab" aria-selected="false"><span class="zh">兩數</span><span class="en">Two Numbers</span></button>
+      <button class="src-tab" data-src="word" role="tab" aria-selected="false"><span class="zh">一字</span><span class="en">A Word</span></button>
+      <button class="src-tab" data-src="tap" role="tab" aria-selected="false"><span class="zh">一觸</span><span class="en">Just Tap</span></button>
+    </div>
+
+    <div class="panel-host reveal">
+      <!-- moment -->
+      <div class="panel on" data-panel="moment">
+        <div class="moment">
+          <div class="moment-cols" id="momentCols"></div>
+          <p class="p-hint">This very instant, cast the traditional way — year branch, month, day, and hour become the trigrams.</p>
+        </div>
+      </div>
+      <!-- numbers -->
+      <div class="panel" data-panel="numbers">
+        <div class="num-row">
+          <div class="num-field">
+            <input id="numA" type="text" inputmode="numeric" maxlength="6" value="" placeholder="7" autocomplete="off" spellcheck="false" aria-label="First number">
+            <label>First <b>上卦 upper</b></label>
+          </div>
+          <span class="num-plus">+</span>
+          <div class="num-field">
+            <input id="numB" type="text" inputmode="numeric" maxlength="6" value="" placeholder="3" autocomplete="off" spellcheck="false" aria-label="Second number">
+            <label>Second <b>下卦 lower</b></label>
+          </div>
+        </div>
+        <p class="p-hint">Any two numbers at all — the last digits of a phone, birds on a wire, the page you stopped on.</p>
+      </div>
+      <!-- word -->
+      <div class="panel" data-panel="word">
+        <div class="word-field">
+          <input id="wordIn" type="text" maxlength="12" value="" placeholder="梅花 · or a word" autocomplete="off" spellcheck="false" aria-label="A word or character">
+        </div>
+        <div class="chips" id="chips"></div>
+        <p class="p-hint">Its strokes divide into two halves — the first raises the upper trigram, the second the lower.</p>
+      </div>
+      <!-- tap -->
+      <div class="panel" data-panel="tap">
+        <button class="tap-zone" id="tapZone" aria-label="Tap to cast a spontaneous reading">
+          <span class="pulse"></span>
+          <svg viewBox="0 0 100 100" aria-hidden="true"><g fill="#C1352A"><circle cx="50" cy="28" r="15"/><circle cx="71" cy="43" r="15"/><circle cx="63" cy="68" r="15"/><circle cx="37" cy="68" r="15"/><circle cx="29" cy="43" r="15"/></g><circle cx="50" cy="50" r="8.5" fill="#C6A15A"/></svg>
+        </button>
+        <p class="p-hint">Let the hand decide. The instant you touch the blossom becomes the seed of the cast.</p>
+      </div>
+    </div>
+
+    <div class="controls reveal">
+      <button class="btn-cast" id="castBtn"><span class="glow"></span>起卦<span class="en">CAST</span></button>
+      <button class="recast" id="recastBtn" hidden>Cast again</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= READING ================= -->
+<section id="reading" aria-live="polite">
+  <div class="rd-inner">
+    <div class="rd-rule"></div>
+    <div class="rd-top">
+      <div class="k" id="rdKicker">The moment answers</div>
+      <div class="src" id="rdSource"></div>
+    </div>
+
+    <div class="verdict" id="verdict"></div>
+
+    <div class="triptych" id="triptych"></div>
+
+    <div class="rd-lower">
+      <div class="wux">
+        <div class="lbl">五行 · The Five Elements</div>
+        <div id="wuxHost"></div>
+      </div>
+      <div class="imagery" id="imagery"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EIGHT TRIGRAMS ================= -->
+<section id="trigrams">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">先天八卦<span class="dot">·</span>THE EIGHT IMAGES</span>
+      <h2>The Eight Trigrams<span class="en">each a number, an image, an element</span></h2>
+      <p>In the early-heaven arrangement every trigram carries a number, one to eight. Divide any number by eight and the remainder names the trigram — zero returns to Earth. Two of them stacked make your hexagram.</p>
+    </div>
+    <div class="tg-grid" id="tgGrid"></div>
+  </div>
+</section>
+
+<!-- ================= METHOD ================= -->
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">占法<span class="dot">·</span>THE METHOD</span>
+      <h2>How a Number Becomes a Hexagram<span class="en">mod eight, mod six, and the moving line</span></h2>
+    </div>
+    <div class="method-grid">
+      <div class="m-col">
+        <div class="n">一</div>
+        <h3>Two trigrams <span class="en">the upper &amp; lower</span></h3>
+        <p>The first number, taken <code>mod 8</code>, raises the <b>upper trigram (上卦)</b>; the second the <b>lower (下卦)</b>. A remainder of zero is Earth, the eighth. Stack them and the sixty-four appear.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">二</div>
+        <h3>The moving line <span class="en">動爻</span></h3>
+        <p>The sum of the numbers, taken <code>mod 6</code>, marks one of the six lines as <b>moving</b> — the single place where the present is already turning into something else.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">三</div>
+        <h3>Self &amp; situation <span class="en">體用</span></h3>
+        <p>The trigram <em>holding</em> the moving line is the <b>用 (yong)</b> — the situation. The still trigram is the <b>體 (ti)</b> — you. Their five-element relationship gives the verdict at a glance.</p>
+      </div>
+      <div class="m-col">
+        <div class="n">四</div>
+        <h3>Present &amp; change <span class="en">本 · 互 · 變</span></h3>
+        <p>The cast hexagram (<b>本卦</b>) is now. Its inner lines two-to-five form the <b>互卦</b>, the hidden middle. Flip the moving line and the <b>變卦</b> shows what it becomes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TI / YONG ================= -->
+<section id="tiyong">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">體用生克<span class="dot">·</span>THE VERDICT</span>
+      <h2>Five Ways the Moment Turns<span class="en">how ti meets yong</span></h2>
+      <p>Between your element and the situation's runs one of five relationships — generating (生) or overcoming (克). This alone tells favorable from adverse.</p>
+    </div>
+    <div class="ty-grid">
+      <div class="ty-card g"><div class="rel">用生體</div><div class="verd">Most favorable</div><div class="txt">The situation feeds you — help arrives unasked. Move with it.</div></div>
+      <div class="ty-card g"><div class="rel">體用比和</div><div class="verd">Harmonious</div><div class="txt">Same element. Self and moment are of one mind; things run smooth.</div></div>
+      <div class="ty-card f"><div class="rel">體克用</div><div class="verd">Favorable, effort</div><div class="txt">You master the situation — but by force of will. Push, and it yields.</div></div>
+      <div class="ty-card f"><div class="rel">體生用</div><div class="verd">Draining</div><div class="txt">You pour yourself out. Much given, little returned. Better to hold.</div></div>
+      <div class="ty-card w"><div class="rel">用克體</div><div class="verd">Adverse</div><div class="txt">The moment presses on you. Avoid its edge; wait, then move.</div></div>
+    </div>
+    <div class="origin">
+      <div class="mark">梅</div>
+      <p>“I was watching plum blossoms when two sparrows fought for a branch and fell. From the hour I cast, and knew the flowers would break by the next evening.”</p>
+      <div class="who">after Shào Yōng · 邵雍 · 11th century</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="mk">梅花</div>
+    <div class="lg">The pattern is always already here.</div>
+    <div class="meta">
+      <a href="/">← XAVIER FABLE ×65</a>
+      <span>梅花易數 · Méi Huā Yì Shù · The Plum-Blossom Oracle</span>
+    </div>
+    <div class="copy">A scholar's swift cast · faithful ti/yong &amp; five-element method · built for the showcase</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+"use strict";
+/* =========================================================
+   梅花易數 — real logic
+   先天八卦 numbers: 乾1 兌2 離3 震4 巽5 坎6 艮7 坤8
+   bits are read bottom→top; 1 = yang(solid), 0 = yin(broken)
+   ========================================================= */
+const TRI = {
+  1:{n:1, zh:"乾", py:"Qián", en:"Heaven",   img:"天", imgEn:"Heaven",   el:"金", elEn:"Metal", sym:"☰", bits:"111"},
+  2:{n:2, zh:"兌", py:"Duì",  en:"Lake",     img:"澤", imgEn:"Lake",     el:"金", elEn:"Metal", sym:"☱", bits:"110"},
+  3:{n:3, zh:"離", py:"Lí",   en:"Fire",     img:"火", imgEn:"Fire",     el:"火", elEn:"Fire",  sym:"☲", bits:"101"},
+  4:{n:4, zh:"震", py:"Zhèn", en:"Thunder",  img:"雷", imgEn:"Thunder",  el:"木", elEn:"Wood",  sym:"☳", bits:"100"},
+  5:{n:5, zh:"巽", py:"Xùn",  en:"Wind",     img:"風", imgEn:"Wind",     el:"木", elEn:"Wood",  sym:"☴", bits:"011"},
+  6:{n:6, zh:"坎", py:"Kǎn",  en:"Water",    img:"水", imgEn:"Water",    el:"水", elEn:"Water", sym:"☵", bits:"010"},
+  7:{n:7, zh:"艮", py:"Gèn",  en:"Mountain", img:"山", imgEn:"Mountain", el:"土", elEn:"Earth", sym:"☶", bits:"001"},
+  8:{n:8, zh:"坤", py:"Kūn",  en:"Earth",    img:"地", imgEn:"Earth",    el:"土", elEn:"Earth", sym:"☷", bits:"000"}
+};
+const BITS2N = {}; for(const k in TRI){ BITS2N[TRI[k].bits] = +k; }
+
+/* 64 hexagram names — [number, upperNum, lowerNum, zh, pinyin, english] */
+const HEX_RAW = [
+[1,1,1,"乾","Qián","The Creative"],[2,8,8,"坤","Kūn","The Receptive"],
+[3,6,4,"屯","Zhūn","Difficulty at the Beginning"],[4,7,6,"蒙","Méng","Youthful Folly"],
+[5,6,1,"需","Xū","Waiting"],[6,1,6,"訟","Sòng","Conflict"],
+[7,8,6,"師","Shī","The Army"],[8,6,8,"比","Bǐ","Holding Together"],
+[9,5,1,"小畜","Xiǎo Chù","Taming Power of the Small"],[10,1,2,"履","Lǚ","Treading"],
+[11,8,1,"泰","Tài","Peace"],[12,1,8,"否","Pǐ","Standstill"],
+[13,1,3,"同人","Tóng Rén","Fellowship"],[14,3,1,"大有","Dà Yǒu","Great Possession"],
+[15,8,7,"謙","Qiān","Modesty"],[16,4,8,"豫","Yù","Enthusiasm"],
+[17,2,4,"隨","Suí","Following"],[18,7,5,"蠱","Gǔ","Work on the Decayed"],
+[19,8,2,"臨","Lín","Approach"],[20,5,8,"觀","Guān","Contemplation"],
+[21,3,4,"噬嗑","Shì Kè","Biting Through"],[22,7,3,"賁","Bì","Grace"],
+[23,7,8,"剝","Bō","Splitting Apart"],[24,8,4,"復","Fù","Return"],
+[25,1,4,"無妄","Wú Wàng","Innocence"],[26,7,1,"大畜","Dà Chù","Taming Power of the Great"],
+[27,7,4,"頤","Yí","The Mouth's Corners"],[28,2,5,"大過","Dà Guò","Great Preponderance"],
+[29,6,6,"坎","Kǎn","The Abysmal"],[30,3,3,"離","Lí","The Clinging"],
+[31,2,7,"咸","Xián","Influence"],[32,4,5,"恆","Héng","Duration"],
+[33,1,7,"遯","Dùn","Retreat"],[34,4,1,"大壯","Dà Zhuàng","Power of the Great"],
+[35,3,8,"晉","Jìn","Progress"],[36,8,3,"明夷","Míng Yí","Darkening of the Light"],
+[37,5,3,"家人","Jiā Rén","The Family"],[38,3,2,"睽","Kuí","Opposition"],
+[39,6,7,"蹇","Jiǎn","Obstruction"],[40,4,6,"解","Xiè","Deliverance"],
+[41,7,2,"損","Sǔn","Decrease"],[42,5,4,"益","Yì","Increase"],
+[43,2,1,"夬","Guài","Breakthrough"],[44,1,5,"姤","Gòu","Coming to Meet"],
+[45,2,8,"萃","Cuì","Gathering Together"],[46,8,5,"升","Shēng","Pushing Upward"],
+[47,2,6,"困","Kùn","Oppression"],[48,6,5,"井","Jǐng","The Well"],
+[49,2,3,"革","Gé","Revolution"],[50,3,5,"鼎","Dǐng","The Cauldron"],
+[51,4,4,"震","Zhèn","The Arousing"],[52,7,7,"艮","Gèn","Keeping Still"],
+[53,5,7,"漸","Jiàn","Development"],[54,4,2,"歸妹","Guī Mèi","The Marrying Maiden"],
+[55,4,3,"豐","Fēng","Abundance"],[56,3,7,"旅","Lǚ","The Wanderer"],
+[57,5,5,"巽","Xùn","The Gentle"],[58,2,2,"兌","Duì","The Joyous"],
+[59,5,6,"渙","Huàn","Dispersion"],[60,6,2,"節","Jié","Limitation"],
+[61,5,2,"中孚","Zhōng Fú","Inner Truth"],[62,4,7,"小過","Xiǎo Guò","Small Preponderance"],
+[63,6,3,"既濟","Jì Jì","After Completion"],[64,3,6,"未濟","Wèi Jì","Before Completion"]
+];
+const HEXMAP = {};
+HEX_RAW.forEach(h => { HEXMAP[h[1] + "-" + h[2]] = {n:h[0], up:h[1], lo:h[2], zh:h[3], py:h[4], en:h[5]}; });
+function hexOf(up, lo){ return HEXMAP[up + "-" + lo]; }
+
+/* five elements */
+const GEN = {木:"火", 火:"土", 土:"金", 金:"水", 水:"木"}; // 生 generates
+const OVC = {木:"土", 土:"水", 水:"火", 火:"金", 金:"木"}; // 克 overcomes
+const EL_EN = {木:"Wood", 火:"Fire", 土:"Earth", 金:"Metal", 水:"Water"};
+const EL_COLOR = {木:"var(--wood)", 火:"var(--fire)", 土:"var(--earth)", 金:"var(--metal)", 水:"var(--water)"};
+
+const m8 = x => { const r = ((x % 8) + 8) % 8; return r === 0 ? 8 : r; };
+const m6 = x => { const r = ((x % 6) + 6) % 6; return r === 0 ? 6 : r; };
+
+/* build a full reading from a derivation {upperSum, lowerSum, movingSum, source, note} */
+function cast(d){
+  const up = m8(d.upperSum), lo = m8(d.lowerSum), mv = m6(d.movingSum);
+  const benLines = (TRI[lo].bits + TRI[up].bits).split(""); // bottom→top L1..L6
+  const ben = hexOf(up, lo);
+  // nuclear 互卦: lower = L2L3L4, upper = L3L4L5
+  const nucLo = BITS2N[benLines[1] + benLines[2] + benLines[3]];
+  const nucUp = BITS2N[benLines[2] + benLines[3] + benLines[4]];
+  const hu = hexOf(nucUp, nucLo);
+  // changed 變卦: flip moving line
+  const chLines = benLines.slice();
+  chLines[mv - 1] = chLines[mv - 1] === "1" ? "0" : "1";
+  const chLo = BITS2N[chLines[0] + chLines[1] + chLines[2]];
+  const chUp = BITS2N[chLines[3] + chLines[4] + chLines[5]];
+  const bian = hexOf(chUp, chLo);
+  // ti / yong — moving line 1-3 => lower holds it (yong); else upper
+  const movingInLower = mv <= 3;
+  const yongNum = movingInLower ? lo : up;
+  const tiNum   = movingInLower ? up : lo;
+  const tiEl = TRI[tiNum].el, yongEl = TRI[yongNum].el;
+  const rel = relation(tiEl, yongEl);
+  return {up, lo, mv, benLines, ben, nucUp, nucLo, hu, chUp, chLo, chLines, bian,
+    tiNum, yongNum, tiPos: movingInLower ? "upper" : "lower", yongPos: movingInLower ? "lower" : "upper",
+    tiEl, yongEl, rel, source:d.source, note:d.note};
+}
+
+function relation(ti, yong){
+  if(ti === yong) return {code:"體用比和", short:"比和", kind:"he", tone:"good",
+    title:"和 · Harmonious", en:"Self and situation move as one.",
+    note:"Same element — like calls to like. Matters run smooth; simply carry on."};
+  if(GEN[yong] === ti) return {code:"用生體", short:"用生體", kind:"sheng", tone:"good", dir:"yong-ti",
+    title:"生 · Most favorable", en:"The situation feeds you.",
+    note:"The moment nourishes the self — help arrives unasked. Move with it."};
+  if(GEN[ti] === yong) return {code:"體生用", short:"體生用", kind:"sheng", tone:"fair", dir:"ti-yong",
+    title:"耗 · Draining", en:"You pour yourself out.",
+    note:"The self spends itself on the situation — much given, little returned. Better to hold and conserve."};
+  if(OVC[ti] === yong) return {code:"體克用", short:"體克用", kind:"ke", tone:"fair", dir:"ti-yong",
+    title:"克 · Favorable, with effort", en:"You master the situation.",
+    note:"The self overcomes the moment — the outcome is yours, but by force of will. Push, and it yields."};
+  return {code:"用克體", short:"用克體", kind:"ke", tone:"warn", dir:"yong-ti",
+    title:"凶 · Adverse", en:"The moment presses against you.",
+    note:"The situation overcomes the self — external forces bear down. Avoid the edge; wait, then move."};
+}
+
+/* ---------- derivations per source ---------- */
+const BRANCH = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+function yearBranchNum(y){ return (((y - 4) % 12) + 12) % 12 + 1; }        // 1..12
+function hourBranchIdx(h){ return (Math.floor((h + 1) / 2)) % 12; }         // 0..11
+function nowParts(dt){
+  dt = dt || new Date();
+  const y = dt.getFullYear(), mo = dt.getMonth() + 1, da = dt.getDate(), h = dt.getHours();
+  const yb = yearBranchNum(y);
+  const hi = hourBranchIdx(h);
+  const hb = hi + 1;
+  return {y, mo, da, h, yb, ybChar: BRANCH[(yb - 1)], hb, hbChar: BRANCH[hi]};
+}
+function deriveMoment(dt){
+  const p = nowParts(dt);
+  const s1 = p.yb + p.mo + p.da;         // 上卦
+  const s2 = s1 + p.hb;                   // 下卦 & 動爻
+  return {upperSum:s1, lowerSum:s2, movingSum:s2, source:"此刻 · The Moment",
+    note:`${p.ybChar}年 · ${p.mo}月 · ${p.da}日 · ${p.hbChar}時`, parts:p};
+}
+function deriveNumbers(a, b){
+  return {upperSum:a, lowerSum:b, movingSum:a + b, source:"兩數 · Two Numbers",
+    note:`${a} · ${b}`};
+}
+
+/* stroke table (simplified forms shown) + graceful fallback */
+const STROKES = {
+  "一":1,"乙":1,"二":2,"人":2,"力":2,"十":2,"又":2,"丁":2,"了":2,"刀":2,
+  "三":3,"山":3,"川":3,"土":3,"大":3,"小":3,"子":3,"女":3,"上":3,"下":3,"口":3,"千":3,"門":3,"门":3,"干":3,"工":3,
+  "天":4,"木":4,"水":4,"火":4,"日":4,"月":4,"心":4,"手":4,"文":4,"中":4,"王":4,"五":4,"六":4,"方":4,"父":4,"friend":4,"井":4,"不":4,"風":4,"风":4,
+  "本":5,"生":5,"白":5,"民":5,"目":5,"石":5,"田":5,"出":5,"平":5,"用":5,"半":5,"外":5,
+  "安":6,"好":6,"行":6,"老":6,"問":6,"问":6,"地":6,"竹":6,"米":6,"光":6,"年":6,"陽":6,"阳":6,"多":6,"名":6,"有":6,"回":6,
+  "花":7,"我":7,"財":7,"财":7,"見":7,"见":7,"時":7,"聲":7,"男":7,"何":7,"求":7,
+  "明":8,"和":8,"金":8,"門2":8,"空":8,"雨":8,"青":8,"雨2":8,"念":8,"知":8,"直":8,"命":8,
+  "春":9,"星":9,"香":9,"风2":9,"為":9,"为":9,"待":9,"缘2":9,
+  "家":10,"時2":10,"海":10,"缘":12,"緣":15,"梅":11,"問2":11,"望":11,"情":11,"問3":11,
+  "問4":11,"福":13,"愛":13,"爱":10,"喜":12,"問5":11
+};
+function strokesOf(ch){
+  if(STROKES[ch] != null) return STROKES[ch];
+  const cp = ch.codePointAt(0);
+  if(cp >= 0x4E00 && cp <= 0x9FFF) return (cp % 18) + 4; // deterministic fallback for other hanzi
+  if(/[a-zA-Z]/.test(ch)) return 1;                       // Latin letter counts as one
+  return 0;
+}
+function deriveWord(str){
+  const chars = [...str.trim()].filter(c => /[一-鿿]/.test(c) || /[a-zA-Z]/.test(c));
+  if(chars.length === 0) return null;
+  let mid;
+  if(chars.length === 1){
+    // single character: split its strokes roughly in half
+    const s = strokesOf(chars[0]);
+    const s1 = Math.ceil(s / 2), s2 = s - s1 || 1;
+    return {upperSum:s1, lowerSum:s2, movingSum:s, source:"一字 · A Character",
+      note:`${chars[0]} · ${s}畫`};
+  }
+  mid = Math.ceil(chars.length / 2);
+  const first = chars.slice(0, mid), second = chars.slice(mid);
+  const s1 = first.reduce((a, c) => a + strokesOf(c), 0);
+  const s2 = second.reduce((a, c) => a + strokesOf(c), 0);
+  return {upperSum:s1, lowerSum:s2, movingSum:s1 + s2, source:"一字 · A Word",
+    note:`${first.join("")} · ${second.join("")}`};
+}
+function deriveTap(){
+  const t = Date.now();
+  const perf = Math.floor((performance.now() % 1) * 1000);
+  const a = (t % 100000) + perf;
+  const b = (Math.floor(t / 7) % 100000) + (perf * 3);
+  return {upperSum:a, lowerSum:b, movingSum:a + b, source:"一觸 · One Touch",
+    note:"cast from the instant"};
+}
+
+/* ========================================================= RENDER ========================================================= */
+function figHTML(lines, opts){
+  opts = opts || {};
+  // lines bottom→top; draw top→bottom. upper = idx 3,4,5 ; lower = idx 0,1,2
+  const mv = opts.moving || 0;
+  function triBlock(idxs, roleClass, tag){
+    let rows = "";
+    // idxs already top→bottom for display
+    idxs.forEach((i, k) => {
+      const yin = lines[i] === "0" ? "yin" : "yang";
+      const isMv = (i + 1) === mv ? "mv" : "";
+      const delay = opts.animate ? (opts.delayBase || 0) + (k * 55) : 0;
+      const style = opts.animate ? `style="animation-delay:${delay}ms"` : "";
+      rows += `<div class="row ${yin} ${isMv}"><span class="seg" ${style}></span>${yin === "yin" ? `<span class="seg" ${style}></span>` : ""}</div>`;
+    });
+    const tagHTML = tag ? `<span class="tri-tag"><span class="r">${tag.role}</span><span class="g">${tag.g}</span></span>` : "";
+    return `<div class="tri ${roleClass}">${tagHTML}${rows}</div>`;
+  }
+  const upTag = opts.tags && opts.tags.upper ? opts.tags.upper : null;
+  const loTag = opts.tags && opts.tags.lower ? opts.tags.lower : null;
+  const upRole = opts.roles && opts.roles.upper ? "role-" + opts.roles.upper : "";
+  const loRole = opts.roles && opts.roles.lower ? "role-" + opts.roles.lower : "";
+  const cls = opts.mini ? "fig mini" : "fig";
+  return `<div class="${cls}">${triBlock([5,4,3], upRole, upTag)}${triBlock([2,1,0], loRole, loTag)}</div>`;
+}
+
+function tgName(num){ const t = TRI[num]; return `${t.zh}`; }
+
+function renderReading(r){
+  // top
+  document.getElementById("rdSource").textContent = r.source + (r.note ? "  ·  " + r.note : "");
+
+  // verdict
+  const rel = r.rel;
+  const relCls = rel.kind === "sheng" ? "sheng" : (rel.kind === "ke" ? "ke" : "he");
+  const relGlyph = rel.kind === "he" ? "比和" : (rel.kind === "sheng" ? "生" : "克");
+  const dirArrow = rel.dir === "yong-ti" ? "用 → 體" : (rel.dir === "ti-yong" ? "體 → 用" : "體 = 用");
+  const vb = document.getElementById("verdict");
+  vb.className = "verdict " + rel.tone;
+  vb.innerHTML = `
+    <div class="v-rel">
+      <div class="v-node ti"><span class="role">體 · self</span><span class="el">${r.tiEl}</span><span class="tg">${TRI[r.tiNum].zh} ${TRI[r.tiNum].en}</span></div>
+      <div class="v-op"><span class="rel ${relCls}">${rel.code}</span><span class="arrow">${dirArrow}</span></div>
+      <div class="v-node yong"><span class="role">用 · situation</span><span class="el">${r.yongEl}</span><span class="tg">${TRI[r.yongNum].zh} ${TRI[r.yongNum].en}</span></div>
+    </div>
+    <div class="v-title">${rel.title}</div>
+    <div class="v-en">${rel.en}</div>
+    <div class="v-note">${rel.note}</div>`;
+
+  // triptych
+  const tags = {};
+  tags[r.tiPos]   = {role:"體 self",      g:`${TRI[r.tiNum].zh} ${TRI[r.tiNum].el}`};
+  tags[r.yongPos] = {role:"用 situation", g:`${TRI[r.yongNum].zh} ${TRI[r.yongNum].el}`};
+  const roles = {}; roles[r.tiPos] = "ti"; roles[r.yongPos] = "yong";
+
+  const benFig = figHTML(r.benLines, {moving:r.mv, animate:true, delayBase:120, tags, roles});
+  const huLines = (TRI[r.nucLo].bits + TRI[r.nucUp].bits).split("");
+  const huFig = figHTML(huLines, {mini:true, animate:true, delayBase:520});
+  const bianFig = figHTML(r.chLines, {moving:r.mv, mini:true, animate:true, delayBase:780});
+
+  function nameBlock(h){ return `<div class="tp-name">${h.zh}<span class="py">${h.py}</span></div><div class="tp-en">${h.en}</div>`; }
+
+  document.getElementById("triptych").innerHTML = `
+    <div class="tp-col">
+      <div class="tp-lbl"><b>本卦</b>The Hexagram · now</div>
+      ${benFig}
+      ${nameBlock(r.ben)}
+    </div>
+    <div class="tp-arrow"><span class="g">→</span><span class="t">holds</span></div>
+    <div class="tp-col">
+      <div class="tp-lbl"><b>互卦</b>The Heart · within</div>
+      ${huFig}
+      ${nameBlock(r.hu)}
+    </div>
+    <div class="tp-arrow"><span class="g">→</span><span class="t">becomes</span></div>
+    <div class="tp-col">
+      <div class="tp-lbl"><b>變卦</b>The Change · then</div>
+      ${bianFig}
+      ${nameBlock(r.bian)}
+    </div>`;
+
+  // five-element diagram
+  document.getElementById("wuxHost").innerHTML = wuxingSVG(r.tiEl, r.yongEl, rel);
+
+  // imagery
+  const upT = TRI[r.up], loT = TRI[r.lo];
+  document.getElementById("imagery").innerHTML = `
+    <div class="img-block">
+      <div class="stack"><span class="u">${upT.img}</span><span class="div"></span><span class="l">${loT.img}</span></div>
+      <div class="txt">
+        <div class="lbl">本卦象 · the image</div>
+        <div class="zh">上${upT.zh}（${upT.img}） · 下${loT.zh}（${loT.img}）</div>
+        <div class="en">${imagerySentence(upT, loT)}</div>
+      </div>
+    </div>
+    <div class="poem">${poemFor(r)}</div>`;
+
+  const rd = document.getElementById("reading");
+  rd.classList.add("open");
+  document.getElementById("rdKicker").textContent = "The moment answers";
+}
+
+function imagerySentence(up, lo){
+  return `${lo.imgEn} below, ${up.imgEn.toLowerCase()} above — ${TRI2phrase(up, lo)}`;
+}
+function TRI2phrase(up, lo){
+  const key = up.n + "-" + lo.n;
+  const P = {
+    "2-3":"the lake set alight — the old form must break for the new.",
+    "7-3":"fire at the foot of the mountain — brief brilliance, quiet grace.",
+    "3-3":"fire doubled — clarity that must be tended lest it consume."
+  };
+  if(P[key]) return P[key];
+  return `${lo.imgEn.toLowerCase()} and ${up.imgEn.toLowerCase()} together shape the hour.`;
+}
+function poemFor(r){
+  const t = r.rel.tone;
+  if(t === "good") return "What you hold and what you meet are of one grain — go, and the way opens of itself.";
+  if(t === "fair") return "The road is real but uphill; spend your strength where it tells, and rest where it does not.";
+  return "The wind is against the door — do not force it. Wait for the turn, and the change will carry you.";
+}
+
+/* five-element SVG: pentagon (生) + star (克), highlight ti & yong */
+function wuxingSVG(tiEl, yongEl, rel){
+  const els = ["木","火","土","金","水"];
+  const cx = 120, cy = 116, R = 78;
+  const pos = {};
+  els.forEach((e, i) => {
+    const a = (-90 + i * 72) * Math.PI / 180;
+    pos[e] = {x: cx + R * Math.cos(a), y: cy + R * Math.sin(a)};
+  });
+  let edges = "";
+  // 生 pentagon (faint)
+  for(let i = 0; i < 5; i++){
+    const a = els[i], b = els[(i + 1) % 5];
+    edges += line(pos[a], pos[b], "rgba(34,32,27,.14)", 1);
+  }
+  // 克 star (faint)
+  for(let i = 0; i < 5; i++){
+    const a = els[i], b = els[(i + 2) % 5];
+    edges += line(pos[a], pos[b], "rgba(34,32,27,.08)", 1);
+  }
+  // active edge
+  let active = "";
+  if(rel.kind !== "he" && rel.dir){
+    const [from, to] = rel.dir === "yong-ti" ? [yongEl, tiEl] : [tiEl, yongEl];
+    const col = rel.kind === "sheng" ? "var(--jade)" : "var(--cinnabar)";
+    active = arrow(pos[from], pos[to], col);
+  }
+  // nodes
+  let nodes = "";
+  els.forEach(e => {
+    const p = pos[e];
+    const isTi = e === tiEl, isYong = e === yongEl;
+    const r = (isTi || isYong) ? 20 : 15;
+    let ring = "";
+    if(isTi && isYong){ ring = `<circle cx="${p.x}" cy="${p.y}" r="${r + 5}" fill="none" stroke="var(--brass)" stroke-width="2"/>`; }
+    else if(isTi){ ring = `<circle cx="${p.x}" cy="${p.y}" r="${r + 5}" fill="none" stroke="var(--jade)" stroke-width="2"/>`; }
+    else if(isYong){ ring = `<circle cx="${p.x}" cy="${p.y}" r="${r + 5}" fill="none" stroke="var(--cinnabar)" stroke-width="2"/>`; }
+    const op = (isTi || isYong) ? 1 : .34;
+    nodes += `${ring}<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${EL_COLOR[e]}" opacity="${op}"/>
+      <text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-family="var(--sc)" font-weight="600" font-size="${(isTi||isYong)?19:14}" fill="#FBF8F1">${e}</text>`;
+  });
+  return `<svg viewBox="0 0 240 232" role="img" aria-label="Five-element relationship between ti (${EL_EN[tiEl]}) and yong (${EL_EN[yongEl]})">
+    <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="context-stroke"/></marker></defs>
+    ${edges}${active}${nodes}</svg>`;
+}
+function line(a, b, col, w){ return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${w}"/>`; }
+function arrow(a, b, col){
+  // shorten to node edges
+  const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy);
+  const ux = dx / len, uy = dy / len, pad = 24;
+  const x1 = a.x + ux * pad, y1 = a.y + uy * pad, x2 = b.x - ux * pad, y2 = b.y - uy * pad;
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="3" marker-end="url(#ah)"/>`;
+}
+
+/* ========================================================= UI WIRING ========================================================= */
+let currentSource = "moment";
+const panels = document.querySelectorAll(".panel");
+const tabs = document.querySelectorAll(".src-tab");
+
+function setSource(src){
+  currentSource = src;
+  tabs.forEach(t => {
+    const on = t.dataset.src === src;
+    t.classList.toggle("act", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  panels.forEach(p => p.classList.toggle("on", p.dataset.panel === src));
+}
+tabs.forEach(t => t.addEventListener("click", () => setSource(t.dataset.src)));
+
+function currentDerivation(){
+  if(currentSource === "moment") return deriveMoment();
+  if(currentSource === "numbers"){
+    const a = parseInt(document.getElementById("numA").value, 10);
+    const b = parseInt(document.getElementById("numB").value, 10);
+    const av = isFinite(a) ? a : Math.floor(Math.random() * 90 + 10);
+    const bv = isFinite(b) ? b : Math.floor(Math.random() * 90 + 10);
+    return deriveNumbers(av, bv);
+  }
+  if(currentSource === "word"){
+    const w = document.getElementById("wordIn").value;
+    const d = deriveWord(w) || deriveWord("梅花");
+    return d;
+  }
+  return deriveTap();
+}
+
+function doCast(){
+  const d = currentDerivation();
+  const r = cast(d);
+  renderReading(r);
+  document.getElementById("recastBtn").hidden = false;
+  const cue = document.getElementById("cue"); if(cue) cue.style.opacity = "0";
+  // reveal + scroll unless we're a screenshot auto-cast
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      if(!window.__noScroll){
+        document.getElementById("reading").scrollIntoView({behavior: reduceMotion() ? "auto" : "smooth", block: "start"});
+      }
+    }, 120);
+  });
+}
+document.getElementById("castBtn").addEventListener("click", doCast);
+document.getElementById("recastBtn").addEventListener("click", () => {
+  document.getElementById("oracle").scrollIntoView({behavior: reduceMotion() ? "auto" : "smooth"});
+  setTimeout(doCast, reduceMotion() ? 0 : 500);
+});
+document.getElementById("tapZone").addEventListener("click", () => { setSource("tap"); doCast(); });
+
+// enter-to-cast on inputs
+["numA","numB","wordIn"].forEach(id => {
+  document.getElementById(id).addEventListener("keydown", e => { if(e.key === "Enter") doCast(); });
+});
+
+function reduceMotion(){ return window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+
+/* ---------- populate moment panel ---------- */
+function paintMoment(){
+  const p = nowParts();
+  const cols = [
+    {zh:p.ybChar, lb:"YEAR 年", nv:String(p.yb)},
+    {zh:String(p.mo), lb:"MONTH 月", nv:""},
+    {zh:String(p.da), lb:"DAY 日", nv:""},
+    {zh:p.hbChar, lb:"HOUR 時", nv:String(p.hb)}
+  ];
+  document.getElementById("momentCols").innerHTML = cols.map(c =>
+    `<div class="mcol"><span class="zh">${c.zh}</span><span class="lb">${c.lb}</span>${c.nv ? `<span class="nv">= ${c.nv}</span>` : ""}</div>`
+  ).join("");
+}
+paintMoment();
+setInterval(paintMoment, 60000);
+
+/* ---------- word chips ---------- */
+const CHIPS = ["梅","心","問","緣","家","明","安","財"];
+document.getElementById("chips").innerHTML = CHIPS.map(c => `<button class="chip" data-c="${c}">${c}</button>`).join("");
+document.querySelectorAll(".chip").forEach(ch => ch.addEventListener("click", () => {
+  document.getElementById("wordIn").value = ch.dataset.c;
+  doCast();
+}));
+
+/* ---------- eight trigrams grid ---------- */
+document.getElementById("tgGrid").innerHTML = [1,2,3,4,5,6,7,8].map(n => {
+  const t = TRI[n];
+  return `<div class="tg-card"><span class="no">${n}</span><div class="sym">${t.sym}</div>
+    <div class="zh">${t.zh}</div><div class="py">${t.py}</div>
+    <div class="meta"><span class="im">${t.img} ${t.en}</span><span class="el">${t.el} ${t.elEn}</span></div></div>`;
+}).join("");
+
+/* ---------- hero plum motif (branch + blossoms) ---------- */
+(function heroMotif(){
+  const svg = document.getElementById("heroMotif");
+  if(!svg) return;
+  function blossom(x, y, s, rot){
+    let petals = "";
+    for(let i = 0; i < 5; i++){
+      const a = (i * 72) + (rot || 0);
+      petals += `<ellipse cx="0" cy="-13" rx="8" ry="12" transform="rotate(${a})" fill="var(--cinnabar)" opacity="0.9"/>`;
+    }
+    return `<g transform="translate(${x},${y}) scale(${s})">${petals}<circle r="4.5" fill="var(--brass-l)"/>
+      <g stroke="var(--brass)" stroke-width="0.8" opacity="0.7">
+      ${[0,72,144,216,288].map(a => `<line x1="0" y1="0" x2="${6*Math.cos((a-90)*Math.PI/180)}" y2="${6*Math.sin((a-90)*Math.PI/180)}"/>`).join("")}</g></g>`;
+  }
+  const branch = `<path class="branch" d="M40,360 C120,300 150,250 200,190 C240,140 300,120 360,70"
+      fill="none" stroke="#5C564B" stroke-width="3.4" stroke-linecap="round"/>
+    <path class="branch" d="M200,190 C230,180 250,150 270,120" fill="none" stroke="#5C564B" stroke-width="2.4" stroke-linecap="round"/>
+    <path class="branch" d="M150,250 C130,220 135,190 120,160" fill="none" stroke="#5C564B" stroke-width="2.2" stroke-linecap="round"/>`;
+  svg.innerHTML = branch + blossom(360, 70, 1.5, 8) + blossom(270, 118, 1.15, 40)
+    + blossom(120, 160, 1.05, 20) + blossom(300, 120, 0.8, 60) + blossom(180, 205, 0.9, 15);
+})();
+
+/* ---------- falling petals ---------- */
+(function petals(){
+  if(reduceMotion()) return;
+  const host = document.getElementById("petals");
+  const svg = `<svg width="18" height="18" viewBox="-14 -14 28 28"><g>${
+    [0,72,144,216,288].map(a => `<ellipse cx="0" cy="-8" rx="5" ry="7.5" transform="rotate(${a})" fill="#C1352A" opacity="0.85"/>`).join("")
+  }<circle r="2.6" fill="#C6A15A"/></g></svg>`;
+  const N = 9;
+  for(let i = 0; i < N; i++){
+    const p = document.createElement("div");
+    p.className = "petal";
+    p.innerHTML = svg;
+    const dur = 13 + Math.random() * 12;
+    const delay = -Math.random() * dur;
+    const size = 0.5 + Math.random() * 0.8;
+    p.style.left = (Math.random() * 100) + "vw";
+    p.style.setProperty("--drift", (Math.random() * 120 - 40) + "px");
+    p.style.setProperty("--spin", (200 + Math.random() * 320) + "deg");
+    p.style.animationDuration = dur + "s";
+    p.style.animationDelay = delay + "s";
+    p.style.transform = `scale(${size})`;
+    p.style.opacity = "0.4";
+    host.appendChild(p);
+  }
+})();
+
+/* ---------- progress + reveals + cursor ---------- */
+(function chrome(){
+  const prog = document.getElementById("prog");
+  let ticking = false;
+  function onScroll(){
+    if(ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      prog.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + "%";
+      const cue = document.getElementById("cue");
+      if(cue && h.scrollTop > 120) cue.style.opacity = "0";
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, {passive:true});
+
+  // reveal
+  if(!reduceMotion() && "IntersectionObserver" in window){
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:0.12});
+    document.querySelectorAll(".reveal").forEach((el, i) => { el.style.transitionDelay = (i * 70) + "ms"; io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+  }
+
+  // cursor (fine pointers only)
+  if(window.matchMedia("(pointer:fine)").matches && !reduceMotion()){
+    const cur = document.getElementById("cur");
+    document.body.classList.add("cur-live");
+    let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y;
+    window.addEventListener("mousemove", e => { tx = e.clientX; ty = e.clientY; cur.classList.add("on"); });
+    window.addEventListener("mouseleave", () => cur.classList.remove("on"));
+    document.querySelectorAll("a,button,input,.chip,.tg-card,.src-tab").forEach(el => {
+      el.addEventListener("mouseenter", () => cur.classList.add("hov"));
+      el.addEventListener("mouseleave", () => cur.classList.remove("hov"));
+    });
+    (function loop(){
+      if(!document.hidden){ x += (tx - x) * 0.28; y += (ty - y) * 0.28; cur.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%)`; }
+      requestAnimationFrame(loop);
+    })();
+  }
+})();
+
+/* ---------- toast + copy ---------- */
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("on"), 1800);
+}
+
+/* ---------- screenshot / deep-link forcing ---------- */
+(function forceCast(){
+  const q = new URLSearchParams(location.search);
+  if(q.has("a") && q.has("b")){
+    window.__noScroll = q.has("noscroll");
+    setSource("numbers");
+    document.getElementById("numA").value = q.get("a");
+    document.getElementById("numB").value = q.get("b");
+    setTimeout(doCast, 260);
+  } else if(q.has("time")){
+    window.__noScroll = q.has("noscroll");
+    setSource("moment");
+    setTimeout(doCast, 260);
+  } else if(q.has("word")){
+    window.__noScroll = q.has("noscroll");
+    setSource("word");
+    document.getElementById("wordIn").value = q.get("word");
+    setTimeout(doCast, 260);
+  }
+})();
+</script>
+</body>
+</html>

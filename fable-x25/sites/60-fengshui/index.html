@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>風水 · FENG SHUI — acupuncture for a room</title>
+<meta name="description" content="An interactive geomancer's blueprint. Overlay the Bagua on your own floor plan to read each zone's life-area, element and practical adjustment — then compute a genuine Flying Star (玄空飛星) chart for your home's period and facing. Practical, bilingual, for reflection.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="風水 · FENG SHUI — acupuncture for a room">
+<meta property="og:description" content="Overlay the Bagua on your floor plan and read every zone; then compute a real 9-palace Flying Star chart for your home's period and facing. Practical, not fortune-telling.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="風水 · FENG SHUI — acupuncture for a room">
+<meta name="twitter:description" content="An interactive Bagua-over-floor-plan tool and a genuine Flying Star chart engine. Bilingual, practical, for reflection.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2286%22>☯</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F1E8; --paper-2:#EFE9DB; --paper-3:#E7DFCD;
+  --ink:#211C15; --ink-2:#3A322611; --ink-soft:#5A5040; --faint:#8B8069;
+  --jade:#2F6D5E; --jade-d:#255649; --jade-f:rgba(47,109,94,.14);
+  --cinnabar:#AC3E2C; --cinnabar-d:#8E3122; --cinnabar-f:rgba(172,62,44,.12);
+  --brass:#9A7A34; --brass-b:#B8933F; --brass-f:rgba(154,122,52,.16);
+  --water:#2E4A5A; --metal:#6E6A5E;
+  --line:rgba(33,28,21,.14); --line-2:rgba(33,28,21,.28); --hair:rgba(33,28,21,.09);
+  --serif-sc:"Noto Serif SC",serif;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-o:cubic-bezier(.16,1,.3,1);
+  --maxw:1240px; --pad:clamp(20px,4.5vw,64px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.no-anim,html.no-anim *{scroll-behavior:auto!important}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--serif); font-size:19px; line-height:1.62; font-weight:400;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+::selection{background:var(--cinnabar);color:var(--paper)}
+::-webkit-scrollbar{width:12px}
+::-webkit-scrollbar-track{background:var(--paper-2)}
+::-webkit-scrollbar-thumb{background:#cabfa4;border-radius:7px;border:3px solid var(--paper-2)}
+::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+:focus{outline:none}
+:focus-visible{outline:1.5px solid var(--jade);outline-offset:3px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--jade-d);text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3{font-weight:500;line-height:1.05}
+.sc{font-family:var(--serif-sc)}
+.mono{font-family:var(--mono)}
+
+/* ---------- atmosphere ---------- */
+.bg{position:fixed;inset:0;z-index:-3;background:
+  radial-gradient(120% 90% at 50% -8%, #FBF7EE 0%, var(--paper) 46%, var(--paper-2) 100%);}
+.blueprint{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(var(--hair) 1px,transparent 1px),
+    linear-gradient(90deg,var(--hair) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(120% 100% at 50% 30%,#000 0%,transparent 78%);
+          mask-image:radial-gradient(120% 100% at 50% 30%,#000 0%,transparent 78%);}
+.grain{position:fixed;inset:-30%;width:160%;height:160%;pointer-events:none;z-index:60;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.28 0 0 0 0 0.24 0 0 0 0 0.17 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:59;
+  background:radial-gradient(ellipse 96% 88% at 50% 42%,transparent 60%,rgba(60,48,30,.10) 100%)}
+
+/* ---------- progress + backlink ---------- */
+.prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+  background:linear-gradient(90deg,var(--jade),var(--brass-b),var(--cinnabar));box-shadow:0 0 8px rgba(154,122,52,.35)}
+.backlink{position:fixed;top:18px;left:20px;z-index:200;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--faint);padding:9px 12px;border:1px solid var(--line);border-radius:100px;
+  background:rgba(245,241,232,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:color .4s var(--ease),border-color .4s,background .4s}
+.backlink .gl{font-family:var(--serif-sc);font-size:14px;letter-spacing:0;color:var(--jade);transition:color .4s}
+.backlink:hover{color:var(--ink);border-color:var(--line-2)}
+.backlink:hover .gl{color:var(--cinnabar)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+section{position:relative;scroll-margin-top:72px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--brass);
+  display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--brass);opacity:.6}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+html.no-anim .reveal{opacity:1;transform:none;transition:none}
+
+/* ---------- HERO ---------- */
+.hero{min-height:100svh;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:clamp(24px,4vw,60px);
+  padding:120px var(--pad) 70px;max-width:var(--maxw);margin:0 auto;position:relative}
+.hero-l{position:relative;z-index:2}
+.hero .kick{font-family:var(--mono);font-size:11px;letter-spacing:.36em;text-transform:uppercase;color:var(--jade-d);margin-bottom:26px;display:flex;align-items:center;gap:12px}
+.hero .kick .dot{width:6px;height:6px;border-radius:50%;background:var(--cinnabar);box-shadow:0 0 0 4px var(--cinnabar-f)}
+.hero h1{font-family:var(--serif-sc);font-weight:600;font-size:clamp(80px,15vw,190px);line-height:.82;letter-spacing:.02em;color:var(--ink);margin-bottom:4px;text-indent:-.04em}
+.hero h1 .en{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(30px,5.4vw,64px);letter-spacing:.14em;line-height:1;color:var(--jade);margin-top:14px;padding-left:.05em}
+.hero .tag{font-style:italic;font-size:clamp(21px,2.8vw,30px);color:var(--ink-soft);margin:30px 0 18px;max-width:20ch;line-height:1.28}
+.hero .tag b{font-style:normal;color:var(--cinnabar);font-weight:500}
+.hero .lede{font-size:19px;color:var(--ink-soft);max-width:44ch;margin-bottom:34px}
+.hero .cta-row{display:flex;flex-wrap:wrap;gap:14px}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;
+  padding:13px 22px;border-radius:100px;border:1px solid var(--line-2);transition:.35s var(--ease);cursor:pointer;white-space:nowrap}
+.btn .sc{font-size:13px;margin-right:6px}
+.btn-solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn-solid:hover{background:var(--jade-d);border-color:var(--jade-d);transform:translateY(-2px)}
+.btn-ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);transform:translateY(-2px)}
+
+/* luopan compass motif */
+.hero-r{position:relative;display:grid;place-items:center;z-index:1}
+.luopan{width:min(46vw,480px);aspect-ratio:1;position:relative}
+.luopan svg{width:100%;height:100%;overflow:visible;display:block}
+.lp-spin{transform-origin:50% 50%;animation:spin 190s linear infinite}
+.lp-spin-r{transform-origin:50% 50%;animation:spin 240s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+html.no-anim .lp-spin,html.no-anim .lp-spin-r{animation:none}
+.luopan .needle{transform-origin:50% 50%;animation:sway 9s var(--ease) infinite alternate}
+@keyframes sway{0%{transform:rotate(-3deg)}100%{transform:rotate(3deg)}}
+html.no-anim .luopan .needle{animation:none}
+
+/* ---------- generic section head ---------- */
+.sec-head{max-width:60ch;margin-bottom:clamp(34px,5vw,56px)}
+.sec-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6vw,76px);line-height:1;letter-spacing:.005em;margin:18px 0 20px}
+.sec-head h2 .sc{font-family:var(--serif-sc);font-weight:500;color:var(--jade);font-size:.86em;margin-right:.28em}
+.sec-head p{font-size:20px;color:var(--ink-soft);max-width:52ch}
+.divider{height:1px;background:linear-gradient(90deg,var(--line-2),transparent);margin:0 auto;max-width:var(--maxw)}
+
+/* ---------- schools strip ---------- */
+.schools{padding:clamp(70px,10vw,120px) 0}
+.school-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.school{background:var(--paper);padding:34px 30px;transition:background .5s}
+.school:hover{background:var(--paper-2)}
+.school .n{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--brass)}
+.school h3{font-family:var(--serif-sc);font-size:30px;font-weight:600;margin:12px 0 4px;color:var(--ink)}
+.school .en{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--jade-d);margin-bottom:14px}
+.school p{font-size:17px;color:var(--ink-soft);line-height:1.55}
+
+/* ---------- TOOL shell ---------- */
+.tool{padding:clamp(56px,8vw,104px) 0}
+.tool-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,420px);gap:clamp(28px,4vw,54px);align-items:start}
+.panel{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,253,247,.6),rgba(239,233,219,.35));
+  padding:clamp(20px,2.5vw,30px);position:relative}
+.panel::before{content:"";position:absolute;inset:8px;border:1px solid var(--hair);border-radius:10px;pointer-events:none}
+
+/* controls */
+.ctl-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);margin-bottom:11px}
+.segrow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.seg{font-family:var(--mono);font-size:11px;letter-spacing:.1em;padding:9px 15px;border:1px solid var(--line);border-radius:100px;
+  color:var(--ink-soft);transition:.28s var(--ease);background:rgba(245,241,232,.5)}
+.seg .sc{font-size:13px;margin-right:5px}
+.seg:hover{border-color:var(--line-2);color:var(--ink)}
+.seg.on{background:var(--jade-d);color:var(--paper);border-color:var(--jade-d)}
+.seg.on.cin{background:var(--cinnabar-d);border-color:var(--cinnabar-d)}
+
+/* ---------- BAGUA plan ---------- */
+.plan-stage{position:relative;width:100%;max-width:560px;margin:0 auto;aspect-ratio:1}
+.plan-stage svg.compass-ring{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.plan-inner{position:absolute;inset:13%;border:1.5px solid var(--ink);background:
+  repeating-linear-gradient(45deg,rgba(33,28,21,.02) 0 8px,transparent 8px 16px);
+  box-shadow:0 10px 40px -22px rgba(33,28,21,.5)}
+.bagua-grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}
+.cell{position:relative;border:.75px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  cursor:pointer;transition:background .3s var(--ease);text-align:center;padding:4px;overflow:hidden}
+.cell:hover{background:rgba(255,255,255,.4)}
+.cell.sel{background:rgba(255,255,255,.62)}
+.cell.sel::after{content:"";position:absolute;inset:0;border:2px solid var(--accent,var(--jade));border-radius:2px}
+.cell .tg{font-family:var(--serif-sc);font-size:clamp(19px,3vw,26px);font-weight:500;color:var(--accent,var(--ink));line-height:1}
+.cell .ar{font-family:var(--serif-sc);font-size:clamp(11px,1.6vw,14px);color:var(--ink);opacity:.82;line-height:1}
+.cell .dir{position:absolute;top:4px;left:5px;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--faint)}
+.cell.center{background:rgba(154,122,52,.06)}
+.cell .el{position:absolute;bottom:4px;right:5px;font-family:var(--serif-sc);font-size:11px;color:var(--accent,var(--faint));opacity:.7}
+.door{position:absolute;background:var(--paper);border:1.5px solid var(--cinnabar);z-index:4;transition:.4s var(--ease);
+  box-shadow:0 0 0 3px var(--paper)}
+.door .swing{position:absolute;border:1px dashed var(--cinnabar-d);opacity:.55}
+.facing-mark{position:absolute;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--cinnabar);z-index:5}
+
+/* dir buttons ring (compass) — sit in the margin around the plan */
+.dirbtn{position:absolute;z-index:6;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:var(--faint);
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;transition:.22s var(--ease);
+  border:1px solid var(--line);background:rgba(245,241,232,.75)}
+.dirbtn:hover{color:var(--ink);border-color:var(--jade);transform:scale(1.08)}
+.dirbtn.on{color:var(--paper);background:var(--cinnabar-d);border-color:var(--cinnabar-d)}
+.doorbtn{position:absolute;z-index:7;width:26px;height:26px;border-radius:50%;border:1px solid var(--cinnabar);
+  background:rgba(245,241,232,.7);color:var(--cinnabar);display:grid;place-items:center;font-size:12px;transition:.25s var(--ease)}
+.doorbtn:hover{background:var(--cinnabar);color:var(--paper)}
+.doorbtn.on{background:var(--cinnabar);color:var(--paper)}
+
+/* reading card */
+.reading{position:sticky;top:26px}
+.rd-accent{height:4px;width:52px;border-radius:3px;background:var(--accent,var(--jade));margin-bottom:20px;transition:background .4s}
+.rd-tg{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+.rd-tg .big{font-family:var(--serif-sc);font-size:60px;font-weight:600;color:var(--accent,var(--ink));line-height:.9}
+.rd-tg .meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+.rd-area{font-family:var(--serif-sc);font-size:30px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.rd-area-en{font-family:var(--serif);font-style:italic;font-size:21px;color:var(--jade-d);margin-bottom:18px}
+.rd-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:6px 11px;border:1px solid var(--line);border-radius:100px;color:var(--ink-soft)}
+.chip .sc{font-size:12px;letter-spacing:0}
+.rd-body{font-size:18px;color:var(--ink-soft);line-height:1.6;margin-bottom:20px}
+.rd-adj{border-left:2px solid var(--accent,var(--jade));padding:2px 0 2px 16px;margin-bottom:16px}
+.rd-adj .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);margin-bottom:5px}
+.rd-adj p{font-size:16.5px;color:var(--ink);line-height:1.5}
+.rd-note{font-size:15px;font-style:italic;color:var(--faint)}
+.hint{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;margin-top:18px;text-align:center}
+
+/* ---------- FLYING STARS ---------- */
+.fs-controls{display:flex;flex-wrap:wrap;gap:26px;margin-bottom:36px;align-items:flex-end}
+.fs-controls .field{flex:1;min-width:210px}
+.fs-summary{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:26px;
+  display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center}
+.fs-summary b{color:var(--cinnabar-d)}
+.fs-summary .sc{font-family:var(--serif-sc);font-size:15px}
+.fs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-2);border:1px solid var(--line-2);border-radius:14px;overflow:hidden;max-width:560px}
+.pal{background:var(--paper);aspect-ratio:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px;transition:background .3s}
+.pal:hover{background:var(--paper-2)}
+.pal .pdir{position:absolute;top:7px;left:8px;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--faint)}
+.pal .pdir .sc{font-size:11px}
+.pal .stars{display:flex;align-items:baseline;gap:9px;font-family:var(--serif-sc);font-weight:600;line-height:1}
+.pal .shan{font-size:clamp(20px,3.4vw,30px);color:var(--jade-d)}
+.pal .xiang{font-size:clamp(24px,4vw,38px);color:var(--cinnabar-d)}
+.pal .yun{font-size:clamp(14px,2.2vw,19px);color:var(--brass);align-self:flex-end}
+.pal .plife{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;color:var(--faint);position:absolute;bottom:7px;text-transform:uppercase}
+.pal.tag-good::after{content:"";position:absolute;inset:0;border:2px solid var(--jade);border-radius:2px;opacity:.9}
+.pal.tag-warn::after{content:"";position:absolute;inset:0;border:2px solid var(--cinnabar);border-radius:2px;opacity:.55}
+.pal.tag-warn::before{content:"⚠";position:absolute;top:7px;right:8px;font-size:11px;color:var(--cinnabar);opacity:.7}
+.pal.tag-good::before{content:"◆";position:absolute;top:7px;right:8px;font-size:10px;color:var(--jade);opacity:.8}
+.pal.center{background:rgba(154,122,52,.07)}
+
+.fs-legend-key{display:flex;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:16px}
+.fs-legend-key i{font-style:normal;font-family:var(--serif-sc);font-weight:700;margin-right:5px}
+.k-shan i{color:var(--jade-d)} .k-xiang i{color:var(--cinnabar-d)} .k-yun i{color:var(--brass)}
+
+.reads{display:flex;flex-direction:column;gap:14px}
+.read{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:rgba(255,253,247,.4);transition:.3s}
+.read.good{border-left:3px solid var(--jade)}
+.read.warn{border-left:3px solid var(--cinnabar)}
+.read.neutral{border-left:3px solid var(--brass)}
+.read h4{font-family:var(--serif-sc);font-size:19px;font-weight:600;color:var(--ink);margin-bottom:5px;display:flex;align-items:center;gap:10px}
+.read h4 .nums{font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--faint);font-weight:400}
+.read p{font-size:16px;color:var(--ink-soft);line-height:1.5}
+
+/* ---------- nine stars ref ---------- */
+.stars-ref{padding:clamp(60px,9vw,110px) 0}
+.star-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.star-cell{background:var(--paper);padding:22px 22px;transition:background .4s;position:relative}
+.star-cell:hover{background:var(--paper-2)}
+.star-cell .num{font-family:var(--serif-sc);font-size:44px;font-weight:700;line-height:1}
+.star-cell .nm{font-family:var(--serif-sc);font-size:17px;font-weight:600;margin:8px 0 2px;color:var(--ink)}
+.star-cell .rl{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-bottom:9px}
+.star-cell p{font-size:15.5px;color:var(--ink-soft);line-height:1.5}
+.star-cell.aus .num{color:var(--jade-d)} .star-cell.cau .num{color:var(--cinnabar-d)} .star-cell.neu .num{color:var(--brass)}
+.star-cell .tagline{position:absolute;top:22px;right:22px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.star-cell.aus .tagline{color:var(--jade)} .star-cell.cau .tagline{color:var(--cinnabar)} .star-cell.neu .tagline{color:var(--brass)}
+
+/* ---------- footer ---------- */
+footer{padding:clamp(70px,10vw,120px) 0 60px;border-top:1px solid var(--line);margin-top:40px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:end}
+.foot-mark{font-family:var(--serif-sc);font-size:clamp(40px,7vw,86px);font-weight:600;line-height:.9;color:var(--ink)}
+.foot-mark .en{display:block;font-family:var(--serif);font-style:italic;font-size:clamp(20px,3vw,30px);color:var(--jade-d);margin-top:12px}
+.foot-note{font-size:16px;color:var(--ink-soft);line-height:1.6;max-width:40ch}
+.foot-note b{color:var(--cinnabar-d);font-weight:500;font-style:italic}
+.foot-meta{margin-top:44px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.foot-meta a{color:var(--faint);transition:.3s}
+.foot-meta a:hover{color:var(--cinnabar)}
+
+/* ---------- responsive ---------- */
+@media (max-width:940px){
+  .hero{grid-template-columns:1fr;padding-top:110px;gap:36px}
+  .hero-r{order:-1}
+  .luopan{width:min(66vw,320px)}
+  .tool-grid{grid-template-columns:1fr}
+  .reading{position:static}
+  .foot-grid{grid-template-columns:1fr;gap:28px}
+  .school-grid,.star-grid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  body{font-size:18px}
+  .backlink{font-size:9px;letter-spacing:.2em;padding:8px 10px}
+  .fs-controls{gap:18px}
+  .fs-controls .field{min-width:100%}
+  .segrow{gap:6px}
+  .seg{padding:8px 12px;font-size:10px}
+  .rd-tg .big{font-size:48px}
+  .pal .plife{display:none}
+  .cell .ar{font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div><div class="blueprint"></div>
+<div class="grain"></div><div class="vignette"></div>
+<div class="prog" id="prog"></div>
+
+<a class="backlink" href="/"><span class="gl">卦</span>XAVIER FABLE ×65</a>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="hero-l reveal in">
+    <div class="kick"><span class="dot"></span>玄空 · 八卦 · 罗盘 &nbsp;/&nbsp; the geomancer's blueprint</div>
+    <h1>風水<span class="en">FENG SHUI</span></h1>
+    <p class="tag">Acupuncture for a room. <b>针灸之于居所</b></p>
+    <p class="lede">Not fortune-telling — a way of reading a room. Where the light falls, where you enter, what a corner is <em>for</em>. Overlay the Bagua on your own floor plan, then compute a genuine Flying Star chart for your home.</p>
+    <div class="cta-row">
+      <a class="btn btn-solid" href="#bagua"><span class="sc">八卦</span>Read the Bagua</a>
+      <a class="btn btn-ghost" href="#stars"><span class="sc">飞星</span>Fly the Stars</a>
+    </div>
+  </div>
+  <div class="hero-r reveal in">
+    <div class="luopan" id="luopan"></div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ===================== SCHOOLS ===================== -->
+<section class="schools">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Two hands on the compass</div>
+      <h2><span class="sc">形</span>Two schools, one plain idea</h2>
+      <p>Feng shui (風水, "wind-water") is the older name for something ordinary: arrange a space so the good things about it are easy to reach and the awkward things are easy to avoid. Two traditions read it differently.</p>
+    </div>
+    <div class="school-grid">
+      <div class="school reveal">
+        <div class="n">01 / 形势</div><h3>形势派</h3><div class="en">Form &amp; landscape</div>
+        <p>Reads the shape of things — where you enter, sightlines, what sits behind you when you sleep or work. Common-sense and observable. Most of this tool lives here.</p>
+      </div>
+      <div class="school reveal">
+        <div class="n">02 / 理气</div><h3>理气派</h3><div class="en">Compass &amp; time</div>
+        <p>Reads direction and era with the 罗盘 (luopan) — a calculated layer where a building's facing and its construction period produce a chart. The Flying Stars below are this school.</p>
+      </div>
+      <div class="school reveal">
+        <div class="n">03 / 分寸</div><h3>分寸</h3><div class="en">A sense of proportion</div>
+        <p>Take what helps, leave what doesn't. An adjustment is a nudge — a lamp, a plant, a cleared corner — never a spell. Nothing here is meant to alarm you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BAGUA MAP ===================== -->
+<section class="tool" id="bagua">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">The Bagua map · 八卦 · 九宫格</div>
+      <h2><span class="sc">八卦</span>Lay the nine palaces over your home</h2>
+      <p>Nine zones, each tied to a life-area, a trigram, an element and a colour. Choose how to orient the map — to your <em>door</em> (the Black-Hat way) or to the <em>compass</em> — then click any zone to read it and its practical adjustment.</p>
+    </div>
+
+    <div class="tool-grid">
+      <div>
+        <div class="ctl-label">Alignment — how the map meets the room</div>
+        <div class="segrow" id="modeSeg">
+          <button class="seg on cin" data-mode="btb"><span class="sc">黑派</span>Black Hat — align to the door</button>
+          <button class="seg" data-mode="compass"><span class="sc">罗盘</span>Compass — align to facing</button>
+        </div>
+
+        <div id="btbCtl">
+          <div class="ctl-label">Where is the front door on the entry wall?</div>
+          <div class="segrow">
+            <button class="seg doorseg on" data-door="1">Knowledge side · 知識</button>
+            <button class="seg doorseg" data-door="0">Centre · 事業</button>
+            <button class="seg doorseg" data-door="-1">Helpful side · 貴人</button>
+          </div>
+        </div>
+        <div id="compassCtl" style="display:none">
+          <div class="ctl-label">Facing (朝向) — the direction the front of the home looks toward</div>
+          <div class="segrow" id="facingSegBagua"></div>
+        </div>
+
+        <div class="plan-stage" id="planStage">
+          <svg class="compass-ring" viewBox="0 0 100 100" id="ringSvg"></svg>
+          <div class="plan-inner">
+            <div class="bagua-grid" id="baguaGrid"></div>
+          </div>
+        </div>
+        <p class="hint" id="planHint">The hatched box is your home · the cinnabar mark is the door</p>
+      </div>
+
+      <aside class="reading panel" id="reading">
+        <div class="rd-accent" id="rdAccent"></div>
+        <div class="rd-tg"><span class="big sc" id="rdBig">健</span><span class="meta" id="rdMeta">TRIGRAM · ELEMENT</span></div>
+        <div class="rd-area sc" id="rdArea">健康</div>
+        <div class="rd-area-en" id="rdAreaEn">Health &amp; the still centre</div>
+        <div class="rd-chips" id="rdChips"></div>
+        <p class="rd-body" id="rdBody"></p>
+        <div class="rd-adj"><div class="lab">The adjustment · 调整</div><p id="rdAdj"></p></div>
+        <p class="rd-note" id="rdNote"></p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===================== FLYING STARS ===================== -->
+<section class="tool" id="stars">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Flying Stars · 玄空飞星</div>
+      <h2><span class="sc">飞星</span>Compute the nine-palace chart</h2>
+      <p>The calculated layer. Give the home its <em>construction period</em> (元運) and the direction it <em>faces</em>, and the 挨星 method flies three stars into each palace — the mountain star 山, the water star 向 and the period star 運. This is real: the chart below is computed, not looked up.</p>
+    </div>
+
+    <div class="fs-controls reveal">
+      <div class="field">
+        <div class="ctl-label">Construction period · 元運</div>
+        <div class="segrow" id="periodSeg"></div>
+      </div>
+      <div class="field">
+        <div class="ctl-label">Facing direction · 朝向 (24-mountain centre / 天元)</div>
+        <div class="segrow" id="facingSeg"></div>
+      </div>
+    </div>
+
+    <div class="fs-summary reveal" id="fsSummary"></div>
+
+    <div class="tool-grid">
+      <div class="reveal">
+        <div class="fs-grid" id="fsGrid"></div>
+        <div class="fs-legend-key">
+          <span class="k-shan"><i>山</i>Mountain star — people, health, relationships</span>
+          <span class="k-xiang"><i>向</i>Water star — wealth, opportunity</span>
+          <span class="k-yun"><i>運</i>Period base</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="ctl-label">What this chart is saying · 断语</div>
+        <div class="reads" id="fsReads"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===================== NINE STARS ===================== -->
+<section class="stars-ref" id="nine">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="eyebrow">Reference · 九星</div>
+      <h2><span class="sc">九星</span>The nine flying stars</h2>
+      <p>Each number is a star with a temperament and an element. Their nature shifts with the era: in the current Period 9 (2024–2043) the reigning star is 九紫; 八白 is the wealth star just past its peak; 一白 is quietly rising.</p>
+    </div>
+    <div class="star-grid" id="starGrid"></div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid reveal">
+      <div class="foot-mark"><span class="sc">风水</span><span class="en">acupuncture for a room</span></div>
+      <p class="foot-note">Everything here is drawn from the common-sense (form) and 玄空 (compass) traditions and computed honestly. It is offered <b>for reflection, not prescription</b> — a way of paying attention to where you live, not a verdict on it.</p>
+    </div>
+    <div class="foot-meta">
+      <span>XAVIER FABLE ×65 · 编号 60 / SIXTY</span>
+      <span>Noto Serif SC · Cormorant Garamond · IBM Plex Mono</span>
+      <a href="/">← 返回 the gallery</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+const RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if (RM) document.documentElement.classList.add('no-anim');
+
+/* ============ shared data ============ */
+const EL = {
+  wood:{cn:'木',en:'Wood',c:'var(--jade)'},
+  fire:{cn:'火',en:'Fire',c:'var(--cinnabar)'},
+  earth:{cn:'土',en:'Earth',c:'var(--brass)'},
+  metal:{cn:'金',en:'Metal',c:'var(--metal)'},
+  water:{cn:'水',en:'Water',c:'var(--water)'},
+};
+// compass direction -> life-area / trigram / element / practical content
+const ZONES = {
+  N:{tg:'坎',tgp:'Kǎn',area:'事業',areaEn:'Career & path',el:'water',colour:'Ink-blue, black, charcoal',
+     body:'The zone of your work and the road ahead. In the Black-Hat map it sits at the entry wall — the mouth through which the day arrives. Keep the way in genuinely clear.',
+     adj:'Clear the entrance of shoes and clutter; a small mirror or a picture of open water or an open road widens the sense of possibility. Warm the passage with light.',
+     note:'Water flows downhill — a blocked doorway blocks momentum first.'},
+  NE:{tg:'艮',tgp:'Gèn',area:'知識',areaEn:'Knowledge & stillness',el:'earth',colour:'Deep blue, earth-green, ochre',
+     body:'The mountain trigram — quiet, self-possessed, the place of study and cultivation. It rewards a corner you can be still in.',
+     adj:'A reading nook, a low steady lamp, books, a stone or ceramic object. Keep it uncluttered so the mind can settle; avoid noise and screens here if you can.',
+     note:'A mountain is patient. Learning likes a still room.'},
+  E:{tg:'震',tgp:'Zhèn',area:'家庭',areaEn:'Family & health roots',el:'wood',colour:'Fresh green, deep teal',
+     body:'Thunder and spring wood — new growth, elders, ancestry and the body\'s vitality. The zone that most wants living things.',
+     adj:'A healthy plant with rounded leaves, morning light, family photographs. Mend anything broken in this corner first — a wobbling chair, a dead bulb.',
+     note:'Growth needs light and water, and nothing rotting nearby.'},
+  SE:{tg:'巽',tgp:'Xùn',area:'財位',areaEn:'Wealth & abundance',el:'wood',colour:'Royal purple, gold, jade-green',
+     body:'The gentle wind — accumulation, flow, the steady inward tide of resources. Not luck; the sense that things gather here.',
+     adj:'A thriving plant (a jade plant is traditional), a lamp kept on in the evening, and above all no clutter or dead plants. Movement — a small fountain — invites flow.',
+     note:'Wealth likes to be tended, not chased. Prune the dead leaves.'},
+  S:{tg:'離',tgp:'Lí',area:'名聲',areaEn:'Fame & reputation',el:'fire',colour:'Cinnabar red, warm orange',
+     body:'The fire trigram — how you are seen, your name, recognition, clarity. It brightens what you want the world to know you for.',
+     adj:'Good light, a candle, awards or work you are proud of, upward and triangular shapes. Keep large mirrors and standing water out of this zone — they douse the fire.',
+     note:'A clear flame, not a bonfire. Let the light be steady.'},
+  SW:{tg:'坤',tgp:'Kūn',area:'感情',areaEn:'Love & partnership',el:'earth',colour:'Rose, terracotta, warm earth',
+     body:'The receptive earth — partnership, marriage, the mother, receptivity. The zone of two rather than one.',
+     adj:'Objects in pairs, warm and soft light, a picture of two of something. A pair of rose-quartz or matching lamps. Clear away anything solitary or spiky here.',
+     note:'Earth holds. Partnership likes symmetry and a soft edge.'},
+  W:{tg:'兌',tgp:'Duì',area:'子女',areaEn:'Children & creativity',el:'metal',colour:'White, silver, pale gold',
+     body:'The joyous lake — children, play, projects, the things you make. Metal that rings clear. It wants lightness and air.',
+     adj:'Round metal objects, a small chime, playful or unfinished art, open space to spread out. Keep it airy rather than crowded.',
+     note:'Creativity needs room to be messy and metal to ring true.'},
+  NW:{tg:'乾',tgp:'Qián',area:'貴人',areaEn:'Helpful people & travel',el:'metal',colour:'Grey, silver, white',
+     body:'Heaven — mentors, benefactors, fathers, travel, the people who show up for you. The zone of support arriving.',
+     adj:'Keep it tidy and dignified; metal objects, a bell near the door, images of people or places that help you. A clear surface says "there is room for help here."',
+     note:'Heaven answers a tidy request. Make space for the helpers.'},
+  C:{tg:'中',tgp:'Zhōng',area:'健康',areaEn:'Health & the still centre',el:'earth',colour:'Yellow, warm ochre, earth',
+     body:'The Tai Chi — the heart of the home, touching every other palace. Its health is the whole plan\'s health.',
+     adj:'Keep the centre open and uncluttered — the home should be able to breathe through its middle. Earthenware, square stable shapes, and clear floor.',
+     note:'A house, like a body, wants an open centre.'},
+};
+const DIR_LABEL = {N:'North',NE:'Northeast',E:'East',SE:'Southeast',S:'South',SW:'Southwest',W:'West',NW:'Northwest'};
+const DIR_SC = {N:'坎',NE:'艮',E:'震',SE:'巽',S:'離',SW:'坤',W:'兌',NW:'乾'};
+
+/* ============ Flying Star engine (玄空飞星 / 挨星) ============ */
+const CW = ['N','NE','E','SE','S','SW','W','NW'];
+const FLIGHT = ['C','NW','W','NE','S','N','SW','E','SE']; // 順飞 palace order
+const OPP = {N:'S',S:'N',E:'W',W:'E',NE:'SW',SW:'NE',SE:'NW',NW:'SE'};
+const DIRNUM = {N:1,SW:2,E:3,SE:4,C:5,NW:6,W:7,NE:8,S:9};
+const YY = {1:'yin',2:'yang',3:'yin',4:'yang',6:'yang',7:'yin',8:'yang',9:'yin'}; // 天元 polarity by trigram number
+const norm = x => ((x-1)%9+9)%9+1;
+function fly(center, dir){ const o={}; FLIGHT.forEach((d,i)=>o[d]=norm(center+dir*i)); return o; }
+function flightDir(centerNum, ownDir){ const n = centerNum===5?DIRNUM[ownDir]:centerNum; return YY[n]==='yang'?1:-1; }
+function flyingChart(period, facing){
+  const per = fly(period,1);
+  const sit = OPP[facing];
+  const xiang = fly(per[facing], flightDir(per[facing], facing));
+  const shan  = fly(per[sit],   flightDir(per[sit],   sit));
+  return {per, shan, xiang, facing, sit};
+}
+
+const STAR = {
+  1:{sc:'一白',star:'貪狼',el:'water',t:'aus',tag:'Rising',note:'clarity, career, scholarship — a quiet star on the rise.'},
+  2:{sc:'二黑',star:'巨門',el:'earth',t:'cau',tag:'Illness',note:'the sickness star 病符. Keep this area calm and clutter-free; a little metal (a brass bowl, a metal clock) settles it.'},
+  3:{sc:'三碧',star:'祿存',el:'wood',t:'cau',tag:'Friction',note:'arguments and disputes. Soften with quiet light and warm reds; avoid noise and mess here.'},
+  4:{sc:'四綠',star:'文曲',el:'wood',t:'aus',tag:'Scholar',note:'文昌 — study, writing, romance. A desk or bookshelf loves this corner.'},
+  5:{sc:'五黃',star:'廉貞',el:'earth',t:'cau',tag:'Caution',note:'the 五黃 — the strongest caution. Keep it still and quiet, avoid digging or renovation here; metal drains it.'},
+  6:{sc:'六白',star:'武曲',el:'metal',t:'aus',tag:'Authority',note:'leadership, mentors, steady money. Order and a touch of metal suit it well.'},
+  7:{sc:'七赤',star:'破軍',el:'metal',t:'cau',tag:'Retired',note:'a retired star now — watch overspending and sharp words. Calm water settles it.'},
+  8:{sc:'八白',star:'左輔',el:'earth',t:'aus',tag:'Wealth',note:'wealth and stability — the great star of 2004–2023, still warm. Activity and light here help.'},
+  9:{sc:'九紫',star:'右弼',el:'fire',t:'aus',tag:'Reigning',note:'九紫 — the reigning star of 2024–2043. Celebration, recognition, future wealth. Bright and welcome.'},
+};
+const PERIODS = {
+  1:'1864–1883',2:'1884–1903',3:'1904–1923',4:'1924–1943',5:'1944–1963',
+  6:'1964–1983',7:'1984–2003',8:'2004–2023',9:'2024–2043'
+};
+
+/* combo reader — genuine notable star pairs */
+function comboRead(shan,xiang){
+  const a=Math.min(shan,xiang), b=Math.max(shan,xiang), key=a+'-'+b, set=[shan,xiang];
+  const has=(x,y)=>set.includes(x)&&set.includes(y);
+  if(shan===8&&xiang===8) return{cls:'good',t:'Double 8 · 旺星到此',p:'Both prosperity stars meet here — a strong pocket. Keep it active and well-lit.'};
+  if(shan===9&&xiang===9) return{cls:'good',t:'Double 9 · 當運雙紫',p:'The reigning stars double up — recognition and future wealth. A bright, celebratory room.'};
+  if(shan===1&&xiang===1) return{cls:'good',t:'Double 1 · 雙白',p:'Doubled water-white — clarity and quiet momentum. Good for a study or workspace.'};
+  if(has(1,4)||key==='1-4') return{cls:'good',t:'1 & 4 · 文昌',p:'The scholarship pairing — study, writing, romance. Ideal for a desk or a student\'s room.'};
+  if(has(8,9)||has(8,6)||has(6,8)||has(8,1)) return{cls:'good',t:key.replace('-',' & ')+' · 生旺',p:'Wealth and mentor stars in company — resources and support. Welcome activity here.'};
+  if(has(2,5)) return{cls:'warn',t:'2 & 5 · 病符五黃',p:'The two earth-caution stars together — the classic health caution. Keep still and quiet; add metal, don\'t make this a bedroom or kitchen long-term.'};
+  if(has(3,7)) return{cls:'warn',t:'3 & 7 · 穿心',p:'Friction meets the retired metal star — watch disputes and overspending. Calm it with soft light and a little water.'};
+  if(has(2,3)) return{cls:'warn',t:'2 & 3 · 鬥牛煞',p:'The "bull-fight" — arguments and strain. Soothe with warm reds and gentle light; keep it tidy.'};
+  if(set.includes(5)) return{cls:'warn',t:key.replace('-',' & ')+' · 五黃臨',p:'The 五黃 caution star is here. Keep the corner quiet and undisturbed; a metal object helps drain it.'};
+  if(set.includes(2)) return{cls:'warn',t:key.replace('-',' & ')+' · 病符',p:'The illness star 二黑 sits here — keep it clean, calm and a touch metallic.'};
+  return null;
+}
+
+/* ============ luopan SVG (hero) ============ */
+function buildLuopan(){
+  const M=['壬','子','癸','丑','艮','寅','甲','卯','乙','辰','巽','巳','丙','午','丁','未','坤','申','庚','酉','辛','戌','乾','亥'];
+  const TRI=['☰','☱','☲','☳','☴','☵','☶','☷'];
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(NS,'svg'); svg.setAttribute('viewBox','0 0 400 400');
+  const c=200;
+  const ring=(stroke,r,w,dash)=>{const e=document.createElementNS(NS,'circle');e.setAttribute('cx',c);e.setAttribute('cy',c);e.setAttribute('r',r);e.setAttribute('fill','none');e.setAttribute('stroke',stroke);e.setAttribute('stroke-width',w||1);if(dash)e.setAttribute('stroke-dasharray',dash);svg.appendChild(e);return e;};
+  ring('rgba(33,28,21,.16)',196,1);
+  const spin=document.createElementNS(NS,'g'); spin.setAttribute('class','lp-spin'); svg.appendChild(spin);
+  const spinR=document.createElementNS(NS,'g'); spinR.setAttribute('class','lp-spin-r'); svg.appendChild(spinR);
+  // outer 24 mountains
+  ring('rgba(33,28,21,.20)',180,1); ring('rgba(33,28,21,.10)',156,1);
+  M.forEach((m,i)=>{
+    const a=(i*15-90)*Math.PI/180, rr=168;
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',c+Math.cos(a)*rr); t.setAttribute('y',c+Math.sin(a)*rr);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+    t.setAttribute('font-family','Noto Serif SC,serif'); t.setAttribute('font-size',13);
+    t.setAttribute('fill', i%2? 'var(--cinnabar-d)':'var(--ink)'); t.setAttribute('opacity',.72);
+    t.setAttribute('transform',`rotate(${i*15} ${c+Math.cos(a)*rr} ${c+Math.sin(a)*rr})`);
+    t.textContent=m; spinR.appendChild(t);
+    const tk=document.createElementNS(NS,'line');
+    tk.setAttribute('x1',c+Math.cos(a)*180); tk.setAttribute('y1',c+Math.sin(a)*180);
+    tk.setAttribute('x2',c+Math.cos(a)*156); tk.setAttribute('y2',c+Math.sin(a)*156);
+    tk.setAttribute('stroke','rgba(33,28,21,.14)'); tk.setAttribute('stroke-width',.75); spinR.appendChild(tk);
+  });
+  // degree ticks
+  ring('rgba(154,122,52,.4)',140,1);
+  for(let d=0;d<360;d+=3){const a=(d-90)*Math.PI/180,r1=140,r2=(d%15===0)?128:134;
+    const l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',c+Math.cos(a)*r1);l.setAttribute('y1',c+Math.sin(a)*r1);
+    l.setAttribute('x2',c+Math.cos(a)*r2);l.setAttribute('y2',c+Math.sin(a)*r2);
+    l.setAttribute('stroke','rgba(33,28,21,.28)');l.setAttribute('stroke-width',d%45===0?1.1:.6);spin.appendChild(l);}
+  // eight trigrams
+  ring('rgba(47,109,94,.35)',112,1); ring('rgba(47,109,94,.16)',86,1);
+  TRI.forEach((g,i)=>{const a=(i*45-90)*Math.PI/180,rr=99;
+    const t=document.createElementNS(NS,'text');
+    t.setAttribute('x',c+Math.cos(a)*rr);t.setAttribute('y',c+Math.sin(a)*rr);
+    t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','central');
+    t.setAttribute('font-size',20);t.setAttribute('fill','var(--jade-d)');t.setAttribute('opacity',.8);
+    t.textContent=g; spin.appendChild(t);});
+  // inner well + taiji + needle
+  ring('rgba(33,28,21,.3)',66,1);
+  const well=document.createElementNS(NS,'circle');well.setAttribute('cx',c);well.setAttribute('cy',c);well.setAttribute('r',66);
+  well.setAttribute('fill','rgba(255,253,247,.5)');svg.appendChild(well);
+  const needle=document.createElementNS(NS,'g');needle.setAttribute('class','needle');svg.appendChild(needle);
+  const nN=document.createElementNS(NS,'path');nN.setAttribute('d',`M${c} ${c-60} L${c-7} ${c} L${c+7} ${c} Z`);
+  nN.setAttribute('fill','var(--cinnabar)');needle.appendChild(nN);
+  const nS=document.createElementNS(NS,'path');nS.setAttribute('d',`M${c} ${c+60} L${c-7} ${c} L${c+7} ${c} Z`);
+  nS.setAttribute('fill','rgba(33,28,21,.55)');needle.appendChild(nS);
+  const hub=document.createElementNS(NS,'circle');hub.setAttribute('cx',c);hub.setAttribute('cy',c);hub.setAttribute('r',6);
+  hub.setAttribute('fill','var(--brass-b)');needle.appendChild(hub);
+  const taiji=document.createElementNS(NS,'text');taiji.setAttribute('x',c);taiji.setAttribute('y',c+44);
+  taiji.setAttribute('text-anchor','middle');taiji.setAttribute('font-size',13);taiji.setAttribute('fill','var(--faint)');
+  taiji.setAttribute('font-family','IBM Plex Mono,monospace');taiji.setAttribute('letter-spacing','2');taiji.textContent='罗盘';svg.appendChild(taiji);
+  document.getElementById('luopan').appendChild(svg);
+}
+
+/* ============ BAGUA tool ============ */
+const PERIM_CELLS=[[0,1],[0,2],[1,2],[2,2],[2,1],[2,0],[1,0],[0,0]]; // clockwise from top-centre
+const BTB_CELLS=[['SE','S','SW'],['E','C','W'],['NE','N','NW']]; // fixed S-at-top layout
+let mode='btb', facingB='S', door=1, selKey='C';
+
+function cssVarForEl(el){return EL[el].c;}
+function cellDirMap(){
+  const map={};
+  if(mode==='btb'){ BTB_CELLS.forEach((row,r)=>row.forEach((d,c)=>map[r+'-'+c]=d)); }
+  else{
+    const shift=(CW.indexOf(facingB)-4+8)%8;
+    PERIM_CELLS.forEach((cell,i)=>{map[cell[0]+'-'+cell[1]]=CW[(i+shift)%8];});
+    map['1-1']='C';
+  }
+  return map;
+}
+function buildBagua(){
+  const grid=document.getElementById('baguaGrid'); grid.innerHTML='';
+  const map=cellDirMap();
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+    const dir=map[r+'-'+c]; const z=ZONES[dir];
+    const b=document.createElement('button');
+    b.className='cell'+(dir==='C'?' center':''); b.dataset.dir=dir; b.style.setProperty('--accent',cssVarForEl(z.el));
+    b.innerHTML=`<span class="dir">${dir}</span><span class="tg">${z.tg}</span><span class="ar">${z.area}</span><span class="el">${EL[z.el].cn}</span>`;
+    b.addEventListener('click',()=>{selKey=dir;paintBagua();renderReading(dir);});
+    grid.appendChild(b);
+  }
+  paintBagua(); positionDoorAndRing(); renderReading(selKey);
+}
+function paintBagua(){
+  document.querySelectorAll('#baguaGrid .cell').forEach(c=>{
+    c.classList.toggle('sel',c.dataset.dir===selKey);
+  });
+}
+function positionDoorAndRing(){
+  const stage=document.getElementById('planStage');
+  stage.querySelectorAll('.door,.facing-mark,.dirbtn,.doorbtn').forEach(e=>e.remove());
+  const ring=document.getElementById('ringSvg'); ring.innerHTML='';
+  const NS='http://www.w3.org/2000/svg';
+  // door: on bottom edge. inner plan inset 13% -> plan spans 13..87 (%). bottom edge y≈87
+  const inset=13, span=87-13, cellW=span/3;
+  const doorEl=document.createElement('div'); doorEl.className='door';
+  // door horizontal cell: btb -> chosen entry cell; compass -> facing wall centre
+  const colIndex = mode==='btb' ? (door===1?0 : door===0?1 : 2) : 1;
+  const doorXpct = inset + cellW*(colIndex+0.5);
+  const dw=Math.max(9,cellW*0.5);
+  doorEl.style.left=(doorXpct-dw/2)+'%'; doorEl.style.top=(87-1.6)+'%';
+  doorEl.style.width=dw+'%'; doorEl.style.height='3.2%';
+  stage.appendChild(doorEl);
+  // facing mark under door
+  const fm=document.createElement('div'); fm.className='facing-mark';
+  fm.textContent=(mode==='btb'?'ENTRY 门':'向 '+facingB); fm.style.left=(doorXpct-6)+'%'; fm.style.top='90.5%';
+  stage.appendChild(fm);
+
+  // compass ring marks (both modes show a subtle ring; compass mode is interactive)
+  const c=50,R=44;
+  // north indicator arrow (fixed geographic north = top only in compass mode with facing S)
+  if(mode==='compass'){
+    // clickable direction markers seated in the margin around the plan (no cell overlap)
+    const map=cellDirMap();
+    const outX=cc=> cc===0?6 : cc===2?94 : 50;
+    const outY=rr=> rr===0?6 : rr===2?94 : 50;
+    PERIM_CELLS.forEach(([rr,cc])=>{
+      if(rr===2&&cc===1) return; // skip bottom-centre: that is the current facing (marked by the door)
+      const d=map[rr+'-'+cc];
+      const btn=document.createElement('button'); btn.className='dirbtn'+(d===facingB?' on':'');
+      btn.textContent=d; btn.title=DIR_LABEL[d]+' — set as facing 向';
+      btn.style.left=`calc(${outX(cc)}% - 15px)`; btn.style.top=`calc(${outY(rr)}% - 15px)`;
+      btn.addEventListener('click',()=>{facingB=d;buildBagua();syncFacingSegBagua();});
+      stage.appendChild(btn);
+    });
+    // in compass mode the plan stays fixed; mark the sitting (坐) side at the top
+    const nMark=document.createElementNS(NS,'text');
+    nMark.setAttribute('x',c);nMark.setAttribute('y',6.5);nMark.setAttribute('text-anchor','middle');
+    nMark.setAttribute('font-family','IBM Plex Mono,monospace');nMark.setAttribute('font-size',4.4);
+    nMark.setAttribute('fill','var(--water)');nMark.setAttribute('letter-spacing','.4');
+    nMark.textContent='坐 '+OPP[facingB]; ring.appendChild(nMark);
+  } else {
+    // btb: 3 door position buttons on bottom edge
+    [1,0,-1].forEach(dp=>{
+      const ci = dp===1?0:dp===0?1:2;
+      const bx = inset + cellW*(ci+0.5);
+      const btn=document.createElement('button'); btn.className='doorbtn'+(dp===door?' on':'');
+      btn.textContent='⌂'; btn.title='Door here';
+      btn.style.left=`calc(${bx}% - 13px)`; btn.style.top='calc(93% - 0px)';
+      btn.addEventListener('click',()=>{door=dp;syncDoorSeg();positionDoorAndRing();});
+      stage.appendChild(btn);
+    });
+  }
+  document.getElementById('planHint').textContent = mode==='btb'
+    ? 'The map is fixed to your door — the entry wall is Career/Knowledge/Helpful'
+    : 'Set the facing on the ring — the whole map turns with the compass';
+}
+function renderReading(dir){
+  const z=ZONES[dir]; const el=EL[z.el]; const root=document.getElementById('reading');
+  root.style.setProperty('--accent',el.c);
+  document.getElementById('rdAccent').style.background=el.c;
+  document.getElementById('rdBig').textContent=z.tg;
+  document.getElementById('rdBig').style.color=el.c;
+  document.getElementById('rdMeta').textContent=`${z.tgp} · ${el.en} 元素 · ${dir==='C'?'CENTRE':DIR_LABEL[dir].toUpperCase()}`;
+  document.getElementById('rdArea').textContent=z.area;
+  document.getElementById('rdArea').style.color='var(--ink)';
+  document.getElementById('rdAreaEn').textContent=z.areaEn;
+  const chips=document.getElementById('rdChips');
+  chips.innerHTML=`<span class="chip"><span class="sc">${el.cn}</span> ${el.en}</span>`+
+    `<span class="chip">${z.colour}</span>`+
+    `<span class="chip"><span class="sc">卦</span> ${z.tg} ${z.tgp}</span>`;
+  document.getElementById('rdBody').textContent=z.body;
+  document.getElementById('rdAdj').textContent=z.adj;
+  document.getElementById('rdNote').textContent='— '+z.note;
+}
+function syncFacingSegBagua(){document.querySelectorAll('#facingSegBagua .seg').forEach(b=>b.classList.toggle('on',b.dataset.f===facingB));}
+function syncDoorSeg(){document.querySelectorAll('.doorseg').forEach(b=>b.classList.toggle('on',+b.dataset.door===door));}
+
+/* mode + facing controls */
+document.getElementById('modeSeg').addEventListener('click',e=>{
+  const b=e.target.closest('.seg'); if(!b)return;
+  mode=b.dataset.mode;
+  document.querySelectorAll('#modeSeg .seg').forEach(s=>{s.classList.toggle('on',s===b);s.classList.toggle('cin',s===b);});
+  document.getElementById('btbCtl').style.display=mode==='btb'?'':'none';
+  document.getElementById('compassCtl').style.display=mode==='compass'?'':'none';
+  buildBagua();
+});
+document.querySelectorAll('.doorseg').forEach(b=>b.addEventListener('click',()=>{door=+b.dataset.door;syncDoorSeg();positionDoorAndRing();}));
+// facing seg (bagua compass)
+(function(){const wrap=document.getElementById('facingSegBagua');
+  CW.forEach(d=>{const b=document.createElement('button');b.className='seg'+(d===facingB?' on':'');b.dataset.f=d;
+    b.innerHTML=`<span class="sc">${DIR_SC[d]}</span>${d}`;b.addEventListener('click',()=>{facingB=d;buildBagua();syncFacingSegBagua();});wrap.appendChild(b);});
+})();
+
+/* ============ FLYING STAR UI ============ */
+let period=9, facingS='S';
+function buildFsControls(){
+  const ps=document.getElementById('periodSeg'); ps.innerHTML='';
+  [1,2,3,4,5,6,7,8,9].forEach(p=>{const b=document.createElement('button');b.className='seg'+(p===period?' on':'');b.dataset.p=p;
+    b.innerHTML=`<span class="sc">${['','一','二','三','四','五','六','七','八','九'][p]}運</span>${PERIODS[p]}`;
+    b.addEventListener('click',()=>{period=p;syncFs();renderFlying();});ps.appendChild(b);});
+  const fs=document.getElementById('facingSeg'); fs.innerHTML='';
+  CW.forEach(d=>{const b=document.createElement('button');b.className='seg'+(d===facingS?' on':'');b.dataset.f=d;
+    b.innerHTML=`<span class="sc">${DIR_SC[d]}</span>${d}`;
+    b.addEventListener('click',()=>{facingS=d;syncFs();renderFlying();});fs.appendChild(b);});
+}
+function syncFs(){
+  document.querySelectorAll('#periodSeg .seg').forEach(b=>b.classList.toggle('on',+b.dataset.p===period));
+  document.querySelectorAll('#facingSeg .seg').forEach(b=>b.classList.toggle('on',b.dataset.f===facingS));
+}
+function renderFlying(){
+  const ch=flyingChart(period,facingS);
+  // summary
+  const sitMt=DIR_SC[ch.sit], facMt=DIR_SC[ch.facing];
+  const type=chartType(ch);
+  document.getElementById('fsSummary').innerHTML=
+    `<span><b class="sc">${['','一','二','三','四','五','六','七','八','九'][period]}運</b> ${PERIODS[period]}</span>`+
+    `<span>坐 <b class="sc">${sitMt}</b> ${DIR_LABEL[ch.sit]} → 向 <b class="sc">${facMt}</b> ${DIR_LABEL[ch.facing]}</span>`+
+    `<span class="sc">${type.cn}</span><span>${type.en}</span>`;
+  // grid (S at top)
+  const rows=[['SE','S','SW'],['E','C','W'],['NE','N','NW']];
+  const grid=document.getElementById('fsGrid'); grid.innerHTML='';
+  rows.forEach(row=>row.forEach(d=>{
+    const shan=ch.shan[d],xiang=ch.xiang[d],yun=ch.per[d];
+    const cell=document.createElement('div'); cell.className='pal'+(d==='C'?' center':'');
+    const cr=comboRead(shan,xiang);
+    if(cr&&cr.cls==='good')cell.classList.add('tag-good');
+    if(cr&&cr.cls==='warn')cell.classList.add('tag-warn');
+    cell.innerHTML=`<span class="pdir"><span class="sc">${DIR_SC[d]||'中'}</span> ${d}</span>`+
+      `<span class="stars"><span class="shan">${shan}</span><span class="xiang">${xiang}</span><span class="yun">${yun}</span></span>`+
+      `<span class="plife">${d==='C'?'中宫':ZONES[d].areaEn.split('&')[0].trim()}</span>`;
+    grid.appendChild(cell);
+  }));
+  // reads
+  renderReads(ch);
+}
+function chartType(ch){
+  // classify by where the current period's prosperity stars land
+  const p=period;
+  const facXiang=ch.xiang[ch.facing]===p, sitShan=ch.shan[ch.sit]===p;
+  const facShan=ch.shan[ch.facing]===p, sitXiang=ch.xiang[ch.sit]===p;
+  if(facXiang&&sitShan) return{cn:'旺山旺向',en:'prosperous sitting & facing — the most balanced pattern'};
+  if(ch.shan[ch.facing]===p&&ch.xiang[ch.facing]===p) return{cn:'雙星到向',en:'both stars to the facing — wealth-forward, keep the front active'};
+  if(ch.shan[ch.sit]===p&&ch.xiang[ch.sit]===p) return{cn:'雙星到坐',en:'both stars to the sitting — favour the back/quiet rooms'};
+  if(facShan&&sitXiang) return{cn:'上山下水',en:'stars reversed — take extra care with placement'};
+  return{cn:'飞星盘',en:'a computed nine-palace chart'};
+}
+function renderReads(ch){
+  const box=document.getElementById('fsReads'); box.innerHTML='';
+  const items=[];
+  // facing palace (wealth focus)
+  const fd=ch.facing, fx=ch.xiang[fd], fs=ch.shan[fd];
+  items.push({cls:STAR[fx].t==='cau'?'warn':(fx===period?'good':'neutral'),
+    t:`The facing · 向首 ${DIR_LABEL[fd]}`,nums:`山${fs} 向${fx}`,
+    p:`Your home looks out on the ${STAR[fx].sc} water star (${STAR[fx].star}) — ${STAR[fx].note} This is the wealth-facing palace; ${fx===period||fx===8||fx===9||fx===1?'a bright, active, well-kept frontage supports it.':'keep the entrance clean and calm.'}`});
+  // sitting palace
+  const sd=ch.sit, ss=ch.shan[sd], sx=ch.xiang[sd];
+  items.push({cls:STAR[ss].t==='cau'?'warn':(ss===period?'good':'neutral'),
+    t:`The sitting · 坐山 ${DIR_LABEL[sd]}`,nums:`山${ss} 向${sx}`,
+    p:`Behind you sits the ${STAR[ss].sc} mountain star (${STAR[ss].star}) — governing health, people and support. ${STAR[ss].note}`});
+  // center
+  const cc=comboRead(ch.shan.C,ch.xiang.C);
+  if(cc) items.push({cls:cc.cls,t:'The centre · 中宫  '+cc.t.split('·')[1]?.trim(),nums:`山${ch.shan.C} 向${ch.xiang.C} 運${ch.per.C}`,p:cc.p});
+  // scan all palaces for standout combos (limit)
+  const rows=['SE','S','SW','E','W','NE','N','NW'];
+  const extra=[];
+  rows.forEach(d=>{const cr=comboRead(ch.shan[d],ch.xiang[d]); if(cr) extra.push({d,cr});});
+  extra.sort((a,b)=> (a.cr.cls==='warn'?-1:1)-(b.cr.cls==='warn'?-1:1));
+  extra.slice(0,3).forEach(({d,cr})=>{
+    items.push({cls:cr.cls,t:`${DIR_LABEL[d]} · ${cr.t.split('·').pop().trim()}`,nums:`山${ch.shan[d]} 向${ch.xiang[d]}`,p:cr.p});
+  });
+  items.slice(0,6).forEach(it=>{
+    const el=document.createElement('div'); el.className='read '+it.cls;
+    el.innerHTML=`<h4>${it.t}<span class="nums">${it.nums}</span></h4><p>${it.p}</p>`;
+    box.appendChild(el);
+  });
+}
+
+/* nine stars reference */
+function buildStarRef(){
+  const g=document.getElementById('starGrid');
+  [1,2,3,4,5,6,7,8,9].forEach(n=>{const s=STAR[n];const cell=document.createElement('div');
+    cell.className='star-cell '+(s.t==='aus'?'aus':s.t==='cau'?'cau':'neu');
+    cell.innerHTML=`<span class="tagline">${s.tag}</span><div class="num sc">${n}</div>`+
+      `<div class="nm sc">${s.sc} · ${s.star}</div><div class="rl">${EL[s.el].cn} ${EL[s.el].en}</div>`+
+      `<p>${s.note.charAt(0).toUpperCase()+s.note.slice(1)}</p>`;
+    g.appendChild(cell);});
+}
+
+/* ============ params + reveal + progress ============ */
+function applyParams(){
+  const q=new URLSearchParams(location.search);
+  const f=(q.get('facing')||'').toUpperCase(); if(CW.includes(f)) facingS=f;
+  const p=parseInt(q.get('period')||'',10); if(p>=1&&p<=9) period=p;
+  const zn=(q.get('zone')||'').toUpperCase(); if(ZONES[zn]) selKey=zn;
+  const md=q.get('mode'); if(md==='compass'){mode='compass';}
+  const bf=(q.get('bfacing')||'').toUpperCase(); if(CW.includes(bf)) facingB=bf;
+  const view=q.get('view'); if(view){const t=document.getElementById(view); if(t) setTimeout(()=>t.scrollIntoView({behavior:RM?'auto':'smooth'}),300);}
+}
+function initReveal(){
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
+}
+let ticking=false;
+function onScroll(){ if(ticking)return; ticking=true; requestAnimationFrame(()=>{
+  const h=document.documentElement; const sc=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+  document.getElementById('prog').style.width=(sc*100)+'%'; ticking=false;
+});}
+
+/* ============ boot ============ */
+buildLuopan();
+applyParams();
+// reflect mode state on controls if set by params
+if(mode==='compass'){
+  document.querySelectorAll('#modeSeg .seg').forEach(s=>{const on=s.dataset.mode==='compass';s.classList.toggle('on',on);s.classList.toggle('cin',on);});
+  document.getElementById('btbCtl').style.display='none';
+  document.getElementById('compassCtl').style.display='';
+}
+buildBagua(); syncFacingSegBagua(); syncDoorSeg();
+buildFsControls(); syncFs(); renderFlying();
+buildStarRef();
+initReveal();
+window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+// pause any rAF work when hidden (progress bar only; luopan is CSS and auto-pauses off-screen)
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) onScroll(); });
+</script>
+</body>
+</html>

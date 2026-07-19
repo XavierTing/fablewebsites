@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>姓名學 · The Name — What a Name Is Worth</title>
+<meta name="description" content="Enter a Chinese name and the Five Grids 五格 are computed in real time from each character's traditional 康熙 stroke count — 天格 人格 地格 外格 總格, mapped to the 81 數理, the 三才 five-element flow, an auspicious score, and a plain-language read of what the name emphasises.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="姓名學 · The Name — What a Name Is Worth">
+<meta property="og:description" content="A real 五格剖象法 engine, cast in code — Five Grids from 康熙 strokes, the 81 數理, the 三才 五行 flow, and a naming-master's reading.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="姓名學 · The Name">
+<meta name="twitter:description" content="Enter a Chinese name; the Five Grids are computed from traditional stroke counts, with the 81 數理 and 三才 五行 flow.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23AC3E2C'/%3E%3Crect x='24' y='24' width='52' height='52' rx='5' fill='none' stroke='%23F5F1E8' stroke-width='4'/%3E%3Cpath d='M50 32v36M35 44h30M40 56h20' stroke='%23F5F1E8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F1E8; --paper2:#EFE8D6; --paper3:#FAF7EF; --paper-d:#EAE1CC; --edge:#DBD0B4;
+    --ink:#241C10; --ink2:#4A3D28; --ink-d:rgba(36,28,16,.64); --ink-f:rgba(36,28,16,.42); --ink-ff:rgba(36,28,16,.22);
+    --brass:#98763A; --brass-hi:#B4924A; --brass-line:rgba(152,118,58,.4); --brass-faint:rgba(152,118,58,.18);
+    --seal:#AC3E2C; --seal-d:#8C3121; --seal-hi:#C4543F;
+    --jade:#3F7050;
+    --wood:#3F7050; --fire:#B4402E; --earth:#98763A; --metal:#65717A; --water:#2C566B;
+    --ji:#3F7050; --xiong:#AC3E2C; --ban:#B08128;
+    --serif:'Spectral',Georgia,serif;
+    --han:'Noto Serif SC',serif;
+    --brush:'Ma Shan Zheng',cursive;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-weight:400;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden; position:relative; min-height:100vh;
+  }
+  /* paper / vignette / grain */
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 120% 90% at 50% -8%, rgba(250,247,239,.7), transparent 60%),
+      radial-gradient(ellipse 150% 130% at 50% 120%, rgba(140,108,52,.13), transparent 62%),
+      radial-gradient(ellipse 90% 80% at 15% 25%, rgba(255,252,244,.4), transparent 55%);}
+  body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+    box-shadow:inset 0 0 220px rgba(80,58,24,.22), inset 0 0 60px rgba(80,58,24,.12);}
+  .watermark{position:fixed;z-index:0;pointer-events:none;user-select:none;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:var(--brush);font-size:min(82vh,780px);line-height:1;
+    color:rgba(36,28,16,.032);white-space:nowrap;}
+
+  ::selection{background:var(--seal);color:var(--paper3)}
+  ::-webkit-scrollbar{width:12px;background:var(--paper)}
+  ::-webkit-scrollbar-thumb{background:var(--brass-line);border:3px solid var(--paper);border-radius:8px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+  :focus{outline:none}
+  :focus-visible{outline:1.5px solid var(--seal);outline-offset:3px;border-radius:2px}
+  a{color:inherit;text-decoration:none}
+
+  /* back-link */
+  .backlink{position:fixed;left:24px;bottom:22px;z-index:60;
+    font-family:var(--mono);font-size:10px;letter-spacing:.3em;font-weight:400;text-transform:uppercase;
+    color:var(--brass);border:1px solid var(--brass-line);padding:8px 13px 7px;border-radius:2px;
+    background:rgba(245,241,232,.72);backdrop-filter:blur(6px);
+    transition:color .45s cubic-bezier(.22,1,.36,1),background .45s cubic-bezier(.22,1,.36,1),border-color .45s}
+  .backlink:hover{color:var(--paper3);background:var(--seal);border-color:var(--seal)}
+
+  .wrap{position:relative;z-index:5;max-width:1120px;margin:0 auto;padding:0 clamp(20px,4vw,54px)}
+
+  /* masthead */
+  header.top{padding-top:clamp(28px,6vh,58px)}
+  .rule-x{display:flex;align-items:center;gap:16px;color:var(--ink-f);
+    font-family:var(--mono);font-size:10px;letter-spacing:.4em;text-transform:uppercase}
+  .rule-x::before,.rule-x::after{content:'';height:1px;background:var(--brass-line);flex:1}
+  .rule-x .seal-mini{width:7px;height:7px;background:var(--seal);border-radius:1px;flex:0 0 auto;transform:rotate(45deg)}
+
+  .hero{padding:clamp(28px,6vh,60px) 0 clamp(20px,4vh,36px);position:relative}
+  .kicker{font-family:var(--mono);font-size:clamp(10px,1.1vw,12px);letter-spacing:.44em;text-transform:uppercase;
+    color:var(--seal);font-weight:500;margin-bottom:clamp(16px,3vh,26px);
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .kicker .zh{font-family:var(--han);font-weight:600;letter-spacing:.24em;font-size:1.2em;color:var(--ink)}
+  h1.mark{font-family:var(--han);font-weight:900;line-height:.9;letter-spacing:-.01em;
+    font-size:clamp(50px,12vw,150px);color:var(--ink);position:relative;
+    display:flex;align-items:flex-start;gap:clamp(14px,3vw,42px)}
+  h1.mark .en{font-family:var(--serif);font-weight:500;font-size:clamp(13px,1.7vw,21px);
+    letter-spacing:.01em;line-height:1.3;color:var(--ink2);align-self:flex-end;
+    max-width:18ch;padding-bottom:clamp(8px,1.6vw,20px);text-transform:none}
+  h1.mark .en em{font-style:normal;color:var(--seal);display:block;font-family:var(--mono);
+    font-size:.6em;letter-spacing:.32em;text-transform:uppercase;margin-top:9px;font-weight:500}
+  .lede{font-family:var(--serif);font-weight:400;font-size:clamp(16px,2vw,20px);line-height:1.72;
+    color:var(--ink2);max-width:62ch;margin-top:clamp(20px,4vh,32px)}
+  .lede b{font-weight:600;color:var(--ink)}
+  .lede .h{font-family:var(--han);font-weight:600;color:var(--ink)}
+
+  /* input console */
+  .console{margin-top:clamp(26px,5vh,44px);border:1px solid var(--brass-line);border-radius:4px;
+    background:linear-gradient(180deg,rgba(250,247,239,.8),rgba(239,232,214,.55));
+    box-shadow:0 1px 0 rgba(255,252,244,.7) inset, 0 22px 52px -32px rgba(80,58,24,.42);
+    padding:clamp(20px,3vw,30px) clamp(20px,3vw,34px);position:relative;overflow:hidden}
+  .console::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--seal),var(--seal-d))}
+  .console-grid{display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,2.4vw,26px)}
+  .field{display:flex;flex-direction:column;gap:9px}
+  .field label{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-d);
+    display:flex;align-items:center;gap:8px}
+  .field label .zh{font-family:var(--han);font-weight:600;font-size:1.4em;letter-spacing:.1em;color:var(--ink)}
+  .field input[type=text]{
+    font-family:var(--han);font-weight:600;font-size:22px;letter-spacing:.14em;color:var(--ink);
+    background:var(--paper3);border:1px solid var(--edge);border-radius:3px;padding:9px 13px;
+    transition:border-color .35s,box-shadow .35s}
+  .field.sur input{width:130px}
+  .field.giv input{width:200px}
+  .field input::placeholder{color:var(--ink-ff);font-weight:400}
+  .field input:hover{border-color:var(--brass)}
+  .field input:focus-visible{border-color:var(--seal);box-shadow:0 0 0 2px rgba(172,62,44,.16);outline:none}
+  .cast{margin-left:auto;font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;
+    color:var(--paper3);background:var(--ink);border:1px solid var(--ink);border-radius:3px;
+    padding:14px 26px;cursor:pointer;display:inline-flex;align-items:center;gap:12px;
+    transition:background .4s cubic-bezier(.22,1,.36,1),transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s}
+  .cast .zh{font-family:var(--han);font-weight:600;font-size:1.5em;letter-spacing:.14em}
+  .cast:hover{background:var(--seal);border-color:var(--seal);transform:translateY(-2px);box-shadow:0 14px 28px -16px rgba(172,62,44,.7)}
+  .cast:active{transform:translateY(0)}
+  .presets{margin-top:16px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-f)}
+  .presets .pre{cursor:pointer;font-family:var(--han);font-weight:600;font-size:15px;letter-spacing:.1em;
+    color:var(--ink-d);border-bottom:1px dashed var(--brass-line);padding-bottom:2px;transition:color .3s,border-color .3s}
+  .presets .pre:hover{color:var(--seal);border-color:var(--seal)}
+  .note-ex{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-f);margin-top:14px;
+    display:flex;align-items:center;gap:8px}
+  .note-ex .dot{width:5px;height:5px;background:var(--brass);border-radius:50%}
+  .note-ex.hide{display:none}
+  .warn{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--seal-d);margin-top:14px;
+    line-height:1.6;border-left:2px solid rgba(172,62,44,.4);padding-left:14px;display:none}
+  .warn.show{display:block}
+
+  /* section scaffolding */
+  section.block{padding:clamp(46px,8vh,90px) 0 0}
+  .sec-h{display:flex;align-items:baseline;gap:16px;margin-bottom:clamp(24px,4vh,40px);flex-wrap:wrap}
+  .sec-h .idx{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--seal);font-weight:500}
+  .sec-h .zh{font-family:var(--han);font-weight:700;font-size:clamp(23px,3.4vw,36px);letter-spacing:.06em;color:var(--ink)}
+  .sec-h .en{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-f)}
+  .sec-h .en::before{content:'· '}
+
+  /* ===== the name plate ===== */
+  .nameplate{display:grid;grid-template-columns:auto 1fr;gap:clamp(22px,4vw,44px);align-items:center;
+    border:1px solid var(--brass-line);border-radius:6px;padding:clamp(26px,4vw,42px) clamp(26px,4vw,48px);
+    background:linear-gradient(180deg,rgba(250,247,239,.66),rgba(239,232,214,.4));
+    box-shadow:0 24px 60px -42px rgba(80,58,24,.5);position:relative;overflow:hidden}
+  .np-name{position:relative;display:flex;gap:clamp(6px,1.4vw,14px);align-items:stretch}
+  .np-char{position:relative;width:clamp(84px,13vw,132px);height:clamp(84px,13vw,132px);flex:0 0 auto;
+    display:grid;place-items:center;border:1px solid var(--brass-faint);border-radius:4px;
+    background:radial-gradient(circle at 50% 42%, rgba(255,252,244,.6), rgba(239,232,214,.18));overflow:hidden}
+  /* mizige — calligraphy practice grid */
+  .np-char::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      linear-gradient(rgba(172,62,44,.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(172,62,44,.2) 1px, transparent 1px);
+    background-position:center;background-size:100% 50%,50% 100%;}
+  .np-char::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.32;
+    background-image:
+      repeating-linear-gradient(45deg, transparent 0 6px, rgba(172,62,44,.16) 6px 6.6px),
+      repeating-linear-gradient(-45deg, transparent 0 6px, rgba(172,62,44,.16) 6px 6.6px);
+    -webkit-mask:linear-gradient(#000,#000);mask:none;}
+  .np-char .hz{position:relative;z-index:2;font-family:var(--brush);font-size:clamp(56px,9vw,104px);line-height:1;
+    color:var(--ink);transition:transform .6s cubic-bezier(.22,1,.36,1)}
+  .np-char.sur .hz{color:var(--seal)}
+  .np-char .sk{position:absolute;z-index:2;bottom:5px;right:7px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.06em;color:var(--ink-f)}
+  .np-char .skedit{position:absolute;z-index:3;bottom:4px;right:5px;width:34px;padding:1px 3px;
+    font-family:var(--mono);font-size:11px;text-align:center;color:var(--seal-d);
+    background:rgba(250,247,239,.9);border:1px solid var(--seal);border-radius:3px}
+  .np-char.unknown{border-color:var(--seal)}
+  .np-char.unknown .hz{color:var(--ink-d)}
+  .np-name:hover .np-char .hz{transform:translateY(-3px)}
+  .np-meta{display:flex;flex-direction:column;gap:14px;min-width:0;padding-right:180px}
+  .np-seal{align-self:flex-start;width:clamp(64px,8vw,86px);height:clamp(64px,8vw,86px);border-radius:5px;
+    background:var(--seal);color:var(--paper3);display:grid;place-items:center;text-align:center;
+    box-shadow:0 12px 30px -18px rgba(172,62,44,.85);position:relative;transform:rotate(2deg)}
+  .np-seal::before{content:'';position:absolute;inset:6px;border:1px solid rgba(245,241,232,.55);border-radius:3px}
+  .np-seal .s-han{font-family:var(--han);font-weight:700;font-size:clamp(15px,2vw,20px);line-height:1.05;letter-spacing:.04em;writing-mode:vertical-rl}
+  .np-lab{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--seal)}
+  .np-en{font-family:var(--serif);font-weight:500;font-size:clamp(19px,2.6vw,26px);line-height:1.15;color:var(--ink)}
+  .np-en .py{font-family:var(--mono);font-weight:400;font-size:.55em;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-d);display:block;margin-top:8px}
+  .np-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .np-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-d);
+    border:1px solid var(--brass-line);border-radius:20px;padding:6px 12px;display:inline-flex;align-items:center;gap:7px}
+  .np-tag .zh{font-family:var(--han);font-weight:600;font-size:1.35em;letter-spacing:.04em;color:var(--ink)}
+  .np-tag .sw{width:8px;height:8px;border-radius:50%}
+
+  /* ===== score ring ===== */
+  .np-score{position:absolute;top:clamp(22px,3vw,34px);right:clamp(22px,3vw,40px);text-align:center}
+  .np-score svg{display:block;width:clamp(96px,12vw,124px);height:clamp(96px,12vw,124px)}
+  .np-score .val{font-family:var(--mono);font-weight:500}
+  .np-score .cap{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-f);margin-top:7px}
+
+  /* ===== five grids diagram ===== */
+  .grids-wrap{border:1px solid var(--brass-line);border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(250,247,239,.6),rgba(239,232,214,.34));
+    box-shadow:0 24px 60px -44px rgba(80,58,24,.5)}
+  #gridsvg{width:100%;height:auto;display:block}
+  .grids-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;padding:16px 20px 20px;
+    border-top:1px solid var(--brass-faint);font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-f)}
+  .grids-legend span{display:inline-flex;align-items:center;gap:8px}
+  .grids-legend .pip{width:10px;height:10px;border-radius:50%}
+  .grids-legend .pip.ji{background:var(--ji)}
+  .grids-legend .pip.ban{background:var(--ban)}
+  .grids-legend .pip.xiong{background:var(--xiong)}
+
+  /* grid detail cards */
+  .grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--brass-faint);
+    border:1px solid var(--brass-line);border-top:none;border-radius:0 0 6px 6px;overflow:hidden;margin-top:-1px}
+  .gc{background:var(--paper2);padding:18px 20px 20px;position:relative}
+  .gc-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+  .gc-name{font-family:var(--han);font-weight:700;font-size:19px;letter-spacing:.08em;color:var(--ink)}
+  .gc-name .en{font-family:var(--mono);font-weight:400;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f);display:block;margin-top:3px}
+  .gc-num{font-family:var(--mono);font-weight:500;font-size:26px;line-height:1;color:var(--ink)}
+  .gc-badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+  .badge{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:3px;
+    display:inline-flex;align-items:center;gap:5px}
+  .badge .zh{font-family:var(--han);font-weight:600;font-size:1.3em;letter-spacing:0}
+  .badge.ji{color:var(--ji);background:rgba(63,112,80,.12);border:1px solid rgba(63,112,80,.32)}
+  .badge.ban{color:var(--ban);background:rgba(176,129,40,.13);border:1px solid rgba(176,129,40,.34)}
+  .badge.xiong{color:var(--xiong);background:rgba(172,62,44,.11);border:1px solid rgba(172,62,44,.3)}
+  .badge.el{color:var(--ink-d);background:transparent;border:1px solid var(--brass-line)}
+  .gc-txt{font-family:var(--serif);font-size:14px;line-height:1.62;color:var(--ink2)}
+  .gc-txt .h{font-family:var(--han);font-weight:600;color:var(--ink)}
+  .gc.ren{background:radial-gradient(ellipse 100% 80% at 50% 0%, rgba(172,62,44,.06), transparent 70%),var(--paper3)}
+  .gc.ren::before{content:'主運';position:absolute;top:0;right:0;font-family:var(--han);font-weight:600;font-size:10px;
+    letter-spacing:.1em;color:var(--paper3);background:var(--seal);padding:4px 9px 3px;border-radius:0 0 0 5px}
+
+  /* ===== 三才 flow ===== */
+  .sancai{display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,4vw,48px);align-items:stretch}
+  .sc-stack{display:flex;flex-direction:column;gap:0;align-items:center;
+    border:1px solid var(--brass-line);border-radius:6px;padding:clamp(22px,3vw,32px) clamp(28px,4vw,54px);
+    background:linear-gradient(180deg,rgba(250,247,239,.6),rgba(239,232,214,.34))}
+  .sc-node{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative}
+  .sc-disc{width:clamp(72px,9vw,92px);height:clamp(72px,9vw,92px);border-radius:50%;display:grid;place-items:center;
+    position:relative;box-shadow:0 10px 24px -16px rgba(80,58,24,.6)}
+  .sc-disc .el{font-family:var(--han);font-weight:700;font-size:clamp(34px,4.4vw,44px);color:var(--paper3);line-height:1}
+  .sc-disc .ring{position:absolute;inset:-5px;border-radius:50%;border:1px solid;opacity:.4}
+  .sc-cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f)}
+  .sc-cap b{color:var(--ink-d);font-weight:500}
+  .sc-link{height:clamp(30px,4vh,44px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative}
+  .sc-link .arr{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent}
+  .sc-link .rel{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;position:absolute;left:calc(100% + 8px);white-space:nowrap}
+  .sc-link .rel .zh{font-family:var(--han);font-weight:600;font-size:1.3em}
+  .sc-read{border:1px solid var(--brass-line);border-radius:6px;padding:clamp(24px,3vw,34px);
+    background:rgba(250,247,239,.5);display:flex;flex-direction:column}
+  .sc-verdict{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .sc-vbadge{font-family:var(--han);font-weight:700;font-size:clamp(22px,3vw,30px);letter-spacing:.06em;
+    padding:6px 16px;border-radius:4px;line-height:1.1}
+  .sc-vbadge .en{font-family:var(--mono);font-weight:400;font-size:.4em;letter-spacing:.2em;text-transform:uppercase;display:block;margin-top:4px}
+  .sc-config{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--ink-d)}
+  .sc-config .zh{font-family:var(--han);font-weight:600;font-size:1.5em;letter-spacing:.1em;color:var(--ink)}
+  .sc-body{font-family:var(--serif);font-size:15.5px;line-height:1.72;color:var(--ink2)}
+  .sc-body b{font-weight:600;color:var(--ink)}
+  .sc-body .h{font-family:var(--han);font-weight:600;color:var(--ink)}
+
+  /* ===== reading ===== */
+  .reading{max-width:76ch}
+  .reading .seal-mark{float:right;width:clamp(74px,10vw,104px);height:clamp(74px,10vw,104px);
+    margin:0 0 14px 26px;border-radius:5px;background:var(--seal);color:var(--paper3);
+    display:grid;place-items:center;text-align:center;box-shadow:0 12px 30px -18px rgba(172,62,44,.8);
+    font-family:var(--han);font-weight:600;line-height:1;position:relative;transform:rotate(-2deg)}
+  .reading .seal-mark::before{content:'';position:absolute;inset:6px;border:1px solid rgba(245,241,232,.5);border-radius:3px}
+  .reading .seal-mark .big{font-size:clamp(30px,4vw,42px);letter-spacing:.04em}
+  .reading .seal-mark .tag{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;margin-top:6px}
+  .reading p{font-family:var(--serif);font-size:clamp(16px,2vw,19.5px);line-height:1.76;color:var(--ink2);margin-bottom:22px}
+  .reading p:first-of-type::first-letter{font-size:3.4em;line-height:.72;float:left;padding:8px 12px 0 0;color:var(--seal);font-weight:600;font-family:var(--serif)}
+  .reading p b{font-weight:600;color:var(--ink)}
+  .reading p .h{font-family:var(--han);font-weight:600;color:var(--ink)}
+  .reading .disclaim{font-family:var(--mono);font-size:11px;line-height:1.7;letter-spacing:.03em;color:var(--ink-f);
+    border-left:2px solid var(--brass-line);padding-left:16px;margin-top:6px}
+
+  /* ===== naming helper ===== */
+  .helper{border:1px solid var(--brass-line);border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(250,247,239,.62),rgba(239,232,214,.36))}
+  .helper-in{padding:clamp(22px,3vw,32px) clamp(22px,3vw,36px)}
+  .helper-form{display:flex;flex-wrap:wrap;align-items:flex-end;gap:clamp(16px,2.4vw,26px);margin-bottom:8px}
+  .el-picker{display:flex;flex-direction:column;gap:10px}
+  .el-picker .lab{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-d)}
+  .el-opts{display:flex;gap:9px;flex-wrap:wrap}
+  .el-opt{cursor:pointer;font-family:var(--han);font-weight:600;font-size:18px;width:46px;height:46px;border-radius:5px;
+    display:grid;place-items:center;border:1px solid var(--brass-line);background:var(--paper3);color:var(--ink-d);position:relative;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .3s,color .3s,background .3s}
+  .el-opt:hover{transform:translateY(-2px)}
+  .el-opt.on{color:var(--paper3);transform:translateY(-2px)}
+  .el-opt .en{position:absolute;bottom:-17px;font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-f)}
+  .helper-note{font-family:var(--mono);font-size:11px;letter-spacing:.02em;line-height:1.65;color:var(--ink-d);
+    margin-top:22px;max-width:78ch}
+  .helper-note .h{font-family:var(--han);font-weight:600;color:var(--ink2)}
+  .suggests{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+  .sug{border:1px solid var(--brass-line);border-radius:5px;padding:12px 14px 13px;background:var(--paper3);
+    min-width:120px;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s,border-color .4s;cursor:pointer}
+  .sug:hover{transform:translateY(-3px);box-shadow:0 14px 28px -20px rgba(80,58,24,.6);border-color:var(--brass)}
+  .sug-name{font-family:var(--brush);font-size:34px;line-height:1;color:var(--ink);display:flex;align-items:baseline;gap:2px}
+  .sug-name .g{color:var(--seal)}
+  .sug-meta{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--ink-d);margin-top:10px;line-height:1.7}
+  .sug-meta b{color:var(--ink);font-weight:500}
+  .sug-score{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.08em;color:var(--ji)}
+  .sug-none{font-family:var(--serif);font-size:15px;color:var(--ink-d);line-height:1.6;margin-top:18px}
+
+  /* ===== how computed ===== */
+  .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--brass-faint);
+    border:1px solid var(--brass-line);border-radius:6px;overflow:hidden}
+  .how .cell{background:var(--paper2);padding:22px 22px 24px}
+  .how .cell .n{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--seal);margin-bottom:11px}
+  .how .cell h4{font-family:var(--han);font-weight:600;font-size:17px;color:var(--ink);margin-bottom:9px;letter-spacing:.04em}
+  .how .cell h4 .en{display:block;font-family:var(--serif);font-weight:500;font-size:.8em;color:var(--ink-d);letter-spacing:0;margin-top:3px}
+  .how .cell p{font-family:var(--mono);font-size:11.5px;line-height:1.72;color:var(--ink-d);letter-spacing:.01em}
+  .how .cell p .h{font-family:var(--han);font-size:1.15em;font-weight:500;color:var(--ink2)}
+  .how-note{font-family:var(--mono);font-size:11px;line-height:1.72;letter-spacing:.03em;color:var(--ink-f);margin-top:18px;max-width:84ch}
+  .how-note b{color:var(--ink-d);font-weight:500}
+
+  /* footer */
+  footer{position:relative;z-index:5;margin-top:clamp(58px,10vh,108px);
+    border-top:1px solid var(--brass-line);background:rgba(36,28,16,.028)}
+  .foot-in{max-width:1120px;margin:0 auto;padding:clamp(44px,7vh,72px) clamp(20px,4vw,54px) clamp(52px,8vh,86px);
+    display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+  footer .fmark{font-family:var(--han);font-weight:700;font-size:clamp(26px,4vw,42px);letter-spacing:.14em;color:var(--ink)}
+  footer .fsub{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-f)}
+  footer .flink{margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--seal);border-bottom:1px solid rgba(172,62,44,.4);padding-bottom:4px;transition:color .35s,border-color .35s}
+  footer .flink:hover{color:var(--seal-d);border-color:var(--seal)}
+  footer .cred{margin-top:20px;font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--ink-ff);line-height:1.8;max-width:64ch}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px)}
+  .reveal.in{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+
+  /* responsive */
+  @media (max-width:880px){
+    .sancai{grid-template-columns:1fr}
+    .nameplate{grid-template-columns:1fr}
+    .np-meta{padding-right:0}
+    .np-score{position:static;text-align:left;display:flex;align-items:center;gap:16px;margin-top:6px}
+    .np-score .cap{margin-top:0}
+    h1.mark{flex-direction:column;gap:14px}
+    h1.mark .en{align-self:flex-start;padding-bottom:0;max-width:36ch}
+    .console-grid{flex-direction:column;align-items:stretch}
+    .cast{margin-left:0;justify-content:center}
+    .field.sur input,.field.giv input{width:100%}
+  }
+  @media (max-width:520px){
+    .backlink{left:14px;bottom:14px}
+    .np-char{width:74px;height:74px}
+    .np-char .hz{font-size:50px}
+    .reading .seal-mark{float:none;margin:0 auto 22px}
+    .reading p:first-of-type::first-letter{font-size:2.8em}
+    .grid-cards{grid-template-columns:1fr 1fr}
+    .gc.zong{grid-column:1 / -1}
+    .sc-link .rel{position:static;margin-top:2px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    .np-char .hz,.cast,.backlink,.sug,.el-opt{transition:none!important}
+  }
+  .noscript{max-width:60ch;margin:80px auto;padding:0 24px;text-align:center;font-family:var(--serif);font-size:19px;line-height:1.7;color:var(--ink2)}
+</style>
+</head>
+<body>
+  <div class="vignette"></div>
+  <div class="watermark" aria-hidden="true">名</div>
+  <a class="backlink" href="/">XAVIER FABLE ×65</a>
+
+  <div class="wrap">
+    <header class="top">
+      <div class="rule-x"><span>正名齋 · The Rectifier's Desk</span><span class="seal-mini"></span><span>五格剖象 · Anno MMXXVI</span></div>
+
+      <div class="hero">
+        <div class="kicker"><span class="zh">姓名學</span> The Name · what a name is worth</div>
+        <h1 class="mark">
+          <span>姓名</span>
+          <span class="en">A name is not decoration. It is five numbers, a lineage of strokes, and an element the character was born to carry.<em>Enter a name — read its grids</em></span>
+        </h1>
+        <p class="lede">The old naming masters did not guess. They counted <b>strokes</b> — each character in its full <span class="h">康熙</span> traditional form — and from those numbers raised the <b>Five Grids</b> <span class="h">五格</span>: <span class="h">天格</span> heaven, <span class="h">人格</span> the self, <span class="h">地格</span> earth, <span class="h">外格</span> the outer world, <span class="h">總格</span> the whole. Each grid falls on one of the <b>81 數理</b>, auspicious or not; the top three reduce to their <b>Five Elements</b> and their flow is judged. Type a Chinese name below and the report is computed, character by character, in your browser.</p>
+
+        <form class="console" id="form" autocomplete="off">
+          <div class="console-grid">
+            <div class="field sur">
+              <label for="sur"><span class="zh">姓</span> Surname</label>
+              <input type="text" id="sur" name="sur" maxlength="2" value="王" spellcheck="false" inputmode="text">
+            </div>
+            <div class="field giv">
+              <label for="giv"><span class="zh">名</span> Given name</label>
+              <input type="text" id="giv" name="giv" maxlength="3" value="力宏" spellcheck="false" inputmode="text">
+            </div>
+            <button type="submit" class="cast"><span class="zh">批名</span> Read the name</button>
+          </div>
+          <div class="presets"><span>Try:</span>
+            <span class="pre" data-s="王" data-g="力宏">王力宏</span>
+            <span class="pre" data-s="李" data-g="安">李安</span>
+            <span class="pre" data-s="林" data-g="徽因">林徽因</span>
+            <span class="pre" data-s="欧阳" data-g="修">欧阳修</span>
+            <span class="pre" data-s="张" data-g="爱玲">张爱玲</span>
+          </div>
+          <div class="note-ex" id="noteEx"><span class="dot"></span>An example name — type your own above and read again.</div>
+          <div class="warn" id="warn"></div>
+        </form>
+      </div>
+    </header>
+
+    <!-- ======= THE NAME PLATE ======= -->
+    <section class="block" id="plate">
+      <div class="sec-h reveal"><span class="idx">I</span><span class="zh">姓名</span><span class="en">The Name, Read</span></div>
+      <div class="nameplate reveal" id="nameplate"><!-- injected --></div>
+    </section>
+
+    <!-- ======= FIVE GRIDS ======= -->
+    <section class="block" id="grids">
+      <div class="sec-h reveal"><span class="idx">II</span><span class="zh">五格</span><span class="en">The Five Grids</span></div>
+      <div class="grids-wrap reveal">
+        <svg id="gridsvg" role="img" aria-label="Five-grid diagram of the name" viewBox="0 0 660 420"></svg>
+        <div class="grids-legend">
+          <span><span class="pip ji"></span>吉 auspicious</span>
+          <span><span class="pip ban"></span>半吉 mixed</span>
+          <span><span class="pip xiong"></span>凶 inauspicious</span>
+        </div>
+      </div>
+      <div class="grid-cards reveal" id="gridCards"><!-- injected --></div>
+    </section>
+
+    <!-- ======= 三才 ======= -->
+    <section class="block" id="sancai">
+      <div class="sec-h reveal"><span class="idx">III</span><span class="zh">三才配置</span><span class="en">The Three Powers &amp; Their Flow</span></div>
+      <div class="sancai reveal">
+        <div class="sc-stack" id="scStack"><!-- injected --></div>
+        <div class="sc-read" id="scRead"><!-- injected --></div>
+      </div>
+    </section>
+
+    <!-- ======= READING ======= -->
+    <section class="block" id="reading">
+      <div class="sec-h reveal"><span class="idx">IV</span><span class="zh">姓名批解</span><span class="en">A Reading of the Name</span></div>
+      <div class="reading reveal">
+        <div class="seal-mark"><div><div class="big">名</div><div class="tag">The Name</div></div></div>
+        <div id="readBody"><!-- injected --></div>
+        <p class="disclaim">This report is generated from the name by rule — the 五格剖象法 of the Kumazaki tradition — not by a diviner, and is offered for reflection and delight, not prediction. 姓名學 is one symbolic lens among many; a good name is a beginning, never a verdict.</p>
+      </div>
+    </section>
+
+    <!-- ======= NAMING HELPER ======= -->
+    <section class="block" id="helper">
+      <div class="sec-h reveal"><span class="idx">V</span><span class="zh">起名</span><span class="en">Suggest a Name</span></div>
+      <div class="helper reveal">
+        <div class="helper-in">
+          <div class="helper-form">
+            <div class="field sur">
+              <label for="hsur"><span class="zh">姓</span> Surname</label>
+              <input type="text" id="hsur" name="hsur" maxlength="2" value="王" spellcheck="false">
+            </div>
+            <div class="el-picker">
+              <span class="lab">Element to boost · 要旺的五行</span>
+              <div class="el-opts" id="elOpts"></div>
+            </div>
+          </div>
+          <div class="suggests" id="suggests"><!-- injected --></div>
+          <p class="helper-note">The desk proposes single-character given names whose <b>strokes</b> raise an <span class="h">吉</span> <span class="h">人格</span> and <span class="h">總格</span>, and whose <span class="h">人格</span> or <span class="h">地格</span> falls on the element you chose — so the name doesn't just sound auspicious, it <b>counts</b> that way. Add a second character of your own and re-read it above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= HOW COMPUTED ======= -->
+    <section class="block" id="how">
+      <div class="sec-h reveal"><span class="idx">VI</span><span class="zh">推算之法</span><span class="en">How This Is Computed</span></div>
+      <div class="how reveal">
+        <div class="cell"><div class="n">康熙筆畫 · Strokes</div><h4>Traditional strokes<span class="en">康熙字典 counts</span></h4><p>Every grid is built from a character's stroke count in its <span class="h">康熙字典</span> traditional form — not its modern simplified shape. Radicals count by their root: <span class="h">氵</span>=水(4), <span class="h">艹</span>=艸(6), <span class="h">辶</span>=辵(7). A bundled table holds a few hundred common characters.</p></div>
+        <div class="cell"><div class="n">五格 · Five Grids</div><h4>The five numbers<span class="en">the formulas</span></h4><p>天格 = surname (+1 if single); 人格 = last surname char + first given char; 地格 = given name (+1 if single); 總格 = every stroke summed; 外格 = the remainder — the outer influence. Rules shift for 1-, 2- and 3-character names.</p></div>
+        <div class="cell"><div class="n">數理 · 81 Numbers</div><h4>The 81 fortunes<span class="en">吉 / 半吉 / 凶</span></h4><p>Each grid number lands on one of the <span class="h">八十一數理</span>, each marked 吉 auspicious, 半吉 mixed, or 凶 inauspicious with a short meaning. Numbers above 81 fold back by subtracting 80.</p></div>
+        <div class="cell"><div class="n">三才 · Three Powers</div><h4>Element &amp; flow<span class="en">木火土金水</span></h4><p>天·人·地 reduce to a Five Element by their last digit (1-2 木, 3-4 火, 5-6 土, 7-8 金, 9-0 水). The flow between them — generating 相生, controlling 相剋, or alike 比和 — sets the <span class="h">三才配置</span>.</p></div>
+      </div>
+      <p class="how-note"><b>A note on honesty.</b> The 五格 formulas and 81-數理 table are standard and applied exactly; the stroke table is curated for common characters using published 康熙 values, and a rare or ambiguous character may differ by a stroke — where a character is unknown, the report flags it and lets you set its stroke count by hand, then recomputes. The 三才 verdict here is derived directly from 五行 生剋 relationships rather than a lookup table. Read it as a beautifully-made mirror, not a machine of fate.</p>
+    </section>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <div class="fmark reveal">五格剖象</div>
+      <div class="fsub">姓名學 · The Name</div>
+      <a class="flink" href="/">↑ Return to the gallery · XAVIER FABLE ×65</a>
+      <div class="cred">A real 姓名學 engine, cast in code — Five Grids from 康熙 strokes, the 81 數理, the 三才 五行 flow, and a naming-master's reading.<br>Counted at the Rectifier's Desk 正名齋 · MMXXVI</div>
+    </div>
+  </footer>
+
+  <noscript><div class="noscript">The Five Grids are computed in your browser from the name you enter. Please enable JavaScript to count the strokes and read the report 五格.</div></noscript>
+
+<script>
+"use strict";
+/* ============================================================
+   姓名學 · 五格剖象法 — real Five-Grid name analysis
+   ============================================================ */
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- 康熙 traditional stroke table (simplified key -> 康熙 strokes) ---------- */
+const KX = {
+  /* numerals use their value, not written strokes */
+  '一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,'百':6,'千':3,'万':15,
+  /* common surnames */
+  '王':4,'李':7,'张':11,'刘':15,'陈':16,'杨':13,'黄':12,'赵':14,'吴':7,'周':8,'徐':10,'孙':10,'马':10,
+  '朱':6,'胡':11,'郭':15,'何':7,'高':10,'林':8,'罗':20,'郑':19,'梁':11,'谢':17,'宋':7,'唐':10,'许':11,
+  '韩':17,'冯':12,'邓':19,'曹':11,'彭':12,'曾':12,'田':5,'董':15,'袁':10,'潘':16,'于':3,'蒋':17,'蔡':17,
+  '余':7,'杜':7,'叶':15,'程':12,'苏':22,'魏':18,'吕':7,'丁':2,'任':6,'沈':8,'姚':9,'卢':16,'姜':9,'崔':11,
+  '钟':17,'谭':19,'陆':16,'汪':8,'范':11,'金':8,'石':5,'廖':14,'贾':13,'夏':10,'韦':9,'付':5,'傅':12,'方':4,
+  '邹':17,'孟':8,'熊':14,'秦':10,'邱':12,'江':7,'尹':4,'薛':19,'段':9,'雷':13,'侯':9,'龙':16,'史':5,'陶':16,
+  '黎':15,'贺':12,'顾':21,'毛':4,'郝':14,'龚':22,'邵':12,'钱':16,'严':20,'武':8,'戴':18,'莫':13,'孔':4,'向':6,
+  '汤':13,'常':11,'温':14,'康':11,'施':9,'文':4,'牛':4,'樊':15,'葛':15,'奚':10,'贝':7,'明':8,'臧':17,'计':9,
+  '成':7,'游':13,'阳':17,'裴':14,'翟':14,'谷':7,'关':19,'苗':11,'解':13,'应':17,'宗':8,'丁':2,'白':5,'欧':15,
+  '司':5,'诸':16,'上':3,'官':8,'东':8,'公':4,'慕':15,'容':10,'宇':6,'徒':10,'令':5,'狐':9,'皇':9,'甫':7,
+  '尉':11,'迟':16,'长':8,'轩':10,'辕':17,'南':9,'宫':10,'西':6,'门':8,'独':17,'孤':8,'端':14,'木':4,'仲':6,
+  '端':14,'鲜':17,'万':15,'俟':9,'呼':8,'延':7,'钟':17,'离':19,'皋':10,'陶':16,'喻':13,'柏':9,'水':4,'窦':20,'章':11,'云':12,'苏':22,'潘':16,'葛':15,'奚':10,'范':11,'彭':12,'郎':14,'鲁':15,'韦':9,'昌':8,'马':10,'苗':11,'凤':14,'花':10,'方':4,'俞':9,'任':6,'袁':10,'柳':9,'酆':18,'鲍':16,'史':5,'唐':10,'费':12,'廉':13,'岑':7,'薛':19,'雷':13,'贺':12,'倪':10,'汤':13,'滕':15,'殷':10,'罗':20,'毕':11,'郝':14,'邬':15,'安':6,'常':11,'乐':15,'时':10,'傅':12,'皮':5,'卞':4,'齐':14,'康':11,'伍':6,'余':7,'元':4,'卜':2,'顾':21,'孟':8,'平':5,'黄':12,'和':8,'穆':16,'萧':18,'尹':4,'姚':9,'邵':12,'湛':13,'汪':8,'祁':8,'毛':4,'禹':9,'狄':8,'米':6,'贝':7,'明':8,'臧':17,'计':9,'伏':6,'成':7,'戴':18,'谈':15,'宋':7,'茅':11,'庞':19,'熊':14,'纪':9,'舒':12,'屈':11,'项':12,'祝':10,'董':15,'梁':11,'杜':7,'阮':12,'蓝':20,'闵':12,'席':10,'季':8,'麻':11,'强':12,'贾':13,'路':13,'娄':11,'危':6,'江':7,'童':12,'颜':18,'郭':15,'梅':11,'盛':12,'林':8,'刁':2,'钟':17,'徐':10,'邱':12,'骆':16,'高':10,'夏':10,'蔡':17,'田':5,'樊':15,'胡':11,'凌':10,'霍':16,'虞':13,'万':15,'支':4,'柯':9,'昝':9,'管':14,'卢':16,'莫':13,'柯':9,'房':8,'裘':13,'缪':17,'干':3,'解':13,'应':17,'宗':8,'丁':2,'宣':9,'贲':12,'邓':19,'郁':13,'单':12,'杭':12,'洪':10,'包':5,'诸':16,'左':5,'石':5,'崔':11,'吉':6,'钮':9,'龚':22,'程':12,'嵇':12,'邢':11,'滑':14,'裴':14,'陆':16,'荣':14,'翁':10,'荀':12,'羊':6,'於':8,'惠':12,'甄':14,'麴':17,'家':10,'封':9,'芮':10,'羿':9,'储':18,'靳':13,'汲':8,'邴':13,'糜':17,'松':8,'井':4,'段':9,'富':12,'巫':7,'乌':10,'焦':12,'巴':4,'弓':3,'牧':8,'隗':13,'山':3,'谷':7,'车':7,'侯':9,'宓':8,'蓬':17,'全':6,'郗':16,'班':11,'仰':6,'秋':9,'仲':6,'伊':6,'宫':10,'宁':14,'仇':4,'栾':23,'暴':15,'甘':5,'钭':11,'厉':15,'戎':6,'祖':10,'武':8,'符':11,'刘':15,'景':12,'詹':13,'束':7,'龙':16,'叶':15,'幸':8,'司':5,'韶':14,'郜':14,'黎':15,'蓟':20,'薄':19,'印':6,'宿':11,'白':5,'怀':20,'蒲':16,'邰':16,'从':11,'鄂':16,'索':10,'咸':9,'籍':20,'赖':16,'卓':8,'蔺':22,'屠':11,'蒙':16,'池':7,'乔':12,'阴':16,'胥':11,'能':12,'苍':16,'双':18,'闻':14,'莘':13,'党':20,'翟':14,'谭':19,'贡':10,'劳':12,'逄':13,'姬':10,'申':5,'扶':8,'堵':12,'冉':5,'宰':10,'郦':30,'雍':13,'却':9,'璩':19,'桑':10,'桂':10,'濮':18,'牛':4,'寿':14,'通':14,'边':22,'扈':11,'燕':16,'冀':16,'郏':14,'浦':11,'尚':8,'农':13,'温':14,'别':7,'庄':13,'晏':10,'柴':10,'瞿':18,'阎':17,'充':6,'慕':15,'连':14,'茹':12,'习':11,'宦':9,'艾':8,'鱼':11,'容':10,'向':6,'古':5,'易':8,'慎':14,'戈':4,'廖':14,'庾':15,'终':11,'暨':16,'居':8,'衡':16,'步':7,'都':16,'耿':10,'满':15,'弘':5,'匡':6,'国':11,'寇':11,'广':15,'禄':13,'阙':18,'东':8,'欧':15,'殳':4,'沃':8,'利':7,'蔚':17,'越':12,'夔':22,'隆':17,'师':10,'巩':6,'厍':8,'聂':18,'晁':10,'勾':4,'敖':11,'融':16,'冷':7,'訾':13,'辛':7,'阚':20,'那':13,'简':18,'饶':21,'空':8,'曾':12,'毋':4,'沙':8,'乜':3,'养':15,'鞠':17,'须':12,'丰':18,'巢':11,'关':19,'蒯':16,'相':9,'查':9,'后':6,'荆':11,'红':9,'游':13,'竺':8,'权':22,'逯':15,'盖':14,'益':10,'桓':10,'公':4,
+  /* common given-name characters (male-leaning) */
+  '力':2,'刚':10,'勇':9,'毅':15,'俊':9,'峰':10,'峯':10,'强':12,'军':9,'保':9,'辉':15,'健':11,'世':5,'广':15,
+  '志':7,'义':13,'兴':16,'良':7,'海':11,'仁':4,'波':9,'贵':12,'福':14,'生':5,'元':4,'全':6,'国':11,'胜':12,
+  '学':16,'祥':11,'才':3,'发':12,'新':13,'利':7,'清':12,'飞':9,'彬':11,'富':12,'顺':12,'信':9,'杰':12,'涛':18,
+  '昌':8,'康':11,'星':9,'光':6,'天':4,'达':16,'安':6,'岩':8,'中':4,'茂':11,'进':15,'有':6,'坚':11,'和':8,
+  '彪':11,'博':12,'诚':14,'先':6,'敬':13,'震':15,'振':11,'壮':7,'会':13,'思':9,'群':13,'豪':14,'心':4,'邦':11,
+  '承':8,'乐':15,'绍':11,'功':5,'松':8,'善':12,'厚':9,'庆':15,'磊':15,'民':5,'友':4,'裕':13,'河':9,'哲':10,
+  '江':7,'超':12,'浩':11,'亮':9,'政':9,'谦':17,'亨':7,'奇':8,'弘':5,'言':7,'若':11,'鸣':14,'朋':8,'斌':12,
+  '维':14,'栋':12,'启':11,'克':7,'伦':10,'翔':12,'旭':6,'鹏':19,'泽':17,'晨':11,'辰':7,'士':3,'以':5,'建':9,
+  '家':10,'致':10,'树':16,'炎':8,'德':15,'行':6,'时':10,'泰':9,'盛':12,'雄':12,'琛':13,'钧':12,'冠':9,'策':12,
+  '腾':20,'楠':13,'榕':14,'风':9,'航':10,'铭':14,'睿':14,'昊':8,'霖':16,'恒':10,'宇':6,'轩':10,'宏':7,'伟':11,
+  '瑞':14,'珂':10,'琦':13,'瑜':14,'瀚':20,'渊':16,'鑫':24,'鹤':21,'麟':23,'骏':17,'翰':16,'翌':11,'哲':10,'昕':8,
+  '晖':13,'皓':12,'凯':12,'尧':12,'舜':13,'尚':8,'钦':12,'铠':18,'钊':10,'锐':15,'锋':15,'铮':16,'钰':13,'钢':16,
+  '洋':10,'涵':12,'润':16,'洲':10,'源':14,'沛':8,'滨':18,'汉':15,'湘':13,'滔':14,'泓':9,'沐':8,'泊':9,'汝':7,
+  '林':8,'森':12,'柏':9,'桦':16,'楷':13,'榛':14,'桐':10,'枫':13,'柳':9,'梓':11,'棠':12,'榆':13,'橙':16,'柯':9,
+  '焕':13,'炜':13,'烨':16,'炫':9,'灿':17,'熙':13,'燚':16,'焱':12,'烽':11,'炬':9,'炳':9,'烁':19,'煜':13,'炅':8,
+  '培':11,'垚':9,'城':10,'坤':8,'墨':15,'圣':13,'均':7,'坦':8,'埔':11,'塬':13,'峻':10,'嵩':13,'岳':17,'崎':11,
+  '钧':12,'银':14,'镇':18,'钟':17,'铉':13,'锦':16,'铨':14,'镐':18,'铄':23,'锌':15,'铭':14,'镒':18,'钥':22,'铖':14,
+  /* common given-name characters (female-leaning) */
+  '芳':10,'娜':10,'秀':7,'娟':10,'英':11,'华':14,'慧':15,'巧':5,'美':9,'娣':10,'妹':8,'娥':10,'翠':14,'雅':12,
+  '芝':10,'玉':5,'萍':14,'红':9,'玲':10,'芬':10,'燕':16,'彩':11,'春':9,'菊':14,'兰':23,'洁':16,'梅':11,'琳':13,
+  '素':10,'云':12,'莲':17,'真':10,'环':18,'雪':11,'荣':14,'爱':13,'霞':17,'香':9,'月':4,'莺':21,'媛':12,'瑞':14,
+  '凡':3,'佳':8,'嘉':14,'琼':20,'勤':13,'珍':10,'贞':9,'莉':13,'桂':10,'婷':12,'姣':9,'婉':11,'娴':15,'瑾':16,
+  '颖':16,'露':21,'瑶':15,'怡':9,'蓓':16,'仪':15,'荷':13,'丹':4,'蓉':16,'君':7,'琴':13,'蕊':18,'薇':19,'菁':14,
+  '梦':16,'岚':12,'婕':11,'馨':20,'韵':19,'融':16,'咏':12,'卿':11,'聪':17,'澜':21,'纯':10,'毓':14,'悦':11,'昭':9,
+  '冰':6,'爽':11,'琬':13,'茗':12,'羽':6,'希':7,'欣':8,'飘':20,'育':10,'滢':19,'馥':18,'筠':13,'柔':9,'竹':6,
+  '凝':16,'晓':16,'欢':22,'霄':15,'芸':10,'菲':14,'寒':12,'伊':6,'亚':8,'宜':8,'可':5,'姬':10,'舒':12,'影':15,
+  '思':9,'丽':19,'茜':12,'蕙':18,'蔓':17,'萱':15,'蓝':20,'莎':13,'菡':14,'荔':12,'蕾':19,'芊':9,'芷':10,'苹':11,
+  '婵':12,'嫣':14,'姝':9,'妍':7,'娆':16,'婧':11,'嫒':16,'姗':9,'娅':11,'婳':14,'嫱':17,'娉':10,'婓':11,'姿':9,
+  '琪':13,'瑛':14,'璐':18,'珊':10,'瑗':14,'璇':16,'瑄':14,'珮':11,'琇':12,'珏':10,'瑟':14,'璟':17,'瑀':14,'珑':21,
+  '莹':15,'蓁':17,'苑':11,'茵':12,'蕴':22,'苾':11,'茉':11,'蕃':18,'苒':11,'薏':19,'蔻':19,'萦':18,'蔼':22,'荃':12,
+  '妙':7,'婌':11,'姈':8,'娓':10,'婥':11,'媖':12,'妆':6,'姵':9,'娍':10,'婠':11,'嫙':16,'妤':7,'姽':9,'娟':10,'嫄':13,
+  '徽':17,'因':6,'钗':13,'黛':17,'嫦':17,'嫦':17,'雯':12,'霏':16,'霖':16,'霭':24,'霓':16,'露':21,'霜':17,'雨':8,
+  /* extra common name characters */
+  '子':3,'之':4,'如':6,'意':13,'成':7,'为':12,'家':10,'国':11,'民':5,'立':5,'正':5,'直':8,'方':4,'圆':13,
+  '恩':10,'惠':12,'德':15,'仁':4,'义':13,'礼':18,'智':12,'信':9,'忠':8,'孝':7,'慈':14,'爱':13,'和':8,'平':5,
+  '安':6,'宁':14,'康':11,'健':11,'寿':14,'福':14,'禄':13,'喜':12,'财':10,'旺':8,'兴':16,'隆':17,'昌':8,'荣':14,
+  '之':4,'乎':5,'也':3,'其':8,'若':11,'兮':4,'惟':11,'斯':12,'尔':14,
+  '修':10,'静':16,'敏':11,'婧':11,'颀':15,'皎':11,'昀':8,'昫':9,'晗':11,'暄':13,'旻':8,'晞':11
+};
+
+const COMPOUND_SURNAMES = ['欧阳','司马','诸葛','上官','夏侯','东方','公孙','慕容','宇文','司徒','令狐','皇甫','尉迟','长孙','轩辕','南宫','西门','独孤','端木','鲜于','闻人','太史','申屠','公羊','万俟','赫连','呼延','东郭','百里','钟离','宗政','濮阳','淳于','单于','拓跋','夹谷','宰父','谷梁','段干','东门','司空','公冶','漆雕','乐正','壤驷','公良'];
+
+/* ---------- Five Elements ---------- */
+const EL = {
+  wood: {c:'木',py:'mù',  en:'Wood', hex:'#3F7050'},
+  fire: {c:'火',py:'huǒ', en:'Fire', hex:'#B4402E'},
+  earth:{c:'土',py:'tǔ',  en:'Earth',hex:'#98763A'},
+  metal:{c:'金',py:'jīn', en:'Metal',hex:'#65717A'},
+  water:{c:'水',py:'shuǐ',en:'Water',hex:'#2C566B'}
+};
+const ELORDER=['wood','fire','earth','metal','water'];
+const GEN ={wood:'fire',fire:'earth',earth:'metal',metal:'water',water:'wood'};
+const CTRL={wood:'earth',earth:'water',water:'fire',fire:'metal',metal:'wood'};
+function elementOf(n){ const d=n%10;
+  if(d===1||d===2)return 'wood'; if(d===3||d===4)return 'fire';
+  if(d===5||d===6)return 'earth'; if(d===7||d===8)return 'metal'; return 'water'; }
+
+/* ---------- 81 数理 table: [rating, zh-meaning, en-meaning] ---------- */
+const R_JI='ji', R_BAN='ban', R_XIONG='xiong';
+const SHULI={
+ 1:[R_JI,'太極之數，萬物開泰','The origin — all things begin.'],
+ 2:[R_XIONG,'混沌未定，進退失據','Chaos undivided — footing uncertain.'],
+ 3:[R_JI,'三才既備，天地人和','Heaven, earth and self in accord.'],
+ 4:[R_XIONG,'四象未化，待時而生','Fourfold and waiting — growth deferred.'],
+ 5:[R_JI,'五行俱全，循環相生','The five phases whole, generating in turn.'],
+ 6:[R_JI,'六爻之數，安穩發展','Steady increase, well-founded.'],
+ 7:[R_JI,'七政之數，剛毅精進','Hard-tempered, unbending will.'],
+ 8:[R_JI,'八卦之數，堅忍發達','Persevering to a real success.'],
+ 9:[R_XIONG,'大成之數，盛極含險','Fullness turning — danger in the peak.'],
+ 10:[R_XIONG,'終結之數，暗淡飄零','An ending — light gone thin.'],
+ 11:[R_JI,'枯木逢春，穩健更新','Dry wood meets spring — renewal.'],
+ 12:[R_XIONG,'薄弱之數，孤力難支','Slender strength, standing alone.'],
+ 13:[R_JI,'天賦才藝，得人信望','Gifted and trusted — talent that carries.'],
+ 14:[R_XIONG,'淪落之數，孤獨煩憂','Scattered fortune, a private sorrow.'],
+ 15:[R_JI,'福壽圓滿，德望兼隆','Fortune, honour and long ease.'],
+ 16:[R_JI,'厚重之數，眾望所歸','Weighty and generous — many turn to you.'],
+ 17:[R_JI,'剛強權威，突破萬難','Authority that breaks through obstacles.'],
+ 18:[R_JI,'有志竟成，內外皆運','Resolve fulfilled, luck within and without.'],
+ 19:[R_XIONG,'風雲蔽月，成敗相隨','Cloud over moon — gain shadowed by loss.'],
+ 20:[R_XIONG,'破運之數，屢遭困厄','A broken run, hardship recurring.'],
+ 21:[R_JI,'明月中天，光風霽月','Moon at zenith — clarity and standing.'],
+ 22:[R_XIONG,'秋草逢霜，中折之相','Autumn grass in frost — a mid-course break.'],
+ 23:[R_JI,'旭日東升，壯麗果敢','Rising sun — bold and rising high.'],
+ 24:[R_JI,'家門餘慶，錢財豐盈','A prospering house, wealth that gathers.'],
+ 25:[R_JI,'英敏之數，剛毅有成','Quick-witted and firm — success earned.'],
+ 26:[R_BAN,'變怪之數，英雄多難','A hero’s number — greatness through storms.'],
+ 27:[R_BAN,'欲望之數，中吉帶凶','Ambition unbounded — good crossed with ill.'],
+ 28:[R_XIONG,'魚臨旱地，遭難之數','Fish on dry land — trouble finds it.'],
+ 29:[R_BAN,'智謀之數，欲壑難平','Cunning and reach — but never satisfied.'],
+ 30:[R_BAN,'浮沉之數，吉凶未定','Rise and fall — the dice still in the air.'],
+ 31:[R_JI,'智勇兼備，名利雙收','Wisdom and courage — name and gain both.'],
+ 32:[R_JI,'僥倖之數，貴人扶助','Favour from above, lifted by elders.'],
+ 33:[R_JI,'家門隆昌，才德俱揚','A rising house, talent and virtue plain.'],
+ 34:[R_XIONG,'破家之數，災難不絕','A ruinous run, misfortune unrelenting.'],
+ 35:[R_JI,'溫和平安，優雅發展','Gentle and safe — an elegant unfolding.'],
+ 36:[R_XIONG,'俠義之數，波瀾不平','Chivalrous but storm-tossed — a hard road.'],
+ 37:[R_JI,'權威顯達，忠實可靠','Weight and standing, dependable and true.'],
+ 38:[R_BAN,'磨鐵成針，藝業有成','Iron ground to a needle — art succeeds.'],
+ 39:[R_JI,'雲開見月，富貴榮華','Clouds part on the moon — wealth and honour.'],
+ 40:[R_BAN,'退保之數，謹慎則安','Safe if cautious — bold if reckless is ruin.'],
+ 41:[R_JI,'德望之數，繼續發展','High regard, steadily continuing.'],
+ 42:[R_BAN,'博涉之數，優柔難精','A dabbler’s reach — much begun, hard to master.'],
+ 43:[R_BAN,'雨夜之花，外華內虛','Blossom in night rain — bright out, hollow in.'],
+ 44:[R_XIONG,'愁苦之數，破敗離散','A grieving number — breakage and parting.'],
+ 45:[R_JI,'順風揚帆，新生泰達','Fair wind and full sail — a clear passage.'],
+ 46:[R_XIONG,'羅網之數，載寶沉舟','A snaring net — treasure sunk with the boat.'],
+ 47:[R_JI,'點鐵成金，開花結果','Iron turned to gold — flower and fruit.'],
+ 48:[R_JI,'德智之數，青松立鶴','Wisdom and virtue — crane on a green pine.'],
+ 49:[R_XIONG,'吉凶難分，遇吉則吉','Poised between — good if good comes to it.'],
+ 50:[R_BAN,'小舟入海，吉凶參半','A small boat at sea — half fair, half ill.'],
+ 51:[R_BAN,'盛衰之數，浮沉不定','Waxing and waning, footing unsure.'],
+ 52:[R_JI,'草木逢春，雨過天晴','Grass in spring — sky clear after rain.'],
+ 53:[R_BAN,'外吉內憂，先甘後苦','Fair outside, worried within — sweet then bitter.'],
+ 54:[R_XIONG,'多難之數，離散破財','Beset by trouble — parting and loss.'],
+ 55:[R_BAN,'外美內苦，先吉後艱','Lovely without, hard within — good then strained.'],
+ 56:[R_XIONG,'事違之數，欲進無力','Things go awry — will without strength.'],
+ 57:[R_JI,'寒松之數，遇吉則昌','Cold pine — flourishing when fortune turns.'],
+ 58:[R_BAN,'浮沉之數，先苦後甘','Ups and downs — bitter first, then sweet.'],
+ 59:[R_XIONG,'寡斷之數，難望成功','Irresolute — success stays out of reach.'],
+ 60:[R_XIONG,'黑暗之數，動搖不安','Darkness — restless and unsettled.'],
+ 61:[R_BAN,'雲遮半月，內隱風波','Cloud over half a moon — hidden squalls.'],
+ 62:[R_XIONG,'薄弱之數，內外不和','Weak-based — discord within and without.'],
+ 63:[R_JI,'萬物化育，繁榮之數','All things nourished — a flourishing.'],
+ 64:[R_XIONG,'骨肉分離，孤獨遭難','Kin divided — a lonely hardship.'],
+ 65:[R_JI,'吉運自來，能享天福','Good fortune arriving of its own accord.'],
+ 66:[R_XIONG,'進退維谷，內外不和','Caught between — no easy way forward.'],
+ 67:[R_JI,'順風之數，事事如意','A following wind — matters go as wished.'],
+ 68:[R_JI,'思慮周詳，計劃力行','Careful thought, plans carried through.'],
+ 69:[R_XIONG,'動搖之數，常陷逆境','Shaken — often thrown against the current.'],
+ 70:[R_XIONG,'慘淡之數，難免困苦','Bleak going — hardship hard to escape.'],
+ 71:[R_BAN,'吉凶參半，賴勇乃成','Half and half — courage makes the difference.'],
+ 72:[R_XIONG,'得失之數，得而復失','Gain and loss — what is got is lost again.'],
+ 73:[R_BAN,'平安之數，安樂自得','Quiet ease — content within its means.'],
+ 74:[R_XIONG,'無為之數，坐食山空','Idle — a mountain eaten hollow.'],
+ 75:[R_BAN,'退守之數，守成則吉','Hold, don’t reach — safe if it keeps still.'],
+ 76:[R_XIONG,'離散之數，先苦後定','Scattering — bitter first, settling late.'],
+ 77:[R_BAN,'先吉後凶，半盛半衰','Good then ill — half thriving, half failing.'],
+ 78:[R_BAN,'功德之數，先盛後衰','Merit and worth — full first, then thinning.'],
+ 79:[R_XIONG,'雲遮之數，身疲力盡','Shrouded — spent to the last of its strength.'],
+ 80:[R_XIONG,'辛苦之數，隱退則安','Toil unending — peace only in retreat.'],
+ 81:[R_JI,'還元之數，萬象回春','Return to the source — spring come round again.']
+};
+function shuli(n){ let m=n; while(m>81) m-=80; if(m<1)m=1; return {n, key:m, ...({rating:SHULI[m][0], zh:SHULI[m][1], en:SHULI[m][2]})}; }
+const RATE_ZH={ji:'吉',ban:'半吉',xiong:'凶'};
+const RATE_EN={ji:'auspicious',ban:'mixed',xiong:'inauspicious'};
+
+/* ---------- stroke lookup ---------- */
+function strokeOf(ch, overrides){
+  if(overrides && overrides[ch]!=null) return {n:overrides[ch], known:true, over:true};
+  if(KX[ch]!=null) return {n:KX[ch], known:true, over:false};
+  return {n:9, known:false, over:false}; // fallback approx
+}
+
+/* ---------- split a full name into surname + given ---------- */
+function splitName(raw){
+  const chars=[...raw.trim()].filter(c=>/[一-鿿]/.test(c));
+  if(chars.length<2) return null;
+  const two=chars.slice(0,2).join('');
+  if(COMPOUND_SURNAMES.includes(two) && chars.length>=3)
+    return {sur:chars.slice(0,2), giv:chars.slice(2)};
+  return {sur:[chars[0]], giv:chars.slice(1)};
+}
+
+/* ---------- THE FIVE GRIDS ---------- */
+function computeGrids(surArr, givArr, overrides){
+  const s=surArr.map(c=>({c, ...strokeOf(c,overrides)}));
+  const g=givArr.map(c=>({c, ...strokeOf(c,overrides)}));
+  const sn=s.map(x=>x.n), gn=g.map(x=>x.n);
+  const singleS=s.length===1, singleG=g.length===1;
+  const zong=[...sn,...gn].reduce((a,b)=>a+b,0);
+  const tian = singleS ? sn[0]+1 : sn[0]+sn[1];
+  const ren  = singleS ? sn[0]+gn[0] : sn[1]+gn[0];
+  const di   = singleG ? gn[0]+1 : gn.reduce((a,b)=>a+b,0);
+  let wai;
+  if(singleS && singleG) wai=2;
+  else if(singleS && !singleG) wai=gn[gn.length-1]+1;
+  else if(!singleS && singleG) wai=sn[0]+1;
+  else wai=sn[0]+gn[gn.length-1];
+  return {s,g,singleS,singleG,
+    grids:{tian,ren,di,wai,zong}};
+}
+
+/* ---------- 三才 judgment (derived from 五行 生剋) ---------- */
+function pairRelation(up,dn){ // up above dn
+  if(up===dn) return {kind:'bhe', zh:'比和', en:'akin', score:1};
+  if(GEN[up]===dn) return {kind:'sheng', zh:'相生', en:'generates', score:2};   // up 生 dn (good for dn)
+  if(GEN[dn]===up) return {kind:'xie', zh:'洩', en:'drains', score:0};          // dn 生 up (drain)
+  if(CTRL[up]===dn) return {kind:'ke', zh:'相剋', en:'controls', score:-1};      // up 剋 dn (ordered pressure)
+  return {kind:'nike', zh:'逆剋', en:'clashes', score:-2};                       // dn 剋 up (reverse)
+}
+function judgeSancai(tEl,pEl,dEl){
+  const r1=pairRelation(tEl,pEl); // 天 -> 人
+  const r2=pairRelation(pEl,dEl); // 人 -> 地
+  const sum=r1.score+r2.score;
+  let rating,zh,en;
+  if(sum>=3){rating=R_JI;zh='大吉';en='Very auspicious';}
+  else if(sum===2){rating=R_JI;zh='吉';en='Auspicious';}
+  else if(sum>=0){rating=R_BAN;zh='半吉';en='Mixed';}
+  else if(sum===-1){rating=R_BAN;zh='半吉';en='Mixed, with strain';}
+  else {rating=R_XIONG;zh='凶';en='Inauspicious';}
+  return {r1,r2,sum,rating,zh,en};
+}
+
+/* ---------- overall score ---------- */
+function rateScore(r){ return r===R_JI?100:r===R_BAN?62:30; }
+function overallScore(gInfo, sc){
+  const w={ren:.30,zong:.20,di:.15,wai:.10,sancai:.25};
+  const sancaiScore = sc.rating===R_JI ? (sc.zh==='大吉'?100:88) : sc.rating===R_BAN?60:30;
+  const s = rateScore(gInfo.ren.rating)*w.ren
+          + rateScore(gInfo.zong.rating)*w.zong
+          + rateScore(gInfo.di.rating)*w.di
+          + rateScore(gInfo.wai.rating)*w.wai
+          + sancaiScore*w.sancai;
+  return Math.round(s);
+}
+function scoreband(s){
+  if(s>=85)return {zh:'上上',en:'Excellent',hex:'var(--ji)'};
+  if(s>=72)return {zh:'上吉',en:'Auspicious',hex:'var(--ji)'};
+  if(s>=58)return {zh:'中平',en:'Fair',hex:'var(--ban)'};
+  if(s>=44)return {zh:'半吉',en:'Mixed',hex:'var(--ban)'};
+  return {zh:'待斟',en:'To reconsider',hex:'var(--xiong)'};
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const $=id=>document.getElementById(id);
+let STATE=null;   // holds last computed
+let OVERRIDES={}; // ch -> strokes user override
+
+function analyse(surArr, givArr){
+  const C=computeGrids(surArr, givArr, OVERRIDES);
+  const G=C.grids;
+  const info={
+    tian:shuli(G.tian), ren:shuli(G.ren), di:shuli(G.di), wai:shuli(G.wai), zong:shuli(G.zong)
+  };
+  const tEl=elementOf(G.tian), pEl=elementOf(G.ren), dEl=elementOf(G.di);
+  const sc=judgeSancai(tEl,pEl,dEl);
+  const score=overallScore(info, sc);
+  return {C,G,info,tEl,pEl,dEl,sc,score};
+}
+
+function build(surArr, givArr, isExample){
+  STATE={surArr,givArr};
+  const A=analyse(surArr,givArr);
+  renderNamePlate(A);
+  renderGridSVG(A);
+  renderGridCards(A);
+  renderSancai(A);
+  renderReading(A);
+  // unknown-character warning
+  const unknown=[...A.C.s,...A.C.g].filter(x=>!x.known && OVERRIDES[x.c]==null);
+  const w=$('warn');
+  if(unknown.length){ w.classList.add('show');
+    w.innerHTML=`Stroke count for ${unknown.map(x=>`<b style="font-family:var(--han)">${x.c}</b>`).join(', ')} is not in the desk’s table — an approximate value of <b>9</b> is used. Tap the number under the character in the report to set its 康熙 stroke count by hand.`;
+  } else w.classList.remove('show');
+  $('noteEx').classList.toggle('hide', !isExample);
+}
+
+function renderNamePlate(A){
+  const {C,info,score}=A;
+  const band=scoreband(score);
+  const all=[...C.s.map(x=>({...x,role:'sur'})),...C.g.map(x=>({...x,role:'giv'}))];
+  const namePinyin='';
+  const chars=all.map(x=>{
+    const cls=`np-char ${x.role}${(!x.known&&OVERRIDES[x.c]==null)?' unknown':''}`;
+    const skInner = (x.over||( !x.known ))
+      ? `<input class="skedit" type="number" min="1" max="40" value="${x.n}" data-ch="${x.c}" aria-label="strokes for ${x.c}">`
+      : `<span class="sk">${x.n}劃</span>`;
+    return `<div class="${cls}"><span class="hz">${x.c}</span>${skInner}</div>`;
+  }).join('');
+  const fullName=all.map(x=>x.c).join('');
+  const sealText=[...fullName].join('');
+  // circumference score ring
+  const R=52, CIRC=2*Math.PI*R, off=CIRC*(1-score/100);
+  const ring=`<svg viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="${R}" fill="none" stroke="rgba(152,118,58,.2)" stroke-width="7"/>
+      <circle class="ring-fg" cx="60" cy="60" r="${R}" fill="none" stroke="${band.hex}" stroke-width="7" stroke-linecap="round"
+        transform="rotate(-90 60 60)" stroke-dasharray="${CIRC.toFixed(1)}" stroke-dashoffset="${RM?off.toFixed(1):CIRC.toFixed(1)}"
+        style="transition:${RM?'none':'stroke-dashoffset 1.3s cubic-bezier(.22,1,.36,1)'}"/>
+      <text x="60" y="56" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-weight="500" font-size="30" fill="var(--ink)">${score}</text>
+      <text x="60" y="76" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" letter-spacing="1.5" fill="var(--ink-f)">/ 100</text>
+    </svg>`;
+  $('nameplate').innerHTML=`
+    <div class="np-name">${chars}</div>
+    <div class="np-meta">
+      <div class="np-lab">姓名 · The Full Name</div>
+      <div class="np-en">${fullName}<span class="py">${all.map(x=>x.c+' '+x.n).join(' · ')} 康熙 strokes · ${C.singleS?'single':'compound'} surname</span></div>
+      <div class="np-tags">
+        <span class="np-tag"><span class="zh" style="color:${EL[A.pEl].hex}">${EL[A.pEl].c}</span>人格 ${EL[A.pEl].en}</span>
+        <span class="np-tag"><span class="sw" style="background:${band.hex}"></span>${band.zh} · ${band.en}</span>
+        <span class="np-tag"><span class="zh">${A.sc.zh}</span>三才 ${RATE_EN[A.sc.rating]}</span>
+      </div>
+    </div>
+    <div class="np-seal"><div class="s-han">${sealText}</div></div>
+    <div class="np-score">${ring}<div class="cap">${band.zh} · ${band.en}</div></div>`;
+  // wire stroke-override inputs
+  $('nameplate').querySelectorAll('.skedit').forEach(inp=>{
+    inp.addEventListener('change',()=>{
+      const v=parseInt(inp.value,10);
+      if(v>=1&&v<=40){ OVERRIDES[inp.dataset.ch]=v; build(STATE.surArr,STATE.givArr,false); }
+    });
+    inp.addEventListener('click',e=>e.stopPropagation());
+  });
+}
+
+/* ---------- the five-grid diagram (SVG) ---------- */
+function renderGridSVG(A){
+  const {C,info}=A;
+  const svg=$('gridsvg');
+  const chars=[...C.s.map(x=>({...x,role:'sur'})),...C.g.map(x=>({...x,role:'giv'}))];
+  // imaginary nodes
+  const nodes=[];
+  if(C.singleS) nodes.push({type:'imag',n:1});
+  chars.forEach(c=>nodes.push({type:'char',ch:c.c,n:c.n,role:c.role}));
+  if(C.singleG) nodes.push({type:'imag',n:1});
+  const N=nodes.length;
+  const box=58, gap=16;
+  const colH=N*box+(N-1)*gap;
+  const padTop=44, padBot=24;
+  const H=Math.max(300, colH+padTop+padBot);
+  const W=660, cx=330;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const y0=(H-colH)/2;
+  const nodeY=i=>y0+i*(box+gap)+box/2;
+  const RATE_COL={ji:'var(--ji)',ban:'var(--ban)',xiong:'var(--xiong)'};
+  const ELC=el=>EL[el].hex;
+
+  // map node index groups per grid
+  const idxChar=i=>{ // index in nodes[] of char #i (0-based over chars)
+    return (C.singleS?1:0)+i;
+  };
+  const surIdx=C.s.map((_,i)=>idxChar(i));
+  const givIdx=C.g.map((_,i)=>idxChar(C.s.length+i));
+  const imagTop=C.singleS?0:null;
+  const imagBot=C.singleG?N-1:null;
+
+  // grid -> connected node indices
+  const conn={
+    tian: C.singleS?[imagTop,surIdx[0]]:[surIdx[0],surIdx[1]],
+    ren : C.singleS?[surIdx[0],givIdx[0]]:[surIdx[1],givIdx[0]],
+    di  : C.singleG?[givIdx[givIdx.length-1],imagBot]:givIdx.slice(),
+    wai : (C.singleS&&C.singleG)?[imagTop,imagBot]
+        : (C.singleS&&!C.singleG)?[imagTop,givIdx[givIdx.length-1]]
+        : (!C.singleS&&C.singleG)?[surIdx[0],imagBot]
+        : [surIdx[0],givIdx[givIdx.length-1]],
+    zong: [...surIdx,...givIdx]
+  };
+
+  // medallion layout: left column (天,人,地), right column (外,總)
+  const mR=33;
+  const leftX=86, rightX=W-86;
+  const clampY=v=>Math.max(y0+mR+8, Math.min(H-padBot-mR-8, v));
+  const avgY=arr=>clampY(arr.reduce((s,i)=>s+nodeY(i),0)/arr.length);
+  // distribute left three to avoid overlap
+  const leftGrids=['tian','ren','di'];
+  let leftYs=leftGrids.map(k=>avgY(conn[k]));
+  // enforce spacing
+  const minGap=mR*2+30;
+  for(let i=1;i<leftYs.length;i++){ if(leftYs[i]<leftYs[i-1]+minGap) leftYs[i]=leftYs[i-1]+minGap; }
+  const overflow=leftYs[2]-(H-padBot-mR-8);
+  if(overflow>0){ leftYs=leftYs.map(y=>y-overflow); }
+  const rightGrids=['wai','zong'];
+  let rightYs=[clampY(avgY(conn.wai)), H-padBot-mR-6];
+  if(rightYs[1]<rightYs[0]+minGap) rightYs[0]=rightYs[1]-minGap;
+
+  const pos={};
+  leftGrids.forEach((k,i)=>pos[k]={x:leftX,y:leftYs[i]});
+  rightGrids.forEach((k,i)=>pos[k]={x:rightX,y:rightYs[i]});
+
+  let s='';
+  // connector lines (behind)
+  const line=(g,side)=>{
+    const p=pos[g]; const el=elementOf(info[g].n); const col=ELC(el);
+    conn[g].forEach(i=>{
+      const nx=cx+(side<0?-box/2:box/2), ny=nodeY(i);
+      const mx=p.x+(side<0? mR: -mR);
+      const midx=(mx+nx)/2;
+      s+=`<path d="M ${mx.toFixed(1)} ${p.y.toFixed(1)} C ${midx.toFixed(1)} ${p.y.toFixed(1)}, ${midx.toFixed(1)} ${ny.toFixed(1)}, ${nx.toFixed(1)} ${ny.toFixed(1)}" fill="none" stroke="${col}" stroke-width="1.3" opacity="${g==='zong'?0.28:0.5}"/>`;
+    });
+  };
+  ['tian','ren','di'].forEach(g=>line(g,-1));
+  ['wai','zong'].forEach(g=>line(g,1));
+
+  // character column
+  nodes.forEach((nd,i)=>{
+    const y=nodeY(i);
+    if(nd.type==='imag'){
+      s+=`<g opacity="0.9"><rect x="${cx-box/2}" y="${y-box/2}" width="${box}" height="${box}" rx="5" fill="none" stroke="var(--brass-faint)" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="${cx}" y="${y-2}" text-anchor="middle" dominant-baseline="central" font-family="'Noto Serif SC',serif" font-weight="600" font-size="24" fill="var(--ink-ff)">一</text>
+        <text x="${cx}" y="${y+18}" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" letter-spacing="1" fill="var(--ink-ff)">太極 1</text></g>`;
+    } else {
+      const col= nd.role==='sur' ? 'var(--seal)' : 'var(--ink)';
+      s+=`<g><rect x="${cx-box/2}" y="${y-box/2}" width="${box}" height="${box}" rx="5" fill="rgba(250,247,239,.7)" stroke="var(--brass-line)" stroke-width="1"/>
+        <text x="${cx}" y="${y+2}" text-anchor="middle" dominant-baseline="central" font-family="'Ma Shan Zheng',cursive" font-size="42" fill="${col}">${nd.ch}</text>
+        <text x="${cx+box/2-3}" y="${y+box/2-6}" text-anchor="end" font-family="'IBM Plex Mono',monospace" font-size="10" fill="var(--ink-f)">${nd.n}</text></g>`;
+    }
+  });
+
+  // medallions
+  const drawMed=(g,zh,en)=>{
+    const p=pos[g], I=info[g], el=elementOf(I.n), col=ELC(el);
+    const rc=RATE_COL[I.rating];
+    s+=`<g>
+      <circle cx="${p.x}" cy="${p.y}" r="${mR+4}" fill="none" stroke="${col}" stroke-width="1" opacity="0.34"/>
+      <circle cx="${p.x}" cy="${p.y}" r="${mR}" fill="${col}" fill-opacity="0.1" stroke="${col}" stroke-width="1.6"/>
+      <text x="${p.x}" y="${p.y-9}" text-anchor="middle" font-family="'Noto Serif SC',serif" font-weight="600" font-size="11" letter-spacing="1" fill="var(--ink-d)">${zh}</text>
+      <text x="${p.x}" y="${p.y+11}" text-anchor="middle" dominant-baseline="middle" font-family="'IBM Plex Mono',monospace" font-weight="500" font-size="22" fill="var(--ink)">${I.n}</text>
+      <text x="${p.x}" y="${p.y+27}" text-anchor="middle" font-family="'Noto Serif SC',serif" font-weight="600" font-size="12" fill="${col}">${EL[el].c}</text>
+      <g transform="translate(${p.x},${p.y+mR+16})">
+        <rect x="-19" y="-11" width="38" height="19" rx="9.5" fill="${rc}" fill-opacity="0.14" stroke="${rc}" stroke-width="1"/>
+        <text x="0" y="1" text-anchor="middle" dominant-baseline="central" font-family="'Noto Serif SC',serif" font-weight="600" font-size="12" fill="${rc}">${RATE_ZH[I.rating]}</text>
+      </g>
+    </g>`;
+  };
+  drawMed('tian','天格','Heaven');
+  drawMed('ren','人格','Self');
+  drawMed('di','地格','Earth');
+  drawMed('wai','外格','Outer');
+  drawMed('zong','總格','Total');
+
+  svg.innerHTML=s;
+  // animate ring/medallions via opacity reveal
+  if(!RM){
+    svg.style.opacity='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ svg.style.transition='opacity .9s cubic-bezier(.22,1,.36,1)'; svg.style.opacity='1'; }));
+  }
+}
+
+function renderGridCards(A){
+  const {info}=A;
+  const order=[
+    ['tian','天格','Heaven','the ancestral top — the surname’s given ground, carried, not chosen'],
+    ['ren','人格','The Self','the heart of the chart — character, will, and the middle years'],
+    ['di','地格','Earth','the base — youth, home, and the foundation you grow from'],
+    ['wai','外格','Outer','the outer world — social luck, and how others meet you'],
+    ['zong','總格','Total','the whole sum — the arc of a life, its later fortune']
+  ];
+  $('gridCards').innerHTML=order.map(([k,zh,en,desc])=>{
+    const I=info[k]; const el=elementOf(I.n);
+    const cls=`gc ${k}${k==='ren'?' ren':''}${k==='zong'?' zong':''}`;
+    return `<div class="${cls}">
+      <div class="gc-top"><div class="gc-name">${zh}<span class="en">${en}</span></div><div class="gc-num">${I.n}</div></div>
+      <div class="gc-badges">
+        <span class="badge ${I.rating}"><span class="zh">${RATE_ZH[I.rating]}</span>${RATE_EN[I.rating]}</span>
+        <span class="badge el"><span class="zh" style="color:${EL[el].hex}">${EL[el].c}</span>${EL[el].en}</span>
+      </div>
+      <div class="gc-txt"><span class="h">${I.zh}</span> — ${I.en}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSancai(A){
+  const {tEl,pEl,dEl,sc}=A;
+  const disc=(el,zh,en,num)=>`
+    <div class="sc-node">
+      <div class="sc-disc" style="background:${EL[el].hex}">
+        <span class="ring" style="border-color:${EL[el].hex}"></span>
+        <span class="el">${EL[el].c}</span>
+      </div>
+      <div class="sc-cap">${zh} · <b>${num}</b> → ${EL[el].en}</div>
+    </div>`;
+  const link=(rel)=>{
+    const good=rel.score>=1; const bad=rel.score<0;
+    const col=good?'var(--ji)':bad?'var(--xiong)':'var(--ban)';
+    return `<div class="sc-link">
+      <div class="arr" style="border-top:8px solid ${col}"></div>
+      <span class="rel" style="color:${col}"><span class="zh">${rel.zh}</span> ${rel.en}</span>
+    </div>`;
+  };
+  $('scStack').innerHTML =
+    disc(tEl,'天格','Heaven',A.G.tian) + link(sc.r1) +
+    disc(pEl,'人格','Self',A.G.ren)    + link(sc.r2) +
+    disc(dEl,'地格','Earth',A.G.di);
+
+  const vcol = sc.rating===R_JI?'var(--ji)':sc.rating===R_BAN?'var(--ban)':'var(--xiong)';
+  // narrative
+  const relText=(rel,up,dn)=>{
+    const U=EL[up].en, D=EL[dn].en, Uz=EL[up].c, Dz=EL[dn].c;
+    switch(rel.kind){
+      case 'sheng': return `<span class="h">${Uz}</span> ${U} <b>feeds</b> <span class="h">${Dz}</span> ${D} — a clean, nourishing hand-off`;
+      case 'bhe':   return `both stand in <span class="h">${Uz}</span> ${U} — <b>alike</b>, steady, self-reinforcing`;
+      case 'xie':   return `<span class="h">${Dz}</span> ${D} quietly <b>draws on</b> <span class="h">${Uz}</span> ${U} — support flowing the harder way`;
+      case 'ke':    return `<span class="h">${Uz}</span> ${U} <b>disciplines</b> <span class="h">${Dz}</span> ${D} — ordered pressure, useful in measure`;
+      default:      return `<span class="h">${Dz}</span> ${D} <b>pushes back on</b> <span class="h">${Uz}</span> ${U} — a friction to watch`;
+    }
+  };
+  $('scRead').innerHTML=`
+    <div class="sc-verdict">
+      <div class="sc-vbadge" style="color:${vcol};background:${sc.rating==='ji'?'rgba(63,112,80,.12)':sc.rating==='ban'?'rgba(176,129,40,.13)':'rgba(172,62,44,.11)'}">${sc.zh}<span class="en">${sc.en}</span></div>
+      <div class="sc-config">三才配置 <span class="zh">${EL[tEl].c}${EL[pEl].c}${EL[dEl].c}</span></div>
+    </div>
+    <div class="sc-body">
+      <p style="margin-bottom:14px">The <b>Three Powers</b> — Heaven above, the Self between, Earth below — reduce from the top three grids to <span class="h">${EL[tEl].c}${EL[pEl].c}${EL[dEl].c}</span>. From Heaven to the Self, ${relText(sc.r1,tEl,pEl)}. From the Self down to Earth, ${relText(sc.r2,pEl,dEl)}.</p>
+      <p>Read together, the configuration lands on <b>${sc.zh} · ${sc.en}</b> — ${sc.sum>=2?'a flow that carries the self forward with little friction':sc.sum>=0?'a workable balance, its strengths and tensions roughly even':'a configuration that asks the self to hold firm against the current'}.</p>
+    </div>`;
+}
+
+function renderReading(A){
+  const {info,pEl,sc,score,C}=A;
+  const band=scoreband(score);
+  // element emphasis: tally the three sancai elements
+  const tally={wood:0,fire:0,earth:0,metal:0,water:0};
+  [A.tEl,A.pEl,A.dEl].forEach(e=>tally[e]++);
+  [elementOf(A.G.wai),elementOf(A.G.zong)].forEach(e=>tally[e]++);
+  let emph=ELORDER[0]; ELORDER.forEach(e=>{ if(tally[e]>tally[emph]) emph=e; });
+  let missing=ELORDER.filter(e=>tally[e]===0);
+  const EMTEMPER={
+    wood:'growth, benevolence and an upward reach',
+    fire:'warmth, expression and quick, visible clarity',
+    earth:'steadiness, patience and the will to hold others up',
+    metal:'precision, principle and a clean cutting edge',
+    water:'depth, adaptability and a long memory'
+  };
+  const grade = score>=85?'stands unusually well':score>=72?'stands well':score>=58?'stands fairly':'is mixed, and worth a second look';
+  const renI=info.ren, zongI=info.zong;
+  const renLine = renI.rating==='ji'
+    ? `Its <span class="h">人格</span> — the number of the self — lands on <b>${renI.n}</b>, an <b>auspicious</b> ${info.ren.zh.replace(/，.*/,'')} that anchors the middle years.`
+    : renI.rating==='ban'
+    ? `Its <span class="h">人格</span> of <b>${renI.n}</b> is a <b>mixed</b> number — ${info.ren.en.toLowerCase()} — strong in some seasons, testing in others.`
+    : `Its <span class="h">人格</span> of <b>${renI.n}</b> falls on a <b>demanding</b> number — ${info.ren.en.toLowerCase()} — a self that is forged rather than given.`;
+  const missClause = missing.length===0
+    ? `all five elements are touched somewhere in the grids — a rounded, well-supplied name.`
+    : missing.length===1
+    ? `<span class="h">${EL[missing[0]].c}</span> ${EL[missing[0]].en} is absent from the five grids — a quality this name reaches toward rather than rests on.`
+    : `${missing.map(e=>`<span class="h">${EL[e].c}</span> ${EL[e].en}`).join(' and ')} are absent from the grids — the notes it will have to sound for itself.`;
+
+  $('readBody').innerHTML=`
+    <p>Counted stroke by stroke in its <span class="h">康熙</span> traditional form, this name <b>${grade}</b> — an overall standing of <b>${score} / 100</b> (<span class="h">${band.zh}</span>, ${band.en.toLowerCase()}). ${renLine}</p>
+    <p>Above and below it, <span class="h">天格</span> ${info.tian.n} and <span class="h">地格</span> ${info.di.n} set the inherited ground and the foundation of youth; the <span class="h">總格</span> of ${zongI.n} — ${zongI.rating==='ji'?'auspicious':zongI.rating==='ban'?'mixed':'demanding'} — traces the later arc. Their three powers read <b>${sc.zh}</b>: ${sc.sum>=2?'the elements pass their strength forward cleanly':sc.sum>=0?'the elements sit in a workable, roughly even balance':'the self must hold its ground against the elements around it'}.</p>
+    <p>In element, the name leans hardest on <span class="h">${EL[emph].c}</span> <b>${EL[emph].en}</b> — ${EMTEMPER[emph]}; ${missClause} Read it less as a verdict than as a portrait cut in strokes — the temperament the name carries into a room, before its bearer says a word.</p>`;
+}
+
+/* ============================================================
+   NAMING HELPER
+   ============================================================ */
+let HELPER_EL='wood';
+// candidate pool: name chars from table within a sensible stroke range
+const POOL=Object.keys(KX).filter(c=>KX[c]>=2&&KX[c]<=20);
+function renderElOpts(){
+  const opts=ELORDER.map(el=>`<div class="el-opt${el===HELPER_EL?' on':''}" data-el="${el}" style="${el===HELPER_EL?`background:${EL[el].hex};border-color:${EL[el].hex}`:''}">${EL[el].c}<span class="en">${EL[el].en}</span></div>`).join('');
+  $('elOpts').innerHTML=opts;
+  $('elOpts').querySelectorAll('.el-opt').forEach(o=>{
+    o.addEventListener('click',()=>{ HELPER_EL=o.dataset.el; renderElOpts(); runHelper(); });
+  });
+}
+function runHelper(){
+  const raw=$('hsur').value.trim();
+  const surChars=[...raw].filter(c=>/[一-鿿]/.test(c)).slice(0,2);
+  if(!surChars.length){ $('suggests').innerHTML=`<div class="sug-none">Enter a surname to receive suggestions.</div>`; return; }
+  const compound=surChars.length===2;
+  const a=surChars.map(c=>strokeOf(c,{}).n);
+  const results=[];
+  const seen=new Set();
+  POOL.forEach(ch=>{
+    if(seen.has(ch))return; seen.add(ch);
+    const b=KX[ch];
+    // single-char given name grids
+    const singleS=!compound, singleG=true;
+    const zong=a.reduce((x,y)=>x+y,0)+b;
+    const tian= singleS? a[0]+1 : a[0]+a[1];
+    const ren = singleS? a[0]+b : a[1]+b;
+    const di  = b+1;
+    const wai = compound? a[0]+1 : 2;
+    const iRen=shuli(ren), iZong=shuli(zong), iDi=shuli(di), iTian=shuli(tian), iWai=shuli(wai);
+    const pEl=elementOf(ren), dEl=elementOf(di), tEl=elementOf(tian);
+    const sc=judgeSancai(tEl,pEl,dEl);
+    // must emphasise chosen element (人格 or 地格) and be auspicious
+    if(iRen.rating!=='ji') return;
+    if(iZong.rating==='xiong') return;
+    if(iDi.rating==='xiong') return;
+    if(pEl!==HELPER_EL && dEl!==HELPER_EL) return;
+    const info={ren:iRen,zong:iZong,di:iDi,wai:iWai};
+    const score=overallScore(info,sc);
+    results.push({ch,b,ren,zong,di,score,pEl,sc,iRen,iZong});
+  });
+  results.sort((x,y)=> (y.pEl===HELPER_EL)-(x.pEl===HELPER_EL) || y.score-x.score || x.b-y.b);
+  // diversify: at most 3 characters sharing the same 人格 number, so the set shows range
+  const top=[]; const perRen={};
+  for(const r of results){ perRen[r.ren]=(perRen[r.ren]||0); if(perRen[r.ren]>=3) continue; perRen[r.ren]++; top.push(r); if(top.length>=6) break; }
+  const sur=surChars.join('');
+  if(!top.length){
+    $('suggests').innerHTML=`<div class="sug-none">No single character in the desk’s table gives an auspicious <span style="font-family:var(--han)">人格</span> in <span style="font-family:var(--han)">${EL[HELPER_EL].c}</span> ${EL[HELPER_EL].en} for <span style="font-family:var(--han)">${sur||'this surname'}</span>. Try another element — the surname’s own strokes constrain which numbers can land auspiciously.</div>`;
+    return;
+  }
+  $('suggests').innerHTML=top.map(r=>`
+    <div class="sug" data-s="${sur}" data-g="${r.ch}" title="Read ${sur}${r.ch}">
+      <div class="sug-name">${sur}<span class="g">${r.ch}</span></div>
+      <div class="sug-meta"><b>${r.b}</b>劃 · 人格 <b>${r.ren}</b> ${RATE_ZH[r.iRen.rating]} · 總格 <b>${r.zong}</b> ${RATE_ZH[r.iZong.rating]}</div>
+      <div class="sug-score">◆ ${r.score} · ${EL[r.pEl].c}${EL[r.pEl].en}</div>
+    </div>`).join('');
+  $('suggests').querySelectorAll('.sug').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const s=el.dataset.s, g=el.dataset.g;
+      $('sur').value=s; $('giv').value=g;
+      OVERRIDES={};
+      build([...s],[...g],false);
+      document.getElementById('plate').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
+    });
+  });
+}
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+function readInputs(){
+  let sRaw=$('sur').value.trim(), gRaw=$('giv').value.trim();
+  let sur=[...sRaw].filter(c=>/[一-鿿]/.test(c)).slice(0,2);
+  let giv=[...gRaw].filter(c=>/[一-鿿]/.test(c)).slice(0,3);
+  if(!sur.length || !giv.length){
+    // try to split a full name pasted in the surname field
+    const sp=splitName(sRaw||gRaw);
+    if(sp){ sur=sp.sur; giv=sp.giv; $('sur').value=sur.join(''); $('giv').value=giv.join(''); }
+  }
+  return {sur,giv};
+}
+function doBuild(isExample){
+  const {sur,giv}=readInputs();
+  if(!sur.length||!giv.length) return;
+  OVERRIDES = isExample?OVERRIDES:OVERRIDES; // keep overrides on manual edits handled elsewhere
+  build(sur,giv,isExample);
+}
+$('form').addEventListener('submit',e=>{e.preventDefault(); OVERRIDES={}; doBuild(false);});
+document.querySelectorAll('.presets .pre').forEach(p=>{
+  p.addEventListener('click',()=>{ $('sur').value=p.dataset.s; $('giv').value=p.dataset.g; OVERRIDES={}; doBuild(false); });
+});
+$('hsur').addEventListener('input',()=>runHelper());
+
+/* reveal on scroll */
+const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>{ if(RM) el.classList.add('in'); else io.observe(el); });
+
+/* init from query: ?name=王力宏  or  ?surname=王&given=力宏 */
+(function init(){
+  renderElOpts();
+  const q=new URLSearchParams(location.search);
+  let sur=null, giv=null, isExample=true;
+  const qn=q.get('name'), qs=q.get('surname')||q.get('sur'), qg=q.get('given')||q.get('giv');
+  if(qs && qg){ sur=[...qs].filter(c=>/[一-鿿]/.test(c)); giv=[...qg].filter(c=>/[一-鿿]/.test(c)); isExample=false; }
+  else if(qn){ const sp=splitName(qn); if(sp){ sur=sp.sur; giv=sp.giv; isExample=false; } }
+  if(sur&&sur.length&&giv&&giv.length){ $('sur').value=sur.join(''); $('giv').value=giv.join(''); }
+  const el=q.get('boost'); if(el && EL[el]) HELPER_EL=el;
+  renderElOpts();
+  doBuild(isExample);
+  $('hsur').value=$('sur').value;
+  runHelper();
+})();
+</script>
+</body>
+</html>

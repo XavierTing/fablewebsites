@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>面相 · 手相 · THE READ — face &amp; palm</title>
+<meta name="description" content="Miàn xiàng &amp; shǒu xiàng — Chinese face-reading and palmistry, redrawn as a clean anatomical atlas. You are the chart: hover the twelve palaces of the face, or the lines and mounts of the palm, and read what the old manuals say — for reflection, not prophecy.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="面相 · 手相 · THE READ — face &amp; palm">
+<meta property="og:description" content="An interactive atlas of Chinese physiognomy and palmistry. You are the chart — read the twelve palaces of the face and the lines of the palm.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="面相 · 手相 · THE READ">
+<meta name="twitter:description" content="Face-reading &amp; palmistry as a clean line-art atlas. You are the chart.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='%23AC3E2C' stroke-width='4' stroke-linecap='round'><ellipse cx='50' cy='50' rx='27' ry='36'/><path d='M38 44h8M54 44h8'/><path d='M50 48v14M42 66q8 6 16 0'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F1E8;
+  --paper-2:#EFE9DA;
+  --paper-3:#E6DDCA;
+  --paper-in:#FBF8F1;
+  --ink:#22252E;
+  --ink-2:#3A3E48;
+  --ink-3:#5A5E68;
+  --ink-f:#8B8578;
+  --line:rgba(34,37,46,.15);
+  --line-2:rgba(34,37,46,.08);
+  --cinnabar:#AC3E2C;
+  --cinnabar-l:#C8563C;
+  --cinnabar-f:rgba(172,62,44,.10);
+  --cinnabar-ff:rgba(172,62,44,.05);
+  --jade:#2E6B5E;
+  --jade-l:#3F8B79;
+  --jade-f:rgba(46,107,94,.12);
+  --brass:#A8813C;
+  --brass-l:#C6A15A;
+  --brass-f:rgba(168,129,60,.14);
+  --serif:"Spectral",Georgia,serif;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sc:"Noto Serif SC",serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-o:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html.no-anim{scroll-behavior:auto}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-weight:400;
+  line-height:1.62;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--cinnabar);color:#FBF3EC}
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:var(--paper-2)}
+::-webkit-scrollbar-thumb{background:var(--paper-3);border-radius:6px;border:2px solid var(--paper-2)}
+::-webkit-scrollbar-thumb:hover{background:#D6CBB3}
+:focus{outline:none}
+:focus-visible{outline:1.5px solid var(--cinnabar);outline-offset:3px;border-radius:2px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:var(--jade);text-decoration:none}
+h1,h2,h3{font-weight:500;line-height:1.05}
+
+/* ---------- atmosphere ---------- */
+.bg{position:fixed;inset:0;z-index:-3;
+  background:radial-gradient(ellipse 120% 82% at 50% -8%, #FBF7EE 0%, var(--paper) 46%, #ECE4D3 100%);}
+.bg::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 58% 48% at 86% 6%, rgba(172,62,44,.05), transparent 60%),
+            radial-gradient(ellipse 54% 44% at 8% 94%, rgba(46,107,94,.05), transparent 60%);}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.13 0 0 0 0 0.11 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:59;
+  background:radial-gradient(ellipse 96% 92% at 50% 44%,transparent 62%,rgba(70,58,36,.09) 100%)}
+.prog{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+  background:linear-gradient(90deg,var(--cinnabar),var(--brass));box-shadow:0 0 8px rgba(172,62,44,.3)}
+
+/* ---------- back-link ---------- */
+.backlink{position:fixed;top:18px;left:22px;z-index:200;display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink-f);padding:8px 4px;transition:color .4s var(--ease)}
+.backlink .mk{font-family:var(--sc);font-size:15px;letter-spacing:0;color:var(--cinnabar);opacity:.75;transition:opacity .4s}
+.backlink:hover{color:var(--ink-2)}
+.backlink:hover .mk{opacity:1}
+
+/* ---------- layout ---------- */
+section{position:relative}
+.wrap{max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,56px)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--jade)}
+.kicker .dot{color:var(--brass);margin:0 .55em}
+.reveal{opacity:0;transform:translateY(16px)}
+.reveal.in{opacity:1;transform:none;transition:opacity 1s var(--ease-o),transform 1s var(--ease-o)}
+
+/* ---------- HERO ---------- */
+#hero{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(78px,11vh,120px) 0 clamp(40px,6vh,72px);overflow:hidden}
+.hero-in{max-width:960px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center}
+.hero-in .kicker{margin-bottom:clamp(18px,2.6vh,28px)}
+.title{position:relative;font-family:var(--sc);font-weight:900;line-height:.9;color:var(--ink);
+  font-size:clamp(58px,13vw,150px);letter-spacing:.02em;display:flex;align-items:center;gap:.14em}
+.title .sep{font-weight:400;color:var(--brass-l);font-size:.5em;transform:translateY(-.06em)}
+.title .a{color:var(--ink)}
+.title .b{color:var(--cinnabar)}
+.title-en{margin-top:clamp(16px,2.6vh,28px);font-family:var(--display);font-style:italic;font-weight:500;
+  font-size:clamp(21px,3vw,34px);color:var(--ink-2);letter-spacing:.01em;line-height:1.22}
+.title-en em{color:var(--cinnabar);font-style:italic}
+.lede{margin-top:16px;max-width:56ch;font-size:clamp(13.5px,1.45vw,16px);color:var(--ink-3);line-height:1.7}
+.lede b{color:var(--jade);font-weight:500}
+.hero-frame{margin-top:clamp(30px,4.4vh,50px);display:flex;gap:clamp(14px,2.6vw,30px);flex-wrap:wrap;justify-content:center;align-items:stretch}
+.frame-card{position:relative;flex:1 1 260px;max-width:340px;text-align:left;
+  border:1px solid var(--line);border-radius:4px;background:var(--paper-in);padding:clamp(18px,2.2vw,24px);
+  box-shadow:0 16px 40px -30px rgba(60,48,24,.5)}
+.frame-card .fx{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass)}
+.frame-card h3{font-family:var(--sc);font-weight:600;font-size:clamp(18px,2.2vw,22px);color:var(--ink);margin:8px 0 8px}
+.frame-card h3 .en{display:block;font-family:var(--display);font-style:italic;font-weight:500;font-size:.74em;color:var(--ink-3);margin-top:3px;letter-spacing:0}
+.frame-card p{font-size:clamp(12.5px,1.35vw,14px);color:var(--ink-3);line-height:1.62}
+.frame-card.sketch::before,.frame-card.draw::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:4px 0 0 4px}
+.frame-card.sketch::before{background:var(--cinnabar)}
+.frame-card.draw::before{background:var(--jade)}
+.frame-card .tag{margin-top:12px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-f)}
+.hero-note{margin-top:clamp(22px,3vh,32px);font-family:var(--display);font-style:italic;font-size:clamp(14px,1.7vw,18px);color:var(--ink-3);max-width:52ch}
+.cue{margin-top:clamp(26px,3.6vh,42px);display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-f)}
+.cue .ln{width:1px;height:34px;background:linear-gradient(var(--brass),transparent);animation:cueMove 2.6s var(--ease) infinite}
+@keyframes cueMove{0%{transform:scaleY(.3);transform-origin:top;opacity:0}40%{opacity:1}100%{transform:scaleY(1);transform-origin:top;opacity:0}}
+
+/* ---------- section heads ---------- */
+.sec-head{text-align:center;margin-bottom:clamp(30px,4.4vh,50px)}
+.sec-head .kicker{margin-bottom:14px;display:inline-block}
+.sec-head h2{font-family:var(--sc);font-weight:600;font-size:clamp(30px,5vw,52px);color:var(--ink);letter-spacing:.03em}
+.sec-head h2 .en{display:block;font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(17px,2.2vw,26px);color:var(--brass);margin-top:9px;letter-spacing:.01em}
+.sec-head p{max-width:60ch;margin:16px auto 0;font-size:clamp(13.5px,1.4vw,15px);color:var(--ink-3);line-height:1.68}
+.sec-head p b{color:var(--jade);font-weight:500}
+
+/* ---------- ATLAS shared ---------- */
+.atlas{padding:clamp(56px,9vh,120px) 0}
+.atlas.face{background:linear-gradient(180deg,transparent,rgba(230,221,202,.34) 42%,transparent)}
+.laybar{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:5px;
+  background:var(--paper-in);border:1px solid var(--line);border-radius:3px;padding:5px;margin:0 auto clamp(26px,3.6vh,40px);
+  box-shadow:0 12px 34px -24px rgba(60,48,24,.4)}
+.laybar-host{text-align:center}
+.lay-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px clamp(14px,2.2vw,24px);border-radius:2px;
+  color:var(--ink-3);transition:color .35s var(--ease),background .35s var(--ease)}
+.lay-tab .zh{font-family:var(--sc);font-size:15px;font-weight:500;letter-spacing:.06em}
+.lay-tab .en{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f);transition:color .35s}
+.lay-tab:hover{color:var(--ink)}
+.lay-tab.act{background:var(--ink);color:var(--paper-in)}
+.lay-tab.act .zh{color:var(--paper-in)}
+.lay-tab.act .en{color:var(--brass-l)}
+
+.atlas-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(20px,3.4vw,52px);align-items:start}
+.diagram-col{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px}
+.diagram-frame{position:relative;width:100%;max-width:520px;border:1px solid var(--line);border-radius:5px;
+  background:linear-gradient(170deg,#FCFAF3,#F3EDE0);padding:clamp(10px,2vw,20px);
+  box-shadow:0 26px 60px -40px rgba(60,48,24,.6);overflow:hidden}
+.diagram-frame::before{content:"";position:absolute;inset:6px;border:1px solid var(--line-2);border-radius:3px;pointer-events:none;z-index:1}
+.dg-corner{position:absolute;width:12px;height:12px;border:1px solid var(--brass);opacity:.5;z-index:2}
+.dg-corner.tl{top:11px;left:11px;border-right:0;border-bottom:0}
+.dg-corner.tr{top:11px;right:11px;border-left:0;border-bottom:0}
+.dg-corner.bl{bottom:11px;left:11px;border-right:0;border-top:0}
+.dg-corner.br{bottom:11px;right:11px;border-left:0;border-top:0}
+.dg-stamp{position:absolute;bottom:16px;right:18px;z-index:3;font-family:var(--sc);font-size:13px;color:var(--cinnabar);
+  border:1.4px solid var(--cinnabar);border-radius:3px;padding:5px 6px;line-height:1;opacity:.62;
+  writing-mode:vertical-rl;letter-spacing:.1em}
+.dg-title{position:absolute;top:16px;left:20px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f)}
+svg.diagram{display:block;width:100%;height:auto;position:relative;z-index:2}
+
+/* line-art strokes */
+.ln{fill:none;stroke:var(--ink-2);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.handfill{fill:#FCFAF4;stroke:var(--ink-2);stroke-width:1.8;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.pguide{fill:none;stroke:var(--ink-3);stroke-width:1.5;opacity:.32;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.ln.thin{stroke:var(--ink-3);stroke-width:1.2;opacity:.9}
+.ln.faint{stroke:var(--ink-3);stroke-width:1;opacity:.5}
+.iris{fill:var(--ink-2);opacity:.85}
+.pupil{fill:var(--ink)}
+/* draw-in */
+.drawin .ln{stroke-dasharray:var(--len,900);stroke-dashoffset:var(--len,900);animation:draw 1.5s var(--ease-o) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* zones */
+.zone{cursor:pointer}
+.zone .hit{fill:transparent;stroke:none}
+.zone .hl{fill:var(--cinnabar-ff);stroke:var(--cinnabar);stroke-width:1.3;stroke-dasharray:3 3;opacity:0;
+  transition:opacity .4s var(--ease);vector-effect:non-scaling-stroke}
+.zone .mk{fill:var(--paper-in);stroke:var(--brass);stroke-width:1.3;transition:fill .3s,stroke .3s,r .3s;vector-effect:non-scaling-stroke}
+.zone .mkn{font-family:var(--mono);font-size:9px;fill:var(--ink-3);text-anchor:middle;dominant-baseline:central;pointer-events:none;transition:fill .3s}
+.zone:hover .mk,.zone.active .mk{fill:var(--cinnabar);stroke:var(--cinnabar)}
+.zone:hover .mkn,.zone.active .mkn{fill:var(--paper-in)}
+.zone.active .hl{opacity:1}
+.zone:hover .hl{opacity:.6}
+/* palm line strokes as zones */
+.pline{fill:none;stroke-width:2.4;stroke-linecap:round;stroke:var(--ink-2);transition:stroke .35s,stroke-width .35s,filter .35s;vector-effect:non-scaling-stroke}
+.pline.sub{stroke:var(--ink-3);stroke-width:1.8;opacity:.85}
+.zone:hover .pline,.zone.active .pline{stroke:var(--cinnabar);stroke-width:3.4;filter:drop-shadow(0 0 5px rgba(172,62,44,.4))}
+.zone .mount{fill:var(--brass-f);stroke:var(--brass);stroke-width:1;stroke-dasharray:2 3;opacity:0;transition:opacity .4s var(--ease);vector-effect:non-scaling-stroke}
+.zone.active .mount{opacity:1;fill:var(--cinnabar-f);stroke:var(--cinnabar)}
+.zone:hover .mount{opacity:.7}
+.varpath{fill:none;stroke:var(--cinnabar);stroke-width:1.6;stroke-dasharray:4 4;opacity:0;transition:opacity .5s var(--ease);vector-effect:non-scaling-stroke}
+.show-var .zone.active .varpath{opacity:.7}
+
+/* callout leader */
+.callout{opacity:0;transition:opacity .45s var(--ease)}
+.callout.on{opacity:1}
+.callout line{stroke:var(--cinnabar);stroke-width:1.1;vector-effect:non-scaling-stroke}
+.callout circle{fill:var(--cinnabar)}
+.callout .cbox{fill:var(--paper-in);stroke:var(--cinnabar);stroke-width:1;opacity:.96}
+.callout .czh{font-family:var(--sc);font-weight:600;font-size:15px;fill:var(--cinnabar)}
+.callout .cpy{font-family:var(--mono);font-size:8px;letter-spacing:.12em;fill:var(--ink-f);text-transform:uppercase}
+
+/* three-court bands (face layer) */
+.court{cursor:pointer}
+.court .cband{fill:var(--cinnabar-ff);opacity:0;transition:opacity .4s var(--ease)}
+.court.active .cband{opacity:1}
+.court:hover .cband{opacity:.55}
+.court .cdiv{stroke:var(--brass);stroke-width:1;stroke-dasharray:5 4;opacity:.55;vector-effect:non-scaling-stroke}
+.court .clbl{font-family:var(--sc);font-size:15px;font-weight:600;fill:var(--brass);transition:fill .3s}
+.court .cs{font-family:var(--mono);font-size:8px;letter-spacing:.16em;fill:var(--ink-f);text-transform:uppercase}
+.court.active .clbl{fill:var(--cinnabar)}
+
+/* ---------- reading side ---------- */
+.read-col{position:relative}
+.index-list{border:1px solid var(--line);border-radius:5px;background:var(--paper-in);overflow:hidden;
+  box-shadow:0 18px 44px -34px rgba(60,48,24,.5)}
+.idx-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:15px clamp(14px,1.8vw,20px);
+  border-bottom:1px solid var(--line)}
+.idx-head .t{font-family:var(--sc);font-weight:600;font-size:16px;color:var(--ink)}
+.idx-head .t .en{font-family:var(--display);font-style:italic;font-weight:500;font-size:.82em;color:var(--brass);margin-left:.5em}
+.idx-head .ct{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-f)}
+.idx-scroll{max-height:min(46vh,420px);overflow-y:auto}
+.idx-scroll::-webkit-scrollbar{width:8px}
+.idx-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px clamp(14px,1.8vw,20px);
+  border-bottom:1px solid var(--line-2);transition:background .3s var(--ease),color .3s;cursor:pointer}
+.idx-row:last-child{border-bottom:0}
+.idx-row .no{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);
+  font-family:var(--mono);font-size:9.5px;color:var(--ink-f);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.idx-row .zh{font-family:var(--sc);font-weight:600;font-size:15.5px;color:var(--ink);flex:none;min-width:3.2em}
+.idx-row .meta{display:flex;flex-direction:column;gap:1px;min-width:0}
+.idx-row .py{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
+.idx-row .en{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.idx-row:hover{background:var(--cinnabar-ff)}
+.idx-row.active{background:var(--cinnabar-f)}
+.idx-row.active .no{background:var(--cinnabar);border-color:var(--cinnabar);color:var(--paper-in)}
+.idx-row.active .zh{color:var(--cinnabar)}
+
+/* detail panel */
+.detail{margin-top:18px;border:1px solid var(--line);border-radius:5px;background:var(--paper-in);
+  padding:clamp(18px,2.4vw,26px);min-height:210px;position:relative;overflow:hidden;
+  box-shadow:0 18px 44px -34px rgba(60,48,24,.5)}
+.detail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cinnabar);opacity:.85}
+.dt-fade{opacity:0;transform:translateY(8px);animation:dtin .5s var(--ease-o) forwards}
+@keyframes dtin{to{opacity:1;transform:none}}
+.dt-top{display:flex;align-items:flex-start;gap:14px}
+.dt-glyph{font-family:var(--sc);font-weight:600;font-size:clamp(30px,4.6vw,44px);color:var(--cinnabar);line-height:.95;flex:none}
+.dt-h{display:flex;flex-direction:column;gap:3px;padding-top:3px}
+.dt-h .py{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+.dt-h .en{font-family:var(--display);font-style:italic;font-size:clamp(17px,2.2vw,22px);color:var(--ink);line-height:1.15}
+.dt-h .loc{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink-f);margin-top:2px}
+.dt-body{margin-top:15px;font-size:clamp(13px,1.45vw,14.5px);color:var(--ink-2);line-height:1.66}
+.dt-body b{color:var(--jade);font-weight:500}
+.dt-body em{font-style:italic;color:var(--cinnabar)}
+.dt-tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
+.dt-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--line);border-radius:2px;padding:4px 9px}
+.dt-tag b{color:var(--jade);font-weight:500}
+.dt-var{margin-top:16px;border-top:1px solid var(--line-2);padding-top:14px}
+.dt-var .vh{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);margin-bottom:9px}
+.dt-var .vrow{display:flex;gap:10px;margin-bottom:8px;font-size:12.5px;color:var(--ink-3);line-height:1.5}
+.dt-var .vrow .vn{flex:none;font-family:var(--sc);font-size:13px;color:var(--cinnabar);min-width:4.6em}
+.dt-empty{display:flex;flex-direction:column;gap:8px;justify-content:center;height:100%;min-height:170px;text-align:center;color:var(--ink-f)}
+.dt-empty .zh{font-family:var(--sc);font-size:26px;color:var(--brass);opacity:.6}
+.dt-empty .tx{font-family:var(--display);font-style:italic;font-size:16px;color:var(--ink-3)}
+
+/* walkthrough + toolbar */
+.tools{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.walk-btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--paper-in);background:var(--cinnabar);padding:11px 20px;border-radius:2px;
+  box-shadow:0 12px 28px -16px rgba(172,62,44,.6);transition:transform .3s var(--ease),background .3s,box-shadow .3s}
+.walk-btn:hover{transform:translateY(-2px);background:var(--cinnabar-l);box-shadow:0 18px 36px -16px rgba(172,62,44,.7)}
+.walk-btn:active{transform:translateY(0)}
+.walk-btn .ic{width:9px;height:9px;position:relative}
+.walk-btn .ic::before{content:"";position:absolute;inset:0;border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.walk-btn.playing .ic::before{border:0;border-left:3px solid currentColor;border-right:3px solid currentColor;width:9px;height:9px}
+.step{display:inline-flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.step button{padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--ink-3);transition:background .3s,color .3s}
+.step button:first-child{border-right:1px solid var(--line)}
+.step button:hover{background:var(--cinnabar-ff);color:var(--cinnabar)}
+.vtoggle{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--line);border-radius:2px;padding:9px 14px;transition:border-color .3s,color .3s}
+.vtoggle .sw{width:26px;height:14px;border-radius:8px;background:var(--paper-3);position:relative;transition:background .3s}
+.vtoggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--paper-in);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .3s var(--ease)}
+.vtoggle.on{border-color:var(--cinnabar);color:var(--cinnabar)}
+.vtoggle.on .sw{background:var(--cinnabar)}
+.vtoggle.on .sw::after{transform:translateX(12px)}
+.walk-count{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink-f)}
+
+/* ---------- MANNER / honest framing ---------- */
+#manner{padding:clamp(64px,10vh,130px) 0}
+.manner-in{max-width:800px;margin:0 auto;text-align:center}
+.quote{font-family:var(--display);font-style:italic;font-size:clamp(22px,3.6vw,40px);color:var(--ink);line-height:1.32;letter-spacing:.005em}
+.quote .hl{color:var(--cinnabar)}
+.qsource{margin-top:20px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f)}
+.manner-grid{margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2.4vw,26px);text-align:left}
+.mcard{border:1px solid var(--line);border-radius:4px;background:var(--paper-in);padding:clamp(18px,2.2vw,26px)}
+.mcard .n{font-family:var(--sc);font-weight:600;font-size:clamp(24px,3.2vw,34px);color:var(--brass);line-height:1}
+.mcard h3{font-family:var(--sc);font-weight:600;font-size:clamp(15px,1.8vw,18px);color:var(--ink);margin:10px 0 9px}
+.mcard h3 .en{display:block;font-family:var(--display);font-style:italic;font-weight:500;font-size:.82em;color:var(--ink-3);margin-top:2px}
+.mcard p{font-size:clamp(12.5px,1.35vw,14px);color:var(--ink-3);line-height:1.64}
+.mcard p b{color:var(--jade);font-weight:500}
+
+/* ---------- footer ---------- */
+footer{padding:clamp(56px,8vh,92px) 0 clamp(40px,6vh,58px);border-top:1px solid var(--line);text-align:center}
+footer .mk{font-family:var(--sc);font-weight:600;font-size:clamp(30px,5vw,46px);color:var(--cinnabar);letter-spacing:.14em}
+footer .lg{font-family:var(--display);font-style:italic;font-size:clamp(17px,2.2vw,23px);color:var(--ink-2);margin-top:12px}
+footer .meta{margin-top:24px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-f);
+  display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+footer .meta a{color:var(--jade);transition:color .3s}
+footer .meta a:hover{color:var(--cinnabar)}
+footer .copy{margin-top:18px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--ink-f);opacity:.75}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,18px);z-index:300;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-in);
+  background:var(--ink);padding:12px 22px;border-radius:2px;opacity:0;pointer-events:none;
+  transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  .atlas-grid{grid-template-columns:1fr;gap:30px}
+  .diagram-frame{max-width:440px;margin:0 auto}
+  .read-col{max-width:520px;margin:0 auto;width:100%}
+  .manner-grid{grid-template-columns:1fr}
+  .idx-scroll{max-height:none}
+}
+@media(max-width:560px){
+  .hero-frame{flex-direction:column;align-items:stretch}
+  .frame-card{max-width:none}
+  .lay-tab .en{display:none}
+  .lay-tab{padding:9px 14px}
+  .tools{gap:8px}
+  .dg-stamp{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+  .drawin .ln{stroke-dashoffset:0;animation:none}
+}
+html.no-anim .reveal{opacity:1;transform:none}
+html.no-anim .cue .ln{animation:none}
+html.no-anim .drawin .ln{stroke-dashoffset:0;animation:none}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grain"></div>
+<div class="vignette"></div>
+<div class="prog" id="prog"></div>
+
+<a class="backlink" href="/"><span class="mk">相</span>XAVIER FABLE ×65</a>
+
+<!-- ================= HERO ================= -->
+<header id="hero">
+  <div class="hero-in wrap">
+    <div class="kicker reveal">面相<span class="dot">·</span>手相<span class="dot">·</span>MIÀN XIÀNG &amp; SHǑU XIÀNG</div>
+    <h1 class="title reveal"><span class="a">面相</span><span class="sep">·</span><span class="b">手相</span></h1>
+    <p class="title-en reveal">You are the chart.<br>Read the <em>face</em>. Read the <em>hand</em>.</p>
+    <p class="lede reveal">No photograph, no camera — only two drawings and the old manuals beside them. The face carries the <b>twelve palaces</b>, the three courts, and the five features; the palm carries its <b>lines and mounts</b>. Hover any zone and the reading appears. Offered honestly — <b>for reflection, not prophecy.</b></p>
+
+    <div class="hero-frame reveal">
+      <div class="frame-card sketch">
+        <div class="fx">相術 · Physiognomy</div>
+        <h3>The impressionistic sketch<span class="en">面相 · 手相 — read from the surface</span></h3>
+        <p>Face and palm are read at a glance — a portrait drawn in quick, warm strokes. It catches the <em>mood</em> of a life more than its mechanism, and it changes as you do.</p>
+        <div class="tag">quick · warm · shareable</div>
+      </div>
+      <div class="frame-card draw">
+        <div class="fx">命理 · BaZi</div>
+        <h3>The engineering drawing<span class="en">八字 — computed from the hour of birth</span></h3>
+        <p>Beside it stands the four-pillar chart: an exact schematic derived from the calendar. Where BaZi calculates, physiognomy <em>observes</em>. Two ways of looking, one person.</p>
+        <div class="tag">precise · fixed · structural</div>
+      </div>
+    </div>
+    <p class="hero-note reveal">“相由心生” — the face is born of the heart. What you read here is a mirror, not a verdict.</p>
+    <div class="cue reveal"><span>Begin with the face</span><span class="ln"></span></div>
+  </div>
+</header>
+
+<!-- ================= FACE ================= -->
+<section class="atlas face" id="face">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">面相<span class="dot">·</span>THE FACE</span>
+      <h2>The Face Read<span class="en">three courts · five features · twelve palaces</span></h2>
+      <p>A face divides into maps laid one over another. Choose a layer, then hover a zone — on the drawing or in the index — to read what the <b>麻衣</b> tradition sees there. Nothing here is fixed; a palace can be cultivated.</p>
+    </div>
+
+    <div class="laybar-host reveal">
+      <div class="laybar" role="tablist" aria-label="Face layer">
+        <button class="lay-tab" data-layer="courts" role="tab"><span class="zh">三停</span><span class="en">Three Courts</span></button>
+        <button class="lay-tab" data-layer="features" role="tab"><span class="zh">五官</span><span class="en">Five Features</span></button>
+        <button class="lay-tab act" data-layer="palaces" role="tab"><span class="zh">十二宫</span><span class="en">Twelve Palaces</span></button>
+      </div>
+    </div>
+
+    <div class="atlas-grid">
+      <div class="diagram-col reveal">
+        <div class="diagram-frame">
+          <span class="dg-corner tl"></span><span class="dg-corner tr"></span><span class="dg-corner bl"></span><span class="dg-corner br"></span>
+          <span class="dg-title" id="faceDgTitle">十二宫 · The Twelve Palaces</span>
+          <span class="dg-stamp">相</span>
+          <svg class="diagram drawin" id="faceSvg" viewBox="0 0 520 620" role="img" aria-label="Line drawing of a face with reading zones">
+            <!-- static face line art -->
+            <g id="faceArt">
+              <path class="ln" d="M260 98 C210 98 180 120 172 175 C165 215 158 255 156 300 C154 345 165 400 192 455 C210 492 234 522 260 540 C286 522 310 492 328 455 C355 400 366 345 364 300 C362 255 355 215 348 175 C340 120 310 98 260 98 Z"/>
+              <path class="ln thin" d="M172 168 C200 112 320 112 348 168"/>
+              <path class="ln thin" d="M156 232 C138 230 132 256 140 284 C146 302 156 298 159 288"/>
+              <path class="ln thin" d="M364 232 C382 230 388 256 380 284 C374 302 364 298 361 288"/>
+              <!-- brows -->
+              <path class="ln" d="M196 244 C212 232 232 231 248 239"/>
+              <path class="ln" d="M272 239 C288 231 308 232 324 244"/>
+              <!-- eyes -->
+              <path class="ln" d="M200 265 C214 255 236 255 248 264"/>
+              <path class="ln" d="M200 265 C216 275 236 275 248 264"/>
+              <path class="ln" d="M272 264 C284 255 306 255 320 265"/>
+              <path class="ln" d="M272 264 C286 275 306 275 320 264"/>
+              <circle class="iris" cx="224" cy="265" r="6.6"/><circle class="pupil" cx="224" cy="265" r="2.7"/>
+              <circle class="iris" cx="296" cy="265" r="6.6"/><circle class="pupil" cx="296" cy="265" r="2.7"/>
+              <!-- nose -->
+              <path class="ln thin" d="M254 262 C250 300 249 336 245 358"/>
+              <path class="ln thin" d="M266 262 C270 300 271 336 275 358"/>
+              <path class="ln" d="M242 360 C246 377 256 383 260 383 C264 383 274 377 278 360"/>
+              <path class="ln thin" d="M245 362 C240 371 245 376 251 373"/>
+              <path class="ln thin" d="M275 362 C280 371 275 376 269 373"/>
+              <!-- philtrum + mouth -->
+              <path class="ln faint" d="M256 388 L258 414"/>
+              <path class="ln faint" d="M264 388 L262 414"/>
+              <path class="ln" d="M231 420 C244 413 252 415 260 419 C268 415 276 413 289 420"/>
+              <path class="ln" d="M231 420 C246 439 274 439 289 420"/>
+              <path class="ln thin" d="M234 421 C250 427 270 427 286 421"/>
+              <!-- chin hint -->
+              <path class="ln faint" d="M244 486 C252 496 268 496 276 486"/>
+            </g>
+            <!-- dynamic layers injected here -->
+            <g id="faceCourts"></g>
+            <g id="faceZones"></g>
+            <g class="callout" id="faceCallout">
+              <line x1="0" y1="0" x2="0" y2="0"/>
+              <circle cx="0" cy="0" r="2.6"/>
+              <rect class="cbox" x="0" y="0" width="0" height="0" rx="2"></rect>
+              <text class="czh" x="0" y="0"></text>
+              <text class="cpy" x="0" y="0"></text>
+            </g>
+          </svg>
+        </div>
+        <div class="tools">
+          <button class="walk-btn" id="faceWalk" aria-label="Play face walkthrough"><span class="ic"></span><span class="wt">Walkthrough</span></button>
+          <span class="step"><button id="facePrev" aria-label="Previous zone">‹</button><button id="faceNext" aria-label="Next zone">›</button></span>
+          <span class="walk-count" id="faceCount"></span>
+        </div>
+      </div>
+
+      <div class="read-col reveal">
+        <div class="index-list">
+          <div class="idx-head">
+            <div class="t" id="faceIdxT">十二宫 <span class="en">The Twelve Palaces</span></div>
+            <div class="ct" id="faceIdxCt"></div>
+          </div>
+          <div class="idx-scroll" id="faceIdx"></div>
+        </div>
+        <div class="detail" id="faceDetail"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PALM ================= -->
+<section class="atlas" id="palm">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="kicker">手相<span class="dot">·</span>THE PALM</span>
+      <h2>The Palm Read<span class="en">the major lines &amp; the seven mounts</span></h2>
+      <p>The left hand — closest to the heart. Its three great lines cross a landscape of <b>seven mounts</b>, each named for a star. Hover a line or a mount; switch on <b>variations</b> to see what a long, short, or forked line is said to mean.</p>
+    </div>
+
+    <div class="laybar-host reveal">
+      <div class="laybar" role="tablist" aria-label="Palm layer">
+        <button class="lay-tab act" data-player="lines" role="tab"><span class="zh">紋</span><span class="en">The Lines</span></button>
+        <button class="lay-tab" data-player="mounts" role="tab"><span class="zh">七丘</span><span class="en">Seven Mounts</span></button>
+      </div>
+    </div>
+
+    <div class="atlas-grid">
+      <div class="diagram-col reveal">
+        <div class="diagram-frame">
+          <span class="dg-corner tl"></span><span class="dg-corner tr"></span><span class="dg-corner bl"></span><span class="dg-corner br"></span>
+          <span class="dg-title" id="palmDgTitle">手紋 · The Lines of the Hand</span>
+          <span class="dg-stamp">掌</span>
+          <svg class="diagram drawin" id="palmSvg" viewBox="-64 -6 596 632" role="img" aria-label="Line drawing of a left palm with lines and mounts">
+            <g id="palmArt">
+              <!-- hand silhouette (filled) -->
+              <path class="handfill" d="M 128 558
+                C 117 520 109 468 107 418 C 105 378 105 320 110 292 C 112 280 113 272 114 264
+                C 113 220 113 176 114 150 A 20 20 0 0 1 154 150
+                C 155 190 156 228 156 260 C 157 258 158 257 160 258
+                C 159 208 159 142 160 100 A 20 20 0 0 1 200 100
+                C 201 150 202 208 202 258 C 203 256 204 256 206 258
+                C 205 200 205 140 206 82 A 22 22 0 0 1 250 82
+                C 251 148 252 206 252 260 C 253 259 255 259 257 261
+                C 256 208 256 152 257 114 A 21 21 0 0 1 299 114
+                C 300 162 301 210 304 258 C 311 268 320 280 330 300
+                C 340 312 356 302 374 300 C 392 298 406 308 407 324
+                C 408 340 396 352 378 360 C 360 367 344 370 332 372
+                C 320 392 314 432 306 472 C 300 510 292 536 280 558 Z"/>
+              <!-- knuckle creases -->
+              <path class="ln faint" d="M118 262 C128 258 146 258 154 262"/>
+              <path class="ln faint" d="M162 260 C172 256 190 256 200 260"/>
+              <path class="ln faint" d="M208 260 C218 256 240 256 250 260"/>
+              <path class="ln faint" d="M259 262 C269 258 289 258 299 262"/>
+              <path class="ln faint" d="M300 372 C320 380 332 398 330 420"/>
+              <!-- faint guide copies of the lines (visible under the mounts layer) -->
+              <path class="pguide" d="M 118 272 C 172 250 244 248 300 266 C 312 270 318 276 320 280"/>
+              <path class="pguide" d="M 302 300 C 256 316 196 324 130 316"/>
+              <path class="pguide" d="M 306 282 C 290 316 262 340 244 378 C 226 414 218 472 214 530"/>
+              <path class="pguide" d="M 226 548 C 224 468 226 386 228 280"/>
+              <path class="pguide" d="M 196 478 C 190 414 186 346 182 286"/>
+              <path class="pguide" d="M 110 232 L 136 231 M 111 244 L 130 243"/>
+            </g>
+            <!-- mounts (region ellipses) -->
+            <g id="palmMounts"></g>
+            <!-- lines (paths) -->
+            <g id="palmLines"></g>
+            <g class="callout" id="palmCallout">
+              <line x1="0" y1="0" x2="0" y2="0"/>
+              <circle cx="0" cy="0" r="2.6"/>
+              <rect class="cbox" x="0" y="0" width="0" height="0" rx="2"></rect>
+              <text class="czh" x="0" y="0"></text>
+              <text class="cpy" x="0" y="0"></text>
+            </g>
+          </svg>
+        </div>
+        <div class="tools">
+          <button class="walk-btn" id="palmWalk" aria-label="Play palm walkthrough"><span class="ic"></span><span class="wt">Walkthrough</span></button>
+          <span class="step"><button id="palmPrev" aria-label="Previous">‹</button><button id="palmNext" aria-label="Next">›</button></span>
+          <button class="vtoggle" id="varToggle" aria-pressed="false"><span class="sw"></span>Variations</button>
+        </div>
+      </div>
+
+      <div class="read-col reveal">
+        <div class="index-list">
+          <div class="idx-head">
+            <div class="t" id="palmIdxT">手紋 <span class="en">The Lines</span></div>
+            <div class="ct" id="palmIdxCt"></div>
+          </div>
+          <div class="idx-scroll" id="palmIdx"></div>
+        </div>
+        <div class="detail" id="palmDetail"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MANNER ================= -->
+<section id="manner">
+  <div class="wrap">
+    <div class="manner-in reveal">
+      <p class="quote">“Physiognomy is the <span class="hl">impressionistic sketch</span> laid beside BaZi's engineering drawing — one catches the likeness, the other the measurements.”</p>
+      <div class="qsource">a teacher of the craft · 相不獨論</div>
+    </div>
+    <div class="manner-grid">
+      <div class="mcard reveal">
+        <div class="n">一</div>
+        <h3>Read the whole<span class="en">相不獨論 — never one feature alone</span></h3>
+        <p>No palace, no line decides anything by itself. A weak nose beside a bright forehead reads differently than a weak nose alone. The old rule: <b>never judge a single sign in isolation.</b></p>
+      </div>
+      <div class="mcard reveal">
+        <div class="n">二</div>
+        <h3>Spirit over shape<span class="en">相由心生 — the face follows the heart</span></h3>
+        <p>Manuals prize <b>神 (shén)</b> — the light in the eyes, the ease in the face — above any measurement. A generous life re-draws its own map. The features are a starting line, not a sentence.</p>
+      </div>
+      <div class="mcard reveal">
+        <div class="n">三</div>
+        <h3>For reflection<span class="en">聊備一格 — hold it lightly</span></h3>
+        <p>Take this as a mirror to think beside, not a fortune to obey. Nothing here is medical, and nothing is fixed. Read it, smile, and <b>keep your own counsel.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="mk">面 · 手</div>
+    <div class="lg">You are the chart — and the chart can change.</div>
+    <div class="meta">
+      <a href="/">← XAVIER FABLE ×65</a>
+      <span>面相 · 手相 · Miàn Xiàng &amp; Shǒu Xiàng · The Read</span>
+    </div>
+    <div class="copy">A 麻衣相法 manual redrawn with modern clarity · faithful to the tradition · offered for reflection</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Linked</div>
+
+<script>
+"use strict";
+/* =========================================================
+   面相 · 手相 — THE READ
+   ========================================================= */
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (reduce) document.documentElement.classList.add('no-anim');
+
+/* ---------- FACE DATA ---------- */
+/* Twelve Palaces (十二宫). mk = marker/anchor; hl = highlight shapes; side = callout direction */
+const PALACES = [
+  {key:'ming', no:1, zh:'命宫', py:'Mìng Gōng', en:'Life Palace', loc:'印堂 · between the brows',
+   mk:[260,246], side:'R',
+   hl:[['e',260,246,15,20]],
+   read:"The clearing between the brows — the single most-watched inch of the face. Kept <b>broad, smooth and bright</b>, it reads as an open, unobstructed spirit: decisions come easily and fortune finds a clear road in. Pinched, knotted, or marked by a deep vertical line (悬针), it suggests a mind that worries a thing to death. Keep this space calm and you keep the whole face calm.",
+   tags:['court:上停','width ≈ two fingers']},
+  {key:'guan', no:2, zh:'官祿宫', py:'Guān Lù Gōng', en:'Career Palace', loc:'中正 · mid-forehead',
+   mk:[260,190], side:'L',
+   hl:[['e',260,190,46,20]],
+   read:"The high road of the forehead, from brow to hairline. A <b>full, rounded, unblemished</b> mid-forehead is the classic mark of standing and recognition — the part of you the world promotes. Scars or a caved-in centre here ask you to build authority by patience rather than by luck. This is the palace of <em>rank</em>, reputation, and the boss's good opinion.",
+   tags:['court:上停','governs standing']},
+  {key:'fumu', no:3, zh:'父母宫', py:'Fù Mǔ Gōng', en:'Parents Palace', loc:'日月角 · upper forehead',
+   mk:[260,150], side:'top',
+   hl:[['e',224,150,26,14],['e',296,150,26,14]],
+   read:"The two rises of the upper forehead — the <b>sun horn (日角)</b> for the father, the <b>moon horn (月角)</b> for the mother. Even, high and glossy, they speak of steady origins and elders who shelter you. If one sits lower or duller than the other, the tradition reads an imbalance in that parent's fortune or nearness — not blame, only a note on the ground you started from.",
+   tags:['court:上停','left=father · right=mother']},
+  {key:'qian', no:4, zh:'遷移宫', py:'Qiān Yí Gōng', en:'Travel Palace', loc:'驛馬 · forehead corners',
+   mk:[182,176], side:'L',
+   hl:[['e',182,176,20,26],['e',338,176,20,26]],
+   read:"The temples and forehead corners — the <b>post-horse (驛馬)</b> region that governs movement, relocation, and luck found away from home. Full and clear, it favours those who travel, transfer, and thrive on new ground. Sunken or webbed with fine lines, it counsels putting down roots and letting opportunity come to you rather than chasing it over the horizon.",
+   tags:['court:上停','journeys · relocation']},
+  {key:'fude', no:5, zh:'福德宫', py:'Fú Dé Gōng', en:'Fortune Palace', loc:'天倉 · upper temples',
+   mk:[176,230], side:'L',
+   hl:[['e',176,230,18,22],['e',344,230,18,22]],
+   read:"The <b>heavenly granary (天倉)</b> above the brow-tails — the palace of contentment, blessing, and the quiet luck that is more felt than counted. Plump and softly filled, it marks a life with reserves: ease of mind, help from unseen quarters, a good night's sleep. Hollow temples suggest the granary runs low — abundance passes through the hands rather than settling.",
+   tags:['court:上停','ease · blessing']},
+  {key:'xiong', no:6, zh:'兄弟宫', py:'Xiōng Dì Gōng', en:'Siblings Palace', loc:'眉 · the eyebrows',
+   mk:[222,239], side:'L',
+   hl:[['e',222,239,30,10],['e',298,239,30,10]],
+   read:"The eyebrows stand for siblings, friends, and the peers who move beside you. <b>Long, glossy, well-ordered</b> brows that reach past the eye read as loyal company and easy alliances. Short, sparse, or tangled brows suggest fewer close bonds or friction among them. Where the hairs lie smooth, so lie the relationships. Faint brows ask you to build your own circle deliberately.",
+   tags:['court:中停','五官:保壽官 · longevity']},
+  {key:'tian', no:7, zh:'田宅宫', py:'Tián Zhái Gōng', en:'Property Palace', loc:'眼瞼 · the eyelids',
+   mk:[297,252], side:'R',
+   hl:[['e',223,252,26,8],['e',297,252,26,8]],
+   read:"The field between eyebrow and eye — the <b>land-and-home (田宅)</b> palace of property, family estate, and where you belong. A <b>broad, clean upper lid</b> reads as a settled home and the capacity to hold real assets. When the gap is cramped and the brow presses on the eye, the tradition sees restlessness about home and money that will not sit still. Breadth here is literally breathing room.",
+   tags:['court:中停','home · estate']},
+  {key:'fuqi', no:8, zh:'夫妻宫', py:'Fū Qī Gōng', en:'Marriage Palace', loc:'奸門/魚尾 · outer eye',
+   mk:[338,270], side:'R',
+   hl:[['e',182,270,16,16],['e',338,270,16,16]],
+   read:"The <b>fish-tail (魚尾)</b> at the outer eye corner, running to the temple — the palace of marriage and the closest partnership. Smooth and lightly filled, it reads as a warm, steady union. A rush of fine lines (奸門紋) or a sunken, dark cast here speaks of turbulence, distance, or a heart pulled two ways. This softens as a couple grows kind to one another — proof the map answers to how you live.",
+   tags:['court:中停','partnership']},
+  {key:'zinv', no:9, zh:'子女宫', py:'Zǐ Nǚ Gōng', en:'Children Palace', loc:'泪堂/卧蠶 · under-eyes',
+   mk:[223,280], side:'L',
+   hl:[['e',223,280,24,10],['e',297,280,24,10]],
+   read:"The soft cushions beneath the eyes — the <b>silkworm mounds (卧蠶)</b> and tear halls. Gently plump and clear, they read as vitality, warmth toward children, and a generative, life-giving nature. Dark, hollow, or puffy, the tradition reads depletion — energy spent faster than it is restored. This is the palace of what you nurture, offspring or otherwise, and of the body's deeper reserves.",
+   tags:['court:中停','vitality · offspring']},
+  {key:'ji', no:10, zh:'疾厄宫', py:'Jí È Gōng', en:'Health Palace', loc:'山根/年壽 · nose bridge',
+   mk:[260,282], side:'R',
+   hl:[['e',260,282,12,24]],
+   read:"The bridge of the nose — the <b>mountain root (山根)</b> rising to the nose's ridge. High, straight and unbroken, it reads as a strong constitution and resilience through hardship. A low or sharply creased bridge marks a life that must guard its stamina and weather more bumps mid-course. Read for <em>resilience</em>, never diagnosis — the manuals speak of fortitude, not medicine.",
+   tags:['court:中停','resilience — not medical']},
+  {key:'cai', no:11, zh:'財帛宫', py:'Cái Bó Gōng', en:'Wealth Palace', loc:'準頭 · the nose tip',
+   mk:[260,366], side:'R',
+   hl:[['e',260,366,22,20]],
+   read:"The tip of the nose (準頭) with its two wings (蘭台·廷尉) — the treasury of the face. A <b>full, rounded, fleshy</b> nose-tip with tidy, covered nostrils is the classic sign of steady mid-life fortune: money earned is money kept. A thin, sharp tip or flared nostrils suggest wealth that flows out as fast as in. The middle court's crown jewel, and the anchor of the whole face.",
+   tags:['court:中停','五官:審辨官 · wealth']},
+  {key:'nupu', no:12, zh:'奴僕宫', py:'Nú Pú Gōng', en:'Support Palace', loc:'地閣 · lower jaw',
+   mk:[316,478], side:'R',
+   hl:[['e',204,478,26,20],['e',316,478,26,20]],
+   read:"The lower jaw and chin-sides — the <b>earth pavilion (地閣)</b> that governs subordinates, loyal help, and the harvest of later years. A <b>broad, rounded, well-cushioned</b> jaw reads as people who stand by you and a comfortable close of life. A narrow or receding jaw asks you to lead by warmth rather than to lean on numbers. This is the palace of the years that reward patience.",
+   tags:['court:下停','support · late life']}
+];
+
+/* Three Courts (三停) — horizontal bands */
+const COURTS = [
+  {key:'upper', no:'上', zh:'上停', py:'Shàng Tíng', en:'Upper Court', loc:'hairline → brows',
+   y0:100, y1:250, lbl:[92,175],
+   read:"From hairline to brow — the <b>heaven court</b>, read for the years of youth (roughly 15–30) and for the mind you inherit. A high, wide, softly rounded forehead speaks of early support, quick intelligence, and a good relationship with authority and elders. Bumps, scars, or a narrow brow suggest an early road walked more alone — often the making of self-reliant people.",
+   tags:['ages 15–30','ancestry · intellect']},
+  {key:'middle', no:'中', zh:'中停', py:'Zhōng Tíng', en:'Middle Court', loc:'brows → nose base',
+   y0:250, y1:385, lbl:[92,320],
+   read:"From brow to the base of the nose — the <b>human court</b>, the prime of life (roughly 31–50) and the seat of drive, wealth, and self-command. Its centrepiece is the nose: full and well-set, it promises a strong, productive middle age when effort compounds. This court is where a person's own doing shows most plainly — the years you build with your own hands.",
+   tags:['ages 31–50','drive · wealth']},
+  {key:'lower', no:'下', zh:'下停', py:'Xià Tíng', en:'Lower Court', loc:'nose base → chin',
+   y0:385, y1:545, lbl:[92,470],
+   read:"From the nose down to the chin — the <b>earth court</b>, the later years (roughly 51 onward), and the yield of a life. A <b>full, rounded, forward chin</b> with a generous mouth reads as a warm, well-supported old age surrounded by loyal people. A sharp or receding lower face counsels tending relationships early, so the harvest is kind. This is where a life's kindness is repaid.",
+   tags:['ages 51+','harvest · legacy']}
+];
+
+/* Five Features (五官) */
+const FEATURES = [
+  {key:'brows', no:1, zh:'眉', py:'Méi', en:'The Brows', loc:'保壽官 · Protector of Longevity',
+   mk:[222,239], side:'L', hl:[['e',222,239,32,11],['e',298,239,32,11]],
+   read:"The <b>Protector of Longevity (保壽官)</b>. Brows should be <b>longer than the eye, glossy, and lie in one direction</b> — the sign of a clear temper, loyal friends, and a long, orderly thread of life. Tangled or broken brows read as a scattered will; too pale or sparse, a solitary road. The brow is the face's punctuation, giving the eyes their sentence.",
+   tags:['五官 one of five','temper · allies']},
+  {key:'eyes', no:2, zh:'眼', py:'Yǎn', en:'The Eyes', loc:'監察官 · The Monitoring Official',
+   mk:[224,265], side:'L', hl:[['e',224,265,26,13],['e',296,265,26,13]],
+   read:"The <b>Monitoring Official (監察官)</b> — the most important feature of all, for they hold <b>神 (shén), the spirit</b>. Eyes that are <b>clear, steady, and quietly bright</b>, with light well-contained, mark an honest, capable, resilient nature. Cloudy, darting, or dull eyes drain the whole reading however fine the other features. As the manuals say: read the eyes first, and read the rest by their light.",
+   tags:['五官 · the chief','神 · spirit']},
+  {key:'nose', no:3, zh:'鼻', py:'Bí', en:'The Nose', loc:'審辨官 · The Judging Official',
+   mk:[260,340], side:'R', hl:[['e',260,320,22,66]],
+   read:"The <b>Judging Official (審辨官)</b> and the seat of the self and its wealth. A <b>straight ridge, high root, and full, rounded tip</b> with tidy nostrils marks a person of judgement, spine, and steady mid-life means. A person's nose is their own pillar — bent or thin, it asks for borrowed structure; strong and centred, it holds the whole face up. The middle court stands or falls here.",
+   tags:['五官 · the pillar','self · wealth']},
+  {key:'mouth', no:4, zh:'口', py:'Kǒu', en:'The Mouth', loc:'出納官 · The Intake Official',
+   mk:[260,420], side:'R', hl:[['e',260,428,34,16]],
+   read:"The <b>Intake-and-Outflow Official (出納官)</b> — what goes in as food and comes out as words. A <b>well-shaped mouth with full, rosy, evenly-closed lips</b> reads as warmth, appetite for life, and speech that draws people near. A tight, thin, or downturned mouth suggests words held back or too sharp. The upturned corner is one of the face's kindest signs — a life that expects good things.",
+   tags:['五官 one of five','speech · warmth']},
+  {key:'ears', no:5, zh:'耳', py:'Ěr', en:'The Ears', loc:'採聽官 · The Listening Official',
+   mk:[150,258], side:'L', hl:[['e',150,258,18,34],['e',370,258,18,34]],
+   read:"The <b>Listening Official (採聽官)</b>, read for the earliest years and for the constitution you were born with. <b>Well-formed ears — set high, firm, with a full lobe</b> and good colour — mark a strong root, good early fortune, and a discerning ear. Thin, pale, or low-set ears speak of a more fragile start (often outgrown). Ears govern the first fourteen years, and quietly, the will to listen.",
+   tags:['五官 one of five','early years · roots']}
+];
+
+/* ---------- PALM DATA ---------- */
+const P_LINES = [
+  {key:'heart', no:1, zh:'感情線', py:'Gǎn Qíng Xiàn', en:'Heart Line', loc:'below the fingers, uppermost',
+   d:"M 118 272 C 172 250 244 248 300 266 C 312 270 318 276 320 280", side:'R',
+   dot:[300,266],
+   read:"The uppermost great line, running below the fingers — the register of the <b>emotional life</b>: how you love, and how freely you show it. A line that <b>curves up to end beneath the index finger</b> reads as warm, idealistic, openly affectionate. Ending flatter, beneath the middle finger, marks a more guarded, self-protective heart. Its <em>chains and islands</em> are the tradition's shorthand for a feeling nature easily stirred.",
+   tags:['the first great line','love · feeling'],
+   vars:[['深長清晰','A long, clear line — steady, generous affection freely given.'],
+         ['末端分叉','A forked end — a heart pulled between duty and desire; also, warmth for many.'],
+         ['短促','A short line — feeling kept close; loyal, but slow to open the door.'],
+         ['鎖鏈狀','A chained line — an ardent, changeable heart, easily moved and easily hurt.']],
+   varpaths:["M300 266 C 312 260 318 252 322 244","M300 266 C 314 272 320 282 322 290"]},
+  {key:'head', no:2, zh:'智慧線', py:'Zhì Huì Xiàn', en:'Head Line', loc:'across the centre of the palm',
+   d:"M 302 300 C 256 316 196 324 130 316", side:'L',
+   dot:[188,321],
+   read:"The line crossing the centre — the cut of the <b>mind</b>: how you think, decide, and hold attention. <b>Long and gently sloping</b> reads as imaginative, wide-ranging thought; <b>straight and firm</b>, a practical, decisive intelligence that goes to the point. Where it begins tied to the life line, the tradition sees a cautious start; where it begins apart, an early independence. Depth reads as focus, not cleverness.",
+   tags:['the second great line','mind · judgement'],
+   vars:[['直而堅','Straight and strong — practical, decisive, business-minded.'],
+         ['長而下垂','Long, sloping to the moon — imaginative, creative, drawn to the arts.'],
+         ['起點分離','Beginning clear of the life line — independent and self-starting early.'],
+         ['末端分叉 (筆匠叉)','A writer’s fork — two gifts at once: the practical and the imaginative held together.']],
+   varpaths:["M130 316 C 122 328 118 340 116 354","M130 316 C 126 308 120 302 114 298"]},
+  {key:'life', no:3, zh:'生命線', py:'Shēng Mìng Xiàn', en:'Life Line', loc:'arcing around the thumb ball',
+   d:"M 306 282 C 290 316 262 340 244 378 C 226 414 218 472 214 530", side:'R',
+   dot:[244,378],
+   read:"The long arc sweeping around the thumb — <b>not</b> a measure of lifespan, whatever the movies say, but of <b>vitality, constitution, and the felt quality of the years</b>. Broad and clear, curving wide to give the Venus mount room, it reads as robust energy and a full-blooded life. Set close to the thumb, it marks a cooler, more reserved vigour. Breaks and islands are read as the years that ask for rest, not as omens.",
+   tags:['the third great line','vitality — not lifespan'],
+   vars:[['深長弧廣','Deep, long, wide-curving — strong constitution, an appetite for life.'],
+         ['緊貼拇指','Hugging the thumb — cautious energy, a life lived closer to home.'],
+         ['中斷','A break — a turning point or change of course; overlapped, it mends.'],
+         ['雙生命線 (火星線)','A second inner line (the Mars line) — a guardian reserve of strength and recovery.']],
+   varpaths:["M306 282 C 296 312 274 330 258 356","M244 378 C 232 416 224 474 220 528"]},
+  {key:'fate', no:4, zh:'事業線', py:'Shì Yè Xiàn', en:'Fate Line', loc:'rising up the centre to the middle finger',
+   d:"M 226 548 C 224 468 226 386 228 280", side:'R',
+   dot:[227,400],
+   read:"The vertical rising from the wrist toward the middle finger (the Saturn mount) — the thread of <b>career, direction, and the sense of a life on its rails</b>. <b>Deep and unbroken</b>, it reads as a steady vocation and a clear course. Faint, broken, or absent, the tradition sees a self-made, improvised path — many strong lives show a light one. Where it starts matters: from the wrist, an early calling; from higher up, a later blooming.",
+   tags:['a fortune line','vocation · course'],
+   vars:[['深直清晰','Deep and straight — a steady career, one clear road.'],
+         ['起自月丘','Rising from the moon — a life shaped by others, the public, or fame.'],
+         ['多段接續','In several overlapping stages — more than one career, each building on the last.'],
+         ['無事業線','Faint or absent — a free, self-directed path answering to no fixed track.']],
+   varpaths:["M226 548 C 190 480 158 410 142 360","M228 280 C 226 258 226 244 228 230"]},
+  {key:'sun', no:5, zh:'太陽線', py:'Tài Yáng Xiàn', en:'Sun / Apollo Line', loc:'rising toward the ring finger',
+   d:"M 196 478 C 190 414 186 346 182 286", side:'L',
+   dot:[188,392],
+   read:"The bright short line climbing toward the ring finger and its <b>Apollo mount</b> — the line of <b>talent, recognition, and the warmth others feel for you</b>. Present and clear, it reads as charm, artistic gift, and luck that arrives with applause; it can gild an otherwise plain hand. Many hands lack it entirely and do perfectly well — where it appears, it simply adds shine, ease, and the good opinion of a crowd.",
+   tags:['a fortune line','talent · acclaim'],
+   vars:[['清晰筆直','Clear and straight — real talent meets public recognition.'],
+         ['多條並行','Several fine lines — many interests; focus turns them to gold.'],
+         ['末端三叉','A trident at the top — the classic sign of fame, wealth, and esteem together.'],
+         ['缺如','Absent — a quieter road; success felt privately rather than acclaimed.']],
+   varpaths:["M182 286 C 176 276 168 270 160 266","M182 286 C 188 276 196 270 204 266"]},
+  {key:'marriage', no:6, zh:'婚姻線', py:'Hūn Yīn Xiàn', en:'Marriage Line(s)', loc:'the percussion edge below the pinky',
+   d:"M 110 232 L 136 231 M 111 244 L 130 243", side:'L',
+   dot:[123,231],
+   read:"The short strokes on the outer edge below the little finger — the tradition's notes on <b>deep unions and lasting attachments</b>. A <b>single strong, straight line</b> reads as one clear, enduring bond. Several fine lines suggest a heart that loves more than once; a line curving down or forked speaks of a union that cools or parts. Read gently — these are marks of the heart's history, not a schedule to be kept.",
+   tags:['a minor line','attachment · union'],
+   vars:[['一條深長','One deep line — a single, defining, lasting union.'],
+         ['數條細紋','Several fine lines — more than one deep attachment across a life.'],
+         ['末端下彎','Curving downward — a bond that cools; tend it early.'],
+         ['末端分叉','A forked end — a parting, or two loves held at once.']],
+   varpaths:["M110 220 L 134 219","M110 256 L 128 255"]}
+];
+
+const P_MOUNTS = [
+  {key:'jupiter', no:1, zh:'木星丘', py:'Mù Xīng Qiū', en:'Mount of Jupiter', loc:'base of the index finger',
+   c:[278,288,20,21], side:'R',
+   read:"The cushion below the <b>index finger</b>. Well-raised, it reads as <b>ambition, leadership, and healthy self-regard</b> — the drive to rise and the nerve to lead. Firm and rounded marks the natural organiser; flat or thin, a gentler appetite for the front of the room; over-full, pride that wants watching. This is the mount of standing tall.",
+   tags:['ruler: Jupiter','ambition · leadership']},
+  {key:'saturn', no:2, zh:'土星丘', py:'Tǔ Xīng Qiū', en:'Mount of Saturn', loc:'base of the middle finger',
+   c:[228,282,20,21], side:'R',
+   read:"The pad below the <b>middle finger</b> — the mount of <b>seriousness, patience, and the inner life</b>. Moderately raised, it grants wisdom, prudence, and a taste for solitude and study; too high, a melancholy, withdrawn streak; too flat, a life that skims the surface. The balance-weight of the hand: it steadies the brighter mounts around it.",
+   tags:['ruler: Saturn','wisdom · gravity']},
+  {key:'apollo', no:3, zh:'太陽丘', py:'Tài Yáng Qiū', en:'Mount of Apollo', loc:'base of the ring finger',
+   c:[180,286,20,21], side:'L',
+   read:"The rise below the <b>ring finger</b>, ruled by the Sun — the mount of <b>art, brightness, and being liked</b>. Well-formed, it gives a feel for beauty, an easy charm, and luck that arrives with warmth and applause. Flat, a plainer and more private taste; over-full, a love of show. Where Apollo is bright, the whole hand seems to catch light.",
+   tags:['ruler: Apollo / Sun','art · charm']},
+  {key:'mercury', no:4, zh:'水星丘', py:'Shuǐ Xīng Qiū', en:'Mount of Mercury', loc:'base of the little finger',
+   c:[135,294,18,20], side:'L',
+   read:"The small mount below the <b>little finger</b> — quickness of <b>mind, tongue, and trade</b>. Well-raised, it sharpens wit, persuasion, and a nose for business, science, or healing; flat, a plainer and more literal turn of mind. This is the mount of the clever talker and the shrewd dealer — the hand's live wire.",
+   tags:['ruler: Mercury','wit · commerce']},
+  {key:'venus', no:5, zh:'金星丘', py:'Jīn Xīng Qiū', en:'Mount of Venus', loc:'the ball of the thumb',
+   c:[286,448,48,72], side:'R',
+   read:"The great cushion at the <b>base of the thumb</b>, ringed by the life line — the mount of <b>love, warmth, vitality, and appetite for life</b>. Full and firm (never hard), it reads as affection, generosity, and physical vigour — the engine-room of the hand. Flat or thin, a cooler, more reserved nature. The wider the life line curves to give it room, the fuller the life it promises.",
+   tags:['ruler: Venus','warmth · vitality']},
+  {key:'luna', no:6, zh:'太陰丘', py:'Tài Yīn Qiū', en:'Mount of Luna', loc:'the lower percussion edge',
+   c:[136,452,40,66], side:'L',
+   read:"The mount low on the <b>outer edge</b>, opposite the thumb — the moon's ground of <b>imagination, intuition, and wanderlust</b>. Well-developed, it gives a dreaming, poetic, restless mind, drawn to water, travel, and the unseen; flat, a plainer, more literal cast. When the fate or head line reaches toward it, the tradition reads a life stirred by imagination and by others.",
+   tags:['ruler: the Moon','imagination · dream']},
+  {key:'mars', no:7, zh:'火星丘', py:'Huǒ Xīng Qiū', en:'Mounts of Mars', loc:'the two Mars fields &amp; the plain between',
+   c:[212,384,28,40], side:'R',
+   read:"Mars holds the hand's <b>courage</b>, in two fields with a plain between. <b>Upper Mars</b>, high on the percussion, gives cool endurance and grace under fire; <b>lower Mars</b>, above the thumb, gives active nerve and fight. The <b>plain of Mars</b> at the centre shows the everyday temper: firm reads as steady bravery, hollow as a gentler, more yielding spirit. This is the mount of how you meet resistance.",
+   tags:['ruler: Mars','courage · resolve']}
+];
+
+/* ---------- generic helpers ---------- */
+const $ = s => document.querySelector(s);
+const svgNS = 'http://www.w3.org/2000/svg';
+function el(name, attrs){ const n=document.createElementNS(svgNS,name); for(const k in attrs) n.setAttribute(k,attrs[k]); return n; }
+
+/* ---------- ATLAS ENGINE ---------- */
+function Atlas(cfg){
+  const svg = $(cfg.svg);
+  const idxHost = $(cfg.idx);
+  const detail = $(cfg.detail);
+  const callout = $(cfg.callout);
+  const ctEl = cfg.ct ? $(cfg.ct) : null;
+  let data = [], zoneEls = {}, active = null, walkTimer = null, walkIdx = -1;
+
+  function clearZones(){
+    if(cfg.zonesG) $(cfg.zonesG).innerHTML='';
+    zoneEls = {};
+  }
+
+  function build(list){
+    data = list;
+    clearZones();
+    idxHost.innerHTML='';
+    if(ctEl) ctEl.textContent = list.length + ' ' + (cfg.ctWord||'zones');
+    const g = cfg.zonesG ? $(cfg.zonesG) : null;
+    list.forEach((z,i)=>{
+      // -- SVG zone --
+      if(g){
+        const zg = el('g',{class:'zone'}); zg.dataset.key=z.key;
+        cfg.renderZone(zg, z);
+        // marker
+        if(z.mk){
+          zg.appendChild(el('circle',{class:'mk',cx:z.mk[0],cy:z.mk[1],r:9}));
+          const t=el('text',{class:'mkn',x:z.mk[0],y:z.mk[1]}); t.textContent=z.no; zg.appendChild(t);
+        }
+        zg.addEventListener('mouseenter',()=>{stopWalk();show(z,false);});
+        zg.addEventListener('click',()=>{stopWalk();show(z,true);});
+        g.appendChild(zg);
+        zoneEls[z.key]=zg;
+      }
+      // -- index row --
+      const row=document.createElement('button'); row.className='idx-row'; row.dataset.key=z.key;
+      row.innerHTML =
+        '<span class="no">'+z.no+'</span>'+
+        '<span class="zh">'+z.zh+'</span>'+
+        '<span class="meta"><span class="py">'+z.py+'</span><span class="en">'+z.en+'</span></span>';
+      row.addEventListener('mouseenter',()=>{stopWalk();show(z,false);});
+      row.addEventListener('click',()=>{stopWalk();show(z,true);});
+      row.addEventListener('focus',()=>show(z,false));
+      idxHost.appendChild(row);
+    });
+    renderEmpty();
+    if(cfg.onBuild) cfg.onBuild(list);
+  }
+
+  function renderEmpty(){
+    detail.innerHTML='<div class="dt-empty"><span class="zh">'+cfg.emptyGlyph+'</span><span class="tx">'+cfg.emptyText+'</span></div>';
+  }
+
+  function positionCallout(z){
+    if(!callout || (!z.mk && !z.dot)){ if(callout) callout.classList.remove('on'); return; }
+    const anchor = z.mk || z.dot;
+    const vb = svg.viewBox.baseVal;
+    const side = z.side||'R';
+    const line = callout.querySelector('line');
+    const dot = callout.querySelector('circle');
+    const box = callout.querySelector('.cbox');
+    const czh = callout.querySelector('.czh');
+    const cpy = callout.querySelector('.cpy');
+    czh.textContent = z.zh; cpy.textContent = '';
+    const clamp=(v,lo,hi)=>Math.min(Math.max(v,lo),hi);
+    const bw = z.zh.length*16+18, bh=27, pad=6;
+    let bx, by, leaderX, leaderY;
+    if(side==='top'){
+      by = clamp(anchor[1]-66, vb.y+pad, vb.y+vb.height-pad-bh);
+      bx = clamp(anchor[0]-bw/2, vb.x+pad, vb.x+vb.width-pad-bw);
+      leaderX = clamp(anchor[0], bx+8, bx+bw-8); leaderY = by+bh;
+    } else if(side==='L'){
+      bx = vb.x+pad;
+      by = clamp(anchor[1]-bh/2, vb.y+pad, vb.y+vb.height-pad-bh);
+      leaderX = bx+bw; leaderY = by+bh/2;
+    } else {
+      bx = vb.x+vb.width-pad-bw;
+      by = clamp(anchor[1]-bh/2, vb.y+pad, vb.y+vb.height-pad-bh);
+      leaderX = bx; leaderY = by+bh/2;
+    }
+    box.setAttribute('x',bx); box.setAttribute('y',by);
+    box.setAttribute('width',bw); box.setAttribute('height',bh);
+    czh.setAttribute('text-anchor','middle');
+    czh.setAttribute('x',bx+bw/2); czh.setAttribute('y',by+bh/2+5);
+    dot.setAttribute('cx',anchor[0]); dot.setAttribute('cy',anchor[1]);
+    line.setAttribute('x1',anchor[0]); line.setAttribute('y1',anchor[1]);
+    line.setAttribute('x2',leaderX); line.setAttribute('y2',leaderY);
+    callout.classList.add('on');
+  }
+
+  function show(z, lock){
+    active = z;
+    // svg zones
+    for(const k in zoneEls) zoneEls[k].classList.toggle('active', k===z.key);
+    // index rows
+    idxHost.querySelectorAll('.idx-row').forEach(r=>r.classList.toggle('active', r.dataset.key===z.key));
+    // scroll index into view
+    const row = idxHost.querySelector('.idx-row[data-key="'+z.key+'"]');
+    if(row && lock) row.scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'});
+    positionCallout(z);
+    // detail
+    let html='<div class="dt-fade"><div class="dt-top"><div class="dt-glyph">'+z.zh+'</div>'+
+      '<div class="dt-h"><span class="py">'+z.py+' · No.'+z.no+'</span><span class="en">'+z.en+'</span><span class="loc">'+z.loc+'</span></div></div>'+
+      '<div class="dt-body">'+z.read+'</div>';
+    if(z.tags){ html+='<div class="dt-tags">'+z.tags.map(t=>'<span class="dt-tag">'+t.replace(/^([^:]+):/, '<b>$1</b> ')+'</span>').join('')+'</div>'; }
+    if(z.vars){
+      html+='<div class="dt-var"><div class="vh">紋象 · Variations — what the form suggests</div>'+
+        z.vars.map(v=>'<div class="vrow"><span class="vn">'+v[0]+'</span><span>'+v[1]+'</span></div>').join('')+'</div>';
+    }
+    html+='</div>';
+    detail.innerHTML=html;
+    if(cfg.onShow) cfg.onShow(z);
+  }
+
+  function stepTo(i){
+    const n=data.length; walkIdx=((i%n)+n)%n; show(data[walkIdx], true);
+  }
+  function startWalk(){
+    if(reduce){ stepTo(walkIdx+1); return; }
+    stopWalk(); cfg.walkBtn && $(cfg.walkBtn).classList.add('playing');
+    stepTo(walkIdx+1);
+    walkTimer=setInterval(()=>{
+      if(document.hidden) return;
+      walkIdx++; if(walkIdx>=data.length){ stopWalk(); return; }
+      show(data[walkIdx],true);
+    }, 2600);
+  }
+  function stopWalk(){ if(walkTimer){clearInterval(walkTimer);walkTimer=null;} cfg.walkBtn && $(cfg.walkBtn).classList.remove('playing'); }
+  function toggleWalk(){ if(walkTimer) stopWalk(); else startWalk(); }
+
+  return { build, show, stepTo, startWalk, stopWalk, toggleWalk,
+    next:()=>{stopWalk();stepTo(walkIdx+1);}, prev:()=>{stopWalk();stepTo(walkIdx-1);},
+    get data(){return data;}, get active(){return active;},
+    byKey:(k)=>data.find(d=>d.key===k) };
+}
+
+/* ---------- FACE setup ---------- */
+const faceAtlas = Atlas({
+  svg:'#faceSvg', zonesG:'#faceZones', idx:'#faceIdx', detail:'#faceDetail',
+  callout:'#faceCallout', ct:'#faceIdxCt', ctWord:'palaces', walkBtn:'#faceWalk',
+  emptyGlyph:'相', emptyText:'Hover a zone to read it',
+  renderZone(zg, z){
+    z.hl.forEach(h=>{
+      if(h[0]==='e') zg.appendChild(el('ellipse',{class:'hl',cx:h[1],cy:h[2],rx:h[3],ry:h[4]}));
+    });
+  }
+});
+const faceCourts = $('#faceCourts');
+function buildCourts(){
+  faceCourts.innerHTML='';
+  const idx = $('#faceIdx'); idx.innerHTML='';
+}
+/* Courts use a lighter engine (bands) */
+function showCourt(c){
+  const g=$('#faceCourts'), idx=$('#faceIdx'), detail=$('#faceDetail');
+  g.querySelectorAll('.court').forEach(x=>x.classList.toggle('active',x.dataset.key===c.key));
+  idx.querySelectorAll('.idx-row').forEach(r=>r.classList.toggle('active',r.dataset.key===c.key));
+  detail.innerHTML='<div class="dt-fade"><div class="dt-top"><div class="dt-glyph">'+c.zh+'</div>'+
+    '<div class="dt-h"><span class="py">'+c.py+'</span><span class="en">'+c.en+'</span><span class="loc">'+c.loc+'</span></div></div>'+
+    '<div class="dt-body">'+c.read+'</div>'+
+    '<div class="dt-tags">'+c.tags.map(t=>'<span class="dt-tag">'+t+'</span>').join('')+'</div></div>';
+}
+function courtsLayer(activateKey){
+  const g=$('#faceCourts'); g.innerHTML='';
+  $('#faceZones').innerHTML='';
+  $('#faceCallout').classList.remove('on');
+  const idx=$('#faceIdx'); idx.innerHTML='';
+  $('#faceIdxCt').textContent='3 courts';
+  COURTS.forEach(c=>{
+    const cg=el('g',{class:'court'}); cg.dataset.key=c.key;
+    cg.appendChild(el('rect',{class:'cband',x:120,y:c.y0,width:280,height:c.y1-c.y0,rx:4}));
+    cg.appendChild(el('line',{class:'cdiv',x1:150,y1:c.y0,x2:370,y2:c.y0}));
+    if(c.key==='lower') cg.appendChild(el('line',{class:'cdiv',x1:170,y1:c.y1,x2:350,y2:c.y1}));
+    const t=el('text',{class:'clbl',x:c.lbl[0],y:c.lbl[1]}); t.textContent=c.zh; cg.appendChild(t);
+    const s=el('text',{class:'cs',x:c.lbl[0],y:c.lbl[1]+16}); s.textContent=c.en; cg.appendChild(s);
+    cg.addEventListener('mouseenter',()=>showCourt(c));
+    cg.addEventListener('click',()=>showCourt(c));
+    g.appendChild(cg);
+    const row=document.createElement('button'); row.className='idx-row'; row.dataset.key=c.key;
+    row.innerHTML='<span class="no">'+c.no+'</span><span class="zh">'+c.zh+'</span>'+
+      '<span class="meta"><span class="py">'+c.py+'</span><span class="en">'+c.en+'</span></span>';
+    row.addEventListener('mouseenter',()=>showCourt(c));
+    row.addEventListener('click',()=>showCourt(c));
+    idx.appendChild(row);
+  });
+  const act = activateKey && COURTS.find(c=>c.key===activateKey);
+  if(act) showCourt(act);
+  else $('#faceDetail').innerHTML='<div class="dt-empty"><span class="zh">停</span><span class="tx">Hover a court to read it</span></div>';
+}
+
+let faceLayer='palaces';
+function setFaceLayer(layer, activateKey){
+  faceLayer=layer;
+  faceAtlas.stopWalk(); if(typeof courtStop==='function') courtStop();
+  document.querySelectorAll('.lay-tab[data-layer]').forEach(t=>t.classList.toggle('act',t.dataset.layer===layer));
+  const titles={courts:'三停 · The Three Courts',features:'五官 · The Five Features',palaces:'十二宫 · The Twelve Palaces'};
+  const idxT={courts:'三停 <span class="en">Three Courts</span>',features:'五官 <span class="en">Five Features</span>',palaces:'十二宫 <span class="en">Twelve Palaces</span>'};
+  $('#faceDgTitle').textContent=titles[layer];
+  $('#faceIdxT').innerHTML=idxT[layer];
+  $('#faceCallout').classList.remove('on');
+  $('#faceCourts').innerHTML='';
+  if(layer==='courts'){ courtsLayer(activateKey); $('#faceCount').textContent='3 courts'; }
+  else if(layer==='features'){ faceAtlas.build(FEATURES); $('#faceCount').textContent='5 features'; if(activateKey){const z=faceAtlas.byKey(activateKey); if(z) faceAtlas.show(z,true);} }
+  else { faceAtlas.build(PALACES); $('#faceCount').textContent='12 palaces'; if(activateKey){const z=faceAtlas.byKey(activateKey); if(z) faceAtlas.show(z,true);} }
+}
+
+/* ---------- PALM setup ---------- */
+const palmAtlas = Atlas({
+  svg:'#palmSvg', zonesG:'#palmLines', idx:'#palmIdx', detail:'#palmDetail',
+  callout:'#palmCallout', ct:'#palmIdxCt', ctWord:'lines', walkBtn:'#palmWalk',
+  emptyGlyph:'掌', emptyText:'Hover a line to read it',
+  renderZone(zg, z){
+    if(z.d){
+      zg.appendChild(el('path',{class:'pline',d:z.d}));
+      if(z.varpaths) z.varpaths.forEach(vp=>zg.appendChild(el('path',{class:'varpath',d:vp})));
+    }
+  },
+  onShow(z){ positionPalmCalloutDot(z); }
+});
+function positionPalmCalloutDot(z){ /* dot handled by callout via z.dot */ }
+
+const palmMountsAtlas = Atlas({
+  svg:'#palmSvg', zonesG:'#palmMounts', idx:'#palmIdx', detail:'#palmDetail',
+  callout:'#palmCallout', ct:'#palmIdxCt', ctWord:'mounts', walkBtn:'#palmWalk',
+  emptyGlyph:'丘', emptyText:'Hover a mount to read it',
+  renderZone(zg, z){
+    if(z.c){
+      zg.appendChild(el('ellipse',{class:'mount',cx:z.c[0],cy:z.c[1],rx:z.c[2],ry:z.c[3]}));
+      zg.appendChild(el('circle',{class:'mk',cx:z.c[0],cy:z.c[1],r:9}));
+      const t=el('text',{class:'mkn',x:z.c[0],y:z.c[1]}); t.textContent=z.no; zg.appendChild(t);
+      z.mk=[z.c[0],z.c[1]];
+    }
+  }
+});
+
+let palmLayer='lines';
+function setPalmLayer(layer, activateKey){
+  palmLayer=layer;
+  document.querySelectorAll('.lay-tab[data-player]').forEach(t=>t.classList.toggle('act',t.dataset.player===layer));
+  $('#palmCallout').classList.remove('on');
+  if(layer==='lines'){
+    $('#palmMounts').innerHTML='';
+    $('#palmDgTitle').textContent='手紋 · The Lines of the Hand';
+    $('#palmIdxT').innerHTML='手紋 <span class="en">The Lines</span>';
+    palmAtlas.build(P_LINES);
+    $('#varToggle').style.visibility='visible';
+  } else {
+    $('#palmLines').innerHTML='';
+    $('#palmDgTitle').textContent='七丘 · The Seven Mounts';
+    $('#palmIdxT').innerHTML='七丘 <span class="en">Seven Mounts</span>';
+    palmMountsAtlas.build(P_MOUNTS);
+    $('#varToggle').style.visibility='hidden';
+  }
+  if(activateKey){
+    const a = layer==='lines'?palmAtlas:palmMountsAtlas;
+    const z=a.byKey(activateKey); if(z) a.show(z,true);
+  }
+}
+function palmCurrent(){ return palmLayer==='lines'?palmAtlas:palmMountsAtlas; }
+
+/* ---------- wire layer tabs ---------- */
+document.querySelectorAll('.lay-tab[data-layer]').forEach(t=>{
+  t.addEventListener('click',()=>setFaceLayer(t.dataset.layer));
+});
+document.querySelectorAll('.lay-tab[data-player]').forEach(t=>{
+  t.addEventListener('click',()=>setPalmLayer(t.dataset.player));
+});
+
+/* courts stepper (courts use a separate engine) */
+let courtIdx=-1, courtTimer=null;
+function courtStep(i){ courtIdx=((i%COURTS.length)+COURTS.length)%COURTS.length; showCourt(COURTS[courtIdx]); }
+function courtStop(){ if(courtTimer){clearInterval(courtTimer);courtTimer=null;} $('#faceWalk').classList.remove('playing'); }
+function courtWalk(){
+  if(courtTimer){ courtStop(); return; }
+  if(reduce){ courtStep(courtIdx+1); return; }
+  $('#faceWalk').classList.add('playing'); courtStep(courtIdx+1);
+  courtTimer=setInterval(()=>{ if(document.hidden) return; courtIdx++; if(courtIdx>=COURTS.length){courtStop();return;} showCourt(COURTS[courtIdx]); },2600);
+}
+
+/* walkthrough + step controls */
+$('#faceWalk').addEventListener('click',()=>{
+  if(faceLayer==='courts'){ courtWalk(); } else { faceAtlas.toggleWalk(); }
+});
+$('#faceNext').addEventListener('click',()=>{ if(faceLayer==='courts'){courtStop();courtStep(courtIdx+1);} else faceAtlas.next(); });
+$('#facePrev').addEventListener('click',()=>{ if(faceLayer==='courts'){courtStop();courtStep(courtIdx-1);} else faceAtlas.prev(); });
+$('#palmWalk').addEventListener('click',()=>palmCurrent().toggleWalk());
+$('#palmNext').addEventListener('click',()=>palmCurrent().next());
+$('#palmPrev').addEventListener('click',()=>palmCurrent().prev());
+
+/* variations toggle */
+const varToggle=$('#varToggle');
+varToggle.addEventListener('click',()=>{
+  const on=varToggle.classList.toggle('on');
+  varToggle.setAttribute('aria-pressed', on?'true':'false');
+  $('#palmSvg').classList.toggle('show-var', on);
+});
+
+/* ---------- init layers ---------- */
+setFaceLayer('palaces');
+setPalmLayer('lines');
+
+/* ---------- query params for screenshots / deep links ---------- */
+const params=new URLSearchParams(location.search);
+const zoneAlias={nose:'cai',bridge:'ji',brows:'xiong',brow:'xiong',eyebrows:'xiong',
+  wealth:'cai',career:'guan',life:'ming',marriage:'fuqi',travel:'qian',children:'zinv',
+  property:'tian',parents:'fumu',fortune:'fude',health:'ji',support:'nupu',
+  eyes:'eyes',eye:'eyes',mouth:'mouth',ears:'ears'};
+if(params.has('zone')){
+  let z=params.get('zone').toLowerCase();
+  const featureKeys=['brows','eyes','nose','mouth','ears'];
+  let key=zoneAlias[z]||z;
+  // decide layer
+  if(params.get('layer')==='features' || featureKeys.includes(z)){
+    if(z==='nose') key='nose';
+    setFaceLayer('features', key);
+  } else if(params.get('layer')==='courts'){
+    setFaceLayer('courts', key);
+  } else {
+    setFaceLayer('palaces', zoneAlias[z]||z);
+  }
+  setTimeout(()=>{ $('#face').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); }, 60);
+}
+if(params.has('line')||params.has('mount')){
+  if(params.has('mount')){ setPalmLayer('mounts', params.get('mount').toLowerCase()); }
+  else { setPalmLayer('lines', params.get('line').toLowerCase()); }
+  setTimeout(()=>{ $('#palm').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}); }, 80);
+}
+
+/* ---------- reveals ---------- */
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+document.querySelectorAll('.reveal').forEach((r,i)=>{ r.style.transitionDelay=Math.min(i*60,320)+'ms'; io.observe(r); });
+
+/* progress */
+const prog=$('#prog');
+let ticking=false;
+function onScroll(){
+  if(ticking) return; ticking=true;
+  requestAnimationFrame(()=>{
+    const h=document.documentElement;
+    const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);
+    prog.style.width=(p*100)+'%'; ticking=false;
+  });
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+
+/* pause walkthroughs when hidden */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ faceAtlas.stopWalk(); palmAtlas.stopWalk(); palmMountsAtlas.stopWalk(); courtStop(); }
+});
+</script>
+</body>
+</html>

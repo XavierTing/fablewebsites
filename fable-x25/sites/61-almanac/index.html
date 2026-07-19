@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>擇日 · The Almanac — What Kind of Day Is Today?</title>
+<meta name="description" content="A living Chinese almanac 黃曆. For any day it renders the classic tear-off page — the lunar date, the day's 干支 pillar computed exactly from the Julian Day, the 生肖, 納音 five-element, the 建除 day-officer, the 二十八宿 mansion, and the day's 宜 (suitable) and 忌 (avoid). A 擇日 helper scans the next sixty days to find an auspicious one for your wedding, opening, or journey.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="擇日 · The Almanac">
+<meta property="og:description" content="The daily tear-off 老黃曆, computed in code — lunar date, day pillar, 建除 officer, 二十八宿, and the day's 宜忌. Pick an event; it finds you an auspicious day.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="擇日 · The Almanac">
+<meta name="twitter:description" content="A real 黃曆 tear-off page for any date, plus a 擇日 helper that scans sixty days for an auspicious one.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='14' fill='%23f5f1e8'/%3E%3Crect x='16' y='16' width='68' height='68' rx='9' fill='%23ac3e2c'/%3E%3Ctext x='50' y='50' font-family='serif' font-size='40' font-weight='700' fill='%23f5f1e8' text-anchor='middle' dominant-baseline='central'%3E宜%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5f1e8; --paper-2:#efe9db; --paper-3:#e8e0cd; --paper-hi:#fbf8f1;
+  --edge:#d8ccae; --edge-2:#cabf9f;
+  --ink:#22252e; --ink-2:#3a3d46; --ink-soft:rgba(34,37,46,.66); --ink-faint:rgba(34,37,46,.42); --ink-ghost:rgba(34,37,46,.2);
+  --cinnabar:#ac3e2c; --cinnabar-deep:#8f3222; --cinnabar-soft:rgba(172,62,44,.12); --cinnabar-line:rgba(172,62,44,.34);
+  --jade:#3f6b54; --jade-soft:rgba(63,107,84,.13); --jade-line:rgba(63,107,84,.4);
+  --brass:#a4863f; --brass-hi:#bd9c50; --brass-line:rgba(164,134,63,.42); --brass-faint:rgba(164,134,63,.2);
+  --serif:'Spectral',Georgia,serif;
+  --han:'Noto Serif SC',serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --sheet-w:820px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--paper);scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-weight:400;line-height:1.6;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;min-height:100vh;position:relative;
+}
+/* paper field */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% -10%, rgba(255,252,244,.7), transparent 55%),
+    radial-gradient(ellipse 130% 120% at 50% 118%, rgba(120,96,52,.14), transparent 62%),
+    radial-gradient(ellipse 90% 70% at 12% 24%, rgba(255,250,238,.35), transparent 60%),
+    var(--paper);
+}
+/* grain */
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+}
+::selection{background:var(--cinnabar);color:var(--paper-hi)}
+::-webkit-scrollbar{width:12px;height:12px;background:var(--paper-2)}
+::-webkit-scrollbar-thumb{background:var(--brass-line);border:3px solid var(--paper);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+:focus-visible{outline:2px solid var(--cinnabar);outline-offset:3px;border-radius:2px}
+a{color:inherit;text-decoration:none}
+
+/* ---------- back-link ---------- */
+.backlink{
+  position:fixed;left:24px;bottom:22px;z-index:80;
+  font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-soft);padding:8px 13px;border:1px solid var(--brass-line);border-radius:2px;
+  background:rgba(251,248,241,.72);backdrop-filter:blur(7px);
+  transition:color .5s var(--ease),background .5s var(--ease),border-color .5s var(--ease);
+}
+.backlink:hover{color:var(--paper-hi);background:var(--cinnabar);border-color:var(--cinnabar)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.intro{padding:64px 0 26px;text-align:center}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--cinnabar);margin-bottom:18px}
+.intro h1{font-family:var(--han);font-weight:700;font-size:clamp(38px,7vw,74px);line-height:1;letter-spacing:.04em;color:var(--ink)}
+.intro .sub{font-family:var(--serif);font-style:italic;font-size:clamp(15px,2.1vw,20px);color:var(--ink-soft);margin-top:16px;font-weight:400}
+.intro .sub2{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);margin-top:10px}
+
+/* rule with seal */
+.rule-x{display:flex;align-items:center;gap:14px;margin:22px auto;max-width:340px}
+.rule-x::before,.rule-x::after{content:"";height:1px;flex:1;background:var(--brass-line)}
+.rule-x i{width:7px;height:7px;background:var(--cinnabar);transform:rotate(45deg);flex:0 0 auto}
+
+/* ---------- toolbar ---------- */
+.toolbar{
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  margin:6px auto 30px;
+}
+.nav-btn{
+  font-family:var(--han);font-size:17px;color:var(--ink);
+  width:44px;height:44px;display:grid;place-items:center;cursor:pointer;
+  background:var(--paper-hi);border:1px solid var(--edge-2);border-radius:3px;
+  transition:transform .4s var(--ease),background .35s,color .35s,border-color .35s;
+}
+.nav-btn:hover{background:var(--cinnabar);color:var(--paper-hi);border-color:var(--cinnabar);transform:translateY(-1px)}
+.nav-btn:active{transform:translateY(0)}
+.date-field{position:relative;display:flex;align-items:center}
+.date-field input[type=date]{
+  font-family:var(--mono);font-size:14px;letter-spacing:.04em;color:var(--ink);
+  background:var(--paper-hi);border:1px solid var(--edge-2);border-radius:3px;
+  padding:12px 14px;cursor:pointer;min-width:170px;
+  transition:border-color .35s,box-shadow .35s;
+}
+.date-field input[type=date]:hover{border-color:var(--brass)}
+.date-field input[type=date]:focus-visible{border-color:var(--cinnabar);box-shadow:0 0 0 3px var(--cinnabar-soft)}
+.today-btn{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--cinnabar);background:transparent;border:1px solid var(--cinnabar-line);border-radius:3px;
+  padding:12px 15px;cursor:pointer;transition:color .35s,background .35s,border-color .35s;
+}
+.today-btn:hover{color:var(--paper-hi);background:var(--cinnabar);border-color:var(--cinnabar)}
+
+/* ---------- the almanac sheet ---------- */
+.sheet-shell{max-width:var(--sheet-w);margin:0 auto;perspective:2000px}
+.sheet{
+  position:relative;background:linear-gradient(178deg,var(--paper-hi),var(--paper-2) 120%);
+  border:1px solid var(--edge);border-radius:3px;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 60px -30px rgba(60,44,20,.55), 0 3px 12px -6px rgba(60,44,20,.3);
+  transform-origin:top center;
+}
+.sheet::after{ /* corner curl shadow */
+  content:"";position:absolute;right:0;bottom:0;width:120px;height:120px;pointer-events:none;
+  background:radial-gradient(circle at bottom right, rgba(60,44,20,.14), transparent 70%);
+  border-bottom-right-radius:3px;
+}
+/* binding / tear strip */
+.binding{
+  position:relative;height:42px;border-bottom:1px dashed var(--edge-2);
+  background:linear-gradient(180deg,var(--paper-3),var(--paper-2));
+  display:flex;align-items:center;justify-content:center;gap:38px;overflow:hidden;
+}
+.binding::before{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:9px;
+  background:radial-gradient(circle at 8px 0, transparent 0 4px, var(--paper-hi) 4px) repeat-x;
+  background-size:16px 9px;
+}
+.ring{width:15px;height:15px;border-radius:50%;background:
+  radial-gradient(circle at 35% 30%, #d9c07e, var(--brass) 60%, #7d642c);
+  box-shadow:0 1px 2px rgba(0,0,0,.35), inset 0 0 3px rgba(0,0,0,.35);position:relative;z-index:2}
+.binding .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-faint)}
+
+.sheet-body{padding:34px 40px 40px}
+
+/* transition state */
+.sheet-body.turn{opacity:0}
+.sheet-body{transition:opacity .34s var(--ease)}
+
+/* masthead inside sheet */
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;
+  padding-bottom:14px;border-bottom:2px solid var(--ink);margin-bottom:22px}
+.masthead .m-l{font-family:var(--han);font-weight:600;font-size:19px;letter-spacing:.05em}
+.masthead .m-l span{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:3px;font-weight:400}
+.masthead .m-r{text-align:right}
+.masthead .m-r .yr{font-family:var(--han);font-weight:600;font-size:18px;color:var(--cinnabar);letter-spacing:.04em}
+.masthead .m-r .zx{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin-top:3px}
+
+/* date hero */
+.hero{display:grid;grid-template-columns:auto 1px 1fr;gap:30px;align-items:center;margin-bottom:26px}
+.big-day{text-align:center;min-width:180px}
+.big-day .greg-top{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ink-soft);margin-bottom:2px}
+.big-day .num{font-family:var(--serif);font-weight:600;font-size:clamp(96px,17vw,152px);line-height:.82;color:var(--cinnabar);letter-spacing:-.02em}
+.big-day .wd{font-family:var(--han);font-weight:500;font-size:19px;margin-top:8px;letter-spacing:.06em}
+.big-day .wd span{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:2px;font-weight:400}
+.hero .vr{background:var(--brass-line);width:1px;align-self:stretch}
+.hero-r{display:flex;flex-direction:column;gap:13px}
+.lunar-line{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.lunar-line .l-han{font-family:var(--han);font-weight:600;font-size:clamp(28px,5vw,40px);letter-spacing:.05em;color:var(--ink)}
+.lunar-line .l-en{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ink-soft)}
+.pillar-row{display:flex;gap:9px;flex-wrap:wrap}
+.pill{border:1px solid var(--brass-line);border-radius:3px;padding:7px 11px 8px;background:var(--paper-hi);min-width:60px}
+.pill .k{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:3px}
+.pill .v{font-family:var(--han);font-weight:600;font-size:19px;letter-spacing:.06em}
+.pill .v em{font-style:normal;font-family:var(--serif);font-size:11px;color:var(--ink-soft);margin-left:5px}
+.pill.hl{background:var(--cinnabar);border-color:var(--cinnabar)}
+.pill.hl .k{color:rgba(255,255,255,.62)}
+.pill.hl .v{color:var(--paper-hi)}
+.pill.hl .v em{color:rgba(255,255,255,.75)}
+
+/* officer band */
+.officer{display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:4px;
+  background:var(--jade-soft);border:1px solid var(--jade-line);margin-bottom:24px}
+.officer .glyph{font-family:var(--han);font-weight:700;font-size:34px;color:var(--jade);line-height:1;flex:0 0 auto}
+.officer .o-txt .o-name{font-family:var(--han);font-weight:600;font-size:16px;letter-spacing:.05em}
+.officer .o-txt .o-name b{font-family:var(--serif);font-weight:500;font-style:italic;color:var(--jade);margin-left:8px}
+.officer .o-txt .o-gloss{font-size:13.5px;color:var(--ink-soft);margin-top:3px;line-height:1.5}
+.officer.tier-worst{background:var(--cinnabar-soft);border-color:var(--cinnabar-line)}
+.officer.tier-worst .glyph{color:var(--cinnabar)}
+.officer.tier-worst .o-name b{color:var(--cinnabar)}
+
+/* 宜忌 */
+.yi-ji{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:26px}
+.yj{border:1px solid var(--edge);border-radius:4px;background:var(--paper-hi);overflow:hidden}
+.yj-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--edge)}
+.yj-seal{width:40px;height:40px;flex:0 0 auto;display:grid;place-items:center;border-radius:4px;
+  font-family:var(--han);font-weight:700;font-size:24px;color:var(--paper-hi)}
+.yj.yi .yj-seal{background:linear-gradient(150deg,var(--cinnabar),var(--cinnabar-deep));box-shadow:0 2px 6px -2px rgba(143,50,34,.6)}
+.yj.ji .yj-seal{background:linear-gradient(150deg,#41454f,var(--ink))}
+.yj-head .yj-t{font-family:var(--han);font-weight:600;font-size:15px;letter-spacing:.06em}
+.yj-head .yj-t span{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:2px;font-weight:400}
+.yj-list{padding:13px 16px 16px;display:flex;flex-wrap:wrap;gap:7px}
+.act{font-family:var(--han);font-size:14.5px;padding:5px 10px;border-radius:3px;letter-spacing:.04em;
+  border:1px solid transparent;display:inline-flex;align-items:baseline;gap:5px;transition:background .3s,border-color .3s}
+.act em{font-style:normal;font-family:var(--serif);font-size:10.5px;color:var(--ink-faint)}
+.yj.yi .act{background:var(--cinnabar-soft);color:var(--cinnabar-deep)}
+.yj.yi .act:hover{background:rgba(172,62,44,.2)}
+.yj.ji .act{background:rgba(34,37,46,.06);color:var(--ink-2)}
+.yj.ji .act:hover{background:rgba(34,37,46,.11)}
+
+/* meta grid: hours + shen sha */
+.grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;margin-bottom:26px}
+.panel{border:1px solid var(--edge);border-radius:4px;background:var(--paper-hi);padding:15px 17px 17px}
+.panel > .p-head{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);
+  margin-bottom:13px;display:flex;justify-content:space-between;align-items:center}
+.panel > .p-head b{font-family:var(--han);font-weight:600;font-size:13px;letter-spacing:.08em;color:var(--ink);text-transform:none}
+
+/* hours */
+.hours{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.hr{border:1px solid var(--edge);border-radius:3px;padding:8px 6px;text-align:center;background:var(--paper);position:relative}
+.hr .hz{font-family:var(--han);font-weight:600;font-size:16px;letter-spacing:.02em}
+.hr .rng{font-family:var(--mono);font-size:8.5px;color:var(--ink-faint);letter-spacing:.02em;margin-top:1px}
+.hr .gd{font-family:var(--han);font-size:10px;margin-top:3px;letter-spacing:.04em}
+.hr.good{background:var(--cinnabar-soft);border-color:var(--cinnabar-line)}
+.hr.good .gd{color:var(--cinnabar)}
+.hr.ill .gd{color:var(--ink-faint)}
+.hr .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%}
+.hr.good .dot{background:var(--cinnabar)}
+.hr.ill .dot{background:var(--ink-ghost)}
+
+/* shen sha */
+.ssrow{display:flex;flex-direction:column;gap:11px}
+.ss{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  padding-bottom:9px;border-bottom:1px solid var(--brass-faint)}
+.ss:last-child{border-bottom:0;padding-bottom:0}
+.ss .ss-k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);flex:0 0 auto}
+.ss .ss-v{font-family:var(--han);font-weight:600;font-size:15px;text-align:right;letter-spacing:.04em}
+.ss .ss-v em{font-style:normal;font-family:var(--serif);font-size:11px;color:var(--ink-soft);margin-left:6px;font-weight:400}
+.ss .ss-v.red{color:var(--cinnabar)}
+.ss .ss-v.jade{color:var(--jade)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.chip{font-family:var(--han);font-size:12.5px;padding:3px 8px;border-radius:2px;letter-spacing:.03em}
+.chip.good{background:var(--jade-soft);color:var(--jade);border:1px solid var(--jade-line)}
+.chip.bad{background:rgba(34,37,46,.06);color:var(--ink-2);border:1px solid var(--edge)}
+
+/* one line */
+.oneline{text-align:center;padding:24px 20px 8px;border-top:1px solid var(--brass-line);margin-top:4px}
+.oneline .ol-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--cinnabar);margin-bottom:12px}
+.oneline .ol{font-family:var(--serif);font-style:italic;font-size:clamp(17px,2.6vw,23px);line-height:1.5;color:var(--ink);max-width:640px;margin:0 auto}
+
+/* ---------- section shell ---------- */
+.section{padding:70px 0 10px}
+.sec-head{text-align:center;margin-bottom:36px}
+.sec-head .sh-k{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--cinnabar);margin-bottom:12px}
+.sec-head h2{font-family:var(--han);font-weight:700;font-size:clamp(27px,4.6vw,42px);letter-spacing:.04em;line-height:1.05}
+.sec-head .sh-en{font-family:var(--serif);font-style:italic;font-size:clamp(14px,2vw,18px);color:var(--ink-soft);margin-top:10px}
+
+/* ---------- event finder ---------- */
+.finder{max-width:860px;margin:0 auto}
+.act-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:12px}
+.ac{font-family:var(--han);font-weight:500;font-size:15px;letter-spacing:.04em;cursor:pointer;
+  padding:10px 16px;border-radius:3px;background:var(--paper-hi);border:1px solid var(--edge-2);color:var(--ink);
+  display:inline-flex;align-items:baseline;gap:7px;transition:all .35s var(--ease)}
+.ac em{font-style:normal;font-family:var(--serif);font-size:11px;color:var(--ink-faint)}
+.ac:hover{border-color:var(--brass);transform:translateY(-1px)}
+.ac.on{background:var(--cinnabar);border-color:var(--cinnabar);color:var(--paper-hi)}
+.ac.on em{color:rgba(255,255,255,.72)}
+.finder-note{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-faint);margin:6px 0 26px}
+.finder-note b{color:var(--cinnabar);font-weight:500}
+.find-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
+.fcard{border:1px solid var(--edge);border-radius:4px;background:var(--paper-hi);padding:14px 15px;cursor:pointer;
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease),border-color .4s}
+.fcard:hover{transform:translateY(-3px);box-shadow:0 14px 28px -18px rgba(60,44,20,.5);border-color:var(--brass)}
+.fcard .fc-greg{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--ink-soft)}
+.fcard .fc-lun{font-family:var(--han);font-weight:600;font-size:20px;margin:4px 0 2px;letter-spacing:.04em}
+.fcard .fc-of{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--jade)}
+.fcard .fc-days{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:9px}
+.fcard .fc-star{color:var(--cinnabar);letter-spacing:1px}
+.find-empty{text-align:center;color:var(--ink-faint);font-style:italic;padding:20px;grid-column:1/-1}
+
+/* ---------- month view ---------- */
+.month{max-width:720px;margin:0 auto}
+.month-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px}
+.month-bar .mtitle{font-family:var(--han);font-weight:600;font-size:19px;letter-spacing:.05em;min-width:190px;text-align:center}
+.month-bar .mtitle span{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-top:2px;font-weight:400}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.dow span{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cell{aspect-ratio:1/1.06;border:1px solid var(--edge);border-radius:3px;background:var(--paper-hi);
+  padding:6px 5px;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;
+  transition:transform .3s var(--ease),box-shadow .3s,border-color .3s}
+.cell.empty{background:transparent;border-color:transparent;cursor:default}
+.cell:not(.empty):hover{transform:translateY(-2px);box-shadow:0 8px 18px -12px rgba(60,44,20,.5);border-color:var(--brass)}
+.cell .cd{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--ink)}
+.cell .cl{font-family:var(--han);font-size:11px;color:var(--ink-soft);letter-spacing:.02em}
+.cell .co{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%}
+.cell.g .co{background:var(--jade)}
+.cell.b .co{background:var(--cinnabar)}
+.cell.m .co{background:var(--brass)}
+.cell.g{background:linear-gradient(165deg,var(--paper-hi) 42%,rgba(63,107,84,.17))}
+.cell.b{background:linear-gradient(165deg,var(--paper-hi) 42%,rgba(172,62,44,.15))}
+.cell.sel{border-color:var(--cinnabar);box-shadow:0 0 0 2px var(--cinnabar-soft)}
+.cell.sel .cd{color:var(--cinnabar)}
+.cell .cf{font-family:var(--han);font-size:10px;color:var(--ink-soft);letter-spacing:.02em}
+.cell.b .cf{color:var(--cinnabar)}
+.mlegend{display:flex;justify-content:center;gap:18px;margin-top:16px;flex-wrap:wrap}
+.mlegend span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);display:inline-flex;align-items:center;gap:6px}
+.mlegend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+
+/* ---------- how / honesty ---------- */
+.how{max-width:760px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.how .hcard{border:1px solid var(--edge);border-radius:4px;background:var(--paper-hi);padding:18px 20px}
+.how .hcard .hn{font-family:var(--han);font-weight:600;font-size:15px;letter-spacing:.05em;margin-bottom:4px}
+.how .hcard .hn span{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cinnabar);display:block;margin-bottom:4px;font-weight:400}
+.how .hcard p{font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.how .hcard p b{color:var(--ink);font-weight:600}
+.how .hcard.full{grid-column:1/-1;background:var(--paper-2)}
+.how .hcard.full p{font-size:13px}
+
+/* ---------- footer ---------- */
+footer{margin-top:80px;padding:44px 0 120px;border-top:1px solid var(--brass-line);text-align:center}
+footer .f-han{font-family:var(--han);font-weight:600;font-size:20px;letter-spacing:.1em;color:var(--cinnabar)}
+footer .f-en{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--ink-soft);margin-top:8px}
+footer .f-meta{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:18px;line-height:1.9}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(22px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .grid-2{grid-template-columns:1fr}
+  .how{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .wrap{padding:0 15px}
+  .intro{padding:46px 0 20px}
+  .sheet-body{padding:24px 18px 28px}
+  .hero{grid-template-columns:1fr;gap:16px;text-align:center}
+  .hero .vr{display:none}
+  .hero-r{align-items:center}
+  .lunar-line{justify-content:center}
+  .pillar-row{justify-content:center}
+  .big-day{min-width:0}
+  .yi-ji{grid-template-columns:1fr;gap:16px}
+  .hours{grid-template-columns:repeat(3,1fr)}
+  .officer{flex-direction:row}
+  .masthead{flex-wrap:wrap;gap:8px}
+  .cell .cl{display:none}
+  .cell .cf{display:none}
+  .backlink{left:12px;bottom:12px}
+  .how .hcard.full{grid-column:auto}
+}
+@media (max-width:400px){
+  .hours{grid-template-columns:repeat(2,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  .sheet-body{transition:none!important}
+  .nav-btn,.ac,.fcard,.cell,.act,.backlink{transition:none!important}
+  .cell:not(.empty):hover,.fcard:hover,.nav-btn:hover,.ac:hover{transform:none!important}
+}
+</style>
+</head>
+<body>
+<a class="backlink" href="/">XAVIER FABLE ×65</a>
+
+<div class="wrap">
+
+  <!-- intro -->
+  <header class="intro">
+    <div class="kicker">擇日 · The Almanac</div>
+    <h1>今天是個什麼日子</h1>
+    <div class="sub">What kind of day is today?</div>
+    <div class="sub2">黃曆 · 老通勝 · the daily tear-off</div>
+    <div class="rule-x"><i></i></div>
+  </header>
+
+  <!-- toolbar -->
+  <div class="toolbar">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous day" title="Previous day">‹</button>
+    <div class="date-field"><input type="date" id="dateInput" aria-label="Choose a date"></div>
+    <button class="nav-btn" id="nextBtn" aria-label="Next day" title="Next day">›</button>
+    <button class="today-btn" id="todayBtn">今日 · Today</button>
+  </div>
+
+  <!-- almanac sheet -->
+  <div class="sheet-shell">
+    <div class="sheet">
+      <div class="binding">
+        <span class="lbl">老 黃 曆</span>
+        <span class="ring"></span>
+        <span class="ring"></span>
+        <span class="lbl">Tear-off</span>
+      </div>
+      <div class="sheet-body" id="sheetBody"><!-- rendered --></div>
+    </div>
+  </div>
+
+  <!-- event finder -->
+  <section class="section" id="finderSec">
+    <div class="sec-head reveal">
+      <div class="sh-k">擇日 · Choose a Day</div>
+      <h2>為一件事，尋一個吉日</h2>
+      <div class="sh-en">Pick an event — the almanac scans the next sixty days and finds the auspicious ones.</div>
+    </div>
+    <div class="finder reveal">
+      <div class="act-chips" id="actChips"></div>
+      <div class="finder-note" id="finderNote"></div>
+      <div class="find-grid" id="findGrid"></div>
+    </div>
+  </section>
+
+  <!-- month view -->
+  <section class="section" id="monthSec">
+    <div class="sec-head reveal">
+      <div class="sh-k">月曆 · The Month at a Glance</div>
+      <h2>整月的吉凶</h2>
+      <div class="sh-en">Every day tinted by its officer — jade for the favourable, cinnabar for the day of ruin.</div>
+    </div>
+    <div class="month reveal">
+      <div class="month-bar">
+        <button class="nav-btn" id="mPrev" aria-label="Previous month">‹</button>
+        <div class="mtitle" id="mTitle"></div>
+        <button class="nav-btn" id="mNext" aria-label="Next month">›</button>
+      </div>
+      <div class="dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="cal" id="cal"></div>
+      <div class="mlegend">
+        <span><i style="background:var(--jade)"></i>宜多 · favourable</span>
+        <span><i style="background:var(--brass)"></i>平平 · even</span>
+        <span><i style="background:var(--cinnabar)"></i>破日 · day of ruin</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- how it works -->
+  <section class="section" id="howSec">
+    <div class="sec-head reveal">
+      <div class="sh-k">推算 · How It Is Computed</div>
+      <h2>真曆，非迷信</h2>
+      <div class="sh-en">Real calendrical mathematics — and an honest note on where reconstruction begins.</div>
+    </div>
+    <div class="how reveal">
+      <div class="hcard"><div class="hn"><span>日柱 · Day Pillar</span>From the Julian Day</div><p>The day's stem-branch is <b>exact</b>. Index = (JDN + 49) mod 60, the offset calibrated against known dates: <b>2000-01-01 = 戊午</b>, 1984-02-01 = 乙丑. Sixty characters turning without a single skip since antiquity.</p></div>
+      <div class="hcard"><div class="hn"><span>農曆 · Lunar Date</span>A bundled ephemeris</div><p>Gregorian → lunar via a compact month-length table (1900–2049) anchored at 1900-01-31. Verified against eleven known Lunar New Years — 2026's falls on <b>Feb 17</b>, so July 20 reads 六月初七.</p></div>
+      <div class="hcard"><div class="hn"><span>建除 · Day Officer</span>Twelve who take turns</div><p>The officer = (day-branch − month-branch) mod 12, with 建 on the branch that matches the solar month. From 建 the twelve — 除滿平定執破危成收開閉 — govern what the day is fit for.</p></div>
+      <div class="hcard"><div class="hn"><span>二十八宿 · The Mansions</span>One star each night</div><p>A continuous 28-day wheel, (JDN + 11) mod 28. Its luminary still tracks the modern weekday — July 20 is 張月鹿, a Monday and a 吉 mansion, exactly as the old七曜 rule demands.</p></div>
+      <div class="hcard full"><div class="hn"><span>宜 · 忌 — an honest note</span>A faithful reconstruction</div><p>The suitable-and-avoid lists, the auspicious spirits, and the lucky hours are derived from the <b>建除 officer</b> and the <b>黃道黑道</b> hour-gods through a curated rules table drawn from the通書 tradition. This is a faithful reconstruction of how an almanac reasons — not a transcription of one specific temple edition, which would weigh dozens of competing 神煞. The dates, pillars, mansions and lunar reckoning above are exact; the 宜忌 are principled, not scriptural.</p></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="f-han">擇日 · 老黃曆</div>
+  <div class="f-en">The daily tear-off that hung on grandmother's wall — read once more, in code.</div>
+  <div class="f-meta">
+    XAVIER FABLE ×65 &nbsp;·&nbsp; The Divination Wing &nbsp;·&nbsp; No. 61<br>
+    Day pillar exact from JDN &nbsp;·&nbsp; Lunar 1900–2049 &nbsp;·&nbsp; 建除 · 二十八宿 · 黃道黑道
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   擇日 · THE ALMANAC — real 黃曆 computation
+   Day pillar exact from JDN (offset 49, 2000-01-01=戊午).
+   Lunar via bundled 1900–2049 month-length table.
+   28宿 continuous wheel (JDN+11)%28 — luminary tracks weekday.
+   ============================================================ */
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mod = (n,m)=>((n%m)+m)%m;
+
+/* ---- stems / branches ---- */
+const STEMS = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BR = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const ZODIAC = [
+  {c:'鼠',en:'Rat'},{c:'牛',en:'Ox'},{c:'虎',en:'Tiger'},{c:'兔',en:'Rabbit'},
+  {c:'龍',en:'Dragon'},{c:'蛇',en:'Snake'},{c:'馬',en:'Horse'},{c:'羊',en:'Goat'},
+  {c:'猴',en:'Monkey'},{c:'雞',en:'Rooster'},{c:'狗',en:'Dog'},{c:'豬',en:'Pig'}
+];
+
+/* ---- lunar table 1900–2049 ---- */
+const lunarInfo = [
+0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,
+0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0
+];
+function leapMonth(y){ return lunarInfo[y-1900] & 0xf; }
+function leapDays(y){ return leapMonth(y) ? ((lunarInfo[y-1900]&0x10000)?30:29) : 0; }
+function monthDays(y,m){ return (lunarInfo[y-1900] & (0x10000>>m)) ? 30 : 29; }
+function lYearDays(y){ let s=348; for(let i=0x8000;i>0x8;i>>=1) s+=(lunarInfo[y-1900]&i)?1:0; return s+leapDays(y); }
+function solarToLunar(y,m,d){
+  let offset = Math.round((Date.UTC(y,m-1,d) - Date.UTC(1900,0,31))/86400000);
+  let ly, temp=0;
+  for(ly=1900; ly<2050 && offset>=0; ly++){ temp=lYearDays(ly); offset-=temp; }
+  offset+=temp; ly--;
+  const leap=leapMonth(ly); let isLeap=false, lm;
+  for(lm=1; lm<13 && offset>=0; lm++){
+    if(leap>0 && lm===leap+1 && !isLeap){ lm--; isLeap=true; temp=leapDays(ly); }
+    else temp=monthDays(ly,lm);
+    if(isLeap && lm===leap+1) isLeap=false;
+    offset-=temp;
+  }
+  if(offset===0 && leap>0 && lm===leap+1){ if(isLeap) isLeap=false; else { isLeap=true; lm--; } }
+  offset+=temp; lm--;
+  return {year:ly, month:lm, day:offset+1, isLeap};
+}
+const L_MONTH = ['正','二','三','四','五','六','七','八','九','十','冬','臘'];
+function lMonthCn(m,leap){ return (leap?'閏':'')+L_MONTH[m-1]+'月'; }
+function lDayCn(d){
+  if(d===10) return '初十'; if(d===20) return '二十'; if(d===30) return '三十';
+  const n=['','一','二','三','四','五','六','七','八','九','十'];
+  const t=['初','十','廿','卅'][Math.floor(d/10)];
+  return t+n[d%10];
+}
+
+/* ---- core astronomical/ganzhi ---- */
+function jdn(y,m,d){ const a=Math.floor((14-m)/12), yy=y+4800-a, mm=m+12*a-3;
+  return d + Math.floor((153*mm+2)/5) + 365*yy + Math.floor(yy/4) - Math.floor(yy/100) + Math.floor(yy/400) - 32045; }
+function dayPillar(y,m,d){ const i=mod(jdn(y,m,d)+49,60); return {stem:i%10, branch:i%12, idx:i}; }
+/* astrological year turns at 立春 ~Feb 4 */
+function yearPillar(y,m,d){ let yr=y; if(m<2 || (m===2 && d<4)) yr=y-1; return {stem:mod(yr-4,10), branch:mod(yr-4,12), yr}; }
+/* 節 (major solar term) approximations -> month branch */
+const TERMS=[[1,6,1],[2,4,2],[3,6,3],[4,5,4],[5,6,5],[6,6,6],[7,7,7],[8,8,8],[9,8,9],[10,8,10],[11,7,11],[12,7,0]];
+function monthBranch(m,d){ let br=0; for(const [tm,td,b] of TERMS){ if(m>tm || (m===tm && d>=td)) br=b; } return br; }
+function monthPillar(yearStem,m,d){ const br=monthBranch(m,d); const yinStem=mod((yearStem%5)*2+2,10); const off=mod(br-2,12);
+  return {stem:mod(yinStem+off,10), branch:br}; }
+
+/* ---- 納音 (60甲子, 30 pairs) ---- */
+const NAYIN = [
+  ['海中金','Gold in the Sea'],['爐中火','Fire in the Furnace'],['大林木','Wood of the Great Forest'],
+  ['路旁土','Earth by the Roadside'],['劍鋒金','Metal of the Sword-Edge'],['山頭火','Fire on the Mountaintop'],
+  ['澗下水','Water in the Ravine'],['城頭土','Earth on the City Wall'],['白蠟金','Metal of White Wax'],
+  ['楊柳木','Wood of the Willow'],['泉中水','Water of the Spring'],['屋上土','Earth on the Rooftop'],
+  ['霹靂火','Thunderbolt Fire'],['松柏木','Wood of Pine and Cypress'],['長流水','Ever-Flowing Water'],
+  ['沙中金','Metal in the Sand'],['山下火','Fire at the Mountain-Foot'],['平地木','Wood of the Plain'],
+  ['壁上土','Earth on the Wall'],['金箔金','Gold-Foil Metal'],['覆燈火','Lamplight Fire'],
+  ['天河水','Water of the Heavenly River'],['大驛土','Earth of the Great Post-Road'],['釵釧金','Metal of Hairpin and Bangle'],
+  ['桑柘木','Wood of the Mulberry'],['大溪水','Water of the Great Stream'],['沙中土','Earth in the Sand'],
+  ['天上火','Fire in the Heavens'],['石榴木','Pomegranate Wood'],['大海水','Water of the Great Sea']
+];
+const NAYIN_EL = {'金':'metal','木':'wood','水':'water','火':'fire','土':'earth'};
+function nayin(idx){ const p=NAYIN[Math.floor(idx/2)]; const el=p[0].slice(-1); return {cn:p[0], en:p[1], el:NAYIN_EL[el]}; }
+
+/* ---- 建除十二神 ---- */
+const OFFICERS = [
+  {c:'建',en:'Establish',py:'Jiàn',tier:'good',gloss:'A day to begin — lay the first stone, but do not yet break the earth.',
+   yi:['祭祀','祈福','求嗣','出行','會親友','冠笄','立券','交易'], ji:['動土','破土','開倉','掘井','安葬'],
+   line:'A day to begin. Set the first stone of a long intention — but do not yet break the earth.'},
+  {c:'除',en:'Remove',py:'Chú',tier:'good',gloss:'Sweep away the old — cleansing, healing, clearing the threshold.',
+   yi:['沐浴','理髮','掃舍','療病','求醫','出行','塞穴'], ji:['嫁娶','開市','入宅','動土'],
+   line:'Sweep the threshold. What you clear away today will not return to burden you.'},
+  {c:'滿',en:'Full',py:'Mǎn',tier:'great',gloss:'The cup brims — abundance answers the generous hand.',
+   yi:['祭祀','祈福','嫁娶','開市','交易','立券','納財','會親友','入宅'], ji:['安葬','破土','求醫'],
+   line:'The cup is full. Gather, wed, and open your doors — abundance answers the generous.'},
+  {c:'平',en:'Balance',py:'Píng',tier:'mixed',gloss:'An even road — steady work prospers, quarrels do not.',
+   yi:['修造','動土','嫁娶','出行','會親友','掃舍'], ji:['栽種','詞訟','祈福'],
+   line:'An even road — no summit, no valley. Steady work prospers; quarrels do not.'},
+  {c:'定',en:'Stable',py:'Dìng',tier:'good',gloss:'Fix what should not move — the bed, the vow, the name.',
+   yi:['冠笄','嫁娶','入學','安床','修造','入宅','納畜','交易'], ji:['出行','移徙','詞訟','求醫'],
+   line:'Set what should not move — the bed, the vow, the name. Let travel wait.'},
+  {c:'執',en:'Grasp',py:'Zhí',tier:'mixed',gloss:'Hold fast — a day for building and keeping, not for setting out.',
+   yi:['修造','動土','嫁娶','捕捉','結網','納財','安床'], ji:['移徙','出行','開市','交易'],
+   line:'Hold fast. A day for building and keeping — not for setting out.'},
+  {c:'破',en:'Break',py:'Pò',tier:'worst',gloss:'The day of ruin — good only for tearing down what already ails you.',
+   yi:['求醫','療病','拆卸','壞垣','破土'], ji:['嫁娶','開市','出行','入宅','交易','祈福','動土','安床'],
+   line:'The day of ruin — good only for tearing down what already ails you. Begin nothing.'},
+  {c:'危',en:'Danger',py:'Wēi',tier:'ill',gloss:'Walk gently — keep to low ground and quiet rooms.',
+   yi:['祭祀','祈福','安床','沐浴'], ji:['登高','乘船','出行','嫁娶','動土','移徙'],
+   line:'Walk gently. Keep to low ground and quiet rooms — the heights are not for today.'},
+  {c:'成',en:'Success',py:'Chéng',tier:'great',gloss:'Whatever you finish today, holds — a crowning day.',
+   yi:['嫁娶','開市','入學','出行','上樑','修造','交易','立券','納財','入宅','動土'], ji:['詞訟','拆卸','破土'],
+   line:'Whatever you finish today, holds. A crowning day — marry, open, arrive.'},
+  {c:'收',en:'Receive',py:'Shōu',tier:'good',gloss:'A day to gather in — receive what is owed, welcome what is new.',
+   yi:['納財','交易','納畜','嫁娶','開市','入學','捕捉'], ji:['出行','安葬','破土','開倉'],
+   line:'A day to gather in. Receive what is owed, welcome what is new — do not scatter.'},
+  {c:'開',en:'Open',py:'Kāi',tier:'great',gloss:'Doors swing wide — begin the venture, turn the first sod.',
+   yi:['祭祀','祈福','入學','開市','出行','動土','上樑','修造','會親友','交易'], ji:['安葬','破土'],
+   line:'Doors swing wide. Begin the venture, enroll the child, turn the first sod — but not the grave.'},
+  {c:'閉',en:'Close',py:'Bì',tier:'ill',gloss:'Seal and store — close accounts and stop the leaks.',
+   yi:['築堤','塞穴','安葬','修造','掃舍'], ji:['出行','開市','開倉','求醫','嫁娶'],
+   line:'Seal and store. A day to close accounts and stop the leaks — keep the gates shut.'}
+];
+function officerIdx(dayBranch, mBranch){ return mod(dayBranch - mBranch, 12); }
+
+/* ---- activity master ---- */
+const ACT = {
+  祭祀:'Rites',祈福:'Blessing',求嗣:'Praying for a child',出行:'Travel',嫁娶:'Marriage',會親友:'Meeting friends',
+  冠笄:'Coming of age',立券:'Contracts',交易:'Trade',動土:'Groundbreaking',破土:'Breaking ground',開倉:'Opening the store',
+  掘井:'Digging a well',安葬:'Burial',沐浴:'Bathing',理髮:'Haircut',掃舍:'Cleaning house',療病:'Curing illness',
+  求醫:'Seeking treatment',塞穴:'Sealing gaps',開市:'Opening business',入宅:'Moving home',修造:'Renovation',
+  栽種:'Planting',詞訟:'Litigation',入學:'Starting school',安床:'Setting the bed',納畜:'Livestock',移徙:'Relocating',
+  捕捉:'Trapping',結網:'Making nets',納財:'Receiving wealth',登高:'Climbing high',乘船:'Boating',上樑:'Raising beams',
+  拆卸:'Demolition',壞垣:'Razing walls',築堤:'Embankments'
+};
+
+/* ---- 二十八宿 (day-order wheel) ---- */
+const XIU = [
+  ['角','木蛟','Horn',1],['亢','金龍','Neck',0],['氐','土貉','Root',0],['房','日兔','Room',1],
+  ['心','月狐','Heart',0],['尾','火虎','Tail',1],['箕','水豹','Basket',1],['斗','木獬','Dipper',1],
+  ['牛','金牛','Ox',0],['女','土蝠','Girl',0],['虛','日鼠','Void',0],['危','月燕','Rooftop',0],
+  ['室','火豬','House',1],['壁','水貐','Wall',1],['奎','木狼','Legs',0],['婁','金狗','Bond',1],
+  ['胃','土雉','Stomach',1],['昴','日雞','Head',0],['畢','月烏','Net',1],['觜','火猴','Beak',0],
+  ['參','水猿','Triaster',1],['井','木犴','Well',1],['鬼','金羊','Ghost',0],['柳','土獐','Willow',0],
+  ['星','日馬','Star',0],['張','月鹿','Bow',1],['翼','火蛇','Wings',0],['軫','水蚓','Chariot',1]
+];
+function xiuOf(y,m,d){ return XIU[mod(jdn(y,m,d)+11,28)]; }
+
+/* ---- 黃道黑道 hour-gods ---- */
+const HGODS = [
+  ['青龍','Green Dragon',1],['明堂','Bright Hall',1],['天刑','Heaven Punishment',0],['朱雀','Vermilion Bird',0],
+  ['金匱','Golden Coffer',1],['天德','Heaven Virtue',1],['白虎','White Tiger',0],['玉堂','Jade Hall',1],
+  ['天牢','Heaven Prison',0],['玄武','Dark Warrior',0],['司命','Life Governor',1],['勾陳','Hooked Array',0]
+];
+/* 青龍 start-hour branch by day branch */
+const DRAGON_START = {0:8,6:8, 1:10,7:10, 2:0,8:0, 3:2,9:2, 4:4,10:4, 5:6,11:6};
+const HOUR_RANGE = ['23–01','01–03','03–05','05–07','07–09','09–11','11–13','13–15','15–17','17–19','19–21','21–23'];
+function hoursOf(dayBranch){
+  const start=DRAGON_START[dayBranch];
+  return BR.map((b,i)=>{ const gi=mod(i-start,12); const g=HGODS[gi];
+    return {br:b, rng:HOUR_RANGE[i], god:g[0], godEn:g[1], good:!!g[2]}; });
+}
+/* day-level 黃道黑道 (month branch sets dragon start among days) */
+function dayHuangdao(mBranch, dayBranch){ const start=DRAGON_START[mBranch]; return HGODS[mod(dayBranch-start,12)]; }
+
+/* 沖 + 煞方 */
+const SHA_DIR = {'申':'南 South','子':'南 South','辰':'南 South','巳':'東 East','酉':'東 East','丑':'東 East',
+  '寅':'北 North','午':'北 North','戌':'北 North','亥':'西 West','卯':'西 West','未':'西 West'};
+/* 喜神 by day stem pair (甲己/乙庚/丙辛/丁壬/戊癸) */
+const XI_DIR = ['東北 NE','西北 NW','西南 SW','正南 S','東南 SE','東北 NE','西北 NW','西南 SW','正南 S','東南 SE'];
+/* 財神 by day stem pair (甲乙/丙丁/戊己/庚辛/壬癸) */
+const CAI_DIR = ['東北 NE','東北 NE','正西 W','正西 W','正北 N','正北 N','正東 E','正東 E','正南 S','正南 S'];
+
+/* ---------- assemble a day ---------- */
+function computeDay(dt){
+  const y=dt.getFullYear(), m=dt.getMonth()+1, d=dt.getDate();
+  const lun=solarToLunar(y,m,d);
+  const yp=yearPillar(y,m,d), dp=dayPillar(y,m,d), mb=monthBranch(m,d);
+  const mp=monthPillar(yp.stem,m,d);
+  const oi=officerIdx(dp.branch, mb), off=OFFICERS[oi];
+  const na=nayin(dp.idx);
+  const xi=xiuOf(y,m,d);
+  const hrs=hoursOf(dp.branch);
+  const dhd=dayHuangdao(mb, dp.branch);
+  const clash=ZODIAC[mod(dp.branch+6,12)];
+  const clashBr=BR[mod(dp.branch+6,12)], clashStem=STEMS[mod(dp.idx-6,10)];
+  const sha=SHA_DIR[BR[dp.branch]];
+  const lunZodiac=ZODIAC[mod(lun.year-4,12)];
+  const lunYearGZ=STEMS[mod(lun.year-4,10)]+BR[mod(lun.year-4,12)];
+  return {y,m,d,dt,lun,yp,dp,mp,off,oi,na,xi,hrs,dhd,clash,clashBr,clashStem,sha,lunZodiac,lunYearGZ,
+    gz:{year:STEMS[yp.stem]+BR[yp.branch], month:STEMS[mp.stem]+BR[mp.branch], day:STEMS[dp.stem]+BR[dp.branch]}};
+}
+
+/* ---------- render ---------- */
+const WD_CN=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+const WD_EN=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const MON_EN=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const esc=s=>s;
+function actHtml(list){ return list.map(k=>`<span class="act">${k}<em>${ACT[k]||''}</em></span>`).join(''); }
+
+function renderSheet(dt){
+  const D=computeDay(dt);
+  const wd=dt.getDay();
+  const tierClass = D.off.tier==='worst' ? 'tier-worst' : '';
+  const hoursHtml = D.hrs.map(h=>`<div class="hr ${h.good?'good':'ill'}"><span class="dot"></span>
+      <div class="hz">${h.br}</div><div class="rng">${h.rng}</div><div class="gd">${h.good?'吉 '+h.god:'凶 '+h.god}</div></div>`).join('');
+  const goodShen = [];
+  const badShen = [];
+  if(D.dhd[2]) goodShen.push(D.dhd[0]+' 黃道'); else badShen.push(D.dhd[0]+' 黑道');
+  // officer-flavoured spirits (reconstructed)
+  if(['great','good'].includes(D.off.tier)) goodShen.push('天德','月德');
+  if(D.off.tier==='great') goodShen.push('天恩');
+  if(D.off.c==='破') badShen.push('月破','大耗');
+  if(D.off.c==='危') badShen.push('天吏','致死');
+  if(D.off.c==='閉') badShen.push('血支');
+  if(D.off.c==='執') badShen.push('小耗');
+  if(goodShen.length<2) goodShen.push('福生');
+  if(badShen.length<1) badShen.push('五離');
+
+  const html = `
+  <div class="masthead">
+    <div class="m-l">老黃曆<span>The Almanac</span></div>
+    <div class="m-r"><div class="yr">${D.lunYearGZ}年 · 生肖${D.lunZodiac.c}</div>
+      <div class="zx">Year of the ${D.lunZodiac.en}</div></div>
+  </div>
+
+  <div class="hero">
+    <div class="big-day">
+      <div class="greg-top">${D.y} · ${MON_EN[D.m-1]}</div>
+      <div class="num">${D.d}</div>
+      <div class="wd">${WD_CN[wd]}<span>${WD_EN[wd]}</span></div>
+    </div>
+    <div class="vr"></div>
+    <div class="hero-r">
+      <div class="lunar-line">
+        <span class="l-han">${lMonthCn(D.lun.month,D.lun.isLeap)}${lDayCn(D.lun.day)}</span>
+        <span class="l-en">the ${ordinal(D.lun.day)} of the ${D.lun.isLeap?'leap ':''}${ordinal(D.lun.month)} moon</span>
+      </div>
+      <div class="pillar-row">
+        <div class="pill"><span class="k">年 Year</span><span class="v">${D.gz.year}</span></div>
+        <div class="pill"><span class="k">月 Month</span><span class="v">${D.gz.month}</span></div>
+        <div class="pill hl"><span class="k">日 Day</span><span class="v">${D.gz.day}</span></div>
+      </div>
+      <div class="pillar-row">
+        <div class="pill"><span class="k">納音 Element</span><span class="v" style="font-size:15px">${D.na.cn}<em>${D.na.en}</em></span></div>
+        <div class="pill"><span class="k">二十八宿</span><span class="v" style="font-size:15px">${D.xi[0]}${D.xi[1]}<em>${D.xi[3]?'吉 · '+D.xi[2]:'凶 · '+D.xi[2]}</em></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="officer ${tierClass}">
+    <div class="glyph">${D.off.c}</div>
+    <div class="o-txt">
+      <div class="o-name">值日 · 十二建除「${D.off.c}」日<b>${D.off.en} · ${D.off.py}</b></div>
+      <div class="o-gloss">${D.off.gloss}</div>
+    </div>
+  </div>
+
+  <div class="yi-ji">
+    <div class="yj yi">
+      <div class="yj-head"><div class="yj-seal">宜</div><div class="yj-t">宜 · Suitable<span>what the day favours</span></div></div>
+      <div class="yj-list">${actHtml(D.off.yi)}</div>
+    </div>
+    <div class="yj ji">
+      <div class="yj-head"><div class="yj-seal">忌</div><div class="yj-t">忌 · Avoid<span>what the day refuses</span></div></div>
+      <div class="yj-list">${actHtml(D.off.ji)}</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="p-head"><span>十二時辰 · Lucky Hours</span><b>吉 / 凶</b></div>
+      <div class="hours">${hoursHtml}</div>
+    </div>
+    <div class="panel">
+      <div class="p-head"><span>神煞方位 · Spirits & Directions</span></div>
+      <div class="ssrow">
+        <div class="ss"><span class="ss-k">沖 Clash</span><span class="ss-v red">沖${D.clash.c}（${D.clashStem}${D.clashBr}）<em>${D.clash.en}</em></span></div>
+        <div class="ss"><span class="ss-k">煞 Direction</span><span class="ss-v">煞 ${D.sha}</span></div>
+        <div class="ss"><span class="ss-k">財神 Wealth</span><span class="ss-v jade">${CAI_DIR[D.dp.stem]}</span></div>
+        <div class="ss"><span class="ss-k">喜神 Joy</span><span class="ss-v jade">${XI_DIR[D.dp.stem]}</span></div>
+        <div class="ss"><span class="ss-k">吉神 Auspicious</span><div class="chips">${[...new Set(goodShen)].slice(0,4).map(s=>`<span class="chip good">${s}</span>`).join('')}</div></div>
+        <div class="ss"><span class="ss-k">凶煞 Inauspicious</span><div class="chips">${[...new Set(badShen)].slice(0,4).map(s=>`<span class="chip bad">${s}</span>`).join('')}</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="oneline">
+    <div class="ol-lbl">今日一言 · Today's One Line</div>
+    <div class="ol">&ldquo;${D.off.line}&rdquo;</div>
+  </div>
+  `;
+  const body=document.getElementById('sheetBody');
+  if(RM){ body.innerHTML=html; return; }
+  body.classList.add('turn');
+  setTimeout(()=>{ body.innerHTML=html; requestAnimationFrame(()=>body.classList.remove('turn')); }, 170);
+}
+function ordinal(n){ const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+
+/* ---------- state / controls ---------- */
+let current = initialDate();
+function initialDate(){
+  const p=new URLSearchParams(location.search).get('date');
+  if(p && /^\d{4}-\d{2}-\d{2}$/.test(p)){ const [y,m,d]=p.split('-').map(Number); return new Date(y,m-1,d); }
+  return new Date();
+}
+function fmt(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+function setDate(dt){ current=dt; document.getElementById('dateInput').value=fmt(dt); renderSheet(dt); }
+
+document.getElementById('dateInput').addEventListener('change', e=>{
+  const v=e.target.value; if(!v) return; const [y,m,d]=v.split('-').map(Number); setDate(new Date(y,m-1,d));
+});
+document.getElementById('prevBtn').addEventListener('click', ()=>{ const n=new Date(current); n.setDate(n.getDate()-1); setDate(n); });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ const n=new Date(current); n.setDate(n.getDate()+1); setDate(n); });
+document.getElementById('todayBtn').addEventListener('click', ()=>setDate(new Date()));
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowLeft'){ const n=new Date(current); n.setDate(n.getDate()-1); setDate(n); }
+  if(e.key==='ArrowRight'){ const n=new Date(current); n.setDate(n.getDate()+1); setDate(n); }
+});
+
+/* ---------- event finder ---------- */
+const EVENTS = [
+  {k:'嫁娶',en:'Wedding'},{k:'開市',en:'Opening'},{k:'出行',en:'Travel'},{k:'動土',en:'Groundbreaking'},
+  {k:'入宅',en:'Moving home'},{k:'安床',en:'Bed-setting'},{k:'交易',en:'Trade'},{k:'祈福',en:'Blessing'},
+  {k:'納財',en:'Wealth'},{k:'安葬',en:'Burial'}
+];
+const TIER_SCORE={great:3,good:2,mixed:1,ill:0,worst:-5};
+let activeEvent='嫁娶';
+function buildChips(){
+  const wrap=document.getElementById('actChips');
+  wrap.innerHTML=EVENTS.map(e=>`<button class="ac ${e.k===activeEvent?'on':''}" data-k="${e.k}">${e.k}<em>${e.en}</em></button>`).join('');
+  wrap.querySelectorAll('.ac').forEach(b=>b.addEventListener('click',()=>{ activeEvent=b.dataset.k; buildChips(); runFinder(); }));
+}
+function runFinder(){
+  const results=[]; const base=new Date(current);
+  for(let i=0;i<60;i++){
+    const dt=new Date(base); dt.setDate(dt.getDate()+i);
+    const D=computeDay(dt);
+    if(D.off.ji.includes(activeEvent)) continue;
+    if(!D.off.yi.includes(activeEvent)) continue;
+    if(D.off.tier==='worst') continue;
+    let score=TIER_SCORE[D.off.tier]; if(D.dhd[2]) score+=1; if(D.xi[3]) score+=1;
+    results.push({dt,D,score,i});
+  }
+  results.sort((a,b)=> b.score-a.score || a.i-b.i);
+  const top=results.slice(0,8);
+  const grid=document.getElementById('findGrid');
+  const note=document.getElementById('finderNote');
+  const evName=EVENTS.find(e=>e.k===activeEvent);
+  if(!top.length){ note.innerHTML=`No clearly auspicious day for <b>${activeEvent} · ${evName.en}</b> in the next 60 days — the officers do not favour it soon.`;
+    grid.innerHTML=`<div class="find-empty">The wheel turns; try another intention.</div>`; return; }
+  note.innerHTML=`<b>${top.length}</b> auspicious day${top.length>1?'s':''} for <b>${activeEvent} · ${evName.en}</b> within the next 60 days, best first.`;
+  grid.innerHTML=top.map(r=>{
+    const stars='★'.repeat(Math.max(1,Math.min(3,r.score-1)));
+    const when = r.i===0 ? 'today' : `in ${r.i} day${r.i===1?'':'s'}`;
+    return `<div class="fcard" role="button" tabindex="0" data-date="${fmt(r.dt)}" aria-label="Jump to ${fmt(r.dt)}, ${r.D.off.en} day">
+      <div class="fc-greg">${r.dt.getFullYear()}·${String(r.dt.getMonth()+1).padStart(2,'0')}·${String(r.dt.getDate()).padStart(2,'0')} · ${WD_EN[r.dt.getDay()].slice(0,3)}</div>
+      <div class="fc-lun">${lMonthCn(r.D.lun.month,r.D.lun.isLeap)}${lDayCn(r.D.lun.day)}</div>
+      <div class="fc-of">${r.D.off.c}日 · ${r.D.off.en} <span class="fc-star">${stars}</span></div>
+      <div class="fc-days">${when} · ${r.D.xi[0]}宿</div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.fcard').forEach(c=>{
+    const go=()=>{ const [y,m,d]=c.dataset.date.split('-').map(Number); setDate(new Date(y,m-1,d));
+      document.querySelector('.sheet-shell').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); };
+    c.addEventListener('click',go);
+    c.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+  });
+}
+
+/* ---------- month view ---------- */
+let mView = new Date(current.getFullYear(), current.getMonth(), 1);
+function renderMonth(){
+  const y=mView.getFullYear(), m=mView.getMonth();
+  document.getElementById('mTitle').innerHTML=`${y}年 ${['一','二','三','四','五','六','七','八','九','十','十一','十二'][m]}月<span>${MON_EN[m]} ${y}</span>`;
+  const first=new Date(y,m,1); let startDow=(first.getDay()+6)%7; // Monday-first
+  const days=new Date(y,m+1,0).getDate();
+  let cells='';
+  for(let i=0;i<startDow;i++) cells+=`<div class="cell empty"></div>`;
+  const todayStr=fmt(new Date());
+  for(let d=1;d<=days;d++){
+    const dt=new Date(y,m,d); const D=computeDay(dt);
+    let cls='m'; if(['great','good'].includes(D.off.tier)) cls='g'; if(D.off.tier==='worst') cls='b';
+    const sel = fmt(dt)===fmt(current) ? 'sel':'';
+    cells+=`<div class="cell ${cls} ${sel}" role="button" tabindex="0" data-date="${fmt(dt)}" aria-label="${fmt(dt)}, ${D.off.en} day">
+      <div><span class="co"></span><span class="cd">${d}</span></div>
+      <div class="cl">${lDayCn(D.lun.day)}</div>
+      <div class="cf">${D.off.c}日</div>
+    </div>`;
+  }
+  const cal=document.getElementById('cal'); cal.innerHTML=cells;
+  cal.querySelectorAll('.cell:not(.empty)').forEach(c=>{
+    const go=()=>{ const [yy,mm,dd]=c.dataset.date.split('-').map(Number); setDate(new Date(yy,mm-1,dd));
+      renderMonth(); document.querySelector('.sheet-shell').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'}); };
+    c.addEventListener('click',go);
+    c.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+  });
+}
+document.getElementById('mPrev').addEventListener('click',()=>{ mView=new Date(mView.getFullYear(),mView.getMonth()-1,1); renderMonth(); });
+document.getElementById('mNext').addEventListener('click',()=>{ mView=new Date(mView.getFullYear(),mView.getMonth()+1,1); renderMonth(); });
+
+/* keep month view synced to selected date on jumps */
+const _setDate=setDate;
+setDate=function(dt){ _setDate(dt); mView=new Date(dt.getFullYear(),dt.getMonth(),1); renderMonth(); runFinder(); };
+
+/* ---------- reveal on scroll ---------- */
+const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- boot ---------- */
+document.getElementById('dateInput').value=fmt(current);
+renderSheet(current);
+buildChips();
+runFinder();
+renderMonth();
+</script>
+</body>
+</html>

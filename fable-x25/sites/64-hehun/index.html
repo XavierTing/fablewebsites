@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合婚 · Two Charts in Conversation — A Real Compatibility Reading</title>
+<meta name="description" content="Enter two people's birth dates and their charts are laid side by side and read for compatibility — the classical 合婚: zodiac 生肖 (六合 / 三合 / 相冲 / 相刑 / 相害 / 相破), five-element 五行 生克, and 纳音 harmony — with a score, and a note that this is for reflection, not a verdict.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×65">
+<meta property="og:title" content="合婚 · Two Charts in Conversation">
+<meta property="og:description" content="Two birth charts, laid side by side and read for compatibility — 生肖, 五行, and 纳音 合婚, computed in code. A reading for reflection, not a verdict.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="合婚 · Two Charts in Conversation">
+<meta name="twitter:description" content="Enter two birth dates; the two charts are read for compatibility — zodiac, five-element, and 纳音 harmony, with a score for reflection.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%23AC3E2C'/%3E%3Cg fill='none' stroke='%23F5F1E8' stroke-width='5' stroke-linecap='round'%3E%3Cpath d='M32 34c0-9 7-15 18-15s18 6 18 15'/%3E%3Cpath d='M32 34v16m36-16v16'/%3E%3C/g%3E%3Cpath d='M50 44l14 24H36z' fill='none' stroke='%23F5F1E8' stroke-width='5' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='78' r='6' fill='%232F6D5E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F1E8; --paper2:#EFE9DA; --paper3:#FAF6EC; --paper4:#E9E1CD; --edge:#DBD0B7;
+    --ink:#2A2118; --ink2:#4A3D2C; --ink-d:rgba(42,33,24,.64); --ink-f:rgba(42,33,24,.42); --ink-ff:rgba(42,33,24,.22);
+    --cin:#AC3E2C; --cin-d:#8f3122; --cin-line:rgba(172,62,44,.42); --cin-faint:rgba(172,62,44,.14);
+    --jade:#2F6D5E; --jade-d:#255649; --jade-line:rgba(47,109,94,.4); --jade-faint:rgba(47,109,94,.13);
+    --brass:#9A7B3F; --brass-hi:#b3924f; --brass-line:rgba(154,123,63,.4); --brass-faint:rgba(154,123,63,.2);
+    --wood:#3d6b46; --fire:#b23a28; --earth:#8a6410; --metal:#5a616a; --water:#27506a;
+    --serif:'Noto Serif SC',serif;
+    --disp:'Cormorant Garamond','Noto Serif SC',serif;
+    --body:'Spectral',Georgia,serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;background:var(--paper)}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--body); font-weight:400; font-size:16px;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:hidden; position:relative; min-height:100vh;
+  }
+  /* paper texture / vignette / watermark */
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 120% 90% at 50% 0%, rgba(250,246,236,.6), transparent 60%),
+      radial-gradient(ellipse 150% 130% at 50% 122%, rgba(120,92,44,.13), transparent 60%),
+      radial-gradient(ellipse 100% 100% at 15% 24%, rgba(255,252,244,.34), transparent 55%);}
+  body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+    box-shadow:inset 0 0 220px rgba(60,44,18,.24), inset 0 0 60px rgba(60,44,18,.13);}
+  .watermark{position:fixed;z-index:0;pointer-events:none;user-select:none;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:var(--serif);font-weight:900;font-size:min(80vh,780px);line-height:1;
+    color:rgba(42,33,24,.032);letter-spacing:-.04em;white-space:nowrap;}
+
+  ::selection{background:var(--cin);color:var(--paper3)}
+  ::-webkit-scrollbar{width:12px;background:var(--paper)}
+  ::-webkit-scrollbar-thumb{background:var(--brass-line);border:3px solid var(--paper);border-radius:8px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--brass)}
+  :focus{outline:none}
+  :focus-visible{outline:1.5px solid var(--cin);outline-offset:3px;border-radius:2px}
+  a{color:inherit;text-decoration:none}
+
+  /* back-link */
+  .backlink{position:fixed;left:26px;bottom:24px;z-index:60;
+    font-family:var(--mono);font-size:10px;letter-spacing:.3em;font-weight:400;text-transform:uppercase;
+    color:var(--cin);border:1px solid var(--cin-line);padding:8px 13px 7px;border-radius:2px;
+    background:rgba(250,246,236,.72);backdrop-filter:blur(6px);
+    transition:color .45s cubic-bezier(.22,1,.36,1),background .45s cubic-bezier(.22,1,.36,1),border-color .45s}
+  .backlink:hover{color:var(--paper3);background:var(--cin);border-color:var(--cin)}
+
+  .wrap{position:relative;z-index:5;max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,54px)}
+
+  /* masthead */
+  header.top{padding-top:clamp(30px,6vh,60px)}
+  .rule-x{display:flex;align-items:center;gap:16px;color:var(--ink-f);
+    font-family:var(--mono);font-size:10px;letter-spacing:.36em;text-transform:uppercase}
+  .rule-x::before,.rule-x::after{content:'';height:1px;background:var(--brass-line);flex:1}
+  .rule-x .seal-mini{width:8px;height:8px;background:var(--cin);border-radius:50%;flex:0 0 auto}
+
+  .hero{padding:clamp(30px,6vh,64px) 0 clamp(20px,4vh,36px);position:relative}
+  .kicker{font-family:var(--mono);font-size:clamp(10px,1.1vw,12px);letter-spacing:.42em;text-transform:uppercase;
+    color:var(--cin);font-weight:500;margin-bottom:clamp(16px,3vh,26px);
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .kicker .zh{font-family:var(--serif);font-weight:600;letter-spacing:.24em;font-size:1.2em;color:var(--ink)}
+  h1.mark{font-family:var(--serif);font-weight:900;line-height:.88;letter-spacing:.02em;
+    font-size:clamp(58px,15vw,190px);color:var(--ink);position:relative;
+    display:flex;align-items:flex-start;gap:clamp(16px,3.4vw,46px)}
+  h1.mark .en{font-family:var(--disp);font-weight:600;font-size:clamp(17px,2.1vw,28px);
+    letter-spacing:.005em;line-height:1.16;color:var(--ink2);align-self:flex-end;
+    max-width:15ch;padding-bottom:clamp(8px,1.6vw,22px);text-transform:none;font-style:italic}
+  h1.mark .en em{font-style:normal;color:var(--cin);display:block;font-family:var(--mono);
+    font-size:.5em;letter-spacing:.3em;text-transform:uppercase;margin-top:11px;font-weight:400}
+  .lede{font-family:var(--body);font-weight:400;font-size:clamp(16.5px,1.55vw,20px);line-height:1.74;
+    color:var(--ink2);max-width:62ch;margin-top:clamp(22px,4vh,34px)}
+  .lede b{font-weight:600;color:var(--ink)}
+  .lede .han{font-family:var(--serif);font-weight:600;font-size:1.02em}
+  .lede .cin{color:var(--cin);font-weight:600}
+
+  /* input console — two people */
+  .console{margin-top:clamp(28px,5vh,44px);border:1px solid var(--brass-line);border-radius:5px;
+    background:linear-gradient(180deg,rgba(250,246,236,.78),rgba(233,225,205,.5));
+    box-shadow:0 1px 0 rgba(255,252,244,.7) inset, 0 22px 54px -34px rgba(60,44,18,.5);
+    padding:clamp(20px,3vw,30px) clamp(20px,3vw,34px);position:relative;overflow:hidden}
+  .console::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--cin),var(--jade))}
+  .console-people{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(14px,2.4vw,30px);align-items:stretch}
+  .person-in{display:flex;flex-direction:column;gap:14px}
+  .person-in .who{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--ink-d);display:flex;align-items:center;gap:9px}
+  .person-in .who .zh{font-family:var(--serif);font-weight:600;font-size:1.5em;letter-spacing:.08em;color:var(--ink)}
+  .person-in .who .dot{width:8px;height:8px;border-radius:50%}
+  .person-in.a .who .dot{background:var(--cin)} .person-in.b .who .dot{background:var(--jade)}
+  .field-row{display:flex;flex-wrap:wrap;gap:12px}
+  .field{display:flex;flex-direction:column;gap:7px;flex:1 1 auto}
+  .field label{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-f)}
+  .field input[type=date],.field input[type=time]{
+    font-family:var(--mono);font-size:14px;letter-spacing:.03em;color:var(--ink);
+    background:var(--paper3);border:1px solid var(--edge);border-radius:3px;padding:11px 12px;
+    width:100%;transition:border-color .35s,box-shadow .35s;color-scheme:light}
+  .field.dt{flex:2 1 150px} .field.tm{flex:1 1 96px}
+  .field input:hover{border-color:var(--brass)}
+  .field input:focus-visible{border-color:var(--cin);box-shadow:0 0 0 2px rgba(172,62,44,.15);outline:none}
+  .field input::-webkit-calendar-picker-indicator{filter:sepia(.5) saturate(1.2) hue-rotate(-8deg);opacity:.55;cursor:pointer}
+  .mid-rail{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-width:44px}
+  .mid-rail .knot{width:34px;height:34px;color:var(--cin)}
+  .mid-rail .amp{font-family:var(--disp);font-style:italic;font-size:26px;color:var(--brass);line-height:1}
+  .console-foot{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:clamp(18px,3vw,24px);
+    padding-top:clamp(16px,2.6vw,20px);border-top:1px solid var(--brass-faint)}
+  .cast{margin-left:auto;font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;
+    color:var(--paper3);background:var(--ink);border:1px solid var(--ink);border-radius:3px;
+    padding:14px 28px;cursor:pointer;display:inline-flex;align-items:center;gap:12px;
+    transition:background .4s cubic-bezier(.22,1,.36,1),transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s}
+  .cast .zh{font-family:var(--serif);font-weight:600;font-size:1.5em;letter-spacing:.14em}
+  .cast:hover{background:var(--cin);border-color:var(--cin);transform:translateY(-2px);box-shadow:0 14px 28px -16px rgba(172,62,44,.7)}
+  .cast:active{transform:translateY(0)}
+  .note-ex{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink-f);
+    display:flex;align-items:center;gap:9px;line-height:1.5}
+  .note-ex .dot{width:5px;height:5px;background:var(--brass);border-radius:50%;flex:0 0 auto}
+  .note-ex.hide{display:none}
+
+  /* section scaffolding */
+  section.block{padding:clamp(48px,8vh,96px) 0 0}
+  .sec-h{display:flex;align-items:baseline;gap:16px;margin-bottom:clamp(24px,4vh,40px);flex-wrap:wrap}
+  .sec-h .idx{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--cin);font-weight:500}
+  .sec-h .zh{font-family:var(--serif);font-weight:700;font-size:clamp(24px,3.4vw,38px);letter-spacing:.06em;color:var(--ink)}
+  .sec-h .en{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-f)}
+  .sec-h .en::before{content:'· '}
+
+  /* ===== THE TWO CHARTS — facing cards ===== */
+  .duel{display:grid;grid-template-columns:1fr minmax(96px,132px) 1fr;gap:0;align-items:stretch;position:relative}
+  .pcard{border:1px solid var(--brass-line);border-radius:6px;background:linear-gradient(180deg,rgba(250,246,236,.72),rgba(233,225,205,.42));
+    box-shadow:0 24px 60px -42px rgba(60,44,18,.6);padding:clamp(22px,3vw,34px) clamp(20px,2.6vw,30px) clamp(24px,3vw,32px);
+    position:relative;overflow:hidden;opacity:0;transform:translateY(20px)}
+  .pcard.in{opacity:1;transform:none;transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
+  .pcard.a{border-top:3px solid var(--cin)}
+  .pcard.b{border-top:3px solid var(--jade)}
+  .pcard .corner{position:absolute;top:0;width:clamp(48px,7vw,68px);height:clamp(48px,7vw,68px);opacity:.5;pointer-events:none}
+  .pcard.a .corner{right:0;border-top:1px solid var(--cin-line);border-right:1px solid var(--cin-line);border-radius:0 6px 0 0}
+  .pcard.b .corner{left:0;border-top:1px solid var(--jade-line);border-left:1px solid var(--jade-line);border-radius:6px 0 0 0}
+  .p-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:clamp(18px,3vw,26px)}
+  .p-label{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-d);
+    display:flex;align-items:center;gap:9px}
+  .p-label .zh{font-family:var(--serif);font-weight:600;font-size:1.5em;letter-spacing:.06em}
+  .pcard.a .p-label .zh{color:var(--cin)} .pcard.b .p-label .zh{color:var(--jade)}
+  .p-date{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-f);text-align:right}
+  .p-date b{color:var(--ink-d);font-weight:500}
+  .zodiac{text-align:center;position:relative}
+  .zodiac .yr-gz{font-family:var(--serif);font-weight:600;font-size:clamp(15px,2vw,19px);letter-spacing:.2em;color:var(--ink2);margin-bottom:6px}
+  .zodiac .yr-gz .en{font-family:var(--mono);font-weight:400;font-size:.62em;letter-spacing:.16em;color:var(--ink-f);text-transform:uppercase;margin-left:2px}
+  .zodiac .animal-glyph{font-family:var(--serif);font-weight:900;line-height:.9;
+    font-size:clamp(86px,15vw,168px);letter-spacing:0;display:block;
+    background:linear-gradient(170deg,var(--ink),var(--ink2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .zodiac .animal-en{font-family:var(--disp);font-style:italic;font-weight:600;font-size:clamp(20px,2.6vw,28px);color:var(--ink);margin-top:2px;letter-spacing:.01em}
+  .zodiac .animal-py{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f);margin-top:6px}
+  .p-stats{margin-top:clamp(20px,3vw,28px);display:flex;flex-direction:column;gap:1px;background:var(--brass-faint);
+    border:1px solid var(--brass-line);border-radius:5px;overflow:hidden}
+  .p-stat{background:var(--paper2);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .p-stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f)}
+  .p-stat .v{display:flex;align-items:center;gap:9px;text-align:right}
+  .p-stat .v .zh{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink);line-height:1}
+  .p-stat .v .en{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-d);text-transform:uppercase}
+  .p-stat .v .sw{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+
+  /* center rail: red thread + verdict seal */
+  .rail{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:6}
+  .rail .thread{position:absolute;top:50%;left:-8px;right:-8px;height:2px;transform:translateY(-50%);z-index:0;
+    background:repeating-linear-gradient(90deg,var(--cin) 0 9px,transparent 9px 15px);opacity:.55}
+  .rail .thread.draw{background:linear-gradient(90deg,var(--cin),var(--cin));
+    -webkit-mask:repeating-linear-gradient(90deg,#000 0 9px,transparent 9px 15px);
+    mask:repeating-linear-gradient(90deg,#000 0 9px,transparent 9px 15px)}
+  .seal{position:relative;z-index:2;width:clamp(84px,11vw,116px);height:clamp(84px,11vw,116px);border-radius:50%;
+    display:grid;place-items:center;text-align:center;
+    background:radial-gradient(circle at 42% 36%,rgba(255,252,244,.28),transparent 62%);
+    box-shadow:0 16px 34px -18px rgba(60,44,18,.7);transition:transform .6s cubic-bezier(.22,1,.36,1)}
+  .seal::before{content:'';position:absolute;inset:7px;border-radius:50%;border:1px solid rgba(250,246,236,.5)}
+  .seal .g{font-family:var(--serif);font-weight:700;font-size:clamp(38px,5vw,52px);line-height:1;color:var(--paper3)}
+  .seal .t{position:absolute;bottom:9px;left:0;right:0;font-family:var(--mono);font-size:7.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,246,236,.82)}
+  .seal.he{background-color:var(--jade);background-image:radial-gradient(circle at 42% 36%,rgba(255,252,244,.3),transparent 62%)}
+  .seal.yuan{background-color:var(--brass);background-image:radial-gradient(circle at 42% 36%,rgba(255,252,244,.32),transparent 62%)}
+  .seal.chong{background-color:var(--cin);background-image:radial-gradient(circle at 42% 36%,rgba(255,252,244,.3),transparent 62%)}
+  .rail:hover .seal{transform:scale(1.05) rotate(-3deg)}
+  .rail .rel-tag{margin-top:14px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-d);text-align:center;background:var(--paper3);padding:4px 9px;border:1px solid var(--brass-line);border-radius:20px;
+    white-space:nowrap;z-index:2}
+  .rail .rel-tag .zh{font-family:var(--serif);font-weight:600;font-size:1.35em;letter-spacing:.04em;color:var(--ink)}
+
+  /* ===== verdict banner ===== */
+  .verdict{margin-top:clamp(20px,3.4vw,30px);border:1px solid var(--brass-line);border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(250,246,236,.66),rgba(233,225,205,.4));
+    display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,3vw,40px);align-items:center;
+    padding:clamp(22px,3vw,32px) clamp(24px,3.4vw,42px)}
+  .gauge-wrap{position:relative;width:clamp(128px,17vw,168px);flex:0 0 auto}
+  .gauge-wrap svg{width:100%;height:auto;display:block;transform:rotate(-90deg)}
+  .gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .gauge-center .num{font-family:var(--disp);font-weight:700;font-size:clamp(42px,6vw,60px);line-height:.9;color:var(--ink)}
+  .gauge-center .out{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink-f);margin-top:3px}
+  .verdict-txt .grade{display:inline-flex;align-items:center;gap:11px;margin-bottom:12px}
+  .verdict-txt .grade .badge{font-family:var(--serif);font-weight:700;font-size:22px;width:44px;height:44px;border-radius:5px;
+    display:grid;place-items:center;color:var(--paper3);line-height:1}
+  .verdict-txt .grade .lab{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-d)}
+  .verdict-txt .grade .lab b{color:var(--ink);font-weight:500}
+  .verdict-txt h2{font-family:var(--disp);font-style:italic;font-weight:600;font-size:clamp(24px,3.4vw,36px);
+    line-height:1.14;color:var(--ink);letter-spacing:.005em}
+  .verdict-txt p{font-family:var(--body);font-size:clamp(15px,1.5vw,17px);line-height:1.66;color:var(--ink2);margin-top:12px;max-width:56ch}
+  .verdict-txt p .han{font-family:var(--serif);font-weight:600;color:var(--ink)}
+
+  /* ===== analysis section cards ===== */
+  .analysis{border:1px solid var(--brass-line);border-radius:6px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(250,246,236,.58),rgba(233,225,205,.36))}
+  .an-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(10px,2vw,24px);
+    padding:clamp(18px,2.6vw,26px) clamp(20px,3vw,32px);border-bottom:1px solid var(--brass-faint)}
+  .an-glyph{text-align:center}
+  .an-glyph .hz{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4.4vw,46px);line-height:1;display:block}
+  .an-glyph .sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-f);margin-top:7px}
+  .an-glyph.a .hz{color:var(--cin)} .an-glyph.b .hz{color:var(--jade)}
+  .an-rel{text-align:center;padding:0 8px}
+  .an-rel .con{font-family:var(--serif);font-weight:700;font-size:clamp(22px,3vw,32px);line-height:1;color:var(--ink)}
+  .an-rel .con.good{color:var(--jade)} .an-rel .con.bad{color:var(--cin)} .an-rel .con.neu{color:var(--brass)}
+  .an-rel .name{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-d);margin-top:8px}
+  .an-rel .arrow{font-family:var(--mono);color:var(--ink-ff);font-size:15px;margin-top:4px}
+  .an-body{padding:clamp(20px,3vw,30px) clamp(22px,3.2vw,36px)}
+  .an-body p{font-family:var(--body);font-size:clamp(15.5px,1.55vw,18px);line-height:1.72;color:var(--ink2)}
+  .an-body p + p{margin-top:16px}
+  .an-body p b{font-weight:600;color:var(--ink)}
+  .an-body p .han{font-family:var(--serif);font-weight:600;color:var(--ink)}
+  .an-body p .cin{color:var(--cin);font-weight:600} .an-body p .jade{color:var(--jade);font-weight:600}
+  .relmap{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px;padding-top:18px;border-top:1px solid var(--brass-faint)}
+  .rchip{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-d);
+    border:1px solid var(--brass-line);border-radius:20px;padding:7px 13px;display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .3s,color .3s}
+  .rchip .zh{font-family:var(--serif);font-weight:600;font-size:1.4em;letter-spacing:.03em;color:var(--ink)}
+  .rchip.on{border-color:var(--cin);color:var(--ink)}
+  .rchip.on.good{border-color:var(--jade)}
+  .rchip .sw{width:8px;height:8px;border-radius:50%}
+
+  /* element mix rows (五行合婚) */
+  .mixgrid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:22px;padding-top:20px;border-top:1px solid var(--brass-faint)}
+  .mix h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-d);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .mix h4 .dot{width:8px;height:8px;border-radius:50%}
+  .mix.a h4 .dot{background:var(--cin)} .mix.b h4 .dot{background:var(--jade)}
+  .ebar{display:grid;grid-template-columns:64px 1fr auto;align-items:center;gap:11px;margin-bottom:9px}
+  .ebar .nm{display:flex;align-items:center;gap:7px}
+  .ebar .nm .zh{font-family:var(--serif);font-weight:600;font-size:16px;width:18px;text-align:center;line-height:1}
+  .ebar .nm .en{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-f)}
+  .ebar .track{height:8px;background:rgba(42,33,24,.07);border-radius:5px;overflow:hidden}
+  .ebar .fill{height:100%;width:0;border-radius:5px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+  .ebar .n{font-family:var(--mono);font-size:11px;color:var(--ink-d);min-width:14px;text-align:right}
+  .ebar.lack .nm .zh,.ebar.lack .nm .en{opacity:.5}
+  .ebar.lack .tag{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);margin-left:5px}
+
+  /* nayin plates */
+  .nayin-plates{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,32px);margin-top:22px;padding-top:20px;border-top:1px solid var(--brass-faint)}
+  .nyplate{text-align:center;padding:clamp(16px,2.4vw,24px);border:1px solid var(--brass-line);border-radius:6px;background:var(--paper2);position:relative}
+  .nyplate.a{border-top:2px solid var(--cin)} .nyplate.b{border-top:2px solid var(--jade)}
+  .nyplate .who{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-f);margin-bottom:12px}
+  .nyplate .ny-zh{font-family:var(--serif);font-weight:700;font-size:clamp(24px,3.4vw,34px);letter-spacing:.14em;color:var(--ink);line-height:1.1}
+  .nyplate .ny-en{font-family:var(--disp);font-style:italic;font-size:clamp(15px,1.8vw,19px);color:var(--ink2);margin-top:9px}
+  .nyplate .ny-el{margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-d);
+    display:inline-flex;align-items:center;gap:7px}
+  .nyplate .ny-el .sw{width:9px;height:9px;border-radius:50%}
+
+  /* ===== synthesis (合斷) ===== */
+  .synth{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(24px,4vw,52px);align-items:start}
+  .synth-read p{font-family:var(--body);font-size:clamp(16px,1.7vw,19px);line-height:1.76;color:var(--ink2);margin-bottom:20px}
+  .synth-read p:first-of-type::first-letter{font-size:3.2em;line-height:.72;float:left;padding:8px 12px 0 0;color:var(--cin);font-weight:700;font-family:var(--serif)}
+  .synth-read p b{font-weight:600;color:var(--ink)}
+  .synth-read p .han{font-family:var(--serif);font-weight:600;color:var(--ink)}
+  .synth-read p .jade{color:var(--jade);font-weight:600} .synth-read p .cin{color:var(--cin);font-weight:600}
+  .sf-col{display:flex;flex-direction:column;gap:16px}
+  .sf-card{border:1px solid var(--brass-line);border-radius:6px;padding:clamp(18px,2.4vw,24px);background:var(--paper2)}
+  .sf-card.str{border-left:3px solid var(--jade)} .sf-card.fri{border-left:3px solid var(--cin)}
+  .sf-card h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-d);margin-bottom:13px;display:flex;align-items:center;gap:9px}
+  .sf-card h4 .zh{font-family:var(--serif);font-weight:600;font-size:1.5em;letter-spacing:.06em}
+  .sf-card.str h4 .zh{color:var(--jade)} .sf-card.fri h4 .zh{color:var(--cin)}
+  .sf-card ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .sf-card li{font-family:var(--body);font-size:15px;line-height:1.56;color:var(--ink2);padding-left:18px;position:relative}
+  .sf-card li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%}
+  .sf-card.str li::before{background:var(--jade)} .sf-card.fri li::before{background:var(--cin)}
+  .sf-card li b{font-weight:600;color:var(--ink)} .sf-card li .han{font-family:var(--serif);font-weight:600;color:var(--ink)}
+  .reflect{margin-top:clamp(28px,4vw,40px);border-left:2px solid var(--cin-line);padding:clamp(14px,2vw,20px) clamp(18px,2.4vw,26px);
+    background:var(--cin-faint);border-radius:0 5px 5px 0}
+  .reflect .lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--cin);margin-bottom:10px;
+    display:flex;align-items:center;gap:9px}
+  .reflect .lab .zh{font-family:var(--serif);font-weight:600;font-size:1.5em;letter-spacing:.06em}
+  .reflect p{font-family:var(--body);font-size:clamp(14.5px,1.5vw,16.5px);line-height:1.72;color:var(--ink2)}
+  .reflect p b{font-weight:600;color:var(--ink)}
+
+  /* how computed */
+  .how{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;background:var(--brass-faint);
+    border:1px solid var(--brass-line);border-radius:6px;overflow:hidden}
+  .how .cell{background:var(--paper2);padding:22px 22px 24px}
+  .how .cell .n{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--cin);margin-bottom:11px}
+  .how .cell h4{font-family:var(--body);font-weight:600;font-size:17px;color:var(--ink);margin-bottom:9px;letter-spacing:.01em}
+  .how .cell p{font-family:var(--mono);font-size:11.5px;line-height:1.72;color:var(--ink-d);letter-spacing:.005em}
+  .how .cell p .han{font-family:var(--serif);font-size:1.12em;font-weight:500;color:var(--ink2)}
+  .how-note{font-family:var(--mono);font-size:11px;line-height:1.72;letter-spacing:.02em;color:var(--ink-f);margin-top:18px;max-width:82ch}
+  .how-note b{color:var(--ink-d);font-weight:500}
+
+  /* footer */
+  footer{position:relative;z-index:5;margin-top:clamp(64px,10vh,120px);
+    border-top:1px solid var(--brass-line);background:rgba(42,33,24,.03)}
+  .foot-in{max-width:1180px;margin:0 auto;padding:clamp(46px,7vh,76px) clamp(20px,4vw,54px) clamp(54px,8vh,88px);
+    display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+  footer .fknot{width:44px;height:44px;color:var(--cin);margin-bottom:2px}
+  footer .fmark{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4vw,46px);letter-spacing:.16em;color:var(--ink)}
+  footer .fsub{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-f)}
+  footer .flink{margin-top:10px;font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--cin);border-bottom:1px solid var(--cin-line);padding-bottom:4px;transition:color .35s,border-color .35s}
+  footer .flink:hover{color:var(--cin-d);border-color:var(--cin)}
+  footer .cred{margin-top:22px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-ff);line-height:1.9;max-width:64ch}
+
+  /* responsive */
+  @media (max-width:900px){
+    .console-people{grid-template-columns:1fr}
+    .mid-rail{flex-direction:row;gap:16px;padding:4px 0}
+    .mid-rail .knot{width:26px;height:26px} .mid-rail .amp{display:none}
+    .synth{grid-template-columns:1fr}
+    .verdict{grid-template-columns:1fr;justify-items:center;text-align:center;gap:22px}
+    .verdict-txt{text-align:center} .verdict-txt .grade{justify-content:center} .verdict-txt p{margin-left:auto;margin-right:auto}
+  }
+  @media (max-width:760px){
+    .duel{grid-template-columns:1fr;gap:0}
+    .rail{padding:6px 0;order:0}
+    .rail .thread{top:-8px;bottom:-8px;left:50%;right:auto;width:2px;height:auto;transform:translateX(-50%);
+      background:repeating-linear-gradient(180deg,var(--cin) 0 9px,transparent 9px 15px)}
+    .pcard{margin:0}
+    .mixgrid{grid-template-columns:1fr;gap:24px}
+    .nayin-plates{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    h1.mark{flex-direction:column;gap:14px}
+    h1.mark .en{align-self:flex-start;padding-bottom:0;max-width:32ch}
+    .field-row{flex-direction:column}
+    .cast{margin-left:0;width:100%;justify-content:center}
+    .console-foot{flex-direction:column;align-items:stretch}
+    .an-head{grid-template-columns:1fr;gap:14px}
+    .an-rel .arrow{display:none}
+    .backlink{left:14px;bottom:14px}
+    .synth-read p:first-of-type::first-letter{font-size:2.8em}
+    .relmap{gap:7px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .pcard{opacity:1!important;transform:none!important;transition:none!important}
+    .ebar .fill,.seal,.gauge-arc{transition:none!important}
+    .rail:hover .seal{transform:none}
+  }
+  .noscript{max-width:60ch;margin:80px auto;padding:0 24px;text-align:center;font-family:var(--body);font-size:19px;line-height:1.7;color:var(--ink2)}
+</style>
+</head>
+<body>
+  <div class="vignette"></div>
+  <div class="watermark" aria-hidden="true">緣</div>
+  <a class="backlink" href="/">XAVIER FABLE ×65</a>
+
+  <div class="wrap">
+    <header class="top">
+      <div class="rule-x"><span>紅線堂 · The Red-Thread Desk</span><span class="seal-mini"></span><span>姻緣 · Est. Anno MMXXVI</span></div>
+
+      <div class="hero">
+        <div class="kicker"><span class="zh">合婚</span> Two Charts in Conversation · 兩命相參</div>
+        <h1 class="mark">
+          <span>合婚</span>
+          <span class="en">Two charts, laid side by side, and read for where they meet.<em>Compatibility · 合婚</em></span>
+        </h1>
+        <p class="lede">Old <span class="cin">月老</span>, the Moon-Elder who ties the red thread, never read one life alone — he laid <b>two charts side by side</b> and looked for where they answered each other. <span class="han">合婚</span> is that reading: the <b>zodiac branches</b> <span class="han">生肖</span> weighed for <span class="han">六合</span> and <span class="han">三合</span> against <span class="han">冲刑害破</span>; the <b>five elements</b> <span class="han">五行</span> tested for whether one supplies what the other lacks; and the <b>sound-element</b> <span class="han">纳音</span> of each birth-year set in tune. Enter two dates — the day pillars computed exactly — and the ledger is cast.</p>
+
+        <form class="console" id="form" autocomplete="off">
+          <div class="console-people">
+            <div class="person-in a">
+              <div class="who"><span class="dot"></span><span class="zh">甲</span> Person A · 其一</div>
+              <div class="field-row">
+                <div class="field dt"><label for="da">Birth date</label>
+                  <input type="date" id="da" name="da" min="1900-01-01" max="2100-12-31" value="1995-06-18"></div>
+                <div class="field tm"><label for="ta">Time · opt.</label>
+                  <input type="time" id="ta" name="ta"></div>
+              </div>
+            </div>
+            <div class="mid-rail" aria-hidden="true">
+              <svg class="knot" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M13 13c0-5 3.5-8 7-8s7 3 7 8"/><path d="M13 13v7m14-7v7"/>
+                <path d="M20 20l6 9H14z" stroke-linejoin="round"/><circle cx="20" cy="33" r="3.5" fill="currentColor" stroke="none"/>
+              </svg>
+              <span class="amp">&amp;</span>
+            </div>
+            <div class="person-in b">
+              <div class="who"><span class="dot"></span><span class="zh">乙</span> Person B · 其二</div>
+              <div class="field-row">
+                <div class="field dt"><label for="db">Birth date</label>
+                  <input type="date" id="db" name="db" min="1900-01-01" max="2100-12-31" value="1998-05-05"></div>
+                <div class="field tm"><label for="tb">Time · opt.</label>
+                  <input type="time" id="tb" name="tb"></div>
+              </div>
+            </div>
+          </div>
+          <div class="console-foot">
+            <div class="note-ex" id="noteEx"><span class="dot"></span>An example pairing — enter two birth dates and cast the ledger again.</div>
+            <button type="submit" class="cast"><span class="zh">合婚</span> Cast the ledger</button>
+          </div>
+        </form>
+      </div>
+    </header>
+
+    <!-- ============ THE TWO CHARTS ============ -->
+    <section class="block" id="charts">
+      <div class="sec-h"><span class="idx">壹</span><span class="zh">對盤</span><span class="en">The Two Charts, Facing</span></div>
+      <div class="duel">
+        <div class="pcard a" id="cardA"><span class="corner"></span><!-- injected --></div>
+        <div class="rail" id="rail"><!-- injected --></div>
+        <div class="pcard b" id="cardB"><span class="corner"></span><!-- injected --></div>
+      </div>
+
+      <div class="verdict" id="verdict"><!-- injected --></div>
+    </section>
+
+    <!-- ============ 生肖合婚 ============ -->
+    <section class="block" id="zodiac">
+      <div class="sec-h"><span class="idx">貳</span><span class="zh">生肖合婚</span><span class="en">The Zodiac Match</span></div>
+      <div class="analysis">
+        <div class="an-head" id="zHead"><!-- injected --></div>
+        <div class="an-body" id="zBody"><!-- injected --></div>
+      </div>
+    </section>
+
+    <!-- ============ 五行合婚 ============ -->
+    <section class="block" id="wuxing">
+      <div class="sec-h"><span class="idx">叁</span><span class="zh">五行合婚</span><span class="en">The Five-Element Match</span></div>
+      <div class="analysis">
+        <div class="an-head" id="wHead"><!-- injected --></div>
+        <div class="an-body" id="wBody"><!-- injected --></div>
+      </div>
+    </section>
+
+    <!-- ============ 纳音合婚 ============ -->
+    <section class="block" id="nayin">
+      <div class="sec-h"><span class="idx">肆</span><span class="zh">纳音合婚</span><span class="en">The Sound-Element Match</span></div>
+      <div class="analysis">
+        <div class="an-head" id="nHead"><!-- injected --></div>
+        <div class="an-body" id="nBody"><!-- injected --></div>
+      </div>
+    </section>
+
+    <!-- ============ 合斷 SYNTHESIS ============ -->
+    <section class="block" id="synth">
+      <div class="sec-h"><span class="idx">伍</span><span class="zh">合斷</span><span class="en">A Reading, for Reflection</span></div>
+      <div class="synth">
+        <div class="synth-read" id="synthRead"><!-- injected --></div>
+        <div class="sf-col">
+          <div class="sf-card str"><h4><span class="zh">合</span>Where you meet</h4><ul id="strList"><!-- injected --></ul></div>
+          <div class="sf-card fri"><h4><span class="zh">磨</span>Where you'll work</h4><ul id="friList"><!-- injected --></ul></div>
+        </div>
+      </div>
+      <div class="reflect">
+        <div class="lab"><span class="zh">參</span>For reflection, not a verdict</div>
+        <p>合婚 describes <b>tendencies</b>, never fates. A red thread was said to bind two people no matter the distance — but the old teachers were careful: the chart is a mirror held up to a temperament, and <b>people choose</b>. A <span style="font-family:var(--serif);font-weight:600">冲</span> is not a doom and a <span style="font-family:var(--serif);font-weight:600">合</span> is not a promise; the friction a chart names is simply the work a good pairing already knows how to do. Read this as a conversation-starter between two people — not a sentence passed on them.</p>
+      </div>
+    </section>
+
+    <!-- ============ HOW COMPUTED ============ -->
+    <section class="block" id="how">
+      <div class="sec-h"><span class="idx">陸</span><span class="zh">推算之法</span><span class="en">How This Is Computed</span></div>
+      <div class="how">
+        <div class="cell"><div class="n">生肖 · Zodiac</div><h4>Year branch &amp; its relations</h4><p>Each person's animal is the <span class="han">地支</span> of the birth year (turned at <span class="han">立春</span>, fixed to Feb 4). The pair is matched against the full tables: <span class="han">六合</span> (secret friends), <span class="han">三合</span> (trine allies), <span class="han">相冲</span> · <span class="han">刑</span> · <span class="han">害</span> · <span class="han">破</span>.</p></div>
+        <div class="cell"><div class="n">日柱 · Day Pillar</div><h4>From the Julian Day</h4><p>The day <span class="han">干支</span> = (JDN + 49) mod 60, the offset calibrated against known dates: 2000-01-01 = <span class="han">戊午</span>, 1990-05-20 = <span class="han">乙酉</span>. The day pillar — and each person's <b>Day Master</b> — is <b>exact</b>.</p></div>
+        <div class="cell"><div class="n">五行 · Elements</div><h4>生 · 克 · 比和</h4><p>Each chart's elements are tallied from its year and day pillars (four characters). The two are read for <span class="han">相生</span> (one feeds the other), <span class="han">比和</span> (alike), or <span class="han">相克</span> (one checks the other) — and for whether one supplies what the other lacks.</p></div>
+        <div class="cell"><div class="n">纳音 · Sound</div><h4>六十甲子纳音</h4><p>Each birth year carries one of the thirty <span class="han">纳音</span> — a poetic sound-element (e.g. <span class="han">路旁土</span> Roadside Earth). The two are set in tune by the same 生 / 克 / 比和 logic.</p></div>
+      </div>
+      <p class="how-note">A note on honesty: only the <b>day pillar</b> is exact to the day. The year branch turns at the true solar term <span style="font-family:var(--serif)">立春</span>, approximated here by a fixed Feb 4 (near that boundary the animal may shift). Birth <b>time</b> is recorded but does not change these three readings — 生肖, 五行, and 纳音 all read the year and day, which the date alone fixes; the hour would only refine a fuller 八字. The compatibility <b>score</b> is one studio's weighting of these classical tests (生肖 45 · 五行 30 · 纳音 25) — a considered heuristic, offered for reflection, not an oracle.</p>
+    </section>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <svg class="fknot" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M13 13c0-5 3.5-8 7-8s7 3 7 8"/><path d="M13 13v7m14-7v7"/>
+        <path d="M20 20l6 9H14z" stroke-linejoin="round"/><circle cx="20" cy="33" r="3.5" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="fmark">紅線相牽</div>
+      <div class="fsub">合婚 · Two Charts in Conversation</div>
+      <a class="flink" href="/">↑ Return to the gallery · XAVIER FABLE ×65</a>
+      <div class="cred">A real 合婚 engine, cast in code — zodiac 生肖, five-element 五行, and 纳音 harmony, weighed side by side.<br>Bound with the red thread at the Red-Thread Desk 紅線堂 · MMXXVI. For reflection, not a verdict.</div>
+    </div>
+  </footer>
+
+  <noscript><div class="noscript">The two charts are read in your browser from the dates you enter. Please enable JavaScript to cast the 合婚 ledger.</div></noscript>
+
+<script>
+"use strict";
+/* ============================================================
+   合婚 · TWO CHARTS IN CONVERSATION — real compatibility engine
+   Day pillar (JDN, offset 49) calibrated & verified. Branch
+   relationship tables (六合/三合/冲/刑/害/破), 五行 生克, and
+   六十甲子纳音 — see PASSES.md for the verification.
+   ============================================================ */
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mod=(n,m)=>((n%m)+m)%m;
+
+/* ---- tables ---- */
+const STEMS=[
+  {c:'甲',py:'jiǎ',el:'wood',yin:false},{c:'乙',py:'yǐ',el:'wood',yin:true},
+  {c:'丙',py:'bǐng',el:'fire',yin:false},{c:'丁',py:'dīng',el:'fire',yin:true},
+  {c:'戊',py:'wù',el:'earth',yin:false},{c:'己',py:'jǐ',el:'earth',yin:true},
+  {c:'庚',py:'gēng',el:'metal',yin:false},{c:'辛',py:'xīn',el:'metal',yin:true},
+  {c:'壬',py:'rén',el:'water',yin:false},{c:'癸',py:'guǐ',el:'water',yin:true}];
+const BRANCHES=[
+  {c:'子',py:'zǐ',el:'water',an:'Rat',emoji:'🐀'},{c:'丑',py:'chǒu',el:'earth',an:'Ox',emoji:'🐂'},
+  {c:'寅',py:'yín',el:'wood',an:'Tiger',emoji:'🐅'},{c:'卯',py:'mǎo',el:'wood',an:'Rabbit',emoji:'🐇'},
+  {c:'辰',py:'chén',el:'earth',an:'Dragon',emoji:'🐉'},{c:'巳',py:'sì',el:'fire',an:'Snake',emoji:'🐍'},
+  {c:'午',py:'wǔ',el:'fire',an:'Horse',emoji:'🐎'},{c:'未',py:'wèi',el:'earth',an:'Goat',emoji:'🐐'},
+  {c:'申',py:'shēn',el:'metal',an:'Monkey',emoji:'🐒'},{c:'酉',py:'yǒu',el:'metal',an:'Rooster',emoji:'🐓'},
+  {c:'戌',py:'xū',el:'earth',an:'Dog',emoji:'🐕'},{c:'亥',py:'hài',el:'water',an:'Pig',emoji:'🐖'}];
+const EL={
+  wood:{c:'木',en:'Wood',hex:'#3d6b46'}, fire:{c:'火',en:'Fire',hex:'#b23a28'},
+  earth:{c:'土',en:'Earth',hex:'#8a6410'}, metal:{c:'金',en:'Metal',hex:'#5a616a'},
+  water:{c:'水',en:'Water',hex:'#27506a'}};
+const ELORDER=['wood','fire','earth','metal','water'];
+const GEN={wood:'fire',fire:'earth',earth:'metal',metal:'water',water:'wood'};
+const CTRL={wood:'earth',earth:'water',water:'fire',fire:'metal',metal:'wood'};
+
+/* six-harmony (六合) transforms; sun-moon for 午未 */
+const key=(a,b)=>a<b?a+'-'+b:b+'-'+a;
+const LIUHE={[key(0,1)]:'earth',[key(2,11)]:'wood',[key(3,10)]:'fire',[key(4,9)]:'metal',[key(5,8)]:'water',[key(6,7)]:'sunmoon'};
+const TRINES=[[8,0,4,'water'],[11,3,7,'wood'],[2,6,10,'fire'],[5,9,1,'metal']];
+const SANHE={}; TRINES.forEach(([a,b,c,el])=>{[[a,b],[a,c],[b,c]].forEach(([x,y])=>SANHE[key(x,y)]={el,group:[a,b,c]});});
+const CHONG=new Set([key(0,6),key(1,7),key(2,8),key(3,9),key(4,10),key(5,11)]);
+const XING=new Set([key(0,3),key(2,5),key(5,8),key(2,8),key(1,10),key(10,7),key(1,7)]);
+const SELFXING=new Set([4,6,9,11]);
+const HAI=new Set([key(0,7),key(1,6),key(2,5),key(3,4),key(8,11),key(9,10)]);
+const PO=new Set([key(0,9),key(3,6),key(5,8),key(2,11),key(1,4),key(7,10)]);
+
+/* 六十甲子纳音 — 30 sound-elements (name, en, element) */
+const NAYIN=[
+  ['海中金','Gold in the Sea','metal'],['炉中火','Fire in the Furnace','fire'],['大林木','Timber of the Great Forest','wood'],['路旁土','Earth by the Roadside','earth'],['剑锋金','Metal of the Sword-Edge','metal'],
+  ['山头火','Fire on the Mountaintop','fire'],['涧下水','Water in the Ravine','water'],['城头土','Earth of the City Wall','earth'],['白蜡金','Metal of the White Wax','metal'],['杨柳木','Wood of the Willow','wood'],
+  ['泉中水','Water in the Spring','water'],['屋上土','Earth on the Rooftop','earth'],['霹雳火','Fire of the Thunderbolt','fire'],['松柏木','Wood of Pine and Cypress','wood'],['长流水','Ever-Flowing Water','water'],
+  ['沙中金','Gold in the Sand','metal'],['山下火','Fire at the Mountain-Foot','fire'],['平地木','Wood of the Open Plain','wood'],['壁上土','Earth on the Wall','earth'],['金箔金','Gold of the Gilded Leaf','metal'],
+  ['覆灯火','Fire of the Sheltered Lamp','fire'],['天河水','Water of the Milky Way','water'],['大驿土','Earth of the Great Post-Road','earth'],['钗钏金','Gold of the Hairpin','metal'],['桑柘木','Wood of the Mulberry','wood'],
+  ['大溪水','Water of the Great Stream','water'],['沙中土','Earth in the Sand','earth'],['天上火','Fire of the Heavens','fire'],['石榴木','Wood of the Pomegranate','wood'],['大海水','Water of the Great Sea','water']];
+function nayinOf(gzIndex){const p=NAYIN[Math.floor(gzIndex/2)];return {zh:p[0],en:p[1],el:p[2]};}
+
+/* ---- core computation ---- */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;
+  return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function yearGZ(y,m,d){let yr=y; if(m<2||(m===2&&d<4))yr=y-1; const i=mod(yr-4,60); return {i,stem:i%10,branch:i%12,solarYear:yr};}
+function dayGZ(y,m,d){const i=mod(jdn(y,m,d)+49,60); return {i,stem:i%10,branch:i%12};}
+
+/* ---- branch relationship ---- */
+function branchRel(a,b){
+  if(a===b) return SELFXING.has(a)?{type:'zixing'}:{type:'bihe'};
+  const k=key(a,b);
+  if(LIUHE[k]) return {type:'liuhe',el:LIUHE[k]};
+  if(SANHE[k]) return {type:'sanhe',el:SANHE[k].el,group:SANHE[k].group};
+  if(CHONG.has(k)) return {type:'chong'};
+  const tags=[]; if(XING.has(k))tags.push('xing'); if(HAI.has(k))tags.push('hai'); if(PO.has(k))tags.push('po');
+  if(tags.length) return {type:tags[0],also:tags.slice(1)};
+  return {type:'ping'};
+}
+function elRel(a,b){ if(a===b)return 'bihe'; if(GEN[a]===b||GEN[b]===a)return 'sheng'; if(CTRL[a]===b||CTRL[b]===a)return 'ke'; return 'none';}
+
+/* element tally from year+day pillars (4 chars) */
+function elTally(P){
+  const c={wood:0,fire:0,earth:0,metal:0,water:0};
+  c[STEMS[P.year.stem].el]++; c[BRANCHES[P.year.branch].el]++;
+  c[STEMS[P.day.stem].el]++;  c[BRANCHES[P.day.branch].el]++;
+  return c;
+}
+
+/* ---- scoring ---- */
+const SCORE_BRANCH={liuhe:45,sanhe:40,bihe:30,ping:27,po:22,hai:16,xing:12,zixing:14,chong:8};
+const SCORE_EL={sheng:30,bihe:24,ke:14,none:20};
+const SCORE_NY={sheng:25,bihe:20,ke:12,none:18};
+
+/* ============================================================
+   BUILD A PAIRING
+   ============================================================ */
+function build(A,B){
+  const yA=yearGZ(A.y,A.m,A.d), dA=dayGZ(A.y,A.m,A.d);
+  const yB=yearGZ(B.y,B.m,B.d), dB=dayGZ(B.y,B.m,B.d);
+  const PA={year:yA,day:dA}, PB={year:yB,day:dB};
+  const br=branchRel(yA.branch,yB.branch);
+  const dmA=STEMS[dA.stem].el, dmB=STEMS[dB.stem].el;
+  const er=elRel(dmA,dmB);
+  const nyA=nayinOf(yA.i), nyB=nayinOf(yB.i);
+  const nr=elRel(nyA.el,nyB.el);
+  const tA=elTally(PA), tB=elTally(PB);
+  const score=SCORE_BRANCH[br.type]+SCORE_EL[er]+SCORE_NY[nr];
+  const grade = score>=74?'up' : score>=52?'mid' : 'low';
+  return {A,B,PA,PB,yA,dA,yB,dB,br,dmA,dmB,er,nyA,nyB,nr,tA,tB,score,grade};
+}
+
+/* ---- relationship copy ---- */
+const REL={
+  liuhe:{zh:'六合',en:'Secret Friends',con:'合',cls:'good',
+    line:(a,b,el)=>`Your two branches — <span class="cin">${a}</span> and <span class="jade">${b}</span> — stand in <b>六合</b>, the "secret harmony." Of the twelve, only six such pairs exist, and yours is one: ${el} — a quiet, private accord that pulls the two of you toward each other without needing to be explained.`},
+  sanhe:{zh:'三合',en:'Trine Allies',con:'合',cls:'good',
+    line:(a,b,el)=>`<span class="cin">${a}</span> and <span class="jade">${b}</span> belong to the same <b>三合</b> trine — the ${el} circle. Trine allies share an instinct and a direction; you tend to want the same things at the same time, and to make each other's plans feel possible.`},
+  bihe:{zh:'比和',en:'Same Sign',con:'和',cls:'neu',
+    line:(a,b)=>`You share the very same sign — <span class="cin">${a}</span> and <span class="jade">${b}</span> both. Same-sign pairs understand each other almost without words, moving to the same rhythm; the only care is that two of one temperament can double a strength — and a blind spot — rather than balance it.`},
+  ping:{zh:'平',en:'Neutral',con:'平',cls:'neu',
+    line:(a,b)=>`Between <span class="cin">${a}</span> and <span class="jade">${b}</span> the zodiac keeps its counsel — neither allied nor at odds. This is the freest ground of all: no inherited pull, no inherited friction, so what grows between you is written by the two of you and read from the elements below, not handed down by the animals.`},
+  chong:{zh:'相冲',en:'The Clash',con:'冲',cls:'bad',
+    line:(a,b)=>`<span class="cin">${a}</span> and <span class="jade">${b}</span> sit exactly opposite on the wheel — the <b>相冲</b> clash, six signs apart. Opposition is not enmity; it is <b>tension</b>, the charge between two poles. Clash pairs often feel an instant magnetism and a lifelong project: to turn the pull of opposites into balance rather than a tug-of-war.`},
+  xing:{zh:'相刑',en:'The Punishment',con:'刑',cls:'bad',
+    line:(a,b)=>`<span class="cin">${a}</span> and <span class="jade">${b}</span> fall under <b>相刑</b> — the "punishment," a friction of pride and timing more than of the heart. It reads less as conflict than as the two of you grinding on the same sore point; named and watched, it wears smooth.`},
+  hai:{zh:'相害',en:'The Harm',con:'害',cls:'bad',
+    line:(a,b)=>`<span class="cin">${a}</span> and <span class="jade">${b}</span> stand in <b>相害</b> — the "harm," a subtler grain that can leave one feeling unseen by the other. It asks for plain speech: what looks like slight is usually only two people reading the same moment in two different keys.`},
+  po:{zh:'相破',en:'The Break',con:'破',cls:'neu',
+    line:(a,b)=>`<span class="cin">${a}</span> and <span class="jade">${b}</span> carry a light <b>相破</b> — the "break," the mildest of the frictions. It nicks at small things — plans, tidiness, follow-through — and rarely touches the foundation; the elements below matter far more here.`},
+  zixing:{zh:'自刑',en:'Self-Punishment',con:'刑',cls:'neu',
+    line:(a,b)=>`You share a sign that carries <b>自刑</b> — the "self-punishment," a doubling of one intense temperament. Two of a kind here can amplify a shared restlessness; the remedy is simply not to mirror each other's worst weather on the same day.`}
+};
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function elSwatch(el){return `<span class="sw" style="background:${EL[el].hex}"></span>`;}
+
+function renderCard(node,side,P,ny,dm){
+  const yb=BRANCHES[P.year.branch], ys=STEMS[P.year.stem];
+  const ds=STEMS[P.day.stem];
+  const dme=EL[dm];
+  node.innerHTML=`<span class="corner"></span>
+    <div class="p-top">
+      <div class="p-label"><span class="zh">${side==='a'?'甲':'乙'}</span>${side==='a'?'Person A':'Person B'}</div>
+      <div class="p-date">${side==='a'?document.getElementById('da').value:document.getElementById('db').value}</div>
+    </div>
+    <div class="zodiac">
+      <div class="yr-gz">${ys.c}${yb.c} <span class="en">${P.year.solarYear} · Year Pillar</span></div>
+      <span class="animal-glyph">${yb.c}</span>
+      <div class="animal-en">${yb.an}</div>
+      <div class="animal-py">生肖 ${yb.py} · ${EL[yb.el].c} ${EL[yb.el].en}</div>
+    </div>
+    <div class="p-stats">
+      <div class="p-stat"><span class="k">日主 Day Master</span><span class="v"><span class="sw" style="background:${dme.hex}"></span><span class="zh" style="color:${dme.hex}">${ds.c}</span><span class="en">${ds.yin?'Yin':'Yang'} ${dme.en}</span></span></div>
+      <div class="p-stat"><span class="k">纳音 Sound-Element</span><span class="v"><span class="zh">${ny.zh}</span><span class="en">${EL[ny.el].c} ${EL[ny.el].en}</span></span></div>
+    </div>`;
+}
+
+function renderRail(node,R){
+  // central seal reflects the SYNTHESIZED verdict (合 / 緣 / 冲);
+  // the small tag below names the specific zodiac branch bond.
+  const t=REL[R.br.type];
+  const verdict = R.grade==='up' ? {g:'合',cls:'he',word:'Harmony'}
+               : R.grade==='mid' ? {g:'緣',cls:'yuan',word:'Affinity'}
+               : {g:'冲',cls:'chong',word:'Friction'};
+  node.innerHTML=`
+    <div class="thread ${RM?'':'draw'}"></div>
+    <div class="seal ${verdict.cls}" title="${verdict.word}"><span class="g">${verdict.g}</span><span class="t">${verdict.word}</span></div>
+    <div class="rel-tag"><span class="zh">${t.zh}</span> ${t.en}</div>`;
+}
+
+function renderVerdict(node,R){
+  const gradeMap={up:{zh:'上',en:'Upper',hex:'var(--jade)',word:'a warm, well-met pairing'},
+                  mid:{zh:'中',en:'Middle',hex:'var(--brass)',word:'a workable pairing with real texture'},
+                  low:{zh:'下',en:'Lower',hex:'var(--cin)',word:'a pairing that asks for tending'}};
+  const g=gradeMap[R.grade];
+  const C=2*Math.PI*54; const off=C*(1-R.score/100);
+  const arcColor = R.grade==='up'?'#2F6D5E':R.grade==='mid'?'#9A7B3F':'#AC3E2C';
+  const head = R.grade==='up'
+      ? 'The red thread pulls true.'
+      : R.grade==='mid'
+      ? 'A thread worth the tying.'
+      : 'A thread that asks for care.';
+  node.innerHTML=`
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 128 128" role="img" aria-label="Compatibility score ${R.score} of 100">
+        <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(42,33,24,.1)" stroke-width="9"/>
+        <circle class="gauge-arc" cx="64" cy="64" r="54" fill="none" stroke="${arcColor}" stroke-width="9" stroke-linecap="round"
+          stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${RM?off.toFixed(1):C.toFixed(1)}"
+          style="transition:stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1)" data-off="${off.toFixed(1)}"/>
+      </svg>
+      <div class="gauge-center"><span class="num" id="scoreNum">${RM?R.score:0}</span><span class="out">/ 100 · 合婚</span></div>
+    </div>
+    <div class="verdict-txt">
+      <div class="grade"><span class="badge" style="background:${g.hex}">${g.zh}</span>
+        <span class="lab">Grade <b>${g.zh} · ${g.en}</b> · ${R.score} / 100</span></div>
+      <h2>${head}</h2>
+      <p>By the ledger's weighting this reads as <b>${g.word}</b> — the zodiac <span class="han">${REL[R.br.type].zh}</span>, the day-masters in <span class="han">${R.er==='sheng'?'相生':R.er==='bihe'?'比和':R.er==='ke'?'相克':'—'}</span>, and the 纳音 in <span class="han">${R.nr==='sheng'?'相生':R.nr==='bihe'?'比和':R.nr==='ke'?'相克':'—'}</span>. Read on for what that means, and where it asks for care.</p>
+    </div>`;
+  // animate arc + count
+  if(!RM){
+    const arc=node.querySelector('.gauge-arc'); const num=document.getElementById('scoreNum');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ arc.style.strokeDashoffset=arc.dataset.off; }));
+    const dur=1400, t0=performance.now();
+    const step=(t)=>{ const k=Math.min(1,(t-t0)/dur); const e=1-Math.pow(1-k,3);
+      num.textContent=Math.round(R.score*e); if(k<1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+}
+
+/* ---- 生肖合婚 section ---- */
+function renderZodiac(R){
+  const ba=BRANCHES[R.yA.branch], bb=BRANCHES[R.yB.branch];
+  const t=REL[R.br.type];
+  document.getElementById('zHead').innerHTML=`
+    <div class="an-glyph a"><span class="hz">${ba.c}</span><span class="sub">${ba.an} · A</span></div>
+    <div class="an-rel"><div class="con ${t.cls}">${t.con}</div><div class="name">${t.zh} · ${t.en}</div></div>
+    <div class="an-glyph b"><span class="hz">${bb.c}</span><span class="sub">${bb.an} · B</span></div>`;
+
+  // pair name (e.g. 子丑六合) + element note
+  let pairPhrase='';
+  if(R.br.type==='liuhe'){const em=R.br.el; const emZh=em==='sunmoon'?'太陽太陰 (sun &amp; moon)':`化${EL[em].c} ${EL[em].en}`;
+    pairPhrase=`<span class="han">${ba.c}${bb.c}六合</span> — ${emZh}.`;}
+  else if(R.br.type==='sanhe'){pairPhrase=`Both belong to the <span class="han">${R.br.group.map(i=>BRANCHES[i].c).join('')}三合</span> — the ${EL[R.br.el].en} trine <span class="han">${EL[R.br.el].c}局</span>. You hold two of its three corners.`;}
+  else if(R.br.type==='chong'){pairPhrase=`<span class="han">${ba.c}${bb.c}相冲</span> — the six-position clash.`;}
+  else if(R.br.type==='xing'){pairPhrase=`<span class="han">${ba.c}${bb.c}相刑</span>${R.br.also&&R.br.also.length?` (also <span class="han">相${R.br.also[0]==='hai'?'害':'破'}</span>)`:''}.`;}
+  else if(R.br.type==='hai'){pairPhrase=`<span class="han">${ba.c}${bb.c}相害</span>${R.br.also&&R.br.also.length?` (also <span class="han">相破</span>)`:''}.`;}
+  else if(R.br.type==='po'){pairPhrase=`<span class="han">${ba.c}${bb.c}相破</span> — the mildest friction.`;}
+  else if(R.br.type==='bihe'){pairPhrase=`Both <span class="han">${ba.c}</span> — the same sign, twice.`;}
+  else if(R.br.type==='zixing'){pairPhrase=`Both <span class="han">${ba.c}</span> — a sign that carries <span class="han">自刑</span>.`;}
+  else pairPhrase=`Between <span class="han">${ba.c}</span> and <span class="han">${bb.c}</span>, none of the six named bonds or four frictions applies.`;
+
+  document.getElementById('zBody').innerHTML=`
+    <p>${t.line(ba.c+' '+ba.an, bb.c+' '+bb.an, R.br.el&&R.br.el!=='sunmoon'?EL[R.br.el].en:'')}</p>
+    <p>${pairPhrase} The zodiac is the first thing 月老 weighs, but never the last — the elements and the sound-element below either confirm what the animals say, or gently overrule it.</p>
+    ${renderRelMap(R.yA.branch,R.yB.branch,R.br)}`;
+}
+function renderRelMap(a,b,br){
+  const chips=[];
+  const push=(zh,en,on,good)=>chips.push(`<span class="rchip${on?' on':''}${on&&good?' good':''}"><span class="zh">${zh}</span>${en}</span>`);
+  const isLiuhe=!!LIUHE[key(a,b)], isSanhe=!!SANHE[key(a,b)];
+  const isChong=CHONG.has(key(a,b)), isXing=XING.has(key(a,b))||(a===b&&SELFXING.has(a));
+  const isHai=HAI.has(key(a,b)), isPo=PO.has(key(a,b));
+  push('六合','Harmony',isLiuhe,true); push('三合','Trine',isSanhe,true);
+  push('相冲','Clash',isChong,false); push('相刑','Punish',isXing,false);
+  push('相害','Harm',isHai,false); push('相破','Break',isPo,false);
+  return `<div class="relmap">${chips.join('')}</div>`;
+}
+
+/* ---- 五行合婚 section ---- */
+function renderWuxing(R){
+  const ea=EL[R.dmA], eb=EL[R.dmB];
+  const conMap={sheng:{con:'生',cls:'good',zh:'相生',en:'One Feeds the Other'},
+                bihe:{con:'和',cls:'neu',zh:'比和',en:'Alike'},
+                ke:{con:'克',cls:'bad',zh:'相克',en:'One Checks the Other'},
+                none:{con:'—',cls:'neu',zh:'—',en:'Indirect'}};
+  const cm=conMap[R.er];
+  document.getElementById('wHead').innerHTML=`
+    <div class="an-glyph a"><span class="hz" style="color:${ea.hex}">${ea.c}</span><span class="sub">${ea.en} · A 日主</span></div>
+    <div class="an-rel"><div class="con ${cm.cls}">${cm.con}</div><div class="name">${cm.zh} · ${cm.en}</div></div>
+    <div class="an-glyph b"><span class="hz" style="color:${eb.hex}">${eb.c}</span><span class="sub">${eb.en} · B 日主</span></div>`;
+
+  // day-master relationship prose
+  let dmLine;
+  if(R.er==='bihe') dmLine=`Both of you meet the world as <b>${ea.en}</b> <span class="han">${ea.c}</span>. Two of one element move to the same instinct — an easy, wordless understanding — though it can double a tendency rather than temper it.`;
+  else if(R.er==='sheng'){
+    const aFeeds = GEN[R.dmA]===R.dmB;
+    const feeder=aFeeds?['A','B',ea.en,eb.en]:['B','A',eb.en,ea.en];
+    dmLine=`Your day-masters stand in <b class="jade">相生</b> — ${feeder[2]} <span class="han">生</span> ${feeder[3]}: <b>${feeder[0]==='A'?'A':'B'}'s ${feeder[2]}</b> naturally <b>feeds</b> <b>${feeder[1]==='A'?"A":"B"}'s ${feeder[3]}</b>. This is the kindest of the element bonds — one of you tends to nourish exactly what the other is trying to grow.`;
+  } else if(R.er==='ke'){
+    const aCtrlB = CTRL[R.dmA]===R.dmB;
+    const c=aCtrlB?[ea.en,eb.en]:[eb.en,ea.en];
+    dmLine=`Your day-masters stand in <b class="cin">相克</b> — ${c[0]} <span class="han">克</span> ${c[1]}: one temperament <b>checks</b> the other. Control is not cruelty — it is the pressure that can sharpen and steady, or, unminded, wear. Well-held, a 克 keeps a pairing honest.`;
+  } else dmLine=`Your day-masters — ${ea.en} and ${eb.en} — neither feed nor check each other directly; they simply keep their own counsel, leaving the balance to the fuller element mix below.`;
+
+  // complementarity from tallies
+  const lacksA=ELORDER.filter(el=>R.tA[el]===0), lacksB=ELORDER.filter(el=>R.tB[el]===0);
+  const bSuppliesA=lacksA.filter(el=>R.tB[el]>0), aSuppliesB=lacksB.filter(el=>R.tA[el]>0);
+  let compLine;
+  const nm=arr=>arr.map(el=>`<span class="han">${EL[el].c}</span> ${EL[el].en}`).join(' and ');
+  if(bSuppliesA.length&&aSuppliesB.length)
+    compLine=`And they complete each other's gaps: A's chart runs short on ${nm(lacksA)}, which B carries; B runs short on ${nm(lacksB)}, which A carries. <b>Each supplies what the other lacks</b> — the old ideal of a 合婚 match.`;
+  else if(bSuppliesA.length)
+    compLine=`Where A's chart runs short on ${nm(bSuppliesA)}, B carries it — B tends to supply what A is missing.`;
+  else if(aSuppliesB.length)
+    compLine=`Where B's chart runs short on ${nm(aSuppliesB)}, A carries it — A tends to supply what B is missing.`;
+  else if(lacksA.length||lacksB.length)
+    compLine=`Each of you leans on the same few elements, so you share both strengths and blind spots — a similar palette rather than a complementary one.`;
+  else
+    compLine=`Between you, all five elements are present — a full, self-supplying palette with no obvious gap for the other to fill.`;
+
+  document.getElementById('wBody').innerHTML=`
+    <p>${dmLine}</p>
+    <p>${compLine} Below, each chart's four characters (year &amp; day pillars) are tallied by element — the taller the bar, the more that element colours the person.</p>
+    <div class="mixgrid">
+      ${mixCol('a','A',R.tA,R.tB)}
+      ${mixCol('b','B',R.tB,R.tA)}
+    </div>`;
+}
+function mixCol(side,label,tally,other){
+  const max=Math.max(1,...ELORDER.map(el=>tally[el]));
+  const rows=ELORDER.map(el=>{const e=EL[el];const c=tally[el];const lack=c===0;
+    const supplied = lack && other[el]>0;
+    return `<div class="ebar${lack?' lack':''}">
+      <div class="nm"><span class="zh" style="color:${e.hex}">${e.c}</span><span class="en">${e.en}</span></div>
+      <div class="track"><div class="fill" data-w="${(c/max*100).toFixed(0)}" style="background:${e.hex}"></div></div>
+      <div class="n">${c}${supplied?'<span class="tag">← partner</span>':''}</div>
+    </div>`;}).join('');
+  return `<div class="mix ${side}"><h4><span class="dot"></span>Person ${label} · 五行 mix</h4>${rows}</div>`;
+}
+
+/* ---- 纳音合婚 section ---- */
+function renderNayin(R){
+  const ea=EL[R.nyA.el], eb=EL[R.nyB.el];
+  const conMap={sheng:{con:'生',cls:'good',zh:'相生',en:'In Tune'},
+                bihe:{con:'和',cls:'neu',zh:'比和',en:'Same Note'},
+                ke:{con:'克',cls:'bad',zh:'相克',en:'Cross-Grained'},
+                none:{con:'—',cls:'neu',zh:'—',en:'Indirect'}};
+  const cm=conMap[R.nr];
+  document.getElementById('nHead').innerHTML=`
+    <div class="an-glyph a"><span class="hz" style="color:${ea.hex}">${ea.c}</span><span class="sub">A · 纳音</span></div>
+    <div class="an-rel"><div class="con ${cm.cls}">${cm.con}</div><div class="name">${cm.zh} · ${cm.en}</div></div>
+    <div class="an-glyph b"><span class="hz" style="color:${eb.hex}">${eb.c}</span><span class="sub">B · 纳音</span></div>`;
+
+  let line;
+  if(R.nr==='sheng'){const aFeeds=GEN[R.nyA.el]===R.nyB.el; const f=aFeeds?[R.nyA,R.nyB]:[R.nyB,R.nyA];
+    line=`The two sound-elements are <b class="jade">相生</b> — <span class="han">${f[0].zh}</span> feeds <span class="han">${f[1].zh}</span>. In the 纳音 reading, the older and subtlest of the three, your birth-years' hidden natures are already in tune: the note one of you sounds is the note the other was waiting to hear.`;}
+  else if(R.nr==='bihe') line=`Both years ring the same 纳音 element — <span class="han">${ea.c} ${ea.en}</span>. Same-note pairs share a deep, quiet resonance; the caution is only that two of one substance can lack a third thing to strike against.`;
+  else if(R.nr==='ke') line=`The two sound-elements are <b class="cin">相克</b> — ${ea.en} and ${eb.en} run cross-grained. In practice the 纳音 clash is the gentlest of the three tests, and the classical texts weigh it least; a strong 生肖 or 五行 accord easily carries it.`;
+  else line=`The two sound-elements neither feed nor check each other — they simply coexist, adding neither lift nor drag to the pairing.`;
+
+  document.getElementById('nBody').innerHTML=`
+    <p>Every birth year carries a <b>纳音</b> — a "sound-element," one of thirty poetic images assigned across the sixty-year <span class="han">甲子</span> cycle. It reads the year at its most figurative, and matchmakers set the two in tune.</p>
+    <p>${line}</p>
+    <div class="nayin-plates">
+      <div class="nyplate a"><div class="who">Person A · ${R.yA.solarYear}</div><div class="ny-zh">${R.nyA.zh}</div><div class="ny-en">${R.nyA.en}</div><div class="ny-el">${elSwatch(R.nyA.el)} ${ea.c} ${ea.en}</div></div>
+      <div class="nyplate b"><div class="who">Person B · ${R.yB.solarYear}</div><div class="ny-zh">${R.nyB.zh}</div><div class="ny-en">${R.nyB.en}</div><div class="ny-el">${elSwatch(R.nyB.el)} ${eb.c} ${eb.en}</div></div>
+    </div>`;
+}
+
+/* ---- 合斷 synthesis ---- */
+function renderSynth(R){
+  const ba=BRANCHES[R.yA.branch], bb=BRANCHES[R.yB.branch];
+  const t=REL[R.br.type];
+  const gradeWord=R.grade==='up'?'well-met':R.grade==='mid'?'workable and real':'tender, and worth tending';
+  // count harmonies vs frictions among the three axes
+  const axes=[
+    ['zodiac', ['liuhe','sanhe','bihe','ping'].includes(R.br.type) ? (['liuhe','sanhe'].includes(R.br.type)?'good':'neu') : 'bad'],
+    ['element', R.er==='sheng'?'good':R.er==='ke'?'bad':'neu'],
+    ['sound', R.nr==='sheng'?'good':R.nr==='ke'?'bad':'neu']
+  ];
+  const goods=axes.filter(a=>a[1]==='good').length, bads=axes.filter(a=>a[1]==='bad').length;
+  let openLine;
+  if(goods>=2&&bads===0) openLine=`Three tests, and the ledger reads warm on nearly all of them.`;
+  else if(goods>=1&&bads>=1) openLine=`Three tests, and they don't all agree — which is exactly what makes this pairing interesting.`;
+  else if(bads>=2) openLine=`Three tests, and more than one asks for care — a pairing that rewards attention.`;
+  else openLine=`Three tests, and the ledger reads even — quiet ground, written mostly by the two of you.`;
+
+  document.getElementById('synthRead').innerHTML=`
+    <p>${openLine} Between <span class="cin">${ba.c} ${ba.an}</span> and <span class="jade">${bb.c} ${bb.an}</span>, the zodiac reads <span class="han">${t.zh}</span>; the day-masters — ${EL[R.dmA].en} and ${EL[R.dmB].en} — stand in <span class="han">${R.er==='sheng'?'相生':R.er==='bihe'?'比和':R.er==='ke'?'相克':'no direct relation'}</span>; and the two 纳音 ring <span class="han">${R.nr==='sheng'?'相生':R.nr==='bihe'?'比和':R.nr==='ke'?'相克':'apart'}</span>.</p>
+    <p>Taken together the studio scores this <b>${R.score} of 100</b> — a <b>${gradeWord}</b> match. But a number is only a way of holding three readings in one hand; the shape of a pairing lives in the particulars beside this, not in the total.</p>
+    <p>Where the elements answer each other, the animals' verdict softens; where the animals clash, a generous element flow can carry it. That is the whole art of <span class="han">合婚</span>: not one test, but <b>three held together</b>, and none of them the last word.</p>`;
+
+  // strengths & frictions bullets
+  const str=[], fri=[];
+  if(R.br.type==='liuhe') str.push(`A <span class="han">六合</span> zodiac bond — the rare "secret harmony," a private pull toward each other.`);
+  if(R.br.type==='sanhe') str.push(`<span class="han">三合</span> trine allies — you share an instinct and tend to want the same things.`);
+  if(R.br.type==='bihe') str.push(`The same sign — an easy, wordless understanding of each other's rhythm.`);
+  if(R.er==='sheng') str.push(`Day-masters in <span class="han">相生</span> — one of you nourishes what the other is growing.`);
+  if(R.er==='bihe') str.push(`Day-masters alike — you meet the world with the same instinct.`);
+  if(R.nr==='sheng') str.push(`<span class="han">纳音</span> in tune — your birth-years' hidden natures already resonate.`);
+  if(R.nr==='bihe') str.push(`The same <span class="han">纳音</span> note — a deep, quiet resonance.`);
+  // complementarity
+  const lacksA=ELORDER.filter(el=>R.tA[el]===0), lacksB=ELORDER.filter(el=>R.tB[el]===0);
+  const bSuppliesA=lacksA.filter(el=>R.tB[el]>0), aSuppliesB=lacksB.filter(el=>R.tA[el]>0);
+  if(bSuppliesA.length&&aSuppliesB.length) str.push(`<b>Complementary elements</b> — each of you carries what the other's chart is missing.`);
+
+  if(R.br.type==='chong') fri.push(`A <span class="han">相冲</span> clash — real magnetism, but a standing invitation to a tug-of-war. Name it, and turn opposition into balance.`);
+  if(R.br.type==='xing') fri.push(`A <span class="han">相刑</span> — a friction of pride and timing that grinds on one sore point. Watched, it wears smooth.`);
+  if(R.br.type==='hai') fri.push(`A <span class="han">相害</span> — a subtle grain where one can feel unseen. It asks for plain speech.`);
+  if(R.br.type==='po') fri.push(`A light <span class="han">相破</span> — small nicks in plans and follow-through, rarely the foundation.`);
+  if(R.br.type==='zixing') fri.push(`A shared <span class="han">自刑</span> — two of one intense temperament; don't mirror each other's worst weather.`);
+  if(R.er==='ke') fri.push(`Day-masters in <span class="han">相克</span> — one temperament checks the other. Pressure that sharpens, or wears, depending on the day.`);
+  if(R.nr==='ke') fri.push(`<span class="han">纳音</span> cross-grained — the gentlest of the three frictions, easily carried by the rest.`);
+  if(R.br.type==='ping'&&!fri.length) fri.push(`A <span class="han">平</span> zodiac — neither help nor hindrance; what grows here is unusually up to you.`);
+  if(!str.length) str.push(`Whatever grows between you is unusually <b>unwritten</b> — few inherited pulls, so more of it is yours to author.`);
+  if(!fri.length) fri.push(`No sharp friction surfaces in the three tests — the gentle caution of an easy match is simply <b>complacency</b>. Keep striking new notes.`);
+
+  document.getElementById('strList').innerHTML=str.map(s=>`<li>${s}</li>`).join('');
+  document.getElementById('friList').innerHTML=fri.map(s=>`<li>${s}</li>`).join('');
+}
+
+/* ============================================================
+   CAST
+   ============================================================ */
+let castCount=0;
+function cast(isExample){
+  const va=document.getElementById('da').value, vb=document.getElementById('db').value;
+  if(!va||!vb) return;
+  const [ay,am,ad]=va.split('-').map(Number), [by,bm,bd]=vb.split('-').map(Number);
+  if(!ay||!am||!ad||!by||!bm||!bd) return;
+  const R=build({y:ay,m:am,d:ad},{y:by,m:bm,d:bd});
+
+  renderCard(document.getElementById('cardA'),'a',R.PA,R.nyA,R.dmA);
+  renderCard(document.getElementById('cardB'),'b',R.PB,R.nyB,R.dmB);
+  renderRail(document.getElementById('rail'),R);
+  renderVerdict(document.getElementById('verdict'),R);
+  renderZodiac(R);
+  renderWuxing(R);
+  renderNayin(R);
+  renderSynth(R);
+
+  // entrance for cards (first cast) + bar fills
+  const cards=[document.getElementById('cardA'),document.getElementById('cardB')];
+  if(RM){ cards.forEach(c=>c.classList.add('in')); }
+  else { cards.forEach((c,i)=>{ c.style.transitionDelay=(i*0.12)+'s';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.add('in'))); }); }
+  const fills=document.querySelectorAll('.ebar .fill');
+  if(RM){ fills.forEach(f=>f.style.width=f.dataset.w+'%'); }
+  else { requestAnimationFrame(()=>requestAnimationFrame(()=>fills.forEach((f,i)=>{ f.style.transitionDelay=(0.2+i*0.05)+'s'; f.style.width=f.dataset.w+'%'; }))); }
+
+  document.getElementById('noteEx').classList.toggle('hide', !isExample);
+  castCount++;
+}
+
+/* ---- wiring ---- */
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();cast(false);});
+['da','db','ta','tb'].forEach(id=>document.getElementById(id).addEventListener('change',()=>cast(false)));
+
+/* ---- init from query (?a=YYYY-MM-DD&b=YYYY-MM-DD) ---- */
+(function init(){
+  const q=new URLSearchParams(location.search);
+  const qa=q.get('a'), qb=q.get('b'); let isExample=true;
+  if(qa && /^\d{4}-\d{2}-\d{2}$/.test(qa)){ document.getElementById('da').value=qa; isExample=false; }
+  if(qb && /^\d{4}-\d{2}-\d{2}$/.test(qb)){ document.getElementById('db').value=qb; isExample=false; }
+  cast(isExample);
+})();
+
+/* pause nothing heavy — static after cast; no rAF loop persists */
+</script>
+</body>
+</html>
