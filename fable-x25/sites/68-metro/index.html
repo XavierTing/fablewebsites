@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calder Metro — Live Network Map</title>
+<meta name="description" content="The official network map of the Calder Metropolitan Railway: five lines, thirty-three stations, and every train running live. Departures at Meridian Exchange, fares, hours, and conduct.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×70">
+<meta property="og:title" content="Calder Metro — Live Network Map">
+<meta property="og:description" content="The official network map of the Calder Metropolitan Railway: five lines, thirty-three stations, and every train running live. Departures at Meridian Exchange, fares, hours, and conduct.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/68-metro/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/68-metro/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calder Metro — Live Network Map">
+<meta name="twitter:description" content="The official network map of the Calder Metropolitan Railway: five lines, thirty-three stations, and every train running live. Departures at Meridian Exchange, fares, hours, and conduct.">
+<meta name="twitter:image" content="https://xavierfable30.netlify.app/sites/68-metro/assets/og.jpg">
+<meta name="theme-color" content="#f4f3ef">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23d8382e'/%3E%3Ctext x='50' y='68' font-family='Helvetica,Arial,sans-serif' font-size='52' font-weight='bold' fill='%23f4f3ef' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/68-style.css">
+</head>
+<body>
+
+<a class="backlink" href="/">XAVIER&nbsp;FABLE&nbsp;×70</a>
+
+<header class="topbar">
+  <div class="tb-left">
+    <span class="mark-disc" aria-hidden="true">M</span>
+    <span class="tb-name">Calder Transit Authority</span>
+  </div>
+  <nav class="tb-nav" aria-label="Sections">
+    <a href="#departures">Departures</a>
+    <a href="#lines">Lines</a>
+    <a href="#riding">Riding</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ HERO / LIVE MAP ============ -->
+  <section class="hero">
+    <div class="rail">
+      <p class="eyebrow reveal">Calder Transit Authority · Official map</p>
+      <h1 class="reveal d1">Calder<br>Metro</h1>
+      <p class="lede reveal d2">Five lines. Thirty-three stations. Every train on this map is
+        actually running — watch them slow into platforms, hold, and pull away.
+        Departure times are read straight off the wire.</p>
+      <div class="legend reveal d3" id="legend" aria-label="Lines"></div>
+      <div class="clockchip reveal d4">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="cc-time" id="clockA">--:--:--</span>
+        <span class="cc-label">Calder time</span>
+      </div>
+      <p class="hint reveal d5">Hover any station for live departures. Dark dots are trains.</p>
+    </div>
+
+    <div class="map-wrap reveal d2">
+      <div class="map-scroll" id="mapScroll" tabindex="-1">
+        <div class="map-inner" id="mapInner">
+          <svg id="map" viewBox="70 30 1470 990" role="img" aria-label="Diagram of the Calder Metro network with live train positions"></svg>
+          <div class="tooltip" id="tip" role="status" hidden></div>
+        </div>
+      </div>
+      <div class="pan-hint" id="panHint" aria-hidden="true">← drag to pan the map →</div>
+    </div>
+  </section>
+
+  <!-- ============ DEPARTURE BOARD ============ -->
+  <section class="board-sec" id="departures">
+    <div class="wrap">
+      <header class="sec-head">
+        <div>
+          <p class="eyebrow lt">Departures · All platforms</p>
+          <h2>Meridian Exchange</h2>
+        </div>
+        <div class="clockchip dark">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="cc-time" id="clockB">--:--:--</span>
+          <span class="cc-label">Calder time</span>
+        </div>
+      </header>
+      <div class="board-frame">
+        <div class="board" id="board"></div>
+      </div>
+      <p class="board-note">Departures are computed from the trains on the map above, not from a schedule.
+        If a train appears late, it is on time by a different clock.</p>
+    </div>
+  </section>
+
+  <!-- ============ THE LINES ============ -->
+  <section class="lines-sec" id="lines">
+    <div class="wrap">
+      <header class="sec-head">
+        <div>
+          <p class="eyebrow">The network</p>
+          <h2>The Lines</h2>
+        </div>
+        <p class="sec-side">Colour is not decoration. Colour is wayfinding.<br>Learn one letter and the city opens.</p>
+      </header>
+      <div class="line-rows" id="lineRows"></div>
+    </div>
+  </section>
+
+  <!-- ============ RIDING ============ -->
+  <section class="riding-sec" id="riding">
+    <div class="wrap">
+      <header class="sec-head">
+        <div>
+          <p class="eyebrow">Fares · Hours · Conduct</p>
+          <h2>Riding</h2>
+        </div>
+        <p class="sec-side">The system is simple by decree.<br>One fare. One map. One way to stand on an escalator.</p>
+      </header>
+
+      <div class="riding-grid">
+        <div class="r-col">
+          <h3 class="r-head">Fares</h3>
+          <div class="fare">
+            <div class="fare-top"><span class="fare-name">Single</span><span class="fare-price">ƒ2.60</span></div>
+            <p>One ride, any distance, ninety minutes of transfers. The turnstile accepts coins, cards, and correct attitudes.</p>
+          </div>
+          <div class="fare">
+            <div class="fare-top"><span class="fare-name">Day</span><span class="fare-price">ƒ7.00</span></div>
+            <p>Unlimited riding until the last train. The city is yours. Return it by morning.</p>
+          </div>
+          <div class="fare">
+            <div class="fare-top"><span class="fare-name">Month</span><span class="fare-price">ƒ86.00</span></div>
+            <p>Thirty days, all lines, no counting. For people with somewhere to be, repeatedly.</p>
+          </div>
+          <p class="fare-note">Children under six ride free. So do dogs that fit in bags, and retired employees of the Authority.</p>
+        </div>
+
+        <div class="r-col">
+          <h3 class="r-head">Hours</h3>
+          <table class="hours">
+            <tbody>
+              <tr><th scope="row">Monday – Thursday</th><td>05:10 – 01:40</td></tr>
+              <tr><th scope="row">Friday – Saturday</th><td>05:10 – 03:00</td></tr>
+              <tr><th scope="row">Sunday</th><td>06:00 – 01:00</td></tr>
+              <tr><th scope="row">A · Harbor Line</th><td>All night</td></tr>
+            </tbody>
+          </table>
+          <p class="hours-note">The Harbor Line runs through the night because the harbor does not close.
+            First trains leave the termini simultaneously; the Authority finds this satisfying.</p>
+        </div>
+
+        <div class="r-col">
+          <h3 class="r-head">Conduct</h3>
+          <ol class="conduct">
+            <li>Let passengers off first. This is not a courtesy; it is physics.</li>
+            <li>Stand right, walk left. The escalator is a system too.</li>
+            <li>Music stays in your ears. The announcements are ours.</li>
+            <li>Doors close ten seconds after the chime. The chime is not a negotiation.</li>
+            <li>Give up the seat. You know the one.</li>
+          </ol>
+          <p class="conduct-note">Violations are noted.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" id="authority">
+    <div class="wrap">
+      <div class="foot-stats">
+        <div class="stat"><span class="stat-n">5</span><span class="stat-l">Lines</span></div>
+        <div class="stat"><span class="stat-n">33</span><span class="stat-l">Stations</span></div>
+        <div class="stat"><span class="stat-n">61.4</span><span class="stat-l">Route km</span></div>
+        <div class="stat"><span class="stat-n">1911</span><span class="stat-l">Opened</span></div>
+        <div class="stat"><span class="stat-n">99.2<em>%</em></span><span class="stat-l">Punctuality, self-reported</span></div>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-brand">
+          <span class="mark-disc" aria-hidden="true">M</span>
+          <div>
+            <p class="foot-name">Calder Transit Authority</p>
+            <p class="foot-sub">Bureau of Rail Operations · Pier House, 1 Meridian Exchange, Calder</p>
+          </div>
+        </div>
+        <p class="foot-note">Calder is a fictional city and its metro a fictional system — running,
+          nonetheless, on schedule since 1911. Site 68 of the
+          <a href="/">XAVIER FABLE ×70</a> showcase.</p>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="selftest" class="selftest" hidden></div>
+<noscript><div class="noscript">The live map needs JavaScript. The trains, regrettably, do not run in this browser.</div></noscript>
+
+<script src="assets/68-network.js"></script>
+<script src="assets/68-app.js"></script>
+</body>
+</html>

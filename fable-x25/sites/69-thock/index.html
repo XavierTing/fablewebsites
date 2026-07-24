@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en" data-cw="milk" data-sw="coast">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THOCK — the SEVENTY-FIVE · a keyboard you can hear</title>
+<meta name="description" content="THOCK builds one keyboard: the SEVENTY-FIVE, a gasket-mounted 75% board in three switches and four colorways. This page is the demo unit — type on it and hear the switches, synthesized live in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×70">
+<meta property="og:title" content="THOCK — the SEVENTY-FIVE · a keyboard you can hear">
+<meta property="og:description" content="THOCK builds one keyboard: the SEVENTY-FIVE, a gasket-mounted 75% board in three switches and four colorways. This page is the demo unit — type on it and hear the switches, synthesized live in your browser.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/69-thock/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/69-thock/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="THOCK — the SEVENTY-FIVE · a keyboard you can hear">
+<meta name="twitter:description" content="THOCK builds one keyboard: the SEVENTY-FIVE, a gasket-mounted 75% board in three switches and four colorways. This page is the demo unit — type on it and hear the switches, synthesized live in your browser.">
+<meta name="twitter:image" content="https://xavierfable30.netlify.app/sites/69-thock/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='14' width='56' height='36' rx='7' fill='%231c1b19'/%3E%3Crect x='11' y='21' width='10' height='9' rx='2' fill='%23ecebe7'/%3E%3Crect x='25' y='21' width='10' height='9' rx='2' fill='%23ecebe7'/%3E%3Crect x='39' y='21' width='14' height='9' rx='2' fill='%23e0561b'/%3E%3Crect x='11' y='34' width='28' height='9' rx='2' fill='%23ecebe7'/%3E%3Crect x='43' y='34' width='10' height='9' rx='2' fill='%23ecebe7'/%3E%3C/svg%3E">
+<script>
+(function(){
+  try{
+    var q = new URLSearchParams(location.search);
+    var cw = q.get('colorway'); var sw = q.get('switch');
+    if(['milk','terminal','pool','tang'].indexOf(cw) >= 0) document.documentElement.dataset.cw = cw;
+    if(['coast','ridge','ratchet'].indexOf(sw) >= 0) document.documentElement.dataset.sw = sw;
+  }catch(e){}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/69-thock.css">
+</head>
+<body id="top">
+
+<a class="chip" href="/" aria-label="Back to the XAVIER FABLE gallery"><span class="chip-dot" aria-hidden="true"></span>XAVIER FABLE ×70</a>
+
+<header class="topbar">
+  <a class="brand" href="#top">THOCK<sup>®</sup></a>
+  <nav class="nav mono" aria-label="Sections">
+    <a href="#switches">Switches</a>
+    <a href="#colorways">Colorways</a>
+    <a href="#specs">Specs</a>
+    <a href="#buy" class="nav-buy">Batch 04</a>
+  </nav>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker mono" data-reveal>N° 75 — one board, made properly</p>
+    <div class="hero-meta mono" data-reveal aria-hidden="true">
+      <span>75% — 85 keys + knob</span>
+      <span>double gasket · FR4</span>
+      <span>QMK / VIA · USB-C</span>
+      <span><b>$185</b> — batch 04</span>
+    </div>
+    <h1 class="wordmark" aria-label="THOCK"><span>T</span><span>H</span><span>O</span><span>C</span><span>K</span></h1>
+    <div class="hero-sub" data-reveal>
+      <p class="tagline">The <em>SEVENTY-FIVE</em>. A gasket-mounted 75% board in three switches and four colorways. We tuned the sound first and built the keyboard around it.</p>
+      <p class="prompt mono"><span class="prompt-key" aria-hidden="true">T</span>this page is the demo unit — go on, type on it</p>
+    </div>
+
+    <div class="controls" data-reveal>
+      <div class="seg" role="radiogroup" aria-label="Switch type" id="switchSeg">
+        <button type="button" class="seg-btn" data-switch="coast" role="radio" aria-checked="true"><b>Coast</b><span class="mono">linear</span></button>
+        <button type="button" class="seg-btn" data-switch="ridge" role="radio" aria-checked="false"><b>Ridge</b><span class="mono">tactile</span></button>
+        <button type="button" class="seg-btn" data-switch="ratchet" role="radio" aria-checked="false"><b>Ratchet</b><span class="mono">clicky</span></button>
+      </div>
+      <div class="cwsel" role="radiogroup" aria-label="Colorway" id="cwSel">
+        <button type="button" class="swb" data-cwv="milk" role="radio" aria-checked="true" title="Milk Study" style="--s1:#f3edde;--s2:#e5dcc6;--s3:#b9854a"><span class="sr">Milk Study</span></button>
+        <button type="button" class="swb" data-cwv="terminal" role="radio" aria-checked="false" title="Terminal" style="--s1:#31332f;--s2:#282a26;--s3:#2f9e5c"><span class="sr">Terminal</span></button>
+        <button type="button" class="swb" data-cwv="pool" role="radio" aria-checked="false" title="Pool" style="--s1:#f0f4f7;--s2:#d3e2ec;--s3:#3f7cd8"><span class="sr">Pool</span></button>
+        <button type="button" class="swb" data-cwv="tang" role="radio" aria-checked="false" title="Tang" style="--s1:#dbd9d3;--s2:#57554f;--s3:#e0561b"><span class="sr">Tang</span></button>
+        <span class="cw-name mono" id="cwName">Milk Study</span>
+      </div>
+    </div>
+
+    <div class="strip" id="strip" data-reveal>
+      <div class="strip-head mono"><span>Typing test — copy the line</span><button type="button" class="reset mono" id="resetBtn">↺ reset</button></div>
+      <div class="line mono" id="line" aria-hidden="true"></div>
+      <div class="hud mono">
+        <span class="hud-cell"><b id="wpm">0</b> wpm</span>
+        <span class="hud-cell"><b id="accv">100</b>% acc</span>
+        <span class="hud-note" id="hudNote">click the line, then type</span>
+      </div>
+      <input id="typeInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Typing test input" maxlength="120">
+    </div>
+
+    <p class="strip-alt mono" data-reveal>Best played with a physical keyboard — on a phone, tap the caps to hear the switches.</p>
+
+    <div class="board-shell" data-reveal>
+      <div class="kb-case" id="kbCase" tabindex="0" role="group" aria-label="Interactive THOCK SEVENTY-FIVE keyboard. Type on your physical keyboard or tap the keys to hear the switch sound.">
+        <div class="matrix" id="matrix"></div>
+        <span class="case-badge mono" aria-hidden="true">THOCK · 75 · B04</span>
+      </div>
+      <div class="ground" aria-hidden="true"></div>
+    </div>
+    <p class="board-cap mono" data-reveal>shown — <b id="capCw">Milk Study</b> · <b id="capSw">Coast, linear</b> · sound synthesized live, nothing recorded</p>
+  </div>
+</section>
+
+<!-- ============ SWITCHES ============ -->
+<section class="sect" id="switches">
+  <div class="wrap">
+    <p class="sect-label mono" data-reveal>01 — Switches</p>
+    <h2 class="sect-title" data-reveal>Three ways to<br>land a keystroke.</h2>
+    <p class="sect-lede" data-reveal>Every SEVENTY-FIVE ships with one of three house switches, tuned and lubed on our line in small batches. Pick with your ears — the selector up top swaps the sound of the whole board, or audition five strokes below.</p>
+
+    <div class="sw-grid">
+      <article class="sw-card" data-switch="coast" data-reveal>
+        <header class="sw-head">
+          <h3>Coast</h3><span class="sw-type mono">linear</span>
+        </header>
+        <dl class="sw-specs">
+          <div><dt class="mono">actuation</dt><dd>43<i>g</i></dd></div>
+          <div><dt class="mono">travel</dt><dd>3.6<i>mm</i></dd></div>
+          <div><dt class="mono">stem</dt><dd>POM<i>lubed</i></dd></div>
+        </dl>
+        <p>No bump, no click — a frictionless drop into a low, woody landing. The library-at-midnight switch.</p>
+        <div class="sw-foot">
+          <button type="button" class="hear mono" data-riff="coast">▶ hear it ×5</button>
+          <button type="button" class="pick mono" data-pick="coast" aria-pressed="true">fitted</button>
+        </div>
+      </article>
+
+      <article class="sw-card" data-switch="ridge" data-reveal>
+        <header class="sw-head">
+          <h3>Ridge</h3><span class="sw-type mono">tactile</span>
+        </header>
+        <dl class="sw-specs">
+          <div><dt class="mono">actuation</dt><dd>55<i>g</i></dd></div>
+          <div><dt class="mono">travel</dt><dd>3.4<i>mm</i></dd></div>
+          <div><dt class="mono">bump</dt><dd>0.5<i>mm in</i></dd></div>
+        </dl>
+        <p>A defined bump early in the stroke, then a clean fall-away. Rhythm you can feel without broadcasting it to the room.</p>
+        <div class="sw-foot">
+          <button type="button" class="hear mono" data-riff="ridge">▶ hear it ×5</button>
+          <button type="button" class="pick mono" data-pick="ridge" aria-pressed="false">fit ridge</button>
+        </div>
+      </article>
+
+      <article class="sw-card" data-switch="ratchet" data-reveal>
+        <header class="sw-head">
+          <h3>Ratchet</h3><span class="sw-type mono">clicky</span>
+        </header>
+        <dl class="sw-specs">
+          <div><dt class="mono">actuation</dt><dd>50<i>g</i></dd></div>
+          <div><dt class="mono">travel</dt><dd>3.2<i>mm</i></dd></div>
+          <div><dt class="mono">click bar</dt><dd>2<i>leaf</i></dd></div>
+        </dl>
+        <p>A hardened click bar snaps at the top of every stroke. Bright, precise, unapologetic. Your coworkers already know.</p>
+        <div class="sw-foot">
+          <button type="button" class="hear mono" data-riff="ratchet">▶ hear it ×5</button>
+          <button type="button" class="pick mono" data-pick="ratchet" aria-pressed="false">fit ratchet</button>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COLORWAYS ============ -->
+<section class="sect" id="colorways">
+  <div class="wrap">
+    <p class="sect-label mono" data-reveal>02 — Colorways</p>
+    <h2 class="sect-title" data-reveal>Four rooms,<br>same furniture.</h2>
+    <p class="sect-lede" data-reveal>Double-shot PBT in our sculpted TH profile, dyed to four studies. Choosing one recolors the demo unit above — the whole page follows the board.</p>
+
+    <div class="cw-grid">
+      <button type="button" class="cw-card" data-cwv="milk" data-reveal style="--c1:#f3edde;--c2:#e5dcc6;--c3:#b9854a;--cs1:#c9bda2;--cs2:#b3a688;--cs3:#8a5f2f">
+        <span class="mini" aria-hidden="true"><i class="mk x"></i><i class="mk a"></i><i class="mk a"></i><i class="mk m"></i><i class="mk a"></i></span>
+        <span class="cw-meta"><b>Milk Study</b><span class="mono">CW-01</span></span>
+        <span class="cw-line">Warm cream over bone, tobacco accents. Morning light in a paper studio.</span>
+      </button>
+      <button type="button" class="cw-card" data-cwv="terminal" data-reveal style="--c1:#31332f;--c2:#282a26;--c3:#2f9e5c;--cs1:#1b1c1a;--cs2:#151614;--cs3:#1d6a3c">
+        <span class="mini" aria-hidden="true"><i class="mk x"></i><i class="mk a"></i><i class="mk a"></i><i class="mk m"></i><i class="mk a"></i></span>
+        <span class="cw-meta"><b>Terminal</b><span class="mono">CW-02</span></span>
+        <span class="cw-line">Charcoal caps, phosphor legends. For people whose home is a tiling window manager.</span>
+      </button>
+      <button type="button" class="cw-card" data-cwv="pool" data-reveal style="--c1:#f0f4f7;--c2:#d3e2ec;--c3:#3f7cd8;--cs1:#bfccd7;--cs2:#9db4c4;--cs3:#2a559c">
+        <span class="mini" aria-hidden="true"><i class="mk x"></i><i class="mk a"></i><i class="mk a"></i><i class="mk m"></i><i class="mk a"></i></span>
+        <span class="cw-meta"><b>Pool</b><span class="mono">CW-03</span></span>
+        <span class="cw-line">Chlorine white and springboard blue. A public pool in August, keyboard form.</span>
+      </button>
+      <button type="button" class="cw-card" data-cwv="tang" data-reveal style="--c1:#dbd9d3;--c2:#57554f;--c3:#e0561b;--cs1:#aeaba3;--cs2:#37352f;--cs3:#a53c0d">
+        <span class="mini" aria-hidden="true"><i class="mk x"></i><i class="mk a"></i><i class="mk a"></i><i class="mk m"></i><i class="mk a"></i></span>
+        <span class="cw-meta"><b>Tang</b><span class="mono">CW-04</span></span>
+        <span class="cw-line">Workshop grey struck through with signal orange. Utility with a pulse.</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SPECS ============ -->
+<section class="sect" id="specs">
+  <div class="wrap">
+    <p class="sect-label mono" data-reveal>03 — Specification</p>
+    <h2 class="sect-title" data-reveal>The sheet.</h2>
+    <div class="spec-table" data-reveal>
+      <div class="spec-row"><span class="mono">layout</span><span>75% — 85 keys + rotary knob</span></div>
+      <div class="spec-row"><span class="mono">mount</span><span>Double gasket, silicone socks</span></div>
+      <div class="spec-row"><span class="mono">plate</span><span>FR4, 1.2 mm</span></div>
+      <div class="spec-row"><span class="mono">keycaps</span><span>Double-shot PBT, sculpted TH profile</span></div>
+      <div class="spec-row"><span class="mono">sockets</span><span>Hot-swap, 5-pin, south-facing</span></div>
+      <div class="spec-row"><span class="mono">stabilisers</span><span>Screw-in, tuned on the line</span></div>
+      <div class="spec-row"><span class="mono">firmware</span><span>QMK / VIA, fully remappable</span></div>
+      <div class="spec-row"><span class="mono">connection</span><span>USB-C, detachable coiled cable</span></div>
+      <div class="spec-row"><span class="mono">case</span><span>6063 aluminium, bead-blasted + anodised</span></div>
+      <div class="spec-row"><span class="mono">damping</span><span>Poron case foam · IXPE pads · PET sheet</span></div>
+      <div class="spec-row"><span class="mono">weight</span><span>1.94 kg assembled</span></div>
+      <div class="spec-row"><span class="mono">knob</span><span>Push-to-mute — the one up top works</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BUY ============ -->
+<section class="sect" id="buy">
+  <div class="wrap">
+    <p class="sect-label mono" data-reveal>04 — Batch 04</p>
+    <div class="buy-block" data-reveal>
+      <div class="buy-left">
+        <h2 class="buy-title">THOCK SEVENTY-FIVE</h2>
+        <p class="buy-sub">Fully assembled, your switch and colorway, coiled cable and keypuller in the box. Machined, tuned and listened to before it leaves.</p>
+        <div class="stock">
+          <div class="stock-line mono"><span>Batch 04 — ships October 2026</span><span>1,088 / 1,500 claimed</span></div>
+          <div class="stock-bar" role="img" aria-label="1088 of 1500 units claimed"><i style="--fill:72.5%"></i></div>
+        </div>
+        <form class="notify" id="notifyForm">
+          <label class="mono" for="notifyMail">get the shipping note</label>
+          <div class="notify-row">
+            <input id="notifyMail" type="email" required placeholder="you@somewhere.com" autocomplete="email">
+            <button type="submit" class="notify-btn mono" id="notifyBtn">notify me</button>
+          </div>
+        </form>
+      </div>
+      <div class="buy-right">
+        <p class="price"><sup>$</sup>185</p>
+        <p class="price-note mono">assembled · ships worldwide<br>from the batch line, Rotterdam</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <p class="foot-brand">THOCK<sup>®</sup></p>
+    <p class="foot-note">THOCK is a fictional keyboard brand designed and built by Fable 5 for the XAVIER FABLE ×70 showcase. Every switch sound on this page is synthesized live in your browser with the Web Audio API — nothing was recorded.</p>
+    <p class="foot-links mono"><a href="/">← gallery</a><a href="#top">back to top ↑</a></p>
+  </div>
+</footer>
+
+<script src="assets/69-thock.js"></script>
+</body>
+</html>

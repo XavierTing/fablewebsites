@@ -1,6 +1,6 @@
-# XAVIER FABLE ×65
+# XAVIER FABLE ×70
 
-**Sixty-five fundamentally different websites — designed, written, art-directed and built end-to-end by Claude Fable 5, autonomously.**
+**Seventy fundamentally different websites — designed, written, art-directed and built end-to-end by Claude Fable 5, autonomously.**
 
 🔗 **Live:** https://xavierfable30.netlify.app · 📖 **The guide:** https://xavierfable30.netlify.app/guide/
 
@@ -10,12 +10,12 @@ Each site is a self-contained demonstration of a distinct web-design technique �
 
 ```
 fable-x25/                  # the site (deployed to Netlify, no build step)
-├── index.html              # gallery homepage — a "living wall" of all 65 thumbnails
+├── index.html              # gallery homepage — a "living wall" of all 70 thumbnails
 ├── guide/index.html        # how it was made
 └── sites/
     ├── 01-liquid-metal/     # MERCURIAL — raymarched liquid-chrome (custom GLSL)
     ├── 02-terrain/          # ALTIVA — procedural Three.js mountain flyover
-    ├── …                    # (65 sites total)
+    ├── …                    # (70 sites total)
     └── 30-orrery/           # EPHEMERIS — a working Keplerian orrery
     #   each: index.html + assets/ + PASSES.md (the 3-pass critique log)
 
@@ -27,7 +27,7 @@ assets-pipeline/            # the tooling that built it
 └── ogshots.mjs / inject-og.mjs     # per-page social share cards + meta
 ```
 
-## The 65
+## The 70
 
 **3D & WebGL** — Mercurial · Altiva · Heliopause · Fold  
 **Typography** — The Elastic Word · Raw Matter · Meridiem · Phosphor  
@@ -39,7 +39,8 @@ assets-pipeline/            # the tooling that built it
 **Wave III** — 山水 Shan Shui · 枯山水 Karesansui · 剪纸 Jianzhi · Rain on Glass · Aurora  
 **Wave IV** — Physarum · Morphogen · N-Body · Kaleido · Harmonograph · Escapement · Resonance · Cold Set (type foundry) · Slow Pour (coffee) · The Brass Owl (bar) · Olfacta (perfume) · The Lumen (cinema) · Uranometria (star atlas) · Meridian (globe) · Further (ocean)  
 **Wave V — Divination** — 生肖 The Zodiac · 八字 Four Pillars (BaZi) · 易经 I Ching · 求签 Fortune Sticks (Kau Cim) · The Twelve Houses (horoscope)  
-**Wave VI — the rest of 命理** — 紫微斗数 Zi Wei Dou Shu · 六爻 Liu Yao · 梅花易数 Plum Blossom · 奇门遁甲 Qi Men Dun Jia · 风水 Feng Shui · 择日 Almanac · 面相/手相 Face & Palm · 姓名学 Name Analysis · 合婚 Marriage Matching · 周公解梦 Dream Interpretation
+**Wave VI — the rest of 命理** — 紫微斗数 Zi Wei Dou Shu · 六爻 Liu Yao · 梅花易数 Plum Blossom · 奇门遁甲 Qi Men Dun Jia · 风水 Feng Shui · 择日 Almanac · 面相/手相 Face & Palm · 姓名学 Name Analysis · 合婚 Marriage Matching · 周公解梦 Dream Interpretation  
+**Wave VII — shops & systems** — L'Orgue (bespoke perfumer's organ) · 聞香 Monkō (Kyoto incense house, live smoke) · Calder Metro (a fictional transit system, running) · Thock (typeable mechanical keyboard, synthesized sound) · Marmor (a working paper-marbling tank)
 
 ## Running locally
 

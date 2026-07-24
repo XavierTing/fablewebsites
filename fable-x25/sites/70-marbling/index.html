@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARMOR — Hand-Marbled Papers · Bindery &amp; Marbling Atelier</title>
+<meta name="description" content="MARMOR is a bindery and marbling atelier. Float pigment on the carrageenan bath, draw the stylus, comb a nonpareil, and pull your own sheet — a working marbling tank built on the closed-form mathematics of ebru.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="XAVIER FABLE ×70">
+<meta property="og:title" content="MARMOR — Hand-Marbled Papers · Bindery &amp; Marbling Atelier">
+<meta property="og:description" content="MARMOR is a bindery and marbling atelier. Float pigment on the carrageenan bath, draw the stylus, comb a nonpareil, and pull your own sheet — a working marbling tank built on the closed-form mathematics of ebru.">
+<meta property="og:url" content="https://xavierfable30.netlify.app/sites/70-marbling/">
+<meta property="og:image" content="https://xavierfable30.netlify.app/sites/70-marbling/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MARMOR — Hand-Marbled Papers · Bindery &amp; Marbling Atelier">
+<meta name="twitter:description" content="MARMOR is a bindery and marbling atelier. Float pigment on the carrageenan bath, draw the stylus, comb a nonpareil, and pull your own sheet — a working marbling tank built on the closed-form mathematics of ebru.">
+<meta name="twitter:image" content="https://xavierfable30.netlify.app/sites/70-marbling/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f2ecdf'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%236e2b25'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23b98a33'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%232c3a5e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/70-style.css">
+</head>
+<body>
+
+<a class="chip" href="/">XAVIER FABLE ×70</a>
+
+<!-- ————— hero + tank ————— -->
+<header class="hero wrap">
+  <p class="eyebrow rv">Marbled papers &amp; bindery sundries · est. MMXI</p>
+  <h1 class="rv rv-d1">MARMOR</h1>
+  <p class="lede rv rv-d2">Pigment floated on a carrageenan bath, drawn with brass combs,
+  and pulled onto paper — one sheet at a time, never the same sheet twice.</p>
+  <hr class="hero-rule rv rv-d3" aria-hidden="true">
+</header>
+
+<main class="wrap">
+  <section id="tank-sec" aria-label="The tank — interactive marbling bath">
+    <div class="sec-head rv"><span>№ 01 — <b>The Tank</b></span></div>
+    <p class="tank-note rv">A working model of the marbler's tray — the same mathematics that move
+    real ink on real size. Drop colour, draw the stylus through it, comb, then pull your sheet.</p>
+
+    <div class="tray rv">
+      <div class="tank-wrap">
+        <canvas id="tank" aria-label="Marbling tank. Click to drop ink; in stylus mode, drag to draw a tine line."></canvas>
+        <svg id="guide" viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="0" y1="0" x2="0" y2="0"></line>
+          <circle cx="0" cy="0" r="5"></circle>
+        </svg>
+      </div>
+
+      <div class="bench" role="toolbar" aria-label="Marbling bench">
+        <div class="bench-group" role="group" aria-label="Tool mode">
+          <span class="bench-label">Mode</span>
+          <button class="btn" data-mode="drop" aria-pressed="true">Drop</button>
+          <button class="btn" data-mode="stylus" aria-pressed="false">Stylus</button>
+        </div>
+        <div class="bench-group" role="group" aria-label="Ink palette">
+          <span class="bench-label">Inks</span>
+          <button class="swatch" data-color="#6e2b25" style="background:#6e2b25" aria-pressed="true" title="Oxblood" aria-label="Oxblood ink"></button>
+          <button class="swatch" data-color="#2e4a3d" style="background:#2e4a3d" aria-pressed="false" title="Serpentine" aria-label="Serpentine green ink"></button>
+          <button class="swatch" data-color="#2c3a5e" style="background:#2c3a5e" aria-pressed="false" title="Indigo" aria-label="Indigo ink"></button>
+          <button class="swatch" data-color="#b98a33" style="background:#b98a33" aria-pressed="false" title="Gold ochre" aria-label="Gold ochre ink"></button>
+          <button class="swatch" data-color="#241f1a" style="background:#241f1a" aria-pressed="false" title="Lamp black" aria-label="Lamp black ink"></button>
+          <button class="swatch swatch--gall" data-color="#e9e0ca" style="background:#e9e0ca" aria-pressed="false" title="Gall (opens rings)" aria-label="Gall — bath-coloured drop that opens rings"></button>
+        </div>
+        <div class="bench-group" role="group" aria-label="Patterns and combs">
+          <span class="bench-label">Bench</span>
+          <button class="btn" data-act="stone" title="Scatter concentric stones">Stone shower</button>
+          <button class="btn" data-act="nonpareil" title="Fine vertical comb, drawn down">Nonpareil</button>
+          <button class="btn" data-act="gelgit" title="Comb down, then back — the zigzag ground">Gel-git</button>
+          <button class="btn" data-act="feather" title="Fine comb crossed back with a wide comb">Feather</button>
+          <button class="btn" data-act="clear" title="Skim the bath clean">Clear bath</button>
+        </div>
+        <button class="btn btn-pull" id="pull">Pull the sheet ↑</button>
+      </div>
+    </div>
+    <p class="bench-hint rv">Drop gall — the pale ink — into a colour to open rings. Pulling the sheet lifts the ink from the size; the bath returns to rest.</p>
+
+    <h2 class="pulls-title rv">Today's pulls</h2>
+    <div id="pulls" class="rv" aria-live="polite">
+      <p id="pulls-empty">No sheets pulled yet — the bath is waiting.</p>
+    </div>
+  </section>
+
+  <!-- ————— the papers ————— -->
+  <section id="papers-sec" aria-label="The papers">
+    <div class="sec-head rv"><span>№ 02 — <b>The Papers</b></span></div>
+    <div class="papers">
+      <article class="paper-card rv">
+        <canvas id="card-stone" aria-label="Stone pattern — rings and crescents of thrown colour"></canvas>
+        <div class="paper-meta">
+          <h3>Stone <span>battal</span></h3>
+          <p>The oldest page in the book: colour thrown and left unstirred, each drop
+          shouldering the last into rings and crescents. Cuts generously for full endpapers.</p>
+          <div class="paper-price"><span>№ S-01 · 48 × 66 cm</span><i>£12 / sheet</i></div>
+        </div>
+      </article>
+      <article class="paper-card rv rv-d1">
+        <canvas id="card-nonpareil" aria-label="Nonpareil pattern — tight parallel scallops from the fine comb"></canvas>
+        <div class="paper-meta">
+          <h3>Nonpareil <span>the fine comb</span></h3>
+          <p>A gel-git ground drawn once through the five-millimetre comb — tight parallel
+          scallops without equal, hence the name. The house pattern for folio endpapers.</p>
+          <div class="paper-price"><span>№ N-04 · 48 × 66 cm</span><i>£16 / sheet</i></div>
+        </div>
+      </article>
+      <article class="paper-card rv rv-d2">
+        <canvas id="card-feather" aria-label="Feather pattern — nonpareil crossed back into plumes"></canvas>
+        <div class="paper-meta">
+          <h3>Feather <span>the counter-comb</span></h3>
+          <p>Nonpareil crossed back with a wide comb, breaking the scallops into plumes.
+          Asks a steady wrist and forgives nothing; favoured for quarter-bound spines.</p>
+          <div class="paper-price"><span>№ F-02 · 48 × 66 cm</span><i>£18 / sheet</i></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ————— the craft ————— -->
+  <section id="craft-sec" aria-label="The craft">
+    <div class="sec-head rv"><span>№ 03 — <b>The Craft</b></span></div>
+    <div class="craft">
+      <div class="step rv">
+        <span class="no">I / IV</span>
+        <h3>The size</h3>
+        <p>Carrageenan — Irish moss, boiled and strained — thickens the water until it will
+        carry pigment on its back. The bath rests overnight and is skimmed each morning
+        with a strip of newsprint. It should pour like single cream.</p>
+      </div>
+      <div class="step rv rv-d1">
+        <span class="no">II / IV</span>
+        <h3>The colours</h3>
+        <p>Earth and mineral pigments ground with ox-gall. The gall lowers each drop's
+        surface tension so it spreads — and every new drop shoulders the older ones aside.
+        The whole geometry of marbling begins in that little push.</p>
+      </div>
+      <div class="step rv rv-d1">
+        <span class="no">III / IV</span>
+        <h3>The comb</h3>
+        <p>Brass pins set in beech, a different rake for every pattern: the nonpareil comb
+        at a scant five millimetres, the wide feather comb, the single stylus for freehand
+        veins. One pass, one direction, no second thoughts.</p>
+      </div>
+      <div class="step rv rv-d2">
+        <span class="no">IV / IV</span>
+        <h3>The pull</h3>
+        <p>Alum-mordanted paper is laid down from the near edge in one unhurried roll, then
+        pulled off with the whole pattern clinging to it. Rinsed, hung, pressed flat.
+        What the paper takes, the bath forgets.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— commissions ————— -->
+  <section id="commissions-sec" class="commissions" aria-label="Commissions">
+    <div class="sec-head rv"><span>№ 04 — <b>Commissions</b></span></div>
+    <div class="inner rv">
+      <h3>Edition work, quietly done</h3>
+      <p>We marble to order for binders, conservators and private presses: endpapers matched
+      to a leather swatch, edition runs to two hundred sheets, edge-marbling for text blocks,
+      and sympathetic repairs to papers older than this house. Send the book — or the idea of it.</p>
+      <a class="mono-line" href="mailto:bench@marmor-atelier.example">bench@marmor-atelier.example — replies on Fridays</a>
+    </div>
+  </section>
+</main>
+
+<!-- ————— footer ————— -->
+<footer>
+  <div class="wrap foot">
+    <div>
+      MARMOR · Bindery &amp; Marbling Atelier<br>
+      7 Vellum Lane, Blackfriars, London EC4V
+    </div>
+    <div>
+      Thursday – Saturday, 10–17<br>
+      The bath is warm from eight
+    </div>
+    <div class="sig">
+      Every pattern on this page was pulled from the tank above.<br>
+      Mathematics after Lu &amp; Jaffer; hands, yours.
+    </div>
+  </div>
+</footer>
+
+<script src="assets/70-marbling.js"></script>
+</body>
+</html>
