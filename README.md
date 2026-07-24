@@ -40,7 +40,7 @@ assets-pipeline/            # the tooling that built it
 **Wave IV** — Physarum · Morphogen · N-Body · Kaleido · Harmonograph · Escapement · Resonance · Cold Set (type foundry) · Slow Pour (coffee) · The Brass Owl (bar) · Olfacta (perfume) · The Lumen (cinema) · Uranometria (star atlas) · Meridian (globe) · Further (ocean)  
 **Wave V — Divination** — 生肖 The Zodiac · 八字 Four Pillars (BaZi) · 易经 I Ching · 求签 Fortune Sticks (Kau Cim) · The Twelve Houses (horoscope)  
 **Wave VI — the rest of 命理** — 紫微斗数 Zi Wei Dou Shu · 六爻 Liu Yao · 梅花易数 Plum Blossom · 奇门遁甲 Qi Men Dun Jia · 风水 Feng Shui · 择日 Almanac · 面相/手相 Face & Palm · 姓名学 Name Analysis · 合婚 Marriage Matching · 周公解梦 Dream Interpretation  
-**Wave VII — shops & systems** — L'Orgue (bespoke perfumer's organ) · 聞香 Monkō (Kyoto incense house, live smoke) · Calder Metro (a fictional transit system, running) · Thock (typeable mechanical keyboard, synthesized sound) · Marmor (a working paper-marbling tank)
+**Wave VII — shops & systems** — L'Orgue (bespoke perfumer's organ) · ode. (modern fragrance house, scents as living gradients) · Calder Metro (a fictional transit system, running) · Thock (typeable mechanical keyboard, synthesized sound) · Marmor (a working paper-marbling tank)
 
 ## Running locally
 
